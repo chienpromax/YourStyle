@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{site/index.html}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/site/css/register.css"> <!-- Thay đổi tên file CSS -->
+</head>
+
+<body>
+    <section class="py-5 container" layout:fragment="main">
+        <!-- Container của form đăng ký -->
+        <section class="register">
+            <div class="register-container row mx-auto">
+
+                <!-- Form đăng ký (bên trái) -->
+                <div class="register-form">
+                    <h1>Đăng Ký</h1>
+
+                    <!-- Input họ và tên với icon -->
+                    <div class="input-container input-icon">
+                        <input type="text" class="form-control" placeholder="Họ và Tên">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+
+                    <!-- Input email với icon -->
+                    <div class="input-container input-icon">
+                        <input type="tel" class="form-control" placeholder="Email">
+                        <i class="bi bi-envelope"></i>
+                    </div>
+                    <!-- Input mật khẩu với icon -->
+                    <div class="input-container input-icon">
+                        <input type="password" class="form-control" placeholder="Mật khẩu">
+                        <i class="bi bi-lock-fill"></i>
+                    </div>
+
+                    <!-- Input nhập lại mật khẩu với icon -->
+                    <div class="input-container input-icon">
+                        <input type="password" class="form-control" placeholder="Nhập lại mật khẩu">
+                        <i class="bi bi-lock-fill"></i>
+                    </div>
+
+                    <!-- Nút Đăng ký -->
+                    <button class="btn btn-custom w-100">Đăng Ký</button>
+                </div>
+
+                <!-- Phần đăng nhập (bên phải) -->
+                <div class="login-info">
+                    <h2>Welcome Back!</h2>
+                    <p style="text-align: center;">Nếu bạn đã có tài khoản, hãy đăng nhập để tiếp tục sử dụng dịch vụ
+                        của chúng
+                        tôi.</p>
+                    <button class="btn btn-light">Đăng Nhập</button>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

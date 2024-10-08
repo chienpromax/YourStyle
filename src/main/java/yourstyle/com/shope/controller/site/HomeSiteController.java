@@ -10,3 +10,4 @@ public class HomeSiteController {
         return "site/pages/home";
     }
 }
+

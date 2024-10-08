@@ -1,0 +1,120 @@
+.register-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 800px;
+    max-width: 100%;
+    /* Đảm bảo form vừa với màn hình nhỏ */
+    height: auto;
+    background-color: #fff;
+    border-radius: 30px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.register-form {
+    padding: 40px;
+    flex: 1;
+    width: 70%;
+    text-align: center;
+}
+
+.login-info {
+    background-color: #285944;
+    color: white;
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-top-left-radius: 110px;
+    border-bottom-left-radius: 110px;
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
+    padding: 40px;
+}
+
+.login-info h2 {
+    margin-bottom: 10px;
+}
+
+.btn-custom {
+    background-color: #285944;
+    color: white;
+    margin-top: 20px;
+}
+
+.input-container {
+    margin-top: 20px;
+}
+
+.login-info button {
+    background-color: white;
+    color: #285944;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.login-info button:hover {
+    background-color: #e2e6ea;
+}
+
+.form-control {
+    background-color: rgba(175, 175, 175, 0.24);
+    border-radius: 12px !important;
+    padding-left: 2.5rem;
+}
+
+.input-icon {
+    position: relative;
+}
+
+.input-icon i {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #285944;
+}
+
+/* Responsive cho thiết bị nhỏ hơn (như điện thoại) */
+@media (max-width: 768px) {
+    .register-container {
+        flex-direction: column;
+        width: 100%;
+        height: auto;
+        border-radius: 0;
+    }
+
+    .register-form,
+    .login-info {
+        width: 100%;
+        border-radius: 0;
+    }
+
+    .login-info {
+        border-top-left-radius: 30px;
+        border-bottom-left-radius: 0;
+        border-top-right-radius: 30px;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .register-form h1 {
+        font-size: 24px;
+    }
+
+    .input-container .input-group-text {
+        font-size: 12px;
+    }
+
+    .input-container .form-control {
+        font-size: 14px;
+    }
+
+    .btn-custom {
+        font-size: 14px;
+    }
+}

@@ -32,16 +32,19 @@
               >
                 <!-- Start Search  -->
                 <div class="position-relative w-50">
-                  <a
-                    class="position-absolute end-0 top-50 translate-middle-y pe-3"
-                    href="#"
-                  >
-                    <i class="bi bi-search"></i>
-                  </a>
-                  <input
-                    class="form-control"
-                    placeholder="Nhập tên hoặc email..."
-                  />
+                  <form th:action="@{/admin/accounts/search}" method="get">
+                    <button
+                      class="position-absolute end-0 top-50 translate-middle-y pe-3 border-0 me-1"
+                      style="background-color: white"
+                    >
+                      <i class="bi bi-search"></i>
+                    </button>
+                    <input
+                      class="form-control"
+                      placeholder="Nhập tên hoặc email..."
+                      name="value"
+                    />
+                  </form>
                 </div>
                 <!-- End Search  -->
                 <!-- start account -->
@@ -73,52 +76,16 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr class="">
-                      <td>1</td>
-                      <td>TK1</td>
-                      <td>Staff</td>
-                      <td>staff1234</td>
-                      <td>staff@gmail.com</td>
-                      <td>Nhân viên</td>
+                    <tr th:each="account, iStat : ${accounts}">
+                      <td>[[${iStat.index + 1}]]</td>
+                      <td>[[${account.accountId}]]</td>
+                      <td>[[${account.username}]]</td>
+                      <td>[[${account.password}]]</td>
+                      <td>[[${account.email}]]</td>
+                      <td>[[${account.role.name}]]</td>
                       <td>
                         <span class="badge text-white bg-success"
-                          >Hoạt động</span
-                        >
-                      </td>
-                      <td class="text-center">
-                        <a style="cursor: pointer; font-size: 21px"
-                          ><i class="bi bi-eye"></i
-                        ></a>
-                      </td>
-                    </tr>
-                    <tr class="">
-                      <td>2</td>
-                      <td>TK3</td>
-                      <td>ManagerAdmin</td>
-                      <td>admin1234</td>
-                      <td>admin@gmail.com</td>
-                      <td>Quản lý</td>
-                      <td>
-                        <span class="badge text-white bg-success"
-                          >Hoạt động</span
-                        >
-                      </td>
-                      <td class="text-center">
-                        <a style="cursor: pointer; font-size: 21px"
-                          ><i class="bi bi-eye"></i
-                        ></a>
-                      </td>
-                    </tr>
-                    <tr class="">
-                      <td>3</td>
-                      <td>TK3</td>
-                      <td>Staff</td>
-                      <td>staff1234145</td>
-                      <td>staff12312dssf@gmail.com</td>
-                      <td>Nhân viên</td>
-                      <td>
-                        <span class="badge text-white bg-success"
-                          >Hoạt động</span
+                          >[[${account.status} ? 'Hoạt động' : 'Bị khóa']]</span
                         >
                       </td>
                       <td class="text-center">
@@ -130,6 +97,7 @@
                   </tbody>
                 </table>
               </div>
+              
               <!-- End table-->
               <!-- start pagination -->
               <div class="text-muted d-flex justify-content-between">
@@ -142,30 +110,39 @@
                       id="size"
                       onchange="this.form.submit()"
                     >
-                      <option value="5">5</option>
-                      <option value="10">10</option>
-                      <option value="20">20</option>
-                      <option value="30">30</option>
+                      <option th:selected="${accounts.size == 5}" value="5" >5</option>
+                      <option th:selected="${accounts.size == 10}" value="10">10</option>
+                      <option  th:selected="${accounts.size == 20}" value="20">20</option>
+                      <option  th:selected="${accounts.size == 30}" value="30">30</option>
                     </select>
                   </div>
                 </form>
                 <nav aria-label="Page navigation">
-                  <ul class="pagination">
-                    <li class="page-item">
-                      <a class="page-link">first</a>
+                  <ul class="pagination" th:if="${accounts.totalPages > 0}">
+                    <li class="page-item" th:classappend="${accounts.number == 0} ? 'disabled' : ''">
+                      <a class="page-link" th:ref="@{/admin/accounts/search(name=${name}, size=${accounts.size}, page=${0})}">First</a>
                     </li>
-                    <li class="page-item">
-                      <a class="page-link" href="#">1</a>
-                    </li>
-                    <li class="page-item">
-                      <a class="page-link" href="#">2</a>
-                    </li>
-                    <li class="page-item">
-                      <a class="page-link" href="#">3</a>
-                    </li>
-                    <li class="page-item">
-                      <a class="page-link" href="#">last</a>
-                    </li>
+                    <li
+                    th:each="pageNumber : ${pageNumbers}"
+                    th:classappend="${pageNumber == accounts.number + 1} ? ' active' : ''"
+                    class="page-item"
+                  >
+                    <a
+                      th:href="@{/admin/accounts/search(name=${name}, size=${accounts.size}, page=${pageNumber - 1})}"
+                      class="page-link"
+                      th:text="${pageNumber}"
+                    ></a>
+                  </li>
+                  <li
+                    th:classappend="${accounts.number + 1 == accounts.totalPages} ? ' disabled' : ''"
+                    class="page-item"
+                  >
+                    <a
+                      th:href="@{/admin/accounts/search(name=${name}, size=${accounts.size}, page=${accounts.totalPages - 1})}"
+                      class="page-link"
+                      >Last</a
+                    >
+                  </li>
                   </ul>
                 </nav>
               </div>

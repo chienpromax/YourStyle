@@ -6,7 +6,244 @@
 </head>
 
 <body>
-    <!--===== main =======-->
+    <section class="py-5 container" layout:fragment="main">
+        <div class="row">
+            <div class="col-md-3 py-3">
+                <form>
+                    <h4 class="text-center py-3">Lọc theo khoảng giá</h4>
+                    <div class="mb-3">
+                        <label for="minPrice" class="form-label">GIÁ THẤP NHẤT</label>
+                        <input type="text" class="form-control" id="minPrice">
+                    </div>
+                    <div class="mb-3">
+                        <label for="maxPrice" class="form-label">GIÁ CAO NHẤT</label>
+                        <input type="text" class="form-control" id="maxPrice">
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary">Lọc</button>
+                    </div>
+                </form>
+                <hr>
+                <div class="pt-3">
+                    <label for="customRange1" class="form-label">lọc khoảng giá</label>
+                    <input type="range" class="form-range" id="customRange1">
+                </div>
+                <hr>
+                <div class="row">
+                    <h4 class="py-3">Kích thước</h4>
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="" />
+                            <label class="form-check-label" for=""> XS </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="" />
+                            <label class="form-check-label" for=""> L </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="" />
+                            <label class="form-check-label" for=""> M </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="" />
+                            <label class="form-check-label" for=""> S </label>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <h4 class="py-3">Mầu sắc</h4>
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="" />
+                            <label class="form-check-label" for=""> ĐEN </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="" />
+                            <label class="form-check-label" for=""> TRẮNG </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="" />
+                            <label class="form-check-label" for=""> VÀNG </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="" />
+                            <label class="form-check-label" for=""> HỒNG </label>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+            </div>
+            <div class="col-md-9 border-start py-3">
+                <div class="col-md-3">
+                    <select class="form-select" aria-label="Default select example">
+                        <option selected>SẮP XẾP THEO</option>
+                        <option value="3">MỚI NHẤT</option>
+                        <option value="1">CAO ĐẾN THẤP</option>
+                        <option value="2">THẤP ĐẾN CAO</option>
+                    </select>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-3 pt-5" data-aos="fade-up">
+                        <div class="card product-card">
+                            <a href="/productdetail">
+                                <img src="/site/images/product/product-1.webp" class="img-fluid">
+                            </a>
+                            <div class="p-2">
+                                <h5>Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
+                                    <a href="/productfavorites">
+                                        <i class="fa-regular fa-heart"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 pt-5" data-aos="fade-up">
+                        <div class="card product-card">
+                            <a href="/allproduct">
+                                <img src="/site/images/product/product-2.webp" class="img-fluid">
+                            </a>
+                            <div class="p-2">
+                                <h5>Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
+                                    <a href="/productfavorites">
+                                        <i class="fa-regular fa-heart"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 pt-5" data-aos="fade-up">
+                        <div class="card product-card">
+                            <a href="/allproduct">
+                                <img src="/site/images/product/product-2.webp" class="img-fluid">
+                            </a>
+                            <div class="p-2">
+                                <h5>Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
+                                    <a href="/productfavorites">
+                                        <i class="fa-regular fa-heart"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 pt-5" data-aos="fade-up">
+                        <div class="card product-card">
+                            <a href="/allproduct">
+                                <img src="/site/images/product/product-2.webp" class="img-fluid">
+                            </a>
+                            <div class="p-2">
+                                <h5>Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
+                                    <a href="/productfavorites">
+                                        <i class="fa-regular fa-heart"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 pt-5" data-aos="fade-up">
+                        <div class="card product-card">
+                            <a href="">
+                                <img src="/site/images/product/product-1.webp" class="img-fluid">
+                            </a>
+                            <div class="p-2">
+                                <h5> Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
+                                    <a href="">
+                                        <i class="fa-regular fa-heart"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 pt-5" data-aos="fade-up">
+                        <div class="card product-card">
+                            <a href="">
+                                <img src="/site/images/product/product-1.webp" class="img-fluid">
+                            </a>
+                            <div class="p-2">
+                                <h5> Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
+                                    <a href="">
+                                        <i class="fa-regular fa-heart"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 pt-5" data-aos="fade-up">
+                        <div class="card product-card">
+                            <a href="">
+                                <img src="/site/images/product/product-1.webp" class="img-fluid">
+                            </a>
+                            <div class="p-2">
+                                <h5> Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
+                                    <a href="">
+                                        <i class="fa-regular fa-heart"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 pt-5" data-aos="fade-up">
+                        <div class="card product-card">
+                            <a href="">
+                                <img src="/site/images/product/product-1.webp" class="img-fluid">
+                            </a>
+                            <div class="p-2">
+                                <h5> Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
+                                    <a href="">
+                                        <i class="fa-regular fa-heart"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pt-5 d-flex align-items-center justify-content-center">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination    ">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item active" aria-current="page">
+                                    <a class="page-link" href="#">1</a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">3</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
     
 </body>
 

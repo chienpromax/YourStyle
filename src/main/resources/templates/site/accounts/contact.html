@@ -1,0 +1,747 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>YourStyle</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+            crossorigin="anonymous">
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    </head>
+
+    <body lang="vn">
+        <!-- ======= Header ======= -->
+        <section th:fragment="header">
+            <img src="/site/images/ao/header.gif" class="img-fluid" alt>
+        </section>
+        <!-- ======= nav ======= -->
+        <section th:fragment="nav">
+            <section>
+                <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+                    <div class="container-fluid">
+                        <button data-mdb-collapse-init class="navbar-toggler" type="button"
+                            data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                            <i class="fa-solid fa-bars-staggered"></i>
+                        </button>
+    
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <a class="navbar-brand mt-2 mt-lg-0" href="#">
+                                <span class="logo-bis">Your</span><span class="logo-lite">Style</span>
+                            </a>
+                            <div class="mx-auto" style="width: 40%;">
+                                <div class="input-group rounded">
+                                    <input type="search" class="form-control rounded" placeholder="TÌM KIẾM"
+                                        aria-label="Search" aria-describedby="search-addon" />
+                                    <span class="input-group-text border-0" id="search-addon">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="d-flex align-items-center pt-3">
+                            <a class="link-secondary me-3" href="#">
+                                <i class="fas fa-shopping-cart"></i>
+                            </a>
+    
+                            <div class="dropdown">
+                                <a data-mdb-dropdown-init class="link-secondary me-3 dropdown-toggle hidden-arrow" href="#"
+                                    id="navbarDropdownMenuLink" role="button" aria-expanded="false">
+                                    <i class="fa-solid fa-globe"></i>
+                                    <span class="badge rounded-pill badge-notification bg-danger">1</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                                    <li>
+                                        <a class="dropdown-item" href="#">THÔNG BÁO</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">LIÊN HỆ</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">GIỚI THIỆU</a>
+                                    </li>
+                                </ul>
+                            </div>
+    
+                            <div class="dropdown">
+                                <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow"
+                                    href="#" id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
+                                    <img src="/site/images/logo/meme-meo-nham-hiem.png" class="rounded-circle"
+                                       width="25" height="25" alt="Black and White Portrait of a Man" loading="lazy" />
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+                                    <li>
+                                        <a class="dropdown-item" href="#">ĐĂNG NHẬP</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">ĐĂNG KÝ</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">QUÊN MẬT KHẨU</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </section>
+            <section>
+                <nav class="navbar navbar-expand-lg bg-body-tertiary">
+                    <!-- Container wrapper -->
+                    <div class="container-fluid ">
+                        <button data-mdb-button-init class="navbar-toggler px-0" type="button" data-mdb-collapse-init
+                            data-mdb-target="#navbarExample6" aria-controls="navbarExample6" aria-expanded="false"
+                            aria-label="Toggle navigation">
+                            <i class="fa-solid fa-play"></i>
+                        </button>
+    
+                        <div class="container collapse navbar-collapse" id="navbarExample6">
+                            <ul class="navbar-nav me-auto ps-lg-0" style="padding-left: 0.15rem">
+                                <li class="nav-item dropdown position-static mx-3">
+                                    <a data-mdb-dropdown-init class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+                                        role="button" aria-expanded="false">
+                                        ÁO NỮ
+                                    </a>
+                                    <div class="dropdown-menu w-100 mt-0" aria-labelledby="navbarDropdown" style="
+                                          border-top-left-radius: 0;
+                                          border-top-right-radius: 0;
+                                          ">
+                                        <div class="container">
+                                            <div class="row my-4">
+                                                <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
+                                                    <p class="text-uppercase font-weight-bold">
+                                                        ÁO LEN
+                                                    </p>
+                                                    <a href="123">
+                                                        <div class="bg-image hover-overlay ripple mb-3"
+                                                            data-mdb-ripple-color="light">
+                                                            <img src="/site/images/ao/ao-cong-so-thoi-trang.png"
+                                                                class="img-fluid" />
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
+                                                    <p class="text-uppercase font-weight-bold">
+                                                        ÁO SƠ MI
+                                                    </p>
+                                                    <a href="123">
+                                                        <div class="bg-image hover-overlay ripple mb-3"
+                                                            data-mdb-ripple-color="light">
+                                                            <img src="/site/images/ao/103128-ao-somi-cong-so-251.png"
+                                                                class="img-fluid" />
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
+                                                    <p class="text-uppercase font-weight-bold">
+                                                        ÁO KHOÁC
+                                                    </p>
+                                                    <a href="123">
+                                                        <div class="bg-image hover-overlay ripple mb-3"
+                                                            data-mdb-ripple-color="light">
+                                                            <img src="/site/images/ao/ÁO khoác.png" class="img-fluid" />
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
+                                                    <p class="text-uppercase font-weight-bold">
+                                                        ÁO KHOÁC
+                                                    </p>
+                                                    <a href="123">
+                                                        <div class="bg-image hover-overlay ripple mb-3"
+                                                            data-mdb-ripple-color="light">
+                                                            <img src="/site/images/ao/ÁO khoác.png" class="img-fluid" />
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
+                                                    <p class="text-uppercase font-weight-bold">
+                                                        ÁO LEN
+                                                    </p>
+                                                    <a href="123">
+                                                        <div class="bg-image hover-overlay ripple mb-3"
+                                                            data-mdb-ripple-color="light">
+                                                            <img src="/site/images/ao/ao-cong-so-thoi-trang.png"
+                                                                class="img-fluid" />
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
+                                                    <p class="text-uppercase font-weight-bold">
+                                                        ÁO SƠ MI
+                                                    </p>
+                                                    <a href="123">
+                                                        <div class="bg-image hover-overlay ripple mb-3"
+                                                            data-mdb-ripple-color="light">
+                                                            <img src="/site/images/ao/103128-ao-somi-cong-so-251.png"
+                                                                class="img-fluid" />
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+    
+                                <li class="nav-item dropdown position-static mx-3">
+                                    <a data-mdb-dropdown-init class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+                                        role="button" aria-expanded="false">
+                                        ÁO NAM
+                                    </a>
+                                    <div class="dropdown-menu w-100 mt-0" aria-labelledby="navbarDropdown" style="
+                                          border-top-left-radius: 0;
+                                          border-top-right-radius: 0;
+                                          ">
+                                        <div class="container">
+                                            <div class="row my-4">
+                                                <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
+                                                    <p class="text-uppercase font-weight-bold">
+                                                        ÁO CHOÀNG SIÊU NhÂN
+                                                    </p>
+                                                    <a href="123">
+                                                        <div class="bg-image hover-overlay ripple mb-3"
+                                                            data-mdb-ripple-color="light">
+                                                            <img src="/site/images/ao/ÁO SIÊU NHÂN.png"
+                                                                class="img-fluid" />
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
+                                                    <p class="text-uppercase font-weight-bold">
+                                                        ÁO LEN
+                                                    </p>
+                                                    <a href="123">
+                                                        <div class="bg-image hover-overlay ripple mb-3"
+                                                            data-mdb-ripple-color="light">
+                                                            <img src="/site/images/ao/ÁO LÊN NAM.png"
+                                                                class="img-fluid" />
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
+                                                    <p class="text-uppercase font-weight-bold">
+                                                        ÁO SƠ MI
+                                                    </p>
+                                                    <a href="123">
+                                                        <div class="bg-image hover-overlay ripple mb-3"
+                                                            data-mdb-ripple-color="light">
+                                                            <img src="/site/images/ao/SƠ MI NAM.png" class="img-fluid" />
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
+                                                    <p class="text-uppercase font-weight-bold">
+                                                        ÁO KHOÁC
+                                                    </p>
+                                                    <a href="123">
+                                                        <div class="bg-image hover-overlay ripple mb-3"
+                                                            data-mdb-ripple-color="light">
+                                                            <img src="/site/images/ao/ÁO KHOÁC NAM.png"
+                                                                class="img-fluid" />
+                                                        </div>
+                                                    </a>
+                                                </div>
+    
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+    
+                                <li class="nav-item dropdown position-static mx-3">
+                                    <a data-mdb-dropdown-init class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+                                        role="button" aria-expanded="false">
+                                        GIẦY
+                                    </a>
+                                    <div class="dropdown-menu w-100 mt-0" aria-labelledby="navbarDropdown" style="
+                                          border-top-left-radius: 0;
+                                          border-top-right-radius: 0;
+                                          ">
+                                        <div class="container">
+                                            <div class="row my-4">
+                                                <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
+                                                    <p class="text-uppercase font-weight-bold">
+                                                        GIẦY THỂ THAO
+                                                    </p>
+                                                    <a href="123">
+                                                        <div class="bg-image hover-overlay ripple mb-3"
+                                                            data-mdb-ripple-color="light">
+                                                            <img src="/site/images/ao/GIẦY THỂ THAO.png"
+                                                                class="img-fluid" />
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
+                                                    <p class="text-uppercase font-weight-bold">
+                                                        GIẦY CAO BỒI
+                                                    </p>
+                                                    <a href="123">
+                                                        <div class="bg-image hover-overlay ripple mb-3"
+                                                            data-mdb-ripple-color="light">
+                                                            <img src="/site/images/ao/GIẦY CAO BỒI.png"
+                                                                class="img-fluid" />
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
+                                                    <p class="text-uppercase font-weight-bold">
+                                                        GIẦY CAO GÓT
+                                                    </p>
+                                                    <a href="123">
+                                                        <div class="bg-image hover-overlay ripple mb-3"
+                                                            data-mdb-ripple-color="light">
+                                                            <img src="/site/images/ao/GIẦY CAO GOT.jpg"
+                                                                class="img-fluid" />
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+    
+                                <li class="nav-item dropdown position-static mx-3">
+                                    <a data-mdb-dropdown-init class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+                                        role="button" aria-expanded="false">
+                                        TÚI SÁCH
+                                    </a>
+                                    <div class="dropdown-menu w-100 mt-0" aria-labelledby="navbarDropdown" style="
+                                          border-top-left-radius: 0;
+                                          border-top-right-radius: 0;
+                                          ">
+                                        <div class="container">
+                                            <div class="row my-4">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+    
+                                <li class="nav-item dropdown position-static mx-3">
+                                    <a data-mdb-dropdown-init class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+                                        role="button" aria-expanded="false">
+                                        ĐÔ TRANG SỨC
+                                    </a>
+                                    <div class="dropdown-menu w-100 mt-0" aria-labelledby="navbarDropdown" style="
+                                          border-top-left-radius: 0;
+                                          border-top-right-radius: 0;
+                                          ">
+                                        <div class="container">
+                                            <div class="row my-4">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </section>
+        </section>
+        <div class="container">
+            
+            <div class="container-fluid-article-1200">
+
+                <div id="j-new-article" data-ssr>
+                    <div class="c-pc-article">
+                        <div class="c-new-article c-article-first-order">
+                            <div class="article-con-item"
+                                style="margin: 0px auto 75px;">
+                                <div class="row"
+                                    style="display: flex; flex-wrap: nowrap; justify-content: space-between; color: rgb(0, 0, 0); background-color: rgb(237, 237, 237); padding: 50px 0px 40px;">
+                                    <div class="article" style="flex: 1 0 40%;">
+                                        <h1 class="col-md-6"
+                                            style="line-height: 1.8; margin: 0px 10% 0px 20px; color: rgb(235, 104, 61); font-size: 38px; font-weight: bolder;">
+                                            Về chúng tôi </h1>
+                                    </div>
+                                    <div style="flex: 1 0 60%;">
+                                        <div class="col-md-10"
+                                            style="line-height: 1.8; margin: 0px 5px 20px 30px; color: rgb(74, 74, 74); font-size: 120%;">
+                                            YourStyle là nhà bán lẻ điện tử thời
+                                            trang và phong cách sống
+                                            toàn cầu cam kết làm cho vẻ đẹp của
+                                            thời trang có thể tiếp cận được với
+                                            tất cả mọi
+                                            người. Chúng tôi sử dụng công nghệ
+                                            sản xuất theo yêu cầu để
+                                            kết nối các nhà cung cấp với chuỗi
+                                            cung ứng linh hoạt của chúng tôi,
+                                            giảm
+                                            lãng phí hàng tồn kho và cho phép
+                                            chúng tôi cung cấp nhiều loại sản
+                                            phẩm giá cả
+                                            phải chăng cho khách hàng trên khắp
+                                            thế giới. Từ các văn phòng
+                                            toàn cầu của mình, chúng tôi tiếp
+                                            cận khách hàng tại hơn 150 quốc gia.
+                                            Để tìm hiểu thêm về YourStyle, hãy
+                                            truy cập
+                                            <a href="#"
+                                                class="link-text"
+                                                data-href="u_6"
+                                                target="_blank">
+                                                www.YourStyle.com.vn
+                                            </a> . </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="article-con-item"
+                                style="margin: 0px auto 75px;">
+                                <div
+                                    style="display: flex; flex-wrap: nowrap; justify-content: space-between; color: rgb(0, 0, 0);">
+                                    <h1
+                                        style="line-height: 1.8; margin: 0px 10% 0px 20px; color: rgb(0, 0, 0); font-size: 38px; font-weight: bolder;">
+                                        Sơ lược về YourStyle </h1>
+                                </div>
+                                <div
+                                    style="display: flex; flex-wrap: nowrap; justify-content: space-between; color: rgb(0, 0, 0); margin: 50px 30px 0px;">
+                                    <div
+                                        style="line-height: 1.8; margin: 0px 5px 20px 30px; color: rgb(74, 74, 74); font-size: 20px;">
+                                        <div
+                                            style="text-align: center;"><img
+                                                data-src="https://pic.onlinewebfonts.com/thumbnails/icons_464825.svg"
+                                                alt class="lazyload"
+                                                loaded="true" height="100px"
+                                                src="https://pic.onlinewebfonts.com/thumbnails/icons_464825.svg">
+                                        </div>
+                                        <div
+                                            style="font-family: Arial, Helvetica, sans-serif; font-size: 20px; color: rgb(0, 0, 0); text-align: center;">
+                                            Gần </div>
+                                        <div
+                                            style="font-family: Arial, Helvetica, sans-serif; font-size: 50px; color: rgb(0, 0, 0); text-align: center; line-height: 1.3; padding: 0px; margin-bottom: 0px !important;">
+                                            <b> 1000 </b></div>
+                                        <div
+                                            style="font-family: Arial, Helvetica, sans-serif; font-size: 20px; color: rgb(0, 0, 0); text-align: center;">
+                                            nhân viên trên tại Đà Nẵng
+                                        </div>
+                                    </div>
+                                    <div
+                                        style="line-height: 1.8; margin: 0px 5px 20px 30px; color: rgb(74, 74, 74); font-size: 20px;">
+                                        <div
+                                            style="text-align: center;"><img
+                                                data-src="https://pic.onlinewebfonts.com/thumbnails/icons_94231.svg"
+                                                alt class="lazyload"
+                                                loaded="true" height="100px"
+                                                src="https://pic.onlinewebfonts.com/thumbnails/icons_94231.svg">
+                                        </div>
+
+                                        <div
+                                            style="font-family: Arial, Helvetica, sans-serif; font-size: 50px; color: rgb(0, 0, 0); text-align: center; line-height: 1.3; padding: 35px 0px 0px;">
+                                            <b> </b></div>
+                                        <div
+                                            style="font-family: Arial, Helvetica, sans-serif; font-size: 20px; color: rgb(0, 0, 0); text-align: center;">
+                                            Luôn cập nhật nhiều mẫu xu hướng mới
+                                            nhất </div>
+                                    </div>
+                                    <div
+                                        style="line-height: 1.8; margin: 0px 5px 20px 30px; color: rgb(74, 74, 74); font-size: 20px;">
+                                        <div
+                                            style="text-align: center;"><img
+                                                data-src="https://pic.onlinewebfonts.com/thumbnails/icons_275889.svg"
+                                                alt class="lazyload"
+                                                loaded="true" height="100px"
+                                                src="https://pic.onlinewebfonts.com/thumbnails/icons_275889.svg">
+                                        </div>
+                                        <div
+                                            style="font-family: Arial, Helvetica, sans-serif; font-size: 20px; color: rgb(0, 0, 0); text-align: center;">
+                                            Có tổng </div>
+                                        <div
+                                            style="font-family: Arial, Helvetica, sans-serif; font-size: 50px; color: rgb(0, 0, 0); text-align: center; line-height: 1.3; padding: 0px; margin-bottom: 0px !important;">
+                                            <b> 50+ </b></div>
+                                        <div
+                                            style="font-family: Arial, Helvetica, sans-serif; font-size: 20px; color: rgb(0, 0, 0); text-align: center;">
+                                            Trên toàn quốc </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="article-con-item"
+                                style="margin: 0px auto 30px;">
+                                <div
+                                    style="display: flex; flex-wrap: nowrap; justify-content: space-between; color: rgb(0, 0, 0); background-color: rgb(237, 237, 237); padding: 50px 0px 40px;">
+                                    <div style="flex: 1 0 40%;">
+                                        <h1
+                                            style="line-height: 1.8; margin: 0px 10% 0px 20px; color: rgb(235, 104, 61); font-size: 38px; font-weight: bolder;">
+                                            Câu chuyện chúng tôi </h1>
+                                    </div>
+                                    <div style="flex: 1 0 60%;">
+                                        <div
+                                            style="line-height: 1.8; margin: 0px 5px 20px 30px; color: rgb(74, 74, 74); font-size: 20px;">
+                                            Chúng tôi tin rằng vẻ đẹp của thời
+                                            trang nên được tiếp cận với
+                                            tất cả mọi người, không chỉ một số
+                                            ít đặc quyền. Khi công ty được
+                                            thành lập vào năm 2019, chúng tôi
+                                            nhận thấy
+                                            rằng các công ty thời trang phải lựa
+                                            chọn
+                                            giữa cung cấp sự lựa chọn hoặc giảm
+                                            áp lực hàng tồn kho và lãng
+                                            phí. Vì vậy, chúng tôi bắt đầu thay
+                                            đổi
+                                            điều đó bằng cách đi đầu trong việc
+                                            phát
+                                            triển các quy trình và công nghệ
+                                            thay thế để đưa thời trang vào
+                                            tương lai. </div>
+                                        <div
+                                            style="line-height: 1.8; margin: 0px 5px 20px 30px; color: rgb(74, 74, 74); font-size: 20px;">
+                                            Khách hàng của chúng tôi là cốt lõi
+                                            trong mô hình kinh doanh của chúng
+                                            tôi, thúc đẩy sự phát triển của
+                                            chúng tôi với đội ngũ gần 1000 nhân
+                                            viên phục vụ toàn quốc gia trong
+                                            vòng chưa đầy một thập kỷ.
+                                            Mô hình ưu tiên kỹ thuật số của
+                                            chúng tôi đáp ứng khách hàng ở bất
+                                            kỳ
+                                            đâu: trên thiết bị di động, trực
+                                            tuyến và trên phương tiện truyền
+                                            thông xã hội.
+                                            Chúng tôi đã trở thành một trong
+                                            những ứng dụng mua sắm phổ biến
+                                            nhất và tiếp tục thu hút khách hàng
+                                            bằng cách cung cấp nhiều luồng nội
+                                            dung trực tiếp trong nền tảng
+                                            YourStyle và mang lại trải nghiệm
+                                            mua sắm
+                                            trực tuyến tốt nhất. </div>
+                                        <div
+                                            style="margin: 0px 5px 0px 30px;"><img
+                                                data-src="https://static1.squarespace.com/static/53b21023e4b08c508ab8058e/t/53ec294ae4b0b5ada3892882/1534793013117/"
+                                                alt class="lazyload"
+                                                style="width: 100%;"
+                                                loaded="true"
+                                                src="https://static1.squarespace.com/static/53b21023e4b08c508ab8058e/t/53ec294ae4b0b5ada3892882/1534793013117/">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    style="display: flex; flex-wrap: nowrap; justify-content: space-between; color: rgb(0, 0, 0); background-color: rgb(237, 237, 237); padding: 50px 0px 40px;">
+                                    <div style="flex: 1 0 40%;">
+                                        <h1
+                                            style="line-height: 1.8; margin: 0px 10% 0px 20px; color: rgb(235, 104, 61); font-size: 38px; font-weight: bolder;">
+                                            Làm cho vẻ đẹp của thời trang có thể
+                                            tiếp cận được với tất cả mọi người
+                                        </h1>
+                                    </div>
+                                    <div style="flex: 1 0 60%;">
+                                        <div
+                                            style="line-height: 1.8; margin: 0px 5px 20px 30px; color: rgb(74, 74, 74); font-size: 20px;">
+                                            Người tiêu dùng không còn tuân theo
+                                            một tiêu chuẩn thống nhất
+                                            về những gì được coi là “thời trang”
+                                            hay “đẹp”. Chúng tôi tin rằng trang
+                                            phục chúng tôi mặc phản ánh tính
+                                            cách của chúng tôi và chúng tôi muốn
+                                            trao quyền cho mọi người khám phá và
+                                            thể hiện cá tính của họ. Để làm
+                                            được điều này, YourStyle tạo ra
+                                            nhiều lựa chọn để phù hợp với bất kỳ
+                                            tâm
+                                            trạng hoặc dịp nào. </div>
+                                        <div
+                                            style="margin: 0px 5px 0px 30px;"><img
+                                                data-src="https://images.squarespace-cdn.com/content/v1/511585b3e4b0b8b2ffe19dc6/1553618720911-2J8VB14WQNVC8BCNOFII/develop+your+style.png"
+                                                alt class="lazyload"
+                                                style="width: 100%;"
+                                                loaded="true"
+                                                src="https://images.squarespace-cdn.com/content/v1/511585b3e4b0b8b2ffe19dc6/1553618720911-2J8VB14WQNVC8BCNOFII/develop+your+style.png">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    style="display: flex; flex-wrap: nowrap; justify-content: space-between; color: rgb(0, 0, 0); background-color: rgb(237, 237, 237); padding: 50px 0px 40px;">
+                                    <div style="flex: 1 0 40%;">
+                                        <h1
+                                            style="line-height: 1.8; margin: 0px 10% 0px 20px; color: rgb(235, 104, 61); font-size: 38px; font-weight: bolder;">
+                                            Thúc đẩy đổi mới công nghệ </h1>
+                                    </div>
+                                    <div style="flex: 1 0 60%;">
+                                        <div
+                                            style="line-height: 1.8; margin: 0px 5px 20px 30px; color: rgb(74, 74, 74); font-size: 20px;">
+                                            Sứ mệnh của YourStyle là trở thành
+                                            người dẫn đầu trong ngành
+                                            và đưa thời trang vào kỷ nguyên hiện
+                                            đại.
+                                            Chúng tôi sử dụng các công nghệ và
+                                            quy trình tiên tiến trong thiết kế
+                                            và tìm nguồn cung ứng của mình để
+                                            luôn nắm bắt được nhu cầu của người
+                                            tiêu dùng, sản xuất hàng hóa kịp
+                                            thời và cung cấp sản phẩm nhanh
+                                            chóng
+                                            đến mọi nơi trên thế giới. Bằng cách
+                                            phát triển công nghệ hậu cần và
+                                            thương mại điện tử độc quyền, chúng
+                                            tôi đang phá vỡ không gian thời
+                                            trang và
+                                            cải thiện kết quả cho các nhà sản
+                                            xuất, nhà cung cấp và người tiêu
+                                            dùng.
+                                        </div>
+                                        <div
+                                            style="line-height: 1.4; margin: 50px 5px 20px 30px; color: rgb(0, 0, 0); font-size: 20px;">
+                                            <b> Chuỗi cung ứng nhanh nhẹn được
+                                                trao quyền kỹ thuật số
+                                            </b></div>
+                                        <div
+                                            style="line-height: 1.8; margin: 0px 5px 20px 30px; color: rgb(74, 74, 74); font-size: 20px;">
+                                            Để đáp ứng nhu cầu, chúng tôi đã xây
+                                            dựng một chuỗi cung ứng kỹ
+                                            thuật số hoàn toàn để cung cấp sản
+                                            phẩm một cách liền mạch và nhanh
+                                            chóng cho khách hàng trên toàn thế
+                                            giới.
+                                            Chúng tôi sử dụng phần mềm độc quyền
+                                            để
+                                            theo dõi doanh số bán hàng và liên
+                                            lạc với các nhà máy của
+                                            chúng tôi trong thời gian thực để
+                                            đặt hàng theo lô nhỏ. Chuỗi cung ứng
+                                            kỹ
+                                            thuật số của chúng tôi là cốt lõi
+                                            trong mô hình kinh doanh của chúng
+                                            tôi
+                                            và cho phép chúng tôi cung cấp nhiều
+                                            loại phong cách theo xu hướng mà
+                                            không tạo ra lãng phí hàng tồn kho
+                                            quá mức hoặc khiến khách hàng phải
+                                            đợi
+                                            hàng tuần để hoàn thành đơn đặt hàng
+                                            của họ. </div>
+                                        <div
+                                            style="margin: 0px 5px 0px 30px;"><img
+                                                data-src="//img.ltwebstatic.com/images3_acp/2022/01/29/1643426545f9029b32071c57997b5db39e1fd6abfb.jpg"
+                                                alt class="lazyload"
+                                                style="width: 100%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="paragraph"></div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- ======= Footer ======= -->
+  <section class="footer py-5" th:fragment="footer">
+    <div class="container">
+      <div class="footer-flow row pb-3">
+        <div class="col-md-9 m-auto text-center">
+          <h3 class="fw-bolder">ĐĂNG KÝ NHẬN TIN TỪ YOURSTYLE</h3>
+          <form th:action="@{/site/accounts/subscribe}" method="post">
+            <input type="email" name="email" class="px-3" placeholder="Hãy nhập Email của bạn" required>
+            <button type="submit" class="btn-follow">ĐĂNG KÝ</button>
+            <h1 th:if="${message}" th:text="${message}"></h1>
+          </form>
+        </div>
+      </div>
+      <div class="row py-5">
+        <div class="col-md-7">
+          <div class="row footer-info">
+            <div class="col-md-4">
+              <p class="pb-1">THÔNG TIN CÔNG TY</p>
+              <a class="menu" href="#">Giới Thiệu YOURSTYLE</a>
+              <a class="menu" href="#">Blogger Thời Trang</a>
+              <a class="menu" href="#">Nghề nghiệp</a>
+            </div>
+            <div class="col-md-4">
+              <p class="pb-1">HỖ TRỢ KHÁCH HÀNG</p>
+              <a class="menu" href="#">Phí Vận Chuyển</a>
+              <a class="menu" href="#">Trả Lại</a>
+              <a class="menu" href="#">Hoàn tiền</a>
+              <a class="menu" href="#">Hướng Dẫn Đặt Hàng</a>
+              <a class="menu" href="#">YOURSTYLE VIP</a>
+            </div>
+            <div class="col-lg-4">
+              <p class="pb-1">DỊCH VỤ KHÁCH HÀNG</p>
+              <a class="menu" href="#">Liên hệ chúng tôi</a>
+              <a class="menu" href="#">Phương Thức Thanh Toán</a>
+              <a class="menu" href="#">Điểm Thưởng</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-5 py-3 footer-info border border-2">
+          <div class="row">
+            <h5 class="pb-2 text-center fw-bolder">KẾT NỐI VỚI CHÚNG TÔI</h5>
+            <div class="row footer-logo">
+              <span class="col-2 pt-2">
+                <a class="footer-info-me" href="" target="_blank" rel="noopener noreferrer">
+                  <img src="/site/images/logo/facebook.png" class="img-fluid client-logo">
+                </a>
+              </span>
+              <span class="col-2 pt-2">
+                <a class="footer-info-me" href="" target="_blank" rel="noopener noreferrer">
+                  <img src="/site/images/logo/instagram.png" class="img-fluid client-logo">
+                </a>
+              </span>
+              <span class="col-2 pt-2">
+                <a class="footer-info-me" href="" target="_blank" rel="noopener noreferrer">
+                  <img src="/site/images/logo/pinterest.png" class="img-fluid client-logo">
+                </a>
+              </span>
+              <span class="col-2 pt-2">
+                <a class="footer-info-me" href="" target="_blank" rel="noopener noreferrer">
+                  <img src="/site/images/logo/linkedin.png" class="img-fluid client-logo">
+                </a>
+              </span>
+              <span class="col-2 pt-2">
+                <a class="footer-info-me" href="https://twitter.com/chien_cham_chi" target="_blank"
+                  rel="noopener noreferrer">
+                  <img src="/site/images/logo/twitter.png" class="img-fluid client-logo">
+                </a>
+              </span>
+              <span class="col-2 pt-2">
+                <a class="footer-info-me" href="" target="_blank" rel="noopener noreferrer">
+                  <img src="/site/images/logo/github.png" class="img-fluid client-logo">
+                </a>
+              </span>
+            </div>
+          </div>
+          <div class="row pt-4 d-flex align-items-center justify-content-center">
+            <h5 class="text-center fw-bolder">CHẤP NHẬN THANH TOÁN</h5>
+            <div class="row footer-logo"></div>
+            <span class="col-2 pt-2">
+              <a class="footer-info-me" href="" target="_blank" rel="noopener noreferrer">
+                <img src="/site/images/logo/paypal.png" class="img-fluid client-logo">
+              </a>
+            </span>
+            <span class="col-2 pt-2">
+              <a class="footer-info-me" href="" target="_blank" rel="noopener noreferrer">
+                <img src="/site/images/logo/vnpay.png" class="img-fluid client-logo">
+              </a>
+            </span>
+            <span class="col-2 pt-2">
+              <a class="footer-info-me" href="" target="_blank" rel="noopener noreferrer">
+                <img src="/site/images/logo/zalo.png" class="img-fluid client-logo">
+              </a>
+            </span>
+            <span class="col-2 pt-2">
+              <a class="footer-info-me" href="" target="_blank" rel="noopener noreferrer">
+                <img src="/site/images/logo/momo.webp" class="img-fluid client-logo">
+              </a>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr class="line-copyRight ">
+    <div class="container footer-copyRight">
+      <p class="text-center copyRight">copyRight ©2024 All right reserved | bản quyền thuộc về nhóm sao băng</p>
+      <a class="navbar-brand"><span class="logo-bis">Your</span><span class="logo-lite">Style</span></a>
+    </div>
+    </div>
+  </section>
+        </body>
+
+    </html>

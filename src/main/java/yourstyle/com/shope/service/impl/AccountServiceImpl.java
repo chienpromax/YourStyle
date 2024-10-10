@@ -67,6 +67,11 @@ public class AccountServiceImpl implements AccountService {
 	public Page<Account> findByUsernameOrEmail(String value,Pageable pageable) {
 		return accountRepository.findByUsernameOrEmail(value,pageable);
 	}
+
+	@Override
+	public Account findByUsernameOrEmail(String username,String email) {
+		return accountRepository.findByUsernameOrEmail(username,email);
+	}
 	
 	
 }

@@ -27,7 +27,12 @@
           <div class="card">
             <div class="card-body mt-4">
               <!-- Floating Labels Form -->
-              <form class="row g-3">
+              <form
+                class="row g-3"
+                th:action="@{/admin/accounts/saveOrUpdate}"
+                th:object="${account}"
+                method="post"
+              >
                 <div class="col-md-12">
                   <div class="form-floating">
                     <input
@@ -35,6 +40,7 @@
                       class="form-control"
                       id="floatingtennguoidung"
                       placeholder="Nhập tên tài khoản"
+                      th:field="*{username}"
                     />
                     <label for="floatingtennguoidung"
                       ><span class="text-danger">*</span> Tên tài khoản</label
@@ -48,6 +54,7 @@
                       class="form-control"
                       id="floatingmatkhau"
                       placeholder="Mật khẩu"
+                      th:field="*{password}"
                     />
                     <label for="floatingmatkhau"
                       ><span class="text-danger">*</span> Mật khẩu</label
@@ -61,58 +68,30 @@
                       class="form-control"
                       id="floatingemail"
                       placeholder="Địa chỉ Email"
+                      th:field="*{email}"
                     />
                     <label for="floatingemail"
                       ><span class="text-danger">*</span> Địa chỉ Email</label
                     >
                   </div>
                 </div>
-                <fieldset class="row mb-3 mt-3">
-                  <legend class="col-3 col-md-2 col-lg-1 col-form-label pt-0">
-                    <span class="text-danger">*</span> Vai trò
-                  </legend>
-                  <div
-                    class="col-9 col-md-10 col-lg-11 d-flex align-items-center"
+                <div class="col-md-12">
+                  <label for="role" class="form-label">Vai trò</label>
+                  <select
+                    class="form-select"
+                    id="role"
+                    th:field="${account.role.name}"
                   >
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="radio"
-                        name="gridRadios"
-                        id="radionhanvien"
-                        value="option1"
-                        checked
-                      />
-                      <label class="form-check-label" for="radionhanvien"
-                        >Nhân viên</label
-                      >
-                    </div>
-                    <div class="form-check me-3 ms-3">
-                      <input
-                        class="form-check-input"
-                        type="radio"
-                        name="gridRadios"
-                        id="radiokhachhang"
-                        value="option2"
-                      />
-                      <label class="form-check-label" for="radiokhachhang"
-                        >Khách hàng</label
-                      >
-                    </div>
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="radio"
-                        name="gridRadios"
-                        id="radioquanly"
-                        value="option3"
-                      />
-                      <label class="form-check-label" for="radioquanly"
-                        >Quản lý</label
-                      >
-                    </div>
-                  </div>
-                </fieldset>
+                    <option value="" disabled>Chọn vai trò</option>
+                    <option
+                      th:each="role : ${roles}"
+                      th:value="${role.roleId}"
+                      th:selected="${role.roleId == account.role?.roleId}"
+                    >
+                      [[${role.name}]]
+                    </option>
+                  </select>
+                </div>
                 <div class="text-center mt-3">
                   <button
                     type="submit"

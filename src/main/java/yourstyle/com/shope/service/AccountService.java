@@ -29,4 +29,7 @@ public interface AccountService {
 	<S extends Account> S save(S entity);
 	
 	Page<Account> findByUsernameOrEmail(String name,Pageable pageable);
+	
+	Account findByUsernameOrEmail(String username,String email);
+
 }

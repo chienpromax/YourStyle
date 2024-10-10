@@ -1087,3 +1087,13 @@ h6 {
 .main_index {
   height: 126vh;
 }
+
+/* set bàn tay cho label trạng thái tài khoản */
+.form-check-label {
+  cursor: pointer;
+}
+
+/* set bàn tay cho input trạng thái tài khoản */
+.form-check-input {
+  cursor: pointer;
+}

@@ -49,7 +49,7 @@
 
 .login-info button {
     background-color: white;
-    color: #285944;
+    /* color: #285944; */
     border: none;
     padding: 10px 30px;
     border-radius: 20px;
@@ -57,10 +57,10 @@
 }
 
 .login-info button:hover {
-    background-color: #e2e6ea;
+    /* background-color: #e2e6ea; */
 }
 
-.form-control {
+.form-control-DK {
     background-color: rgba(175, 175, 175, 0.24);
     border-radius: 12px !important;
     padding-left: 2.5rem;
@@ -110,7 +110,7 @@
         font-size: 12px;
     }
 
-    .input-container .form-control {
+    .input-container .form-control-DK {
         font-size: 14px;
     }
 

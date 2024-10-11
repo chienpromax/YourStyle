@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("admin/vouchers")
+@RequestMapping("admin/vouchers/")
 public class VoucherController {
     @GetMapping("add")
     public String add() {

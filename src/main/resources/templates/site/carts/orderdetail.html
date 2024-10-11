@@ -82,14 +82,33 @@
                     <div class="mb-3">
                         <label for="discountCode" class="form-label">Mã phiếu giảm giá</label>
                         <input type="text" class="form-control" id="discountCode">
-                        <button class="btn btn-secondary mt-2" disabled>Đã xong</button>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <button class="btn-order-save mt-2" disabled>Đã xong</button>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="giftCard" class="form-label">Thẻ quà tặng</label>
-                        <input type="text" class="form-control" id="giftCard">
-                        <button class="btn btn-secondary mt-2">Đã xong</button>
+                    <div class="payment py-4">
+                        <h5>Phương thức thanh toán</h5>
+                        <div class="payment-method-radio">
+                            <!-- Thanh toán khi nhận hàng -->
+                            <div class="payment-method-card">
+                                <input class="form-check-input me-2" type="radio" name="paymentMethod" id="cod"
+                                    value="cod">
+                                <img src="https://img.icons8.com/ios-filled/50/000000/cash-in-hand.png" alt="COD">
+                            </div>
+                            <!-- Thanh toán VNPay -->
+                            <div class="payment-method-card">
+                                <input class="form-check-input me-2" type="radio" name="paymentMethod" id="vnpay"
+                                    value="vnpay">
+                                <img src="/site/images/logo/vnpay.png" alt="VNPay">
+                            </div>
+                            <div class="payment-method-card">
+                                <input class="form-check-input me-2" type="radio" name="paymentMethod" id="vnpay"
+                                    value="vnpay">
+                                <img src="/site/images/logo/zalo.png" alt="VNPay">
+                            </div>
+                        </div>
                     </div>
-                    <a class="py-5" href="/yourstyle/orderdetail">
+                    <a class="py-5" href="/yourstyle/order">
                         <button class="btn-cart-detail">ĐẶT HÀNG</button>
                     </a>
                 </div>

@@ -35,6 +35,7 @@
                     <div class="d-flex align-items-center pt-3">
                         <a class="link-secondary me-3" href="/yourstyle/cartdetail">
                             <i class="fas fa-shopping-cart"></i>
+                            <span class="badge rounded-pill badge-notification bg-danger">1</span>
                         </a>
                         <a class="link-secondary me-3" href="/productfavorites">
                             <i class="fa-solid fa-heart"></i>
@@ -44,17 +45,13 @@
                             <a data-mdb-dropdown-init class="link-secondary me-3 dropdown-toggle hidden-arrow" href="#"
                                 id="navbarDropdownMenuLink" role="button" aria-expanded="false">
                                 <i class="fa-solid fa-globe"></i>
-                                <span class="badge rounded-pill badge-notification bg-danger">1</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-                                <li>
-                                    <a class="dropdown-item" href="#">THÔNG BÁO</a>
-                                </li>
                                 <li>
                                     <a class="dropdown-item" href="#">LIÊN HỆ</a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="#">GIỚI THIỆU</a>
+                                    <a class="dropdown-item" th:href="@{/yourstyle/about}">GIỚI THIỆU</a>
                                 </li>
                             </ul>
                         </div>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/index.html}">
+
+<head> </head>
+
+<body>
+    <section layout:fragment="main">
+        <main id="main" class="main">
+            <div class="pagetitle">
+                <h1>Danh Mục Sản Phẩm</h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item active">Danh Mục Sản Phẩm</li>
+                    </ol>
+                </nav>
+            </div><!-- End Page Title -->
+
+            <section class="section">
+                <div class="row">
+                    <!-- Thông tin danh mục -->
+                    <div class="col-lg-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Thông tin danh mục</h5>
+                                <form class="row g-3">
+                                    <div class="col-md-12">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="categoryName"
+                                                placeholder="Tên danh mục">
+                                            <label for="categoryName">Tên danh mục</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-floating">
+                                            <select class="form-select" id="categoryParent"
+                                                aria-label="Chọn doanh mục cha">
+                                                <option selected value="1">Khác</option>
+                                                <option>Áo nữ</option>
+                                                <option value="1">Áo nam</option>
+                                            </select>
+                                            <label for="categoryParent">doanh mục cha</label>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3 py-3">
+                                        <label class="form-label" for="customFile">Chọn ảnh doanh mục</label>
+                                        <input type="file" class="form-control" id="customFile" />
+                                        <!-- <label for="categoryImage" class="col-form-label">Hình ảnh danh mục:</label>
+                                        <div class="col-md-12 col-lg-12">
+                                            <img id="defaultImage" src="assets/img/profile-img.jpg" alt="Default Image"
+                                                style="max-width: 100%;">
+                                            <img id="imagePreview" src="" alt="Image Preview"
+                                                style="display:none; max-width: 100%; margin-top: 10px;">
+                                            <input type="file" id="categoryImage" accept="image/*"
+                                                onchange="previewImage(event)" style="display:none;">
+                                            <div class="pt-2">
+                                                <button class="btn btn-primary btn-sm"
+                                                    onclick="document.getElementById('categoryImage').click();">
+                                                    <i class="bi bi-upload"></i>
+                                                </button>
+                                                <button class="btn btn-danger btn-sm ms-2" id="removeImageBtn"
+                                                    onclick="removeImage();">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div> -->
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary">Thêm</button>
+                                        <button type="reset" class="btn btn-secondary">Làm mới</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Thông tin danh mục -->
+
+                    <!-- Bảng danh mục -->
+                    <div class="col-lg-9">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title text-center">Danh sách danh mục sản phẩm</h5>
+
+                                <!-- Table with stripped rows -->
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Hình ảnh</th>
+                                            <th scope="col">Tên danh mục</th>
+                                            <th scope="col">Doanh mục cha</th>
+                                            <th scope="col">Trạng thái</th>
+                                            <th scope="col">Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><img src="assets/img/product-4.jpg" alt="Áo thun" width="50"></td>
+                                            <td>Áo thun</td>
+                                            <td>Áo Nam</td>
+                                            <td>hoạt động</td>
+                                            <td>
+                                                <button class="btn btn-warning">Sửa</button>
+                                                <button class="btn btn-danger">Xóa</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><img src="assets/img/product-3.jpg" alt="Mũ len" width="50"></td>
+                                            <td>Mũ len</td>
+                                            <td>khác</td>
+                                            <td>hoạt động</td>
+                                            <td>
+                                                <button class="btn btn-warning">Sửa</button>
+                                                <button class="btn btn-danger">Xóa</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><img src="assets/img/product-2.jpg" alt="Quần jean" width="50"></td>
+                                            <td>Quần jean</td>
+                                            <td>Nữ</td>
+                                            <td>hoạt động</td>
+                                            <td>
+                                                <button class="btn btn-warning">Sửa</button>
+                                                <button class="btn btn-danger">Xóa</button>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                                <!-- End Table with stripped rows -->
+                                <!-- Pagination -->
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination justify-content-center">
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" tabindex="-1">Trước</a>
+                                        </li>
+                                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">Sau</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Bảng danh mục -->
+                </div>
+            </section>
+        </main>
+    </section>
+</body>
+
+</html>

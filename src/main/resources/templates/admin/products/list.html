@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/index.html}">
+
+<head> </head>
+
+<body>
+    <section layout:fragment="main">
+        <main id="main" class="main">
+            <div class="pagetitle">
+                <h1>Danh sách sản phẩm</h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="index.html">Trang chủ</a>
+                        </li>
+                        <li class="breadcrumb-item active">sản phẩm</li>
+                    </ol>
+                </nav>
+            </div>
+            <!-- End Page Title -->
+
+            <section class="section bg-white p-4">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <!-- search and create staff -->
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <!-- Start Search  -->
+                            <div class="position-relative w-50">
+                                <a class="position-absolute end-0 top-50 translate-middle-y pe-3" href="#">
+                                    <i class="bi bi-search"></i>
+                                </a>
+                                <input class="form-control" placeholder="Nhập tên sản phẩm..." />
+                            </div>
+                            <!-- End Search  -->
+                            <!-- add staff -->
+                            <div>
+                                <a id="addStaff" class="btn btn-warning py-lg-1 px-lg-3 rounded-pill text-white ms-3"
+                                    th:href="@{/admin/products/add}">
+                                    <i class="bi bi-plus-circle"></i> Thêm sản phẩm
+                                </a>
+                            </div>
+                            <!-- add staff -->
+                        </div>
+                        <!-- search and create staff -->
+                        <!-- start list table -->
+                        <div class="table-responsive">
+                            <table class="table table-striped-columns">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">STT</th>
+                                        <th scope="col">Ảnh</th>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Tên SP</th>
+                                        <th scope="col">Trạng thái</th>
+                                        <th scope="col">Mô tả</th>
+                                        <th scope="col">Doanh mục</th>
+                                        <th scope="col">Chỉnh sửa</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="">
+                                        <td>1</td>
+                                        <td>
+                                            <img src="/admin/img/profile-img.jpg"
+                                                class="rounded-pill w-50 h-50 object-fit-cover" alt="" />
+                                        </td>
+                                        <td>SP1</td>
+                                        <td>ÁO lông</td>    
+                                        <td>Hoạt động</td>
+                                        <td>Mô tả 123456</td>
+                                        <td>Áo nữ</td>
+                                        <td class="text-center">
+                                            <a style="cursor: pointer; font-size: 21px"><i class="bi bi-eye"></i></a>
+                                        </td>
+                                    </tr>
+                                    <tr class="">
+                                        <td>1</td>
+                                        <td>
+                                            <img src="/admin/img/profile-img.jpg"
+                                                class="rounded-pill w-50 h-50 object-fit-cover" alt="" />
+                                        </td>
+                                        <td>SP1</td>
+                                        <td>ÁO lông</td>    
+                                        <td>Hoạt động</td>
+                                        <td>Mô tả 123456</td>
+                                        <td>Áo nữ</td>
+                                        <td class="text-center">
+                                            <a style="cursor: pointer; font-size: 21px"><i class="bi bi-eye"></i></a>
+                                        </td>
+                                    </tr>
+                                    <tr class="">
+                                        <td>1</td>
+                                        <td>
+                                            <img src="/admin/img/profile-img.jpg"
+                                                class="rounded-pill w-50 h-50 object-fit-cover" alt="" />
+                                        </td>
+                                        <td>SP1</td>
+                                        <td>ÁO lông</td>    
+                                        <td>Hoạt động</td>
+                                        <td>Mô tả 123456</td>
+                                        <td>Áo nữ</td>
+                                        <td class="text-center">
+                                            <a style="cursor: pointer; font-size: 21px"><i class="bi bi-eye"></i></a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- End table-->
+                        <!-- start pagination -->
+                        <div class="text-muted d-flex justify-content-between">
+                            <form action="">
+                                <div class="form-inline">
+                                    <label for="size">Page Size:</label>
+                                    <select class="px-lg-2 py-lg-1" name="size" id="size" onchange="this.form.submit()">
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="20">20</option>
+                                        <option value="30">30</option>
+                                    </select>
+                                </div>
+                            </form>
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination">
+                                    <li class="page-item">
+                                        <a class="page-link">first</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">1</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">2</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">3</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">last</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <!-- end pagination -->
+                    </div>
+                    <!-- end col -->
+                </div>
+                <!-- end row -->
+            </section>
+        </main>
+    </section>
+</body>
+
+</html>

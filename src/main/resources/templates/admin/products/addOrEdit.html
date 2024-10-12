@@ -1,188 +1,109 @@
 <!DOCTYPE html>
-<html
-  lang="en"
-  xmlns:th="http://www.thymeleaf.org"
-  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  layout:decorate="~{admin/index.html}"
->
-  <head> </head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{admin/index.html}">
 
-  <body>
-    <section layout:fragment="main">
-        <main id="main" class="main">
-            <div class="pagetitle">
-              <h1>Danh Mục Sản Phẩm</h1>
-              <nav>
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                  <li class="breadcrumb-item active">Danh Mục Sản Phẩm</li>
-                </ol>
-              </nav>
-            </div><!-- End Page Title -->
-        
-            <section class="section">
-              <div class="row">
-                <!-- Thông tin danh mục -->
-                <div class="col-lg-3">
-                  <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title">Thông tin danh mục</h5>
-                      <form class="row g-3">
-                        <div class="col-md-12">
-                          <div class="form-floating">
-                            <input type="text" class="form-control" id="categoryName" placeholder="Tên danh mục">
-                            <label for="categoryName">Tên danh mục</label>
-                          </div>
+<head> </head>
+
+<body>
+  <section layout:fragment="main">
+    <main id="main" class="main">
+      <div class="pagetitle">
+        <h1>Sản phẩm</h1>
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="index.html">Trang chủ</a>
+            </li>
+            <li class="breadcrumb-item active">Sản phẩm</li>
+          </ol>
+        </nav>
+      </div>
+      <!-- End Page Title -->
+
+      <section class="section">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card">
+              <div class="card-body mt-4">
+                <!-- Floating Labels Form -->
+                <form class="">
+                  <div class="row mb-2">
+                    <!-- cột bên trái -->
+                    <div class="col-md-6">
+                      <div class="form-outline mb-3" data-mdb-input-init>
+                        <input type="text" id="form12" class="form-control" />
+                        <label class="form-label" for="form12"><span class="text-danger">*</span>Tên sản phẩm</label>
+                      </div>
+                      
+                      <div class="mb-3">
+                        <label for="" class="form-label">Doanh mục</label>
+                        <select class="form-select form-select-lg" name="" id="">
+                          <option selected>Áo Nữ</option>
+                          <option value="">Áo nam</option>
+                        </select>
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="" class="form-label">Mô tả</label>
+                        <textarea class="form-control" name="" id="" rows="4"></textarea>
+                      </div>
+
+                      <label for="floatingngaysinh py-3"><span class="text-danger">*</span> Trạng thái</label>
+                      <div class="form-floating mb-3">
+                        <div class="form-check mb-3">
+                          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
+                          <label class="form-check-label" for="flexRadioDefault1"> Hoạt động </label>
                         </div>
-                        <div class="col-md-12">
-                          <div class="form-floating">
-                            <select class="form-select" id="categoryParent" aria-label="Giới tính">
-                              <option selected>Nam</option>
-                              <option value="1">Nữ</option>
-                              <option value="2">Unisex</option>
-                            </select>
-                            <label for="categoryParent">Giới tính</label>
-                          </div>
+
+                        <div class="form-check mb-3">
+                          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2"
+                            checked />
+                          <label class="form-check-label" for="flexRadioDefault2"> Không hoạt động </label>
                         </div>
-                        <div class="col-md-12">
-                          <div class="form-floating">
-                            <textarea class="form-control" placeholder="Mô tả" id="categoryDescription"
-                              style="height: 100px;"></textarea>
-                            <label for="categoryDescription">Mô tả</label>
-                          </div>
-                        </div>
-                        <!-- <div class="col-md-12">
-                          <div class="form-floating">
-                            <input type="file" class="form-control" id="categoryImage" accept="image/*" onchange="previewImage(event)">
-                            <label for="categoryImage">Chọn hình ảnh</label>
-                          </div>
-                        </div> -->
-                        <div class="row mb-3">
-                          <label for="categoryImage" class="col-form-label">Hình ảnh danh mục:</label>
-                          <div class="col-md-12 col-lg-12">
-                            <img id="defaultImage" src="assets/img/profile-img.jpg" alt="Default Image"
-                              style="max-width: 100%;">
-                            <img id="imagePreview" src="" alt="Image Preview"
-                              style="display:none; max-width: 100%; margin-top: 10px;">
-                            <input type="file" id="categoryImage" accept="image/*" onchange="previewImage(event)"
-                              style="display:none;">
-                            <div class="pt-2">
-                              <button class="btn btn-primary btn-sm"
-                                onclick="document.getElementById('categoryImage').click();">
-                                <i class="bi bi-upload"></i>
-                              </button>
-                              <button class="btn btn-danger btn-sm ms-2" id="removeImageBtn" onclick="removeImage();">
-                                <i class="bi bi-trash"></i>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-        
-                        <!-- <div class="col-md-12">
-                          <img id="imagePreviewCategory" src="" alt="Image Preview" style="display:none; max-width: 100%; margin-top: 10px;">
-                        </div> -->
-                        <div class="text-center">
-                          <button type="submit" class="btn btn-primary">Thêm</button>
-                          <button type="reset" class="btn btn-secondary">Làm mới</button>
-                        </div>
-                      </form>
+                      </div>
                     </div>
-                  </div>
-                </div>
-                <!-- Thông tin danh mục -->
-        
-                <!-- Bảng danh mục -->
-                <div class="col-lg-9">
-                  <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title text-center">Danh sách danh mục sản phẩm</h5>
-        
-                      <!-- Table with stripped rows -->
-                      <table class="table table-striped">
-                        <thead>
-                          <tr>
-                            <th scope="col">Hình ảnh</th>
-                            <th scope="col">Tên danh mục</th>
-                            <th scope="col">Giới tính</th>
-                            <th scope="col">Mô tả</th>
-                            <th scope="col">Hành động</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td><img src="assets/img/product-4.jpg" alt="Áo thun" width="50"></td>
-                            <td>Áo thun</td>
-                            <td>Nam</td>
-                            <td>Designer tại công ty XYZ.</td>
-                            <td>
-                              <button class="btn btn-warning">Sửa</button>
-                              <button class="btn btn-danger">Xóa</button>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td><img src="assets/img/product-3.jpg" alt="Mũ len" width="50"></td>
-                            <td>Mũ len</td>
-                            <td>Nữ</td>
-                            <td>Developer tại công ty ABC.</td>
-                            <td>
-                              <button class="btn btn-warning">Sửa</button>
-                              <button class="btn btn-danger">Xóa</button>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td><img src="assets/img/product-2.jpg" alt="Quần jean" width="50"></td>
-                            <td>Quần jean</td>
-                            <td>Nữ</td>
-                            <td>Finance tại công ty 123.</td>
-                            <td>
-                              <button class="btn btn-warning">Sửa</button>
-                              <button class="btn btn-danger">Xóa</button>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td><img src="assets/img/product-1.jpg" alt="Giày thể thao" width="50"></td>
-                            <td>Giày thể thao</td>
-                            <td>Nam</td>
-                            <td>HR tại công ty DEF.</td>
-                            <td>
-                              <button class="btn btn-warning">Sửa</button>
-                              <button class="btn btn-danger">Xóa</button>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td><img src="assets/img/product-5.jpg" alt="Túi xách" width="50"></td>
-                            <td>Túi xách</td>
-                            <td>Nam</td>
-                            <td>Dynamic tại công ty GHI.</td>
-                            <td>
-                              <button class="btn btn-warning">Sửa</button>
-                              <button class="btn btn-danger">Xóa</button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                      <!-- End Table with stripped rows -->
-                      <!-- Pagination -->
-                      <nav aria-label="Page navigation example">
-                        <ul class="pagination justify-content-center">
-                          <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1">Trước</a>
-                          </li>
-                          <li class="page-item"><a class="page-link" href="#">1</a></li>
-                          <li class="page-item"><a class="page-link" href="#">2</a></li>
-                          <li class="page-item"><a class="page-link" href="#">3</a></li>
-                          <li class="page-item">
-                            <a class="page-link" href="#">Sau</a>
-                          </li>
-                        </ul>
-                      </nav>
+                    <!-- cột bên trái -->
+
+                    <!-- cột bên phải -->
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="avatarInput" class="form-label ms-4" style="cursor: pointer">Ảnh sản phẩm</label>
+                        <input type="file" name="avatar" id="avatarInput" class="form-control d-none"
+                          onchange="loadFile(event)" />
+                        <div class="avatar_wrapper d-flex align-items-center justify-content-center">
+                          <img id="avatarImage" src="/admin/img/anhnentrang.jpg" alt="Chọn ảnh đại diện"
+                            class="border border-dark border-1" style="
+                                width: 80%;
+                                height: auto;
+                                min-height: 440px;
+                                cursor: pointer;
+                                object-fit: cover;
+                              " />
+                        </div>
+                      </div>
                     </div>
+                    <!-- cột bên phải -->
                   </div>
-                </div>
-                <!-- Bảng danh mục -->
+                  <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary me-3 py-2 px-4 rounded-pill">
+                      Thêm Sản phẩm
+                    </button>
+                    <button type="reset" class="btn btn-secondary py-2 px-4 rounded-pill">
+                      Làm mới
+                    </button>
+                  </div>
+                </form>
+                <!-- End floating Labels Form -->
               </div>
-            </section>
-          </main>
-    </section>
-  </body>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/admin/js/staff.js"></script>
+    <script src="/admin/js/customer.js"></script>
+  </section>
+</body>
+
 </html>

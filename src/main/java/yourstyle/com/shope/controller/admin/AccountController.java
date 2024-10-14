@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,7 +19,6 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,13 +28,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.fasterxml.jackson.annotation.JsonCreator.Mode;
-
+import jakarta.validation.Valid;
 import yourstyle.com.shope.model.Account;
 import yourstyle.com.shope.model.Role;
 import yourstyle.com.shope.service.AccountService;
 import yourstyle.com.shope.service.RoleService;
+import yourstyle.com.shope.validation.admin.AccountDto;
 
 @Controller
 @RequestMapping("admin/accounts")
@@ -47,42 +46,62 @@ public class AccountController {
 	@GetMapping("add")
 	public String add(Model model) {
 		List<Role> roles = roleService.findAll();
-		model.addAttribute("account", new Account());
+		model.addAttribute("account", new AccountDto());
 		model.addAttribute("roles", roles);
 		return "admin/accounts/addOrEdit";
 	}
 
 	@GetMapping("edit/{accountId}")
 	public ModelAndView edit(ModelMap model, @PathVariable("accountId") Integer accountId) {
+		AccountDto accountDto = new AccountDto();
 		Optional<Account> optional = accountService.findById(accountId);
 		List<Role> roles = roleService.findAll();
 		if (optional.isPresent()) { // tồn tại
 			Account account = optional.get();
-			model.addAttribute("account", account);
+			BeanUtils.copyProperties(account, accountDto);
+			accountDto.setEdit(true);
+			model.addAttribute("account", accountDto);
 			model.addAttribute("roles", roles);
 			return new ModelAndView("admin/accounts/addOrEdit");
 		}
-		model.addAttribute("message", "Tài khoản không tồn tại!");
+		model.addAttribute("messageType", "warning");
+		model.addAttribute("messageContent", "Tài khoản không tồn tại!");
 		return new ModelAndView("redirect:/admin/accounts", model);
 	}
 
 	@PostMapping("saveOrUpdate")
-	public ModelAndView saveOrUpdate(ModelMap model, @Validated @ModelAttribute("account") Account account,
-			BindingResult result) {
+	public ModelAndView saveOrUpdate(ModelMap model, @Valid @ModelAttribute("account") AccountDto accountDto,
+			BindingResult result, @RequestParam(name = "roleId", required = true) Integer roleId) {
 		if (result.hasErrors()) {
+			List<Role> roles = roleService.findAll();
+			model.addAttribute("roles", roles);
 			return new ModelAndView("admin/accounts/addOrEdit");
 		}
-		Account existingAccount = accountService.findByUsernameOrEmail(account.getUsername(), account.getEmail());
-		if (existingAccount != null) {
-			if (existingAccount.getEmail().equals(account.getEmail())) {
-				model.addAttribute("message", "Email đã được sử dụng!");
+		Account existingAccount = accountService.findByUsernameOrEmail(accountDto.getUsername(), accountDto.getEmail());
+		if (existingAccount != null && !(existingAccount.getAccountId() == accountDto.getAccountId())) {
+			if (existingAccount.getEmail().equals(accountDto.getEmail())) {
+				model.addAttribute("messageType", "error");
+				model.addAttribute("messageContent", "Email đã được sử dụng!");
 				return new ModelAndView("redirect:/admin/accounts/add", model);
 			}
-			model.addAttribute("message", "Tên tài khoản đã tồn tại!");
+			model.addAttribute("messageType", "error");
+			model.addAttribute("messageContent", "Tên tài khoản đã tồn tại!");
 			return new ModelAndView("redirect:/admin/accounts/add", model);
 		}
+		Account account = new Account();
+		Role role = roleService.findById(roleId).get();
+		accountDto.setRole(role);
+		BeanUtils.copyProperties(accountDto, account);
 		accountService.save(account);
-		model.addAttribute("message", "Thêm tài khoản thành công");
+		// kiểm tra xem thêm mới hay là cập nhật
+		boolean isNew = accountDto.getAccountId() == null;
+		if (isNew) {
+			model.addAttribute("messageType", "success");
+			model.addAttribute("messageContent", "Thêm tài khoản thành công");
+		} else {
+			model.addAttribute("messageType", "success");
+			model.addAttribute("messageContent", "Cập nhật tài khoản thành công");
+		}
 		return new ModelAndView("redirect:/admin/accounts", model);
 	}
 

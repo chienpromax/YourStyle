@@ -2,12 +2,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const elementInputs = document.querySelectorAll(".form-check-input");
   elementInputs.forEach((elementInput) => {
     elementInput.addEventListener("change", function () {
+      // tìm hàng tr gần nhất chứa checkbox
       const parentRow = this.closest("tr");
       if (parentRow) {
-        const accountIdElement = parentRow.querySelector(".account-id");
+        const accountIdElement = parentRow.querySelector(".account-id"); // tìm phần tử có class là account-id bên trong tr
         if (accountIdElement) {
           const accountIdValue = accountIdElement.innerText; // lấy giá trị
-          // Lấy phần tử label tương ứng với checkbox
+          // Lấy phần tử label tương ứng với checkbox thông qua for
           const labelElement = parentRow.querySelector(
             "label[for='" + this.id + "']"
           );

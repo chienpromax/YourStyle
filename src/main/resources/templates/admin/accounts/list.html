@@ -9,6 +9,7 @@
 
   <body>
     <section layout:fragment="main">
+      <div class="displayNotifications"></div>
       <main id="main" class="main">
         <div class="pagetitle">
           <h1>Danh sách Tài khoản</h1>
@@ -116,7 +117,7 @@
               <div class="text-muted d-flex justify-content-between">
                 <form action="">
                   <div class="form-inline">
-                    <label for="size">Page Size:</label>
+                    <label for="size">Hiển thị:</label>
                     <select
                       class="px-lg-2 py-lg-1"
                       name="size"
@@ -147,8 +148,8 @@
                       <a
                         class="page-link"
                         th:href="@{/admin/accounts/search(name=${name}, size=${accounts.size}, page=${0})}"
-                        >First</a
-                      >
+                        ><i class="bi bi-chevron-double-left"></i
+                      ></a>
                     </li>
                     <li
                       th:each="pageNumber : ${pageNumbers}"
@@ -168,8 +169,8 @@
                       <a
                         th:href="@{/admin/accounts/search(name=${name}, size=${accounts.size}, page=${accounts.totalPages - 1})}"
                         class="page-link"
-                        >Last</a
-                      >
+                        ><i class="bi bi-chevron-double-right"></i
+                      ></a>
                     </li>
                   </ul>
                 </nav>
@@ -181,7 +182,8 @@
           <!-- end row -->
         </section>
       </main>
-      <script src="/admin/js/account.js"></script>
+      <script src="/admin/js/accountList.js"></script>
+      <script src="/admin/js/accountAddOrEdit.js"></script>
     </section>
   </body>
 </html>

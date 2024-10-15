@@ -8,7 +8,10 @@
   <section layout:fragment="main">
     <main id="main" class="main">
       <div class="pagetitle">
-        <h1>Khách hàng</h1>
+        <h1>
+          <span th:if="${customer.isEdit}">Cập nhật</span>
+          <span th:unless="${customer.isEdit}">Tạo</span> khách hàng
+        </h1>
         <nav>
           <ol class="breadcrumb">
             <li class="breadcrumb-item">
@@ -32,6 +35,7 @@
                     <!-- cột bên trái -->
                     <div class="col-md-6">
                       <div class="form-floating mb-3">
+                        <input type="hidden" th:field="*{customerId}" />
                         <input th:field="*{fullname}" type="text" class="form-control" id="floatinghovaten"
                           placeholder="Họ và tên" />
                         <label for="floatinghovaten"><span class="text-danger">*</span> Họ và tên</label>
@@ -49,6 +53,7 @@
                           placeholder="Ngày sinh" />
                         <label for="floatingngaysinh"><span class="text-danger">*</span> Ngày sinh</label>
                       </div>
+
 
                       <div class="col-md-6">
                         <label for="" class="form-label fs-5">Chọn tài khoản</label>
@@ -84,18 +89,17 @@
                     </legend>
                     <div class="col-12 col-md-12 d-flex align-items-center">
                       <div class="form-check me-3">
-                        <input class="form-check-input" type="radio" name="gridRadios" id="radionam" value="option1"
-                          checked />
-                        <label class="form-check-label" for="radionam" style="cursor: pointer">Nam</label>
+                        <input th:field="*{gender}" class="form-check-input" type="radio" id="radionam" value="1" />
+                        <label class="form-check-label" for="radionam">Nam</label>
                       </div>
                       <div class="form-check cursor-pointer">
-                        <input class="form-check-input" type="radio" name="gridRadios" id="radionu" value="option2" />
-                        <label class="form-check-label" for="radionu" style="cursor: pointer">Nữ</label>
+                        <input th:field="*{gender}" class="form-check-input" type="radio" id="radionu" value="0" />
+                        <label class="form-check-label" for="radionu">Nữ</label>
                       </div>
                     </div>
                   </fieldset>
 
-                  
+
                   <div class="row">
                     <div class="col-md-12">
                       <h6>Địa chỉ 1</h6>
@@ -178,10 +182,16 @@
                   </div>
                   <!--  Icon thêm địa chỉ-->
                   <div class="text-center mt-3">
-                    <button type="submit" class="btn btn-primary me-3 py-2 px-4 rounded-pill">
+                    <button class="btn btn-primary rounded-pill py-2 px-4 me-3" th:if="*{isEdit}">
+                      Cập nhật
+                    </button>
+                    <button class="btn btn-primary rounded-pill py-2 px-4 me-3" th:unless="*{isEdit}">
                       Thêm khách hàng
                     </button>
-                    <button type="reset" class="btn btn-secondary py-2 px-6 rounded-pill">
+                    <!-- <button type="reset" class="btn btn-danger me-3 px-4 rounded-pill">
+                      Xóa Khách hàng
+                    </button> -->
+                    <button type="reset" class="btn btn-secondary me-3 px-4 rounded-pill">
                       Làm mới
                     </button>
                   </div>

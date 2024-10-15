@@ -15,6 +15,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,7 +32,7 @@ public class Customer implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int customerId;
+    private Integer customerId;
 
     @Column(nullable = false, length = 50)
     private String fullname;
@@ -46,6 +48,7 @@ public class Customer implements Serializable {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(nullable = true)
+    @Temporal(TemporalType.DATE)
     private Date birthday;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -54,6 +57,8 @@ public class Customer implements Serializable {
     @OneToOne
     @JoinColumn(name = "accountId", referencedColumnName = "accountId", nullable = false)
     private Account account;
+
+    private boolean isEdit = false;
 
     @Transient // Để không lưu vào database
     private MultipartFile imageFile;

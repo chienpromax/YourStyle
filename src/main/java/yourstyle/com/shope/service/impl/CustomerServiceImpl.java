@@ -25,6 +25,11 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
+    public Customer update(Customer customer) {
+        return customerRepository.save(customer);
+    }
+
+	@Override
 	public <S extends Customer> S save(S entity) {
 		return customerRepository.save(entity);
 	}

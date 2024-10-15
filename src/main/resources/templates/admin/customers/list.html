@@ -64,19 +64,22 @@
                     <td th:text="${stat.count}"></td>
                     <td th:text="${customer.customerId}"></td>
                     <td th:text="${customer.fullname}"></td>
-                    <td th:text="${customer.account.accountId}"></td>
+                    <td th:text="${customer.account.email}"></td>
                     <td th:text="${customer.phoneNumber}"></td>
                     <td th:text="${#dates.format(customer.birthday, 'dd-MM-yyyy')}"></td>
-                    <td th:text="${customer.gender == 1 ? 'Nam' : 'Nữ'}"></td>
+                    <td th:text="${customer.gender == true ? 'Nam' : (customer.gender == false ? 'Nữ' : 'Không xác định')}"></td>
                     <td>
-                      <img th:src="@{/uploads/} + ${customer.avatar}" 
-                           alt="Avatar" 
-                           width="50" height="50" 
-                           style="object-fit: cover; border-radius: 50%;" />
-                    </td>                                  
+                      <img th:src="@{/uploads/} + ${customer.avatar}" alt="Avatar" width="50" height="50"
+                        style="object-fit: cover; border-radius: 50%;" />
+                    </td>
                     <td class="text-center">
-                      <a style="cursor: pointer; font-size: 21px">
+                      <a style="cursor: pointer; font-size: 21px; color: green;"
+                        th:href="@{/admin/customers/edit/{id}(id=${customer.customerId})}">
                         <i class="bi bi-eye"></i>
+                      </a>
+                      <a style="cursor: pointer; font-size: 21px; color: rgb(255, 0, 0);"
+                        th:href="@{/admin/customers/edit/{id}(id=${customer.customerId})}">
+                        <i class="bi bi-trash3 ps-3"></i>
                       </a>
                     </td>
                   </tr>

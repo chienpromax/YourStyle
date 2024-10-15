@@ -31,6 +31,8 @@ public interface CustomerService {
 
 	<S extends Customer> S save(S entity);
 
+	Customer update(Customer customer);
+
 	// Page<Customer> findByFullnameOrPhone(String name, Pageable pageable);
 
 	// Customer findByFullnameOrPhone(String fullname, String phone);

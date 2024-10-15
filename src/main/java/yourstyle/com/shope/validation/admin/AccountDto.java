@@ -28,4 +28,5 @@ public class AccountDto implements Serializable {
 
     private Role role;
     private boolean isEdit = false;
+
 }

@@ -26,24 +26,36 @@
             <div class="card">
               <div class="card-body mt-4">
                 <!-- Floating Labels Form -->
-                <form class="" action="" method="post">
+                <form class="" th:action="@{/admin/customers/saveOrUpdate}" th:object="${customer}" method="post"
+                  enctype="multipart/form-data">
                   <div class="row mb-2">
                     <!-- cột bên trái -->
                     <div class="col-md-6">
                       <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatinghovaten" placeholder="Họ và tên" />
+                        <input th:field="*{fullname}" type="text" class="form-control" id="floatinghovaten"
+                          placeholder="Họ và tên" />
                         <label for="floatinghovaten"><span class="text-danger">*</span> Họ và tên</label>
                       </div>
 
                       <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatingsodienthoai" placeholder="Số điện thoại" />
+                        <input th:field="*{phoneNumber}" type="text" class="form-control" id="floatingsodienthoai"
+                          placeholder="Số điện thoại" />
                         <label for="floatingsodienthoai"><span class="text-danger">*</span> Số điện
                           thoại</label>
                       </div>
 
                       <div class="form-floating mb-3">
-                        <input type="date" class="form-control" id="floatingngaysinh" placeholder="Ngày sinh" />
+                        <input th:field="*{birthday}" type="date" class="form-control" id="floatingngaysinh"
+                          placeholder="Ngày sinh" />
                         <label for="floatingngaysinh"><span class="text-danger">*</span> Ngày sinh</label>
+                      </div>
+
+                      <div class="col-md-6">
+                        <label for="" class="form-label fs-5">Chọn tài khoản</label>
+                        <select th:field="*{account.accountId}" class="form-control" required>
+                          <option th:each="account : ${accounts}" th:value="${account.accountId}"
+                            th:text="${account.email}"></option>
+                        </select>
                       </div>
                     </div>
                     <!-- cột bên trái -->
@@ -51,20 +63,19 @@
                     <!-- cột bên phải -->
                     <div class="col-md-6">
                       <div class="form-group">
+                        <input type="hidden" th:field="*{avatar}" />
+
                         <label for="avatarInput" class="form-label ms-4" style="cursor: pointer">Ảnh đại diện</label>
-                        <input type="file" name="avatar" id="avatarInput" class="form-control d-none"
+                        <input type="file" th:field="*{imageFile}" id="avatarInput" class="form-control d-none"
                           onchange="loadFile(event)" />
                         <div class="avatar_wrapper d-flex align-items-center justify-content-center">
-                          <img id="avatarImage" src="/admin/img/anhnentrang.jpg" alt="Chọn ảnh đại diện"
-                            class="rounded-circle border border-dark border-1" style="
-                                width: 250px;
-                                height: 250px;
-                                cursor: pointer;
-                                object-fit: cover;
-                              " />
+                          <img id="avatarImage" th:src="@{'/uploads/' + ${customer.avatar}}"
+                            class="rounded-circle border border-dark border-1"
+                            style="width: 250px; height: 250px; cursor: pointer; object-fit: cover;" />
                         </div>
                       </div>
                     </div>
+
                     <!-- cột bên phải -->
                   </div>
                   <fieldset class="row mb-3 mt-3">
@@ -83,6 +94,8 @@
                       </div>
                     </div>
                   </fieldset>
+
+                  
                   <div class="row">
                     <div class="col-md-12">
                       <h6>Địa chỉ 1</h6>

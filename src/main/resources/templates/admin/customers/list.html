@@ -30,7 +30,7 @@
                 <a class="position-absolute end-0 top-50 translate-middle-y pe-3" href="#">
                   <i class="bi bi-search"></i>
                 </a>
-                <input class="form-control" placeholder="Nhập tên hoặc email hoặc sdt..." />
+                <input class="form-control" placeholder="Nhập tên hoặc SĐT..." />
               </div>
               <!-- End Search  -->
               <!-- add customer -->
@@ -55,7 +55,7 @@
                     <th scope="col">SĐT</th>
                     <th scope="col">Ngày sinh</th>
                     <th scope="col">Giới tính</th>
-                    <th scope="col">Trạng thái</th>
+                    <th scope="col">Ảnh</th>
                     <th scope="col">Thao tác</th>
                   </tr>
                 </thead>
@@ -64,15 +64,16 @@
                     <td th:text="${stat.count}"></td>
                     <td th:text="${customer.customerId}"></td>
                     <td th:text="${customer.fullname}"></td>
-                    <td th:text="${customer.account.email}"></td>
+                    <td th:text="${customer.account.accountId}"></td>
                     <td th:text="${customer.phoneNumber}"></td>
                     <td th:text="${#dates.format(customer.birthday, 'dd-MM-yyyy')}"></td>
                     <td th:text="${customer.gender == 1 ? 'Nam' : 'Nữ'}"></td>
                     <td>
-                      <span class="badge text-white"
-                        th:classappend="${customer.account.status ? 'bg-success' : 'bg-danger'}"
-                        th:text="${customer.account.status ? 'Hoạt động' : 'Không hoạt động'}"></span>
-                    </td>
+                      <img th:src="@{/uploads/} + ${customer.avatar}" 
+                           alt="Avatar" 
+                           width="50" height="50" 
+                           style="object-fit: cover; border-radius: 50%;" />
+                    </td>                                  
                     <td class="text-center">
                       <a style="cursor: pointer; font-size: 21px">
                         <i class="bi bi-eye"></i>

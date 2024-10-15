@@ -21,218 +21,236 @@
             <section class="section">
                 <div class="card">
                     <div class="card-body">
-                        <div class="row">
-                            <!-- Form Section - Bên trái -->
-                            <div class="col-md-5 mt-3">
-                                <div class="row g-3">
-                                    <div class="col-md-12">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="floatingMa"
-                                                placeholder="Mã phiếu giảm giá">
-                                            <label for="floatingMa">Mã phiếu giảm giá</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="floatingName"
-                                                placeholder="Tên phiếu giảm giá">
-                                            <label for="floatingName">Tên phiếu giảm giá</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="floatingDiscountValue"
-                                                placeholder="Số tiền giảm giá">
-                                            <label for="floatingDiscountValue">Giá trị</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="floatingMaxDiscount"
-                                                placeholder="Giá trị tối đa">
-                                            <label for="floatingMaxDiscount">Giá trị tối đa</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="floatingQuantity"
-                                                placeholder="Số lượng">
-                                            <label for="floatingQuantity">Số lượng</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="floatingCondition"
-                                                placeholder="Điều kiện">
-                                            <label for="floatingCondition">Điều kiện</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="number" class="form-control" id="floatingMaxUses"
-                                                placeholder="Giới hạn người dùng">
-                                            <label for="floatingMaxUses">Giới hạn người</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="number" class="form-control" id="floatingMaxUsesUser"
-                                                placeholder="Số lần sử dụng">
-                                            <label for="floatingMaxUsesUser">Số lần sử dụng</label>
-                                        </div>
-                                    </div>
-                                    <!-- Date and time picker -->
-                                    <div class="col-md-12">
-                                        <div class="form-floating">
-                                            <input type="datetime-local" class="form-control" id="datetimepickerFrom"
-                                                value="2020-12-22T14:12:56">
-                                            <label for="datetimepickerFrom">Từ ngày</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="form-floating">
-                                            <input type="datetime-local" class="form-control" id="datetimepickerTo"
-                                                value="2020-12-22T14:12:56">
-                                            <label for="datetimepickerTo">Đến ngày</label>
-                                        </div>
-                                    </div>
-                                    <!-- Type -->
-                                    <fieldset class="row mb-3 mt-3">
-                                        <legend class="col-form-label col-sm-3">Kiểu</legend>
-                                        <div class="col-sm-9 d-flex align-items-center">
-                                            <div class="form-check me-3">
-                                                <input class="form-check-input" type="radio" name="gridRadios"
-                                                    id="gridRadios1" value="option1" checked>
-                                                <label class="form-check-label" for="gridRadios1">Công khai</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="gridRadios"
-                                                    id="gridRadios2" value="option2">
-                                                <label class="form-check-label" for="gridRadios2">Cá nhân</label>
+                        <form th:action="@{/admin/vouchers/saveOrUpdate}" th:object="${voucher}" method="post">
+                            <div class="row">
+                                <!-- Form Section - Bên trái -->
+
+                                <div class="col-md-5 mt-3">
+                                    <div class="row g-3">
+                                        <div class="col-md-12">
+                                            <div class="form-floating">
+                                                <input th:field="*{voucherCode}" type="text" class="form-control"
+                                                    id="floatingMa" placeholder="Mã phiếu giảm giá">
+                                                <label for="floatingMa">Mã phiếu giảm giá</label>
                                             </div>
                                         </div>
-                                    </fieldset>
-                                    <div class="col-md-12">
-                                        <div class="form-floating">
-                                            <textarea class="form-control" id="floatingTextarea" placeholder="Mô tả"
-                                                style="height: 100px;"></textarea>
-                                            <label for="floatingTextarea">Mô tả</label>
+                                        <div class="col-md-12">
+                                            <div class="form-floating">
+                                                <input th:field="*{voucherName}" type="text" class="form-control"
+                                                    id="floatingName" placeholder="Tên phiếu giảm giá">
+                                                <label for="floatingName">Tên phiếu giảm giá</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-floating">
+                                                <input th:field="*{discountAmount}" type="text" class="form-control"
+                                                    id="floatingDiscountValue" placeholder="Số tiền giảm giá">
+                                                <label for="floatingDiscountValue">Giá trị</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-floating">
+                                                <input th:field="*{maxTotalAmount}" type="text" class="form-control"
+                                                    id="floatingMaxDiscount" placeholder="Giá trị tối đa">
+                                                <label for="floatingMaxDiscount">Giá trị tối đa</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-floating">
+                                                <input th:field="*{maxUses}" type="text" class="form-control"
+                                                    id="floatingQuantity" placeholder="Số lượng">
+                                                <label for="floatingQuantity">Số lượng</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-floating">
+                                                <input th:field="*{minTotalAmount}" type="text" class="form-control"
+                                                    id="floatingCondition" placeholder="Điều kiện">
+                                                <label for="floatingCondition">Giá trị tối thiểu</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-floating">
+                                                <input th:field="*{maxUsesUser}" type="number" class="form-control"
+                                                    id="floatingMaxUsesUser" placeholder="Số lần sử dụng">
+                                                <label for="floatingMaxUsesUser">Số lần sử dụng</label>
+                                            </div>
+                                        </div>
+                                        <!-- ---------Loại-------------- -->
+                                        <!-- Form Select đã chỉnh sửa -->
+                                        <div class="col-md-12">
+                                            <div class="form-floating">
+                                                <select th:field="*{type}" class="form-select" id="inputState"
+                                                    aria-label="Floating label select example">
+                                                    <option th:value="1" selected>Giảm giá trực tiếp</option>
+                                                    <option th:value="2">Giảm giá phần trăm</option>
+                                                    <option th:value="3">Giảm giá vận chuyển</option>
+                                                    <option th:value="4">Voucher</option>
+                                                </select>
+                                                <label for="inputState">Loại</label>
+                                            </div>
+                                        </div>
+                                        <!-- Date and time picker -->
+                                        <div class="col-md-12">
+                                            <div class="form-floating">
+                                                <input th:field="*{startDate}" type="datetime-local"
+                                                    class="form-control" id="datetimepickerFrom">
+                                                <label for="datetimepickerFrom">Từ ngày</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-floating">
+                                                <input th:field="*{endDate}" type="datetime-local" class="form-control"
+                                                    id="datetimepickerTo">
+                                                <label for="datetimepickerTo">Đến ngày</label>
+                                            </div>
+                                        </div>
+                                        <!-- Trạng thái -->
+                                        <fieldset class="row mt-3">
+                                            <legend class="col-form-label col-sm-4">Trạng thái</legend>
+                                            <div class="col-sm-8 d-flex align-items-center">
+                                                <div class="form-check me-3">
+                                                    <input th:field="*{isPublic}" class="form-check-input" type="radio"
+                                                        id="gridRadios1" value="true"
+                                                        th:checked="${voucher.isPublic == true}">
+                                                    <label class="form-check-label" for="gridRadios1">Công khai</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input th:field="*{isPublic}" class="form-check-input" type="radio"
+                                                        id="gridRadios2" value="false"
+                                                        th:checked="${voucher.isPublic == false}">
+                                                    <label class="form-check-label" for="gridRadios2">Cá nhân</label>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+
+                                        <div class="col-md-12">
+                                            <div class="form-floating">
+                                                <textarea th:field="*{description}" class="form-control"
+                                                    id="floatingTextarea" placeholder="Mô tả"
+                                                    style="height: 100px;"></textarea>
+                                                <label for="floatingTextarea">Mô tả</label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Search, Table, Pagination - Bên phải -->
-                            <div class="col-md-7 mt-3">
-                                <!-- Search input section -->
+                                <!-- Search, Table, Pagination - Bên phải -->
+                                <div class="col-md-7 mt-3">
+                                    <!-- Search input section -->
 
-                                <div class="position-relative w-100">
-                                    <span class="position-absolute search start-0 top-50 translate-middle-y ps-2">
-                                        <i class="bi bi-search"></i>
-                                    </span>
-                                    <input class="form-control w-100 ps-5" placeholder="Tìm kiếm bằng #, tên...">
+                                    <div class="position-relative w-100">
+                                        <span class="position-absolute search start-0 top-50 translate-middle-y ps-2">
+                                            <i class="bi bi-search"></i>
+                                        </span>
+                                        <input class="form-control w-100 ps-5" placeholder="Tìm kiếm bằng #, tên...">
+                                    </div>
+                                    <!-- Table section -->
+                                    <div class="table-responsive mt-3">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" width="5%"><input class="form-check-input"
+                                                            type="checkbox">
+                                                    </th>
+                                                    <th scope="col" width="5%">#</th>
+                                                    <th scope="col" width="20%">Tên</th>
+                                                    <th scope="col" width="20%">Số điện thoại</th>
+                                                    <th scope="col" width="20%">Email</th>
+                                                    <th scope="col" width="20%">Ngày sinh</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <th><input class="form-check-input" type="checkbox"></th>
+                                                    <td>1</td>
+                                                    <td><img src="https://i.imgur.com/VKOeFyS.png" width="25"> Althan
+                                                        Travis
+                                                    </td>
+                                                    <td>0935141828</td>
+                                                    <td><span>althan@gamil.com</span></td>
+                                                    <td>09-01-2001</td>
+                                                </tr>
+                                                <tr>
+                                                    <th><input class="form-check-input" type="checkbox"></th>
+                                                    <td>2</td>
+                                                    <td><img src="https://i.imgur.com/VKOeFyS.png" width="25"> Althan
+                                                        Travis
+                                                    </td>
+                                                    <td>0935141828</td>
+                                                    <td><span>althan@gamil.com</span></td>
+                                                    <td>09-01-2001</td>
+                                                </tr>
+                                                <tr>
+                                                    <th><input class="form-check-input" type="checkbox"></th>
+                                                    <td>2</td>
+                                                    <td><img src="https://i.imgur.com/VKOeFyS.png" width="25"> Althan
+                                                        Travis
+                                                    </td>
+                                                    <td>0935141828</td>
+                                                    <td><span>althan@gamil.com</span></td>
+                                                    <td>09-01-2001</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <nav aria-label="Page navigation">
+                                        <ul class="pagination justify-content-center">
+                                            <!-- Đầu -->
+                                            <li class="page-item">
+                                                <a class="page-link rounded text-dark bg-light border-0 shadow-sm"
+                                                    href="#" aria-label="First">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                            <!-- Trước -->
+                                            <li class="page-item">
+                                                <a class="page-link rounded text-dark bg-light border-0 shadow-sm"
+                                                    href="#" aria-label="Previous">
+                                                    <span aria-hidden="true">&lsaquo;</span>
+                                                </a>
+                                            </li>
+                                            <!-- Trang Số -->
+                                            <li class="page-item"><a
+                                                    class="page-link rounded text-dark bg-light border-0 shadow-sm"
+                                                    href="#">1</a></li>
+                                            <li class="page-item"><a
+                                                    class="page-link rounded text-dark bg-light border-0 shadow-sm"
+                                                    href="#">2</a></li>
+                                            <li class="page-item"><a
+                                                    class="page-link rounded text-dark bg-light border-0 shadow-sm"
+                                                    href="#">3</a></li>
+                                            <li class="page-item disabled"><a
+                                                    class="page-link rounded text-dark bg-light border-0 shadow-sm"
+                                                    href="#">...</a></li>
+                                            <li class="page-item"><a
+                                                    class="page-link rounded text-dark bg-light border-0 shadow-sm"
+                                                    href="#">10</a></li>
+                                            <!-- Sau -->
+                                            <li class="page-item">
+                                                <a class="page-link rounded text-dark bg-light border-0 shadow-sm"
+                                                    href="#" aria-label="Next">
+                                                    <span aria-hidden="true">&rsaquo;</span>
+                                                </a>
+                                            </li>
+                                            <!-- Cuối -->
+                                            <li class="page-item">
+                                                <a class="page-link rounded text-dark bg-light border-0 shadow-sm"
+                                                    href="#" aria-label="Last">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
                                 </div>
-                                <!-- Table section -->
-                                <div class="table-responsive mt-3">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col" width="5%"><input class="form-check-input"
-                                                        type="checkbox">
-                                                </th>
-                                                <th scope="col" width="5%">#</th>
-                                                <th scope="col" width="20%">Tên</th>
-                                                <th scope="col" width="20%">Số điện thoại</th>
-                                                <th scope="col" width="20%">Email</th>
-                                                <th scope="col" width="20%">Ngày sinh</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <th><input class="form-check-input" type="checkbox"></th>
-                                                <td>1</td>
-                                                <td><img src="https://i.imgur.com/VKOeFyS.png" width="25"> Althan Travis
-                                                </td>
-                                                <td>0935141828</td>
-                                                <td><span>althan@gamil.com</span></td>
-                                                <td>09-01-2001</td>
-                                            </tr>
-                                            <tr>
-                                                <th><input class="form-check-input" type="checkbox"></th>
-                                                <td>2</td>
-                                                <td><img src="https://i.imgur.com/VKOeFyS.png" width="25"> Althan Travis
-                                                </td>
-                                                <td>0935141828</td>
-                                                <td><span>althan@gamil.com</span></td>
-                                                <td>09-01-2001</td>
-                                            </tr>
-                                            <tr>
-                                                <th><input class="form-check-input" type="checkbox"></th>
-                                                <td>2</td>
-                                                <td><img src="https://i.imgur.com/VKOeFyS.png" width="25"> Althan Travis
-                                                </td>
-                                                <td>0935141828</td>
-                                                <td><span>althan@gamil.com</span></td>
-                                                <td>09-01-2001</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                <div class="col-12 text-center mt-3">
+                                    <button type="submit" class="btn btn-outline-primary">Gửi</button>
+                                    <button type="reset" class="btn btn-outline-secondary">Xóa</button>
                                 </div>
 
-                                <nav aria-label="Page navigation">
-                                    <ul class="pagination justify-content-center">
-                                        <!-- Đầu -->
-                                        <li class="page-item">
-                                            <a class="page-link rounded text-dark bg-light border-0 shadow-sm" href="#"
-                                                aria-label="First">
-                                                <span aria-hidden="true">&laquo;</span>
-                                            </a>
-                                        </li>
-                                        <!-- Trước -->
-                                        <li class="page-item">
-                                            <a class="page-link rounded text-dark bg-light border-0 shadow-sm" href="#"
-                                                aria-label="Previous">
-                                                <span aria-hidden="true">&lsaquo;</span>
-                                            </a>
-                                        </li>
-                                        <!-- Trang Số -->
-                                        <li class="page-item"><a
-                                                class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                href="#">1</a></li>
-                                        <li class="page-item"><a
-                                                class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                href="#">2</a></li>
-                                        <li class="page-item"><a
-                                                class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                href="#">3</a></li>
-                                        <li class="page-item disabled"><a
-                                                class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                href="#">...</a></li>
-                                        <li class="page-item"><a
-                                                class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                href="#">10</a></li>
-                                        <!-- Sau -->
-                                        <li class="page-item">
-                                            <a class="page-link rounded text-dark bg-light border-0 shadow-sm" href="#"
-                                                aria-label="Next">
-                                                <span aria-hidden="true">&rsaquo;</span>
-                                            </a>
-                                        </li>
-                                        <!-- Cuối -->
-                                        <li class="page-item">
-                                            <a class="page-link rounded text-dark bg-light border-0 shadow-sm" href="#"
-                                                aria-label="Last">
-                                                <span aria-hidden="true">&raquo;</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </nav>
                             </div>
-                            <div class="col-12 text-center mt-3">
-                                <button type="submit" class="btn btn-outline-primary">Gửi</button>
-                                <button type="reset" class="btn btn-outline-secondary">Xóa</button>
-                            </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </section>

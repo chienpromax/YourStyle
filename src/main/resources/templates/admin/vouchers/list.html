@@ -100,38 +100,15 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
+                                        <tr th:each="voucher, iStat : ${vouchers}">
                                             <td>1</td>
-                                            <td>kkkkjk</td>
-                                            <td>kkkkkk</td>
-                                            <td><span class="badge bg-info text-dark">Cá nhân</span></td>
-                                            <td>10%</td>
-                                            <td>20</td>
+                                            <td>[[${voucher.voucherCode}]]</td>
+                                            <td>[[${voucher.voucherName}]]</td>
+                                            <td><span class="badge bg-info text-dark">[[${voucher.isPublic}]]</span>
+                                            </td>
+                                            <td>[[${voucher.type}]]</td>
+                                            <td>[[${voucher.maxUses}]]</td>
                                             <td>21/12/2023 13:36</td>
-                                            <td>30/12/2023 00:00</td>
-                                            <td><span class="badge bg-success">Đang diễn ra</span></td>
-                                            <td><i class="bi bi-eye"></i></td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>PGGTT</td>
-                                            <td>tri an kh</td>
-                                            <td><span class="badge bg-info text-dark">Cá nhân</span></td>
-                                            <td>100%</td>
-                                            <td>0</td>
-                                            <td>20/12/2023 10:29</td>
-                                            <td>23/12/2023 00:00</td>
-                                            <td><span class="badge bg-success">Đang diễn ra</span></td>
-                                            <td><i class="bi bi-eye"></i></td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td>PGG2023</td>
-                                            <td>Thi bảo vệ</td>
-                                            <td><span class="badge bg-primary">Công khai</span></td>
-                                            <td>10%</td>
-                                            <td>97</td>
-                                            <td>20/12/2023 10:05</td>
                                             <td>30/12/2023 00:00</td>
                                             <td><span class="badge bg-success">Đang diễn ra</span></td>
                                             <td><i class="bi bi-eye"></i></td>

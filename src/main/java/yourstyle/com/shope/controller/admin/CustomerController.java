@@ -52,6 +52,18 @@ public class CustomerController {
 		return "admin/customers/addOrEdit";
 	}
 
+	@GetMapping("delete/{customerId}")
+	public ModelAndView delete(ModelMap model, @PathVariable("customerId") Integer customerId) {
+		Optional<Customer> customer = customerService.findById(customerId);
+		if (customer.isPresent()) {
+			customerService.deleteById(customerId);
+			model.addAttribute("message", "Xóa thành công");
+		} else {
+			model.addAttribute("message", "Khách hàng không tồn tại");
+		}
+		return new ModelAndView("forward:/admin/customers", model);
+	}
+
 	@GetMapping("edit/{customerId}")
 	public ModelAndView edit(ModelMap model, @PathVariable("customerId") Integer customerId) {
 		CustomerDto customerDto = new CustomerDto();
@@ -71,14 +83,13 @@ public class CustomerController {
 		return new ModelAndView("redirect:/admin/customers", model);
 	}
 
-	
 	@PostMapping("saveOrUpdate")
 	public ModelAndView saveOrUpdate(ModelMap model, @Validated @ModelAttribute("customer") Customer customer,
-									  BindingResult result, @RequestParam("imageFile") MultipartFile imageFile) {
+			BindingResult result, @RequestParam("imageFile") MultipartFile imageFile) {
 		if (result.hasErrors()) {
 			return new ModelAndView("admin/customers/addOrEdit", model);
 		}
-	
+
 		// Xử lý upload tệp
 		if (imageFile != null && !imageFile.isEmpty()) {
 			try {
@@ -96,7 +107,7 @@ public class CustomerController {
 			Optional<Customer> existingCustomer = customerService.findById(customer.getCustomerId());
 			existingCustomer.ifPresent(c -> customer.setAvatar(c.getAvatar()));
 		}
-	
+
 		// Kiểm tra xem khách hàng đã tồn tại hay chưa
 		if (customer.getCustomerId() != null && customerService.findById(customer.getCustomerId()).isPresent()) {
 			// Cập nhật thông tin khách hàng
@@ -107,10 +118,9 @@ public class CustomerController {
 			customerService.save(customer);
 			model.addAttribute("message", "Thêm khách hàng thành công");
 		}
-	
+
 		return new ModelAndView("redirect:/admin/customers", model);
 	}
-	
 
 	@GetMapping("")
 	public String list(Model model, @RequestParam("page") Optional<Integer> page,

@@ -5,9 +5,6 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-
-import jakarta.transaction.Transactional;
-
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 
@@ -24,6 +21,8 @@ public interface CustomerService {
 	List<Customer> findAll();
 
 	Page<Customer> findAll(Pageable pageable);
+
+	Page<Customer> searchByNameOrPhone(String value, Pageable pageable);
 
 	List<Customer> findAll(Sort sort);
 

@@ -47,11 +47,39 @@ public class CustomerController {
 	}
 
 	@GetMapping("/search")
-    public String search(@RequestParam("value") String value, Model model) {
-        List<Customer> customers = customerService.searchByNameOrPhone(value);
-        model.addAttribute("Customers", customers);
-        return "admin/Customers/list";
-    }
+	public String search(@RequestParam("value") String value,
+			@RequestParam("page") Optional<Integer> page,
+			@RequestParam("size") Optional<Integer> size,
+			Model model) {
+		int currentPage = page.orElse(0);
+		int pageSize = size.orElse(5);
+		Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by("fullname"));
+
+		// Gọi phương thức tìm kiếm hỗ trợ phân trang
+		Page<Customer> customers = customerService.searchByNameOrPhone(value, pageable);
+
+		int totalPages = customers.getTotalPages();
+		if (totalPages > 0) {
+			int start = Math.max(1, currentPage + 1 - 2);
+			int end = Math.min(currentPage + 1 + 2, totalPages);
+			if (totalPages > 5) {
+				if (end == totalPages) {
+					start = end - 5;
+				} else if (start == 1) {
+					end = start + 5;
+				}
+			}
+			List<Integer> pageNumbers = IntStream.rangeClosed(start, end).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		}
+
+		model.addAttribute("Customers", customers.getContent());
+		model.addAttribute("currentPage", currentPage);
+		model.addAttribute("size", pageSize);
+		model.addAttribute("value", value);
+
+		return "admin/Customers/list";
+	}
 
 	@GetMapping("delete/{customerId}")
 	public ModelAndView delete(ModelMap model, @PathVariable("customerId") Integer customerId) {
@@ -125,10 +153,12 @@ public class CustomerController {
 	@GetMapping("")
 	public String list(Model model, @RequestParam("page") Optional<Integer> page,
 			@RequestParam("size") Optional<Integer> size) {
-		int currentPage = page.orElse(0); // trang hiện tại
-		int pageSize = size.orElse(5); // mặc định hiển thị 5 tài khoản 1 trang
+		int currentPage = page.orElse(0); // Trang hiện tại
+		int pageSize = size.orElse(5); // Kích thước trang
+
 		Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by("fullname"));
 		Page<Customer> list = customerService.findAll(pageable);
+
 		int totalPages = list.getTotalPages();
 		if (totalPages > 0) {
 			int start = Math.max(1, currentPage + 1 - 2);
@@ -143,7 +173,13 @@ public class CustomerController {
 			List<Integer> pageNumbers = IntStream.rangeClosed(start, end).boxed().collect(Collectors.toList());
 			model.addAttribute("pageNumbers", pageNumbers);
 		}
+
 		model.addAttribute("Customers", list.getContent());
+		model.addAttribute("currentPage", currentPage);
+		model.addAttribute("totalPages", totalPages);
+		model.addAttribute("size", pageSize);
+
 		return "admin/Customers/list";
 	}
+
 }

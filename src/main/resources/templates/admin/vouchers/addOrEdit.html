@@ -27,6 +27,14 @@
 
                                 <div class="col-md-5 mt-3">
                                     <div class="row g-3">
+                                        <!-- Hiển thị voucherId chỉ khi chỉnh sửa -->
+                                        <div class="col-md-12" th:if="${voucher.voucherId != null}">
+                                            <div class="form-floating">
+                                                <input th:field="*{voucherId}" th:value="${voucher.voucherId}"
+                                                    class="form-control" id="floatingVoucherId" readonly>
+                                                <label for="floatingVoucherId">ID Voucher</label>
+                                            </div>
+                                        </div>
                                         <div class="col-md-12">
                                             <div class="form-floating">
                                                 <input th:field="*{voucherCode}" type="text" class="form-control"
@@ -45,7 +53,7 @@
                                             <div class="form-floating">
                                                 <input th:field="*{discountAmount}" type="text" class="form-control"
                                                     id="floatingDiscountValue" placeholder="Số tiền giảm giá">
-                                                <label for="floatingDiscountValue">Giá trị</label>
+                                                <label for="floatingDiscountValue">Giảm giá</label>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -93,15 +101,18 @@
                                         <!-- Date and time picker -->
                                         <div class="col-md-12">
                                             <div class="form-floating">
-                                                <input th:field="*{startDate}" type="datetime-local"
-                                                    class="form-control" id="datetimepickerFrom">
+                                                <input th:field="*{startDate}" type="text"
+                                                    class="form-control datetimepicker bg-white" id="datetimepickerFrom"
+                                                    placeholder="Từ ngày">
                                                 <label for="datetimepickerFrom">Từ ngày</label>
                                             </div>
                                         </div>
-                                        <div class="col-md-12">
+
+                                        <div class="col-md-12 mt-3">
                                             <div class="form-floating">
-                                                <input th:field="*{endDate}" type="datetime-local" class="form-control"
-                                                    id="datetimepickerTo">
+                                                <input th:field="*{endDate}" type="text"
+                                                    class="form-control datetimepicker bg-white" id="datetimepickerTo"
+                                                    placeholder="Đến ngày">
                                                 <label for="datetimepickerTo">Đến ngày</label>
                                             </div>
                                         </div>

@@ -1,5 +1,7 @@
 package yourstyle.com.shope.service;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -10,4 +12,11 @@ public interface VoucherService {
     Voucher createVoucher(Voucher voucher);
 
     Page<Voucher> findAll(Pageable pageable);
+
+    Page<Voucher> findByCodeOrName(String value, Pageable pageable);
+
+    Optional<Voucher> findByVoucherId(Integer voucherId);
+
+    void deleteByVoucherId(Integer voucherId);
+
 }

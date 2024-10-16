@@ -1,5 +1,7 @@
 package yourstyle.com.shope.service.impl;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +24,21 @@ public class VoucherServiceImpl implements VoucherService {
     @Override
     public Page<Voucher> findAll(Pageable pageable) {
         return voucherRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Voucher> findByCodeOrName(String value, Pageable pageable) {
+        return voucherRepository.findByCodeOrName(value, pageable);
+    }
+
+    @Override
+    public Optional<Voucher> findByVoucherId(Integer voucherId) {
+        return voucherRepository.findById(voucherId);
+    }
+
+    @Override
+    public void deleteByVoucherId(Integer voucherId) {
+        voucherRepository.deleteById(voucherId);
     }
 
 }

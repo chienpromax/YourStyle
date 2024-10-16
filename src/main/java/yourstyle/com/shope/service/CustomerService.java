@@ -33,7 +33,9 @@ public interface CustomerService {
 
 	Customer update(Customer customer);
 
-	// Page<Customer> findByFullnameOrPhone(String name, Pageable pageable);
+	List<Customer> searchByNameOrPhone(String value);
 
-	// Customer findByFullnameOrPhone(String fullname, String phone);
+	// Page<Customer> findByFullnameOrPhoneNumber(String fullname, Pageable pageable);
+
+	// Customer findByFullnameOrPhoneNumber(String fullname, String phoneNumber);
 }

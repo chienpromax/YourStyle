@@ -69,13 +69,18 @@ public class CustomerServiceImpl implements CustomerService {
 		customerRepository.deleteById(id);
 	}
 
+	@Override
+    public List<Customer> searchByNameOrPhone(String value) {
+        return customerRepository.findByFullnameContainingOrPhoneNumberContaining(value, value);
+    }
+
 	// @Override
-	// public Page<Customer> findByFullnameOrPhone(String value, Pageable pageable) {
-	// 	return customerRepository.findByFullnameOrPhone(value, pageable);
+	// public Page<Customer> findByFullnameOrPhoneNumber(String value, Pageable pageable) {
+	// 	return customerRepository.findByFullnameOrPhoneNumber(value, pageable);
 	// }
 
 	// @Override
-	// public Customer findByFullnameOrPhone(String fullname, String phone) {
-	// 	return customerRepository.findByFullnameOrPhone(fullname, phone);
+	// public Customer findByFullnameOrPhoneNumber(String fullname, String phoneNumber) {
+	// 	return customerRepository.findByFullnameOrPhoneNumber(fullname, phoneNumber);
 	// }
 }

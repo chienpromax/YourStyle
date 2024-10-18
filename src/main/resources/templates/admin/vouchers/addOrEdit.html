@@ -123,13 +123,15 @@
                                                 <div class="form-check me-3">
                                                     <input th:field="*{isPublic}" class="form-check-input" type="radio"
                                                         id="gridRadios1" value="true"
-                                                        th:checked="${voucher.isPublic == true}">
+                                                        th:checked="${voucher.isPublic == true}"
+                                                        onclick="toggleCustomerSection()">
                                                     <label class="form-check-label" for="gridRadios1">Công khai</label>
                                                 </div>
                                                 <div class="form-check">
                                                     <input th:field="*{isPublic}" class="form-check-input" type="radio"
                                                         id="gridRadios2" value="false"
-                                                        th:checked="${voucher.isPublic == false}">
+                                                        th:checked="${voucher.isPublic == false}"
+                                                        onclick="toggleCustomerSection()">
                                                     <label class="form-check-label" for="gridRadios2">Cá nhân</label>
                                                 </div>
                                             </div>
@@ -149,64 +151,80 @@
                                 <!-- Search, Table, Pagination - Bên phải -->
                                 <div class="col-md-7 mt-3">
                                     <!-- Search input section -->
-
                                     <div class="position-relative w-100">
                                         <span class="position-absolute search start-0 top-50 translate-middle-y ps-2">
                                             <i class="bi bi-search"></i>
                                         </span>
-                                        <input class="form-control w-100 ps-5" placeholder="Tìm kiếm bằng #, tên...">
+                                        <input class="form-control w-100 ps-5" placeholder="Tìm kiếm bằng #, tên..."
+                                            disabled id="searchInput">
                                     </div>
-                                    <!-- Table section -->
-                                    <div class="table-responsive mt-3">
-                                        <table class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col" width="5%"><input class="form-check-input"
-                                                            type="checkbox">
-                                                    </th>
-                                                    <th scope="col" width="5%">#</th>
-                                                    <th scope="col" width="20%">Tên</th>
-                                                    <th scope="col" width="20%">Số điện thoại</th>
-                                                    <th scope="col" width="20%">Email</th>
-                                                    <th scope="col" width="20%">Ngày sinh</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <th><input class="form-check-input" type="checkbox"></th>
-                                                    <td>1</td>
-                                                    <td><img src="https://i.imgur.com/VKOeFyS.png" width="25"> Althan
-                                                        Travis
-                                                    </td>
-                                                    <td>0935141828</td>
-                                                    <td><span>althan@gamil.com</span></td>
-                                                    <td>09-01-2001</td>
-                                                </tr>
-                                                <tr>
-                                                    <th><input class="form-check-input" type="checkbox"></th>
-                                                    <td>2</td>
-                                                    <td><img src="https://i.imgur.com/VKOeFyS.png" width="25"> Althan
-                                                        Travis
-                                                    </td>
-                                                    <td>0935141828</td>
-                                                    <td><span>althan@gamil.com</span></td>
-                                                    <td>09-01-2001</td>
-                                                </tr>
-                                                <tr>
-                                                    <th><input class="form-check-input" type="checkbox"></th>
-                                                    <td>2</td>
-                                                    <td><img src="https://i.imgur.com/VKOeFyS.png" width="25"> Althan
-                                                        Travis
-                                                    </td>
-                                                    <td>0935141828</td>
-                                                    <td><span>althan@gamil.com</span></td>
-                                                    <td>09-01-2001</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                    <div class="container mt-3">
+                                        <div class="table-responsive mt-3">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col" width="5%">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                id="selectAll" onclick="toggleAll(this)">
+                                                        </th>
+                                                        <th scope="col" width="5%">#</th>
+                                                        <th scope="col" width="20%">Tên</th>
+                                                        <th scope="col" width="20%">Số điện thoại</th>
+                                                        <th scope="col" width="20%">Giới tính</th>
+                                                        <th scope="col" width="20%">Ngày sinh</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- Đổ dữ liệu danh sách khách hàng -->
+                                                    <!-- <tr th:each="customer : ${customers}">
+                                                        <th>
+                                                            <input class="form-check-input" type="checkbox"
+                                                                th:value="${customer.customerId}"
+                                                                name="selectedCustomers" />
+                                                        </th>
+                                                        <td th:text="${customer.customerId}"></td>
+                                                        <td>
+                                                            <img src="https://i.imgur.com/VKOeFyS.png" width="25">
+                                                            <span th:text="${customer.fullname}"></span>
+                                                        </td>
+                                                        <td th:text="${customer.phonenumber}"></td>
+                                                        <td th:text="${customer.gender ? 'Nam' : 'Nữ'}"></td>
+                                                        <td th:text="${customer.birthDate}"></td>
+                                                    </tr> -->
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
 
-                                    <nav aria-label="Page navigation">
+                                    <script>
+                                        function toggleCustomerSection() {
+                                            const isPublic = document.querySelector('input[name="isPublic"]:checked').value === 'true';
+                                            const inputs = document.querySelectorAll(
+                                                'input[name="selectedCustomers"], #selectAll, #searchInput, #paginationNav a'
+                                            );
+
+                                            // Vô hiệu hóa hoặc kích hoạt các input và liên kết phân trang tùy theo trạng thái radio
+                                            inputs.forEach(input => input.disabled = isPublic);
+
+                                            // Nếu là phân trang (thẻ <a>), thêm/xóa class 'disabled' để vô hiệu hóa
+                                            document.querySelectorAll('#paginationNav .page-item').forEach(item => {
+                                                item.classList.toggle('disabled', isPublic);
+                                            });
+                                        }
+
+                                        function toggleAll(source) {
+                                            const checkboxes = document.querySelectorAll('input[name="selectedCustomers"]');
+                                            checkboxes.forEach(checkbox => {
+                                                checkbox.checked = source.checked;
+                                            });
+                                        }
+
+                                        // Gọi hàm này ngay khi trang được tải để đảm bảo trạng thái đúng
+                                        document.addEventListener('DOMContentLoaded', toggleCustomerSection);
+                                    </script>
+
+
+                                    <nav aria-label="Page navigation" id="paginationNav">
                                         <ul class="pagination justify-content-center">
                                             <!-- Đầu -->
                                             <li class="page-item">

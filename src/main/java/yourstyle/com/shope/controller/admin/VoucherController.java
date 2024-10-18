@@ -1,5 +1,7 @@
 package yourstyle.com.shope.controller.admin;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,6 +27,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.data.domain.Page;
 
 import yourstyle.com.shope.model.Voucher;
@@ -40,9 +43,23 @@ public class VoucherController {
     public String add(Model model) {
         Voucher voucher = new Voucher();
         voucher.setIsPublic(true);
+
+        // model.addAttribute("customers", listCustomers());
         model.addAttribute("voucher", voucher);
         return "admin/vouchers/addOrEdit";
     }
+
+    // public List<Customer> listCustomers() {
+    // List<Customer> customers = new ArrayList<>();
+    // customers.add(new Customer(1, "Althan Travis", "0935141828", true,
+    // "09-01-2001"));
+    // customers.add(new Customer(2, "John Doe", "0901234567", false,
+    // "22-05-1995"));
+    // customers.add(new Customer(3, "Jane Smith", "0987654321", true,
+    // "14-07-1998"));
+
+    // return customers;
+    // }
 
     @GetMapping("edit/{voucherId}")
     public ModelAndView edit(ModelMap model, @PathVariable("voucherId") Integer voucherId) {
@@ -132,20 +149,27 @@ public class VoucherController {
     }
 
     @GetMapping("search")
-    public String searchAccount(Model model, @RequestParam(name = "value", required = false) String value,
-            @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
-        int currentPage = page.orElse(0); // trang hiện tại
+    public String searchVoucher(Model model,
+            @RequestParam(name = "value", required = false) String value,
+            @RequestParam(name = "isPublic", required = false) Boolean isPublic,
+            @RequestParam(name = "type", required = false) Integer type,
+            @RequestParam(name = "fromDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime fromDate,
+            @RequestParam(name = "toDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime toDate,
+            @RequestParam("page") Optional<Integer> page,
+            @RequestParam("size") Optional<Integer> size) {
+
+        int currentPage = page.orElse(0);
         int pageSize = size.orElse(5);
-
         Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by("voucherCode"));
-        Page<Voucher> list = null;
 
-        if (StringUtils.hasText(value)) {
-            list = voucherService.findByCodeOrName(value, pageable);
+        Page<Voucher> list;
+        if (StringUtils.hasText(value) || isPublic != null || type != null || fromDate != null || toDate != null) {
+            list = voucherService.advancedSearch(value, isPublic, type, fromDate, toDate, pageable);
         } else {
             list = voucherService.findAll(pageable);
         }
-        int totalPages = list.getTotalPages(); // lấy tổng số trang
+
+        int totalPages = list.getTotalPages();
         if (totalPages > 0) {
             int start = Math.max(1, currentPage + 1 - 2);
             int end = Math.min(currentPage + 1 + 2, totalPages);
@@ -159,7 +183,14 @@ public class VoucherController {
             List<Integer> pageNumbers = IntStream.rangeClosed(start, end).boxed().collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
+
         model.addAttribute("vouchers", list);
+        model.addAttribute("searchValue", value);
+        model.addAttribute("isPublic", isPublic);
+        model.addAttribute("type", type);
+        model.addAttribute("fromDate", fromDate);
+        model.addAttribute("toDate", toDate);
+
         return "admin/vouchers/list";
     }
 

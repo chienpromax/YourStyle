@@ -1,5 +1,6 @@
 package yourstyle.com.shope.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,12 @@ public class VoucherServiceImpl implements VoucherService {
     @Override
     public void deleteByVoucherId(Integer voucherId) {
         voucherRepository.deleteById(voucherId);
+    }
+
+    @Override
+    public Page<Voucher> advancedSearch(String value, Boolean isPublic, Integer type, LocalDateTime fromDate,
+            LocalDateTime toDate, Pageable pageable) {
+        return voucherRepository.findByCriteria(value, isPublic, type, fromDate, toDate, pageable);
     }
 
 }

@@ -40,9 +40,9 @@ public class CustomerController {
 
 	@GetMapping("add")
 	public String add(Model model) {
-		model.addAttribute("customer", new Customer());
 		List<Account> accounts = accountService.findAll();
 		model.addAttribute("accounts", accounts);
+		model.addAttribute("customer", new Customer());
 		return "admin/customers/addOrEdit";
 	}
 
@@ -86,12 +86,15 @@ public class CustomerController {
 		Optional<Customer> customer = customerService.findById(customerId);
 		if (customer.isPresent()) {
 			customerService.deleteById(customerId);
-			model.addAttribute("message", "Xóa thành công");
+			model.addAttribute("messageType", "success");
+			model.addAttribute("messageContent", "Xóa thành công");
 		} else {
-			model.addAttribute("message", "Khách hàng không tồn tại");
+			model.addAttribute("messageType", "error");
+			model.addAttribute("messageContent", "Khách hàng không tồn tại");
 		}
 		return new ModelAndView("redirect:/admin/customers", model);
 	}
+	
 
 	@GetMapping("edit/{customerId}")
 	public ModelAndView edit(ModelMap model, @PathVariable("customerId") Integer customerId) {
@@ -110,46 +113,84 @@ public class CustomerController {
 		model.addAttribute("messageContent", "người dùng không tồn tại!");
 		return new ModelAndView("redirect:/admin/customers", model);
 	}
+	
+	// Định nghĩa phương thức chuyển đổi từ CustomerDto sang Customer
+	private Customer convertToCustomer(CustomerDto customerDto) {
+		Customer customer = new Customer();
+		customer.setCustomerId(customerDto.getCustomerId());
+		customer.setFullname(customerDto.getFullname());
+		customer.setPhoneNumber(customerDto.getPhoneNumber());
+		customer.setGender(customerDto.getGender());
+		customer.setAvatar(customerDto.getAvatar());
+		customer.setBirthday(customerDto.getBirthday());
+		customer.setAccount(customerDto.getAccount());
+		return customer;
+	}
 
 	@PostMapping("saveOrUpdate")
-	public ModelAndView saveOrUpdate(ModelMap model, @Validated @ModelAttribute("customer") Customer customer,
+	public ModelAndView saveOrUpdate(ModelMap model, @Validated @ModelAttribute("customer") CustomerDto customerDto,
 			BindingResult result, @RequestParam("imageFile") MultipartFile imageFile) {
+		List<Account> accounts = accountService.findAll();
+		model.addAttribute("accounts", accounts);
+		Customer customer = convertToCustomer(customerDto);
+	
+		// Kiểm tra lỗi đầu vào
 		if (result.hasErrors()) {
+			model.addAttribute("customer", customerDto);
+			model.addAttribute("messageType", "error");
+			model.addAttribute("messageContent", "Lỗi Kiểm tra lại thông tin!");
 			return new ModelAndView("admin/customers/addOrEdit", model);
 		}
-
+	
+		// Kiểm tra file ảnh
+		if (imageFile == null || imageFile.isEmpty()) {
+			result.rejectValue("imageFile", "error.customer", "Vui lòng chọn ảnh đại diện");
+		} else if (!imageFile.getContentType().startsWith("image/")) {
+			result.rejectValue("imageFile", "error.customer", "File không hợp lệ, vui lòng chọn một file ảnh.");
+		}
+	
+		// Kiểm tra số điện thoại
+		if (customerService.existsByPhoneNumber(customerDto.getPhoneNumber())) {
+			model.addAttribute("messageType", "warning");
+			model.addAttribute("messageContent", "SĐT đã được sử dụng!");
+			result.rejectValue("phoneNumber", "error.customer", "Số điện thoại đã tồn tại, vui lòng nhập số khác.");
+			return new ModelAndView("admin/customers/addOrEdit", model);
+		}
+	
 		// Xử lý upload tệp
 		if (imageFile != null && !imageFile.isEmpty()) {
 			try {
 				String uploadDir = "src/main/resources/static/uploads/";
 				String originalFilename = imageFile.getOriginalFilename();
 				String newFilename = UploadUtils.saveFile(uploadDir, originalFilename, imageFile);
-				customer.setAvatar(newFilename); // Lưu tên tệp vào database
+				customer.setAvatar(newFilename);
 			} catch (IOException e) {
-				e.printStackTrace();
-				model.addAttribute("message", "Lỗi khi tải tệp: " + e.getMessage());
+				model.addAttribute("messageType", "error");
+				model.addAttribute("messageContent", "Lỗi khi tải tệp: " + e.getMessage());
 				return new ModelAndView("admin/customers/addOrEdit", model);
 			}
 		} else {
 			// Giữ nguyên ảnh đại diện nếu không có tệp mới tải lên
-			Optional<Customer> existingCustomer = customerService.findById(customer.getCustomerId());
-			existingCustomer.ifPresent(c -> customer.setAvatar(c.getAvatar()));
+			if (customer.getCustomerId() != null) {
+				Optional<Customer> existingCustomer = customerService.findById(customer.getCustomerId());
+				existingCustomer.ifPresent(c -> customer.setAvatar(c.getAvatar()));
+			}
 		}
-
-		// Kiểm tra xem khách hàng đã tồn tại hay chưa
+	
+		// Xử lý lưu hoặc cập nhật khách hàng
 		if (customer.getCustomerId() != null && customerService.findById(customer.getCustomerId()).isPresent()) {
-			// Cập nhật thông tin khách hàng
-			customerService.update(customer); // Cần có phương thức update trong CustomerService
-			model.addAttribute("message", "Cập nhật khách hàng thành công");
+			customerService.update(customer);
+			model.addAttribute("messageType", "success");
+			model.addAttribute("messageContent", "Sửa khách hàng thành công");
 		} else {
-			// Thêm mới khách hàng
 			customerService.save(customer);
-			model.addAttribute("message", "Thêm khách hàng thành công");
+			model.addAttribute("messageType", "success");
+			model.addAttribute("messageContent", "Thêm khách hàng thành công");
 		}
-
+	
 		return new ModelAndView("redirect:/admin/customers", model);
 	}
-
+	
 	@GetMapping("")
 	public String list(Model model, @RequestParam("page") Optional<Integer> page,
 			@RequestParam("size") Optional<Integer> size) {

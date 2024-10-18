@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -79,13 +80,9 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findByFullnameContainingOrPhoneNumberContaining(value, value);
     }
 
-	// @Override
-	// public Page<Customer> findByFullnameOrPhoneNumber(String value, Pageable pageable) {
-	// 	return customerRepository.findByFullnameOrPhoneNumber(value, pageable);
-	// }
+	@Override
+    public boolean existsByPhoneNumber(String phoneNumber) {
+        return customerRepository.existsByPhoneNumber(phoneNumber);
+    }
 
-	// @Override
-	// public Customer findByFullnameOrPhoneNumber(String fullname, String phoneNumber) {
-	// 	return customerRepository.findByFullnameOrPhoneNumber(fullname, phoneNumber);
-	// }
 }

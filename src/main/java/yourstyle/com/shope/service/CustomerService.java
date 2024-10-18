@@ -34,7 +34,6 @@ public interface CustomerService {
 
 	List<Customer> searchByNameOrPhone(String value);
 
-	// Page<Customer> findByFullnameOrPhoneNumber(String fullname, Pageable pageable);
-
-	// Customer findByFullnameOrPhoneNumber(String fullname, String phoneNumber);
+	boolean existsByPhoneNumber(String phoneNumber);
+	
 }

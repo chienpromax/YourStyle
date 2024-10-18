@@ -3,6 +3,7 @@ package yourstyle.com.shope.validation.admin;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.persistence.Column;
@@ -38,13 +39,10 @@ public class CustomerDto implements Serializable {
 
     private String avatar;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "Vui lòng nhập ngày sinh")
     @Past(message = "Ngày sinh phải là một ngày trong quá khứ")
     private Date birthday;
-
-    @NotBlank(message = "Vui lòng nhập địa chỉ email")
-    @Email(message = "Địa chỉ email không hợp lệ")
-    private String email;
 
     private Account account;
 

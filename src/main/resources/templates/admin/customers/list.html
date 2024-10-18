@@ -6,6 +6,7 @@
 
 <body>
   <section layout:fragment="main">
+    <div class="displayNotifications"></div>
     <main id="main" class="main">
       <div class="pagetitle">
         <h1>Danh sách khách hàng</h1>
@@ -84,10 +85,34 @@
                         th:href="@{/admin/customers/edit/{id}(id=${customer.customerId})}">
                         <i class="bi bi-eye"></i>
                       </a>
-                      <a style="cursor: pointer; font-size: 21px; color: rgb(255, 0, 0);"
-                        th:href="@{/admin/customers/delete/{id}(id=${customer.customerId})}">
-                        <i class="bi bi-trash3 ps-3"></i>
-                      </a>
+
+                      <!-- Button trigger modal -->
+                      <i data-bs-toggle="modal" data-bs-target="#exampleModal"
+                        style="cursor: pointer; font-size: 21px; color: rgb(255, 0, 0);" class="bi bi-trash3 ps-3"></i>
+
+                      <!-- Modal -->
+                      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel">Bạn có chắc muốn xóa không?</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              <img src="/admin/img/carefu.gif"/>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
+                              <a style="border: 1px solid red; border-radius: 10%; padding: 5px; cursor: pointer; color: rgb(255, 0, 0); "
+                                th:href="@{/admin/customers/delete/{id}(id=${customer.customerId})}">Có<i class="bi bi-trash3 ps-1"></i>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
                     </td>
                   </tr>
                 </tbody>
@@ -136,6 +161,8 @@
         <!-- end row -->
       </section>
     </main>
+    <script src="/admin/js/accountList.js"></script>
+    <script src="/admin/js/accountAddOrEdit.js"></script>
   </section>
 </body>
 

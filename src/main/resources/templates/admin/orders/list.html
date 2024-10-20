@@ -80,13 +80,6 @@
                                             <option th:each="status : ${orderStatus}" th:value="${status.code}">
                                                 [[${status.description}]]
                                             </option>
-                                            <!-- <option value="2">Đang đóng gói</option>
-                                            <option value="3">Đã giao cho vận chuyển</option>
-                                            <option value="4">Đang giao hàng</option>
-                                            <option value="5">Đã giao</option>
-                                            <option value="6">Đơn hàng hoàn tất</option>
-                                            <option value="7">Đơn hàng bị hủy</option>
-                                            <option value="8">Trả hàng</option> -->
                                         </select>
                                     </div>
                                     <div class="col-lg-4 col-md-12 mb-3 mb-lg-0">
@@ -104,8 +97,8 @@
                                                 <th>STT</th>
                                                 <th>Mã HĐ</th>
                                                 <th>Tên khách hàng</th>
-                                                <th>Số lượng</th>
-                                                <th>Tổng tiền</th>
+                                                <th>Tổng SP</th>
+                                                <th>Tổng số tiền</th>
                                                 <th>Ngày tạo</th>
                                                 <th>Trạng thái</th>
                                                 <th>Hành động</th>
@@ -125,7 +118,9 @@
                                                     <span class="badge bg-success">[[${order.statusDescription}]]</span>
                                                 </td>
                                                 <td>
-                                                    <a th:href="@{/admin/orders/detail}">
+                                                    <a
+                                                        th:href="@{/admin/orders/detail/{orderId}(orderId=${order.orderId})}"
+                                                    >
                                                         <i class="bi bi-eye"></i>
                                                     </a>
                                                 </td>
@@ -206,26 +201,26 @@
 
                     function getStatusValue(value) {
                         console.log(value);
-                        const newValue = value;
-                        fetch("/admin/orders/filterStatus", {
+                        const newStatus = value;
+                        console.log(newStatus);
+
+                        fetch(`/admin/orders/filterStatus`, {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
                             },
-                            body: JSON.stringify({ status: newValue }),
+                            body: JSON.stringify({ status: newStatus }),
                         })
                             .then((response) => response.json())
                             .then((data) => {
-                                console.log("data : " + data);
-
                                 if (data.success) {
-                                    console.log(`Tìm kiếm hóa đơn theo trạng thái có status là ${value}`);
+                                    console.log(`Trạng thái đơn hàng có   ${newStatus} đã được tìm thấy`);
                                 } else {
-                                    console.log("Không tìm thấy!");
+                                    console.error("Không tìm thấy!");
                                 }
                             })
                             .catch((error) => {
-                                console.log("Có lỗi xảy ra " + error);
+                                console.error("Có lỗi xảy ra:", error);
                             });
                     }
                 });

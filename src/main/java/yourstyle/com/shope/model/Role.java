@@ -5,6 +5,7 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,12 +21,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "roles")
-public class Role implements Serializable{
+public class Role implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int roleId;
-	@Column(name = "name",nullable = false,length= 20,unique = true)
+	@Column(name = "name", nullable = false, length = 20, unique = true)
 	private String name;
-	@OneToMany(mappedBy = "role")
+	@OneToMany(mappedBy = "role", fetch = FetchType.EAGER)
 	private List<Account> accounts;
 }

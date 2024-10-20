@@ -1,4 +1,3 @@
-
 :root {
   scroll-behavior: smooth;
 }
@@ -248,7 +247,7 @@ h6 {
 .alert-heading {
   font-weight: 500;
   font-family: "Poppins", sans-serif;
-  font-size: 20px;
+  font-size  : 20px;
 }
 
 /* Close Button */
@@ -257,7 +256,7 @@ h6 {
 }
 
 .btn-close:focus {
-  outline: 0;
+  outline   : 0;
   box-shadow: none;
 }
 
@@ -267,29 +266,29 @@ h6 {
 }
 
 .accordion-button:focus {
-  outline: 0;
+  outline   : 0;
   box-shadow: none;
 }
 
 .accordion-button:not(.collapsed) {
-  color: #012970;
+  color           : #012970;
   background-color: #f6f9ff;
 }
 
 .accordion-flush .accordion-button {
-  padding: 15px 0;
+  padding   : 15px 0;
   background: none;
-  border: 0;
+  border    : 0;
 }
 
 .accordion-flush .accordion-button:not(.collapsed) {
   box-shadow: none;
-  color: #4154f1;
+  color     : #4154f1;
 }
 
 .accordion-flush .accordion-body {
-  padding: 0 0 15px 0;
-  color: #3e4f6f;
+  padding  : 0 0 15px 0;
+  color    : #3e4f6f;
   font-size: 15px;
 }
 
@@ -386,28 +385,28 @@ h6 {
 
 .header .search-bar {
   min-width: 360px;
-  padding: 0 20px;
+  padding  : 0 20px;
 }
 
 @media (max-width: 1199px) {
   .header .search-bar {
-    position: fixed;
-    top: 50px;
-    left: 0;
-    right: 0;
-    padding: 20px;
+    position  : fixed;
+    top       : 50px;
+    left      : 0;
+    right     : 0;
+    padding   : 20px;
     box-shadow: 0px 0px 15px 0px rgba(1, 41, 112, 0.1);
     background: white;
-    z-index: 9999;
+    z-index   : 9999;
     transition: 0.3s;
     visibility: hidden;
-    opacity: 0;
+    opacity   : 0;
   }
 
   .header .search-bar-show {
-    top: 60px;
+    top       : 60px;
     visibility: visible;
-    opacity: 1;
+    opacity   : 1;
   }
 }
 
@@ -416,28 +415,28 @@ h6 {
 }
 
 .header .search-form input {
-  border: 0;
-  font-size: 14px;
-  color: #012970;
-  border: 1px solid rgba(1, 41, 112, 0.2);
-  padding: 7px 38px 7px 8px;
+  border       : 0;
+  font-size    : 14px;
+  color        : #012970;
+  border       : 1px solid rgba(1, 41, 112, 0.2);
+  padding      : 7px 38px 7px 8px;
   border-radius: 3px;
-  transition: 0.3s;
-  width: 100%;
+  transition   : 0.3s;
+  width        : 100%;
 }
 
 .header .search-form input:focus,
 .header .search-form input:hover {
-  outline: none;
+  outline   : none;
   box-shadow: 0 0 10px 0 rgba(1, 41, 112, 0.15);
-  border: 1px solid rgba(1, 41, 112, 0.3);
+  border    : 1px solid rgba(1, 41, 112, 0.3);
 }
 
 .header .search-form button {
-  border: 0;
-  padding: 0;
+  border     : 0;
+  padding    : 0;
   margin-left: -30px;
-  background: none;
+  background : none;
 }
 
 .header .search-form button i {
@@ -1150,7 +1149,7 @@ h6 {
 
 .dashboard .top-selling img {
   border-radius: 5px;
-  max-width: 60px;
+  max-width    : 60px;
 }
 
 /*--------------------------------------------------------------
@@ -1161,34 +1160,61 @@ h6 {
 }
 
 #progressbar-2 {
-  color: #455A64;
-  display: flex;
+  color          : #455A64;
+  display        : flex;
   justify-content: space-between;
-  padding: 0;
-
+  padding        : 0;
+  min-width      : 1050px;
 }
 
 #progressbar-2 li {
   list-style-type: none;
-  width: 15%;
-  text-align: center;
-  position: relative;
+  width          : 20%;
+  text-align     : center;
+  position       : relative;
 }
 
 #progressbar-2 li::before {
-  content: '✓';
-  font-family: "Font Awesome 5 Free";
-  font-weight: 900;
-  color: #c5cae9;
-  width: 37px;
-  height: 37px;
+  content         : '✓';
+  font-family     : "Font Awesome 5 Free";
+  font-weight     : 900;
+  color           : #c5cae9;
+  width           : 37px;
+  height          : 37px;
   background-color: #c5cae9;
-  border-radius: 50%;
-  line-height: 37px;
-  display: block;
-  margin: 0 auto 10px auto;
+  border-radius   : 50%;
+  line-height     : 37px;
+  display         : block;
+  margin          : 0 auto 10px 40px;
 
-}  
+}
+
+#progressbar-2 li::after {
+  content         : '';
+  position        : absolute;
+  width           : 100%;
+  height          : 5px;
+  background-color: #c5cae9;
+  top             : 17px;
+  left            : -65%;
+  z-index         : -1;
+}
+
+#progressbar-2 li:first-child::after {
+  content: none;
+}
+
+#progressbar-2 li.active::before,
+#progressbar-2 li.active::after {
+  background-color: #6520ff;
+  color           : white;
+}
+
+.ordericon .icon i {
+  font-size: 2rem;
+  color    : #6520ff;
+}
+
 .error-404 h1 {
   font-size    : 180px;
   font-weight  : 700;
@@ -1210,35 +1236,9 @@ h6 {
   padding   : 8px 30px;
 }
 
-#progressbar-2 li::after {
-  content: '';
-  position: absolute;
-  width: 170%;
-  height: 5px;
-  background-color: #c5cae9;
-  top: 17px;
-  left: -130%;
-  z-index: -1;
-}
-
-#progressbar-2 li:first-child::after {
-  content: none;
-}
-
-#progressbar-2 li.active::before,
-#progressbar-2 li.active::after {
-  background-color: #6520ff;
-  color: white;
-}
-
 .step-text {
-  font-size: 14px;
+  font-size  : 14px;
   font-weight: bold;
-}
-
-.ordericon .icon i {
-  font-size: 2.5rem;
-  color: #6520ff;
 }
 
 .dssp img {

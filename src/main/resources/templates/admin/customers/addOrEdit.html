@@ -1,293 +1,220 @@
 <!DOCTYPE html>
-<html
-  lang="en"
-  xmlns:th="http://www.thymeleaf.org"
-  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  layout:decorate="~{admin/index.html}"
->
-  <head> </head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{admin/index.html}">
 
-  <body>
-    <section layout:fragment="main">
-      <main id="main" class="main">
-        <div class="pagetitle">
-          <h1>Khách hàng</h1>
-          <nav>
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item">
-                <a href="index.html">Trang chủ</a>
-              </li>
-              <li class="breadcrumb-item active">Khách hàng</li>
-            </ol>
-          </nav>
-        </div>
-        <!-- End Page Title -->
+<head> </head>
 
-        <section class="section">
-          <div class="row">
-            <div class="col-lg-12">
-              <div class="card">
-                <div class="card-body mt-4">
-                  <!-- Floating Labels Form -->
-                  <form class="" action="" method="post">
-                    <div class="row mb-2">
-                      <!-- cột bên trái -->
+<body>
+  <section layout:fragment="main">
+    <div class="displayNotifications"></div>
+    <main id="main" class="main">
+      <div class="pagetitle">
+        <h1>
+          <span th:if="${customer.isEdit}">Cập nhật</span>
+          <span th:unless="${customer.isEdit}">Tạo</span> khách hàng
+        </h1>
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="index.html">Trang chủ/</a>
+            </li>
+            <li>
+              <a th:href="@{/admin/customers}">
+                <span>&nbsp; Khách hàng</span>
+              </a>
+            </li>
+          </ol>
+        </nav>
+      </div>
+      <!-- End Page Title -->
+
+      <section class="section">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card">
+              <div class="card-body mt-4">
+                <!-- Floating Labels Form -->
+                <form class="" th:action="@{/admin/customers/saveOrUpdate}" th:object="${customer}" method="post"
+                  enctype="multipart/form-data">
+                  <div class="row mb-2">
+                    <!-- cột bên trái -->
+                    <div class="col-md-6">
+                      <div class="form-floating mb-3">
+                        <input type="hidden" th:field="*{customerId}" />
+                        <input required th:field="*{fullname}" type="text" class="form-control" id="floatinghovaten"
+                          placeholder="Họ và tên" />
+                        <label for="floatinghovaten"><span class="text-danger">*</span> Họ và tên</label>
+                        <div th:if="${#fields.hasErrors('fullname')}" class="text-danger" th:errors="*{fullname}">Tên không hợp lệ</div>
+                      </div>
+
+                      <div class="form-floating mb-3">
+                        <input required th:field="*{phoneNumber}" type="text" class="form-control" id="floatingsodienthoai"
+                          placeholder="Số điện thoại" />
+                        <label for="floatingsodienthoai"><span class="text-danger">*</span> Số điện thoại</label>
+                        <div th:if="${#fields.hasErrors('phoneNumber')}" class="text-danger" th:errors="*{phoneNumber}">Số điện thoại không hợp lệ</div>
+                      </div>
+
+                      <div class="form-floating mb-3">
+                        <input th:field="*{birthday}" type="date" class="form-control" id="floatingngaysinh"
+                          placeholder="Ngày sinh" />
+                        <label for="floatingngaysinh"><span class="text-danger">*</span> Ngày sinh</label>
+                        <div th:if="${#fields.hasErrors('birthday')}" class="text-danger" th:errors="*{birthday}">Ngày sinh không hợp lệ</div>
+                      </div>
+
                       <div class="col-md-6">
-                        <div class="form-floating mb-3">
-                          <input
-                            type="text"
-                            class="form-control"
-                            id="floatinghovaten"
-                            placeholder="Họ và tên"
-                          />
-                          <label for="floatinghovaten"
-                            ><span class="text-danger">*</span> Họ và tên</label
-                          >
-                        </div>
-
-                        <div class="form-floating mb-3">
-                          <input
-                            type="text"
-                            class="form-control"
-                            id="floatingsodienthoai"
-                            placeholder="Số điện thoại"
-                          />
-                          <label for="floatingsodienthoai"
-                            ><span class="text-danger">*</span> Số điện
-                            thoại</label
-                          >
-                        </div>
-
-                        <div class="form-floating mb-3">
-                          <input
-                            type="date"
-                            class="form-control"
-                            id="floatingngaysinh"
-                            placeholder="Ngày sinh"
-                          />
-                          <label for="floatingngaysinh"
-                            ><span class="text-danger">*</span> Ngày sinh</label
-                          >
-                        </div>
-                      </div>
-                      <!-- cột bên trái -->
-
-                      <!-- cột bên phải -->
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label
-                            for="avatarInput"
-                            class="form-label ms-4"
-                            style="cursor: pointer"
-                            >Ảnh đại diện</label
-                          >
-                          <input
-                            type="file"
-                            name="avatar"
-                            id="avatarInput"
-                            class="form-control d-none"
-                            onchange="loadFile(event)"
-                          />
-                          <div class="avatar_wrapper">
-                            <img
-                              id="avatarImage"
-                              src="/admin/img/anhnentrang.jpg"
-                              alt="Chọn ảnh đại diện"
-                              class="rounded-circle border border-dark border-1"
-                              style="
-                                width: 150px;
-                                height: 150px;
-                                cursor: pointer;
-                                object-fit: cover;
-                              "
-                            />
-                            <!-- <span
-                                    class="position-absolute top-50 translate-middle-y"
-                                    style="margin-left: 60px"
-                                    >Chọn ảnh</span
-                                  > -->
-                          </div>
-                        </div>
-                      </div>
-                      <!-- cột bên phải -->
-                    </div>
-                    <fieldset class="row mb-3 mt-3">
-                      <legend class="col-12 col-md-12 col-form-label pt-0">
-                        <span class="text-danger">*</span> Giới tính
-                      </legend>
-                      <div class="col-12 col-md-12 d-flex align-items-center">
-                        <div class="form-check me-3">
-                          <input
-                            class="form-check-input"
-                            type="radio"
-                            name="gridRadios"
-                            id="radionam"
-                            value="option1"
-                            checked
-                          />
-                          <label
-                            class="form-check-label"
-                            for="radionam"
-                            style="cursor: pointer"
-                            >Nam</label
-                          >
-                        </div>
-                        <div class="form-check cursor-pointer">
-                          <input
-                            class="form-check-input"
-                            type="radio"
-                            name="gridRadios"
-                            id="radionu"
-                            value="option2"
-                          />
-                          <label
-                            class="form-check-label"
-                            for="radionu"
-                            style="cursor: pointer"
-                            >Nữ</label
-                          >
-                        </div>
-                      </div>
-                    </fieldset>
-                    <div class="row">
-                      <div class="col-md-12">
-                        <h6>Địa chỉ 1</h6>
-                      </div>
-                      <!-- Street -->
-                      <div class="col-md-6 mb-3">
-                        <div class="form-floating">
-                          <input
-                            type="text"
-                            class="form-control"
-                            id="floatingstreet"
-                            placeholder="Địa chị cụ thể"
-                          />
-                          <label for="floatingstreet"
-                            ><span class="text-danger">*</span> Địa chị cụ
-                            thể</label
-                          >
-                        </div>
-                      </div>
-                      <!-- Street -->
-                      <!-- City -->
-                      <div class="col-md-6 mb-3">
-                        <div class="form-floating">
-                          <select class="form-select floatingcity" id="">
-                            <option selected>Chọn Tỉnh/thành phố</option>
-                          </select>
-                          <label for="floatingCity"
-                            ><span class="text-danger">*</span> Chọn Tỉnh/thành
-                            phố</label
-                          >
-                        </div>
-                      </div>
-                      <!-- City -->
-                      <!-- District -->
-                      <div class="col-md-6 mb-3">
-                        <div class="form-floating">
-                          <select
-                            name=""
-                            id=""
-                            class="form-select floatingdistrict"
-                            disabled
-                          >
-                            <option selected>Chọn Quận/huyện</option>
-                          </select>
-                          <label for="floatingdistrict"
-                            ><span class="text-danger">*</span>
-                            Quận/huyện</label
-                          >
-                        </div>
-                      </div>
-                      <!-- District -->
-                      <!-- Ward -->
-                      <div class="col-md-6 mb-3">
-                        <div class="form-floating">
-                          <select
-                            name=""
-                            id=""
-                            class="form-select floatingward"
-                            disabled
-                          >
-                            <option selected>Chọn Xã/phường/thị trấn</option>
-                          </select>
-                          <label for="floatingward"
-                            ><span class="text-danger">*</span> Xã/phường/thị
-                            trấn</label
-                          >
-                        </div>
-                      </div>
-                      <!-- Ward -->
-                      <!-- Thêm, sửa, xóa, địa chỉ -->
-                      <div class="col-md-12">
-                        <div
-                          class="d-flex align-items-center justify-content-between mt-2"
-                        >
-                          <!-- bên trái set mặc định địa chỉ -->
-                          <div>
-                            <a href="#" class="btnDefault"
-                              ><i class="bi bi-star-fill"></i
-                            ></a>
-                          </div>
-                          <!-- bên phải thao tác đia chị -->
-                          <div>
-                            <a href="#" class="btn btn-success">
-                              <i class="bi bi-plus-circle"></i>
-                            </a>
-                            <a href="#" class="btn btn-warning"
-                              ><i class="bi bi-pencil-square"></i
-                            ></a>
-                            <a href="#" class="btn btn-danger">
-                              <i class="bi bi-trash"></i
-                            ></a>
-                          </div>
-                          <!-- bên phải thao tác đia chị -->
-                        </div>
-                        <hr />
-                      </div>
-                      <!-- Thêm, sửa, xóa, địa chỉ -->
-                    </div>
-
-                    <!-- hiện thị địa chỉ mới -->
-                    <div id="displayAddress"></div>
-                    <!-- hiện thị địa chỉ mới -->
-                    <!--  Icon thêm địa chỉ-->
-                    <div class="row">
-                      <div class="col-md-12 mb-3">
-                        <button
-                          id="addAddress"
-                          class="btn btn-outline-success py-1 px-3 rounded-pill"
-                        >
-                          <i class="bi bi-plus-circle"></i> Thêm địa chỉ
-                        </button>
+                        <label for="" class="form-label fs-5">Chọn tài khoản</label>
+                        <select th:field="*{account.accountId}" class="form-control" required>
+                          <option  th:each="account : ${accounts}" th:value="${account.accountId}"
+                            th:text="${account.email}"></option>
+                        </select>
                       </div>
                     </div>
-                    <!--  Icon thêm địa chỉ-->
-                    <div class="text-center mt-3">
-                      <button
-                        type="submit"
-                        class="btn btn-primary me-3 py-2 px-4 rounded-pill"
-                      >
-                        Thêm khách hàng
-                      </button>
-                      <button
-                        type="reset"
-                        class="btn btn-secondary py-2 px-6 rounded-pill"
-                      >
-                        Làm mới
+                    <!-- cột bên trái -->
+
+                    <!-- cột bên phải -->
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <input type="hidden" th:field="*{avatar}" />
+
+                        <label for="avatarInput" class="form-label ms-4" style="cursor: pointer">Ảnh đại diện</label>
+                        <input required type="file" th:field="*{imageFile}" id="avatarInput" class="form-control d-none"
+                          onchange="loadFile(event)" />
+                        <div class="avatar_wrapper d-flex align-items-center justify-content-center">
+                          <img id="avatarImage" th:src="@{'/uploads/' + ${customer.avatar}}"
+                            class="rounded-circle border border-dark border-1"
+                            style="width: 250px; height: 250px; cursor: pointer; object-fit: cover;" />
+                        </div>
+                      </div>
+                      <div th:if="${#fields.hasErrors('imageFile')}" class="text-danger" th:errors="*{imageFile}">Chọn Ảnh</div>
+
+                    </div>
+
+                    <!-- cột bên phải -->
+                  </div>
+                  <fieldset class="row mb-3 mt-3">
+                    <legend class="col-12 col-md-12 col-form-label pt-0">
+                      <span class="text-danger">*</span> Giới tính
+                    </legend>
+                    <div class="col-12 col-md-12 d-flex align-items-center">
+                      <div class="form-check me-3">
+                        <input required th:field="*{gender}" class="form-check-input" type="radio" id="radionam" value="1" />
+                        <label class="form-check-label" for="radionam">Nam</label>
+                      </div>
+                      <div class="form-check cursor-pointer">
+                        <input required th:field="*{gender}" class="form-check-input" type="radio" id="radionu" value="0" />
+                        <label class="form-check-label" for="radionu">Nữ</label>
+                      </div>
+                    </div>
+                  </fieldset>
+
+
+                  <div class="row">
+                    <div class="col-md-12">
+                      <h6>Địa chỉ 1</h6>
+                    </div>
+                    <!-- Street -->
+                    <div class="col-md-6 mb-3">
+                      <div class="form-floating">
+                        <input type="text" class="form-control" id="floatingstreet" placeholder="Địa chị cụ thể" />
+                        <label for="floatingstreet"><span class="text-danger">*</span> Địa chị cụ
+                          thể</label>
+                      </div>
+                    </div>
+                    <!-- Street -->
+                    <!-- City -->
+                    <div class="col-md-6 mb-3">
+                      <div class="form-floating">
+                        <select class="form-select floatingcity" id="">
+                          <option selected>Chọn Tỉnh/thành phố</option>
+                        </select>
+                        <label for="floatingCity"><span class="text-danger">*</span> Chọn Tỉnh/thành
+                          phố</label>
+                      </div>
+                    </div>
+                    <!-- City -->
+                    <!-- District -->
+                    <div class="col-md-6 mb-3">
+                      <div class="form-floating">
+                        <select name="" id="" class="form-select floatingdistrict" disabled>
+                          <option selected>Chọn Quận/huyện</option>
+                        </select>
+                        <label for="floatingdistrict"><span class="text-danger">*</span>
+                          Quận/huyện</label>
+                      </div>
+                    </div>
+                    <!-- District -->
+                    <!-- Ward -->
+                    <div class="col-md-6 mb-3">
+                      <div class="form-floating">
+                        <select name="" id="" class="form-select floatingward" disabled>
+                          <option selected>Chọn Xã/phường/thị trấn</option>
+                        </select>
+                        <label for="floatingward"><span class="text-danger">*</span> Xã/phường/thị
+                          trấn</label>
+                      </div>
+                    </div>
+                    <!-- Ward -->
+                    <!-- Thêm, sửa, xóa, địa chỉ -->
+                    <div class="col-md-12">
+                      <div class="d-flex align-items-center justify-content-between mt-2">
+                        <!-- bên trái set mặc định địa chỉ -->
+                        <div>
+                          <a href="#" class="btnDefault"><i class="bi bi-star-fill"></i></a>
+                        </div>
+                        <!-- bên phải thao tác đia chị -->
+                        <div>
+                          <a href="#" class="btn btn-success">
+                            <i class="bi bi-plus-circle"></i>
+                          </a>
+                          <a href="#" class="btn btn-warning"><i class="bi bi-pencil-square"></i></a>
+                          <a href="#" class="btn btn-danger">
+                            <i class="bi bi-trash"></i></a>
+                        </div>
+                        <!-- bên phải thao tác đia chị -->
+                      </div>
+                      <hr />
+                    </div>
+                    <!-- Thêm, sửa, xóa, địa chỉ -->
+                  </div>
+
+                  <!-- hiện thị địa chỉ mới -->
+                  <div id="displayAddress"></div>
+                  <!-- hiện thị địa chỉ mới -->
+                  <!--  Icon thêm địa chỉ-->
+                  <div class="row">
+                    <div class="col-md-12 mb-3">
+                      <button id="addAddress" class="btn btn-outline-success py-1 px-3 rounded-pill">
+                        <i class="bi bi-plus-circle"></i> Thêm địa chỉ
                       </button>
                     </div>
-                  </form>
-                  <!-- End floating Labels Form -->
-                </div>
+                  </div>
+                  <!--  Icon thêm địa chỉ-->
+                  <div class="text-center mt-3">
+                    <button class="btn btn-primary rounded-pill py-2 px-4 me-3" th:if="*{isEdit}">
+                      Cập nhật
+                    </button>
+                    <button class="btn btn-primary rounded-pill py-2 px-4 me-3" th:unless="*{isEdit}">
+                      Thêm khách hàng
+                    </button>
+                    <!-- <button type="reset" class="btn btn-danger me-3 px-4 rounded-pill">
+                      Xóa Khách hàng
+                    </button> -->
+                    <button type="reset" class="btn btn-secondary me-3 px-4 rounded-pill">
+                      Làm mới
+                    </button>
+                  </div>
+                </form>
+                <!-- End floating Labels Form -->
               </div>
             </div>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
+    </main>
 
-      <script src="/admin/js/customer.js"></script>
-      <script src="/admin/js/addressAPI.js"></script>
-    </section>
-  </body>
+    <script src="/admin/js/customer.js"></script>
+    <script src="/admin/js/addressAPI.js"></script>
+  </section>
+</body>
+
 </html>

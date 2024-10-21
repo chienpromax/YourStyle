@@ -35,7 +35,6 @@
                     <div class="d-flex align-items-center pt-3">
                         <a class="link-secondary me-3" href="/yourstyle/cartdetail">
                             <i class="fas fa-shopping-cart"></i>
-                            <span class="badge rounded-pill badge-notification bg-danger">1</span>
                         </a>
                         <a class="link-secondary me-3" href="/productfavorites">
                             <i class="fa-solid fa-heart"></i>
@@ -45,33 +44,44 @@
                             <a data-mdb-dropdown-init class="link-secondary me-3 dropdown-toggle hidden-arrow" href="#"
                                 id="navbarDropdownMenuLink" role="button" aria-expanded="false">
                                 <i class="fa-solid fa-globe"></i>
+                                <span class="badge rounded-pill badge-notification bg-danger">1</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                                <li>
+                                    <a class="dropdown-item" href="#">THÔNG BÁO</a>
+                                </li>
                                 <li>
                                     <a class="dropdown-item" href="#">LIÊN HỆ</a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" th:href="@{/yourstyle/about}">GIỚI THIỆU</a>
+                                    <a class="dropdown-item" href="#">GIỚI THIỆU</a>
                                 </li>
                             </ul>
                         </div>
-
+                        <!-- th:if="${not #lists.isEmpty(principal)}" để kiểm tra xem người dùng đã đăng nhập hay chưa. Nếu có, liên kết "ĐĂNG XUẤT" sẽ hiển thị. -->
                         <div class="dropdown">
                             <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow"
                                 href="#" id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
-                                <img src="/site/images/logo/meme-meo-nham-hiem.png" class="rounded-circle"
-                                   width="25" height="25" alt="Black and White Portrait of a Man" loading="lazy" />
+                                <div>
+                                    <img src="/site/images/logo/meme-meo-nham-hiem.png" class="rounded-circle"
+                                        width="25" height="25" alt="Black and White Portrait of a Man" loading="lazy">
+                                    <span th:text="${userName}" style="margin-left: 5px;"></span>
+                                </div>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
                                 <li>
-                                    <a class="dropdown-item" th:href="@{/yourstyle/accounts/login}">ĐĂNG NHẬP</a>
-
+                                    <a class="dropdown-item" th:if="${not#lists.isEmpty(principal)}"
+                                        th:href="@{/yourstyle/accounts/logout}">ĐĂNG XUẤT</a>
                                 </li>
-                                <li>
+                                <li th:if="${#lists.isEmpty(principal)}">
+                                    <a class="dropdown-item" th:href="@{/yourstyle/accounts/login}">ĐĂNG NHẬP</a>
+                                </li>
+                                <li th:if="${#lists.isEmpty(principal)}">
                                     <a class="dropdown-item" th:href="@{/yourstyle/accounts/register}">ĐĂNG KÝ</a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" th:href="@{/yourstyle/accounts/forgot-password}">QUÊN MẬT KHẨU</a>
+                                    <a class="dropdown-item" th:href="@{/yourstyle/accounts/forgotpassword}">QUÊN MẬT
+                                        KHẨU</a>
                                 </li>
                             </ul>
                         </div>
@@ -195,8 +205,7 @@
                                                 <a href="123">
                                                     <div class="bg-image hover-overlay ripple mb-3"
                                                         data-mdb-ripple-color="light">
-                                                        <img src="/site/images/ao/ÁO SIÊU NHÂN.png"
-                                                            class="img-fluid" />
+                                                        <img src="/site/images/ao/ÁO SIÊU NHÂN.png" class="img-fluid" />
                                                     </div>
                                                 </a>
                                             </div>
@@ -207,8 +216,7 @@
                                                 <a href="123">
                                                     <div class="bg-image hover-overlay ripple mb-3"
                                                         data-mdb-ripple-color="light">
-                                                        <img src="/site/images/ao/ÁO LÊN NAM.png"
-                                                            class="img-fluid" />
+                                                        <img src="/site/images/ao/ÁO LÊN NAM.png" class="img-fluid" />
                                                     </div>
                                                 </a>
                                             </div>
@@ -230,8 +238,7 @@
                                                 <a href="123">
                                                     <div class="bg-image hover-overlay ripple mb-3"
                                                         data-mdb-ripple-color="light">
-                                                        <img src="/site/images/ao/ÁO KHOÁC NAM.png"
-                                                            class="img-fluid" />
+                                                        <img src="/site/images/ao/ÁO KHOÁC NAM.png" class="img-fluid" />
                                                     </div>
                                                 </a>
                                             </div>
@@ -271,8 +278,7 @@
                                                 <a href="123">
                                                     <div class="bg-image hover-overlay ripple mb-3"
                                                         data-mdb-ripple-color="light">
-                                                        <img src="/site/images/ao/GIẦY CAO BỒI.png"
-                                                            class="img-fluid" />
+                                                        <img src="/site/images/ao/GIẦY CAO BỒI.png" class="img-fluid" />
                                                     </div>
                                                 </a>
                                             </div>
@@ -283,8 +289,7 @@
                                                 <a href="123">
                                                     <div class="bg-image hover-overlay ripple mb-3"
                                                         data-mdb-ripple-color="light">
-                                                        <img src="/site/images/ao/GIẦY CAO GOT.jpg"
-                                                            class="img-fluid" />
+                                                        <img src="/site/images/ao/GIẦY CAO GOT.jpg" class="img-fluid" />
                                                     </div>
                                                 </a>
                                             </div>

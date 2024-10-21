@@ -27,5 +27,5 @@ public class Role implements Serializable{
 	@Column(name = "name",nullable = false,length= 20,unique = true)
 	private String name;
 	@OneToMany(mappedBy = "role")
-	private List<Account> account;
+	private List<Account> accounts;
 }

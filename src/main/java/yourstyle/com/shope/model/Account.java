@@ -37,4 +37,7 @@ public class Account implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "roleId", referencedColumnName = "roleId")
 	private Role role;
-}
+	
+	 // Thêm thuộc tính token để lưu trữ mã đặt lại mật khẩu
+		 private String token;
+	}

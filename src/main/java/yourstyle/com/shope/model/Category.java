@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+import org.springframework.web.multipart.MultipartFile;
+
 
 @Data
 @NoArgsConstructor
@@ -34,8 +36,7 @@ public class Category implements Serializable {
     @JoinColumn(name = "parent_id")
     private Category parentCategory;  // Đây là quan hệ với chính bảng `Category`.
 
-    // Thêm vào để giữ danh sách các category con, hỗ trợ quan hệ đệ quy.
-    // @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL)
-    // private List<Category> subCategories;
+    @Transient // Để không lưu vào database
+    private MultipartFile imageFile;
 
 }

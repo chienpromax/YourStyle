@@ -10,7 +10,6 @@ import lombok.Data;
 public class CategoryDto {
 
     private Integer categoryId;
-
     @NotEmpty(message = "Tên danh mục không được để trống")
     @Size(min = 2, max = 100, message = "Tên danh mục phải từ 2 đến 100 ký tự")
     private String name;

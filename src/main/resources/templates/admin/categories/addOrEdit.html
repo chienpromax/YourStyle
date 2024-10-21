@@ -2,7 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
     layout:decorate="~{admin/index.html}">
 
-<head> </head>
+<head>
+</head>
 
 <body>
     <section layout:fragment="main">
@@ -14,7 +15,7 @@
                 <h1>Danh Mục Sản Phẩm</h1>
                 <nav>
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="/admin/home">Home</a></li>
                         <li class="breadcrumb-item active">Danh Mục Sản Phẩm</li>
                     </ol>
                 </nav>
@@ -26,56 +27,70 @@
                     <div class="col-lg-3">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title" th:text="${category != null} ? 'Cập nhật danh mục' : 'Thêm danh mục'">Thêm danh mục</h5>
-                                <form class="row g-3" th:action="${category != null} ? @{/admin/categories/update} : @{/admin/categories/add}" 
+                                <h5 class="card-title"
+                                    th:text="${category != null} ? 'Cập nhật danh mục' : 'Thêm danh mục'">Thêm danh mục
+                                </h5>
+                                <form class="row g-3" id="yourFormId"
+                                    th:action="${category != null} ? @{/admin/categories/update} : @{/admin/categories/add}"
                                     enctype="multipart/form-data" method="post">
-                                    
+
                                     <!-- ID danh mục nếu đang sửa -->
-                                    <input type="hidden" th:if="${category != null}" th:value="${category.categoryId}" name="categoryId"/>
-                    
+                                    <input type="hidden" th:if="${category != null}" th:value="${category.categoryId}"
+                                        name="categoryId" />
+
                                     <div class="col-md-12">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control" id="name" name="name" 
-                                                   th:value="${category != null} ? ${category.name} : ''"
-                                                   placeholder="Tên danh mục" required>
+                                            <input type="text" class="form-control" id="name" name="name"
+                                                th:value="${category != null} ? ${category.name} : ''"
+                                                placeholder="Tên danh mục" required>
                                             <label for="name">Tên danh mục</label>
                                         </div>
                                     </div>
-                    
+
                                     <div class="col-md-12">
                                         <div class="form-floating">
                                             <select class="form-select" id="categoryParent" name="parentCategory">
                                                 <option value="">Không có</option>
                                                 <th:block th:each="parent : ${listctparents}">
-                                                    <option th:value="${parent.categoryId}" 
-                                                            th:text="${parent.name}" 
-                                                            th:selected="${category != null and category.parentCategory != null and category.parentCategory.categoryId == parent.categoryId}">
+                                                    <option th:value="${parent.categoryId}" th:text="${parent.name}"
+                                                        th:selected="${category != null and category.parentCategory != null and category.parentCategory.categoryId == parent.categoryId}">
                                                     </option>
                                                 </th:block>
                                             </select>
                                             <label for="categoryParent">Danh mục cha</label>
                                         </div>
                                     </div>
-                    
+
                                     <div class="row mb-3 py-3">
                                         <label class="form-label" for="image">Chọn ảnh danh mục</label>
-                                        <input type="file"  th:value="${category != null}" class="form-control" id="image" name="image" accept="image/*" required/>
+
                                         <!-- Hiển thị ảnh hiện tại nếu có -->
-                                        <div th:if="${category != null && category.image != null}">
-                                            <img th:src="@{${category.image}}" alt="Ảnh danh mục hiện tại" width="100"/>
+                                        <div>
+                                            <img id="image"
+                                                th:src="@{${category != null && category.image != null} ? ${'/uploads/' + category.image} : '/uploads/default-image-path.jpg'}"
+                                                alt="Chọn ảnh danh mục" width="100" style="cursor: pointer;"
+                                                onclick="document.getElementById('imageInput').click();" />
                                         </div>
+
+                                        <!-- Input chọn file ảnh ẩn -->
+                                        <input type="file" class="form-control d-none" id="imageInput" name="imageFile"
+                                            accept="image/*" onchange="loadFile(event)" />
+                                        <!-- Vị trí hiển thị thông báo lỗi -->
+                                        <div id="error-message" style="color: red; display: none;"></div>
                                     </div>
-                    
+
+
                                     <div class="text-center">
                                         <!-- Nút Thêm hoặc Cập nhật tùy theo ngữ cảnh -->
-                                        <button type="submit" class="btn btn-primary" th:text="${category != null} ? 'Cập nhật' : 'Thêm'">Thêm</button>
+                                        <button type="submit" class="btn btn-primary"
+                                            th:text="${category != null} ? 'Cập nhật' : 'Thêm'">Thêm</button>
                                         <button type="reset" class="btn btn-secondary">Làm mới</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
                     </div>
-                                        
+
                     <!-- Thông tin danh mục -->
 
                     <!-- Bảng danh mục -->
@@ -84,70 +99,88 @@
                             <div class="card-body">
                                 <h5 class="card-title text-center">Danh sách danh mục sản phẩm</h5>
                                 <div class="table-responsive">
-                                <!-- Table with stripped rows -->
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th scope="col">Hình ảnh</th>
-            <th scope="col">Tên danh mục</th>
-            <th scope="col">Doanh mục cha</th>
-            <th scope="col">Trạng thái</th>
-            <th scope="col">Hành động</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr th:each="category : ${categoryPage.content}">
-            <td><img th:src="${category.image != null} ? @{${category.image}} : 'https://via.placeholder.com/50'" 
-                alt="Ảnh danh mục" width="50"></td>
+                                    <!-- Table with stripped rows -->
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Hình ảnh</th>
+                                                <th scope="col">Tên danh mục</th>
+                                                <th scope="col">Doanh mục cha</th>
+                                                <th scope="col">Trạng thái</th>
+                                                <th scope="col">Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="category : ${categoryPage.content}">
+                                                <td>
+                                                    <img th:if="${category.image != null}"
+                                                        th:src="@{'/uploads/' + ${category.image}}" alt="Ảnh danh mục"
+                                                        width="50" />
+                                                    <img th:unless="${category.image != null}"
+                                                        src="https://via.placeholder.com/50" alt="Không có ảnh"
+                                                        width="50" />
+                                                </td>
 
-            <!-- Category Name with ellipsis for long text -->
-            <td class="text-truncate"  th:text="${category.name}"></td>
+                                                <td class="text-truncate category-name" th:text="${category.name}"></td>
+                                                <td
+                                                    th:text="${category.parentCategory != null ? category.parentCategory.name : 'Không có'}">
+                                                </td>
 
-            <td th:text="${category.parentCategory != null ? category.parentCategory.name : 'N/A'}"></td>
-            
-            <td>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" th:id="'statusToggle'+ ${category.categoryId}" th:checked="${category.status}" />
-                    <label class="form-check-label" th:for="'statusToggle'+ ${category.categoryId}">
-                        [[${category.status} ? 'Hoạt động' : 'Bị khóa']]
-                    </label>
-                </div>
-            </td>
+                                                <td>
+                                                    <div class="form-check form-switch ">
+                                                        <input class="form-check-input status-toggle" type="checkbox"
+                                                            cli th:id="'statusToggle' + ${category.categoryId}"
+                                                            th:checked="${category.status}"
+                                                            th:attr="data-category-id=${category.categoryId}" />
+                                                        <label class="form-check-label"
+                                                            th:for="'statusToggle' + ${category.categoryId}">
+                                                            [[${category.status} ? 'Hoạt động' : 'Bị khóa']]
+                                                        </label>
+                                                    </div>
+                                                </td>
 
-            <!-- Action buttons aligned horizontally -->
-            <td class="text-nowrap">
-                <a class="btn btn-warning btn-sm" th:href="@{'/admin/categories/edit/' + ${category.categoryId}}">Sửa</a>
-                
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    Xóa
-                </button>
+                                                <td class="text-nowrap">
+                                                    <a class="btn btn-warning btn-sm"
+                                                        th:href="@{'/admin/categories/edit/' + ${category.categoryId}}">Sửa</a>
 
-                <!-- Modal for deletion confirmation -->
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">Xác nhận xóa</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                Bạn có chắc chắn xóa danh mục này không?
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                <a class="btn btn-danger" th:href="@{'/admin/categories/delete/' + ${category.categoryId}}">Xóa</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </td>
-        </tr>
-    </tbody>
-</table>
+                                                    <!-- Button trigger modal -->
+                                                    <button type="button" class="btn btn-danger btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        th:data-bs-target="'#deleteModal' + ${category.categoryId}">
+                                                        Xóa
+                                                    </button>
 
-                            </div>
-                                <!-- End Table with stripped rows -->
+                                                    <!-- Modal for deletion confirmation -->
+                                                    <div class="modal fade"
+                                                        th:id="'deleteModal' + ${category.categoryId}" tabindex="-1"
+                                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h1 class="modal-title fs-5" id="exampleModalLabel">
+                                                                        Xác nhận xóa
+                                                                    </h1>
+                                                                    <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    Bạn có chắc chắn muốn xóa danh mục này không?
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                        data-bs-dismiss="modal">Hủy</button>
+                                                                    <a class="btn btn-danger"
+                                                                        th:href="@{'/admin/categories/delete/' + ${category.categoryId}}">Xóa</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
 
                                 <!-- Pagination -->
                                 <nav aria-label="Page navigation example">
@@ -175,7 +208,9 @@
                     <!-- Bảng danh mục -->
                 </div>
             </section>
+
         </main>
+        <script src="/admin/js/categoryAddOrEdit.js"></script>
     </section>
 </body>
 

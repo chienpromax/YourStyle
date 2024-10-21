@@ -24,9 +24,9 @@
                         <form th:action="@{/admin/vouchers/saveOrUpdate}" th:object="${voucher}" method="post">
                             <div class="row">
                                 <!-- Form Section - Bên trái -->
-
-                                <div class="col-md-5 mt-3">
+                                <div class="col-md-12 mt-3">
                                     <div class="row g-3">
+
                                         <!-- Hiển thị voucherId chỉ khi chỉnh sửa -->
                                         <div class="col-md-12" th:if="${voucher.voucherId != null}">
                                             <div class="form-floating">
@@ -38,50 +38,90 @@
                                         <div class="col-md-12">
                                             <div class="form-floating">
                                                 <input th:field="*{voucherCode}" type="text" class="form-control"
+                                                    th:classappend="${#fields.hasErrors('voucherCode')} ? 'is-invalid' : ''"
                                                     id="floatingMa" placeholder="Mã phiếu giảm giá">
                                                 <label for="floatingMa">Mã phiếu giảm giá</label>
+                                                <!-- Hiển thị lỗi voucherCode -->
+                                                <div th:if="${#fields.hasErrors('voucherCode')}"
+                                                    class="invalid-feedback">
+                                                    <p th:errors="*{voucherCode}" class="mb-0"></p>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-floating">
                                                 <input th:field="*{voucherName}" type="text" class="form-control"
+                                                    th:classappend="${#fields.hasErrors('voucherName')} ? 'is-invalid' : ''"
                                                     id="floatingName" placeholder="Tên phiếu giảm giá">
                                                 <label for="floatingName">Tên phiếu giảm giá</label>
+                                                <!-- Hiển thị lỗi voucherName -->
+                                                <div th:if="${#fields.hasErrors('voucherName')}"
+                                                    class="invalid-feedback">
+                                                    <p th:errors="*{voucherName}" class="mb-0"></p>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-floating">
-                                                <input th:field="*{discountAmount}" type="text" class="form-control"
+                                                <input th:field="*{discountAmount}" type="number" class="form-control"
+                                                    th:classappend="${#fields.hasErrors('discountAmount')} ? 'is-invalid' : ''"
                                                     id="floatingDiscountValue" placeholder="Số tiền giảm giá">
                                                 <label for="floatingDiscountValue">Giảm giá</label>
+                                                <div th:if="${#fields.hasErrors('discountAmount')}"
+                                                    class="invalid-feedback">
+                                                    <p th:errors="*{discountAmount}" class="mb-0"></p>
+                                                </div>
                                             </div>
                                         </div>
+
                                         <div class="col-md-6">
                                             <div class="form-floating">
-                                                <input th:field="*{maxTotalAmount}" type="text" class="form-control"
+                                                <input th:field="*{maxTotalAmount}" type="number" class="form-control"
+                                                    th:classappend="${#fields.hasErrors('maxTotalAmount')} ? 'is-invalid' : ''"
                                                     id="floatingMaxDiscount" placeholder="Giá trị tối đa">
                                                 <label for="floatingMaxDiscount">Giá trị tối đa</label>
+                                                <div th:if="${#fields.hasErrors('maxTotalAmount')}"
+                                                    class="invalid-feedback">
+                                                    <p th:errors="*{maxTotalAmount}" class="mb-0"></p>
+                                                </div>
                                             </div>
                                         </div>
+
                                         <div class="col-md-6">
                                             <div class="form-floating">
-                                                <input th:field="*{maxUses}" type="text" class="form-control"
+                                                <input th:field="*{maxUses}" type="number" class="form-control"
+                                                    th:classappend="${#fields.hasErrors('maxUses')} ? 'is-invalid' : ''"
                                                     id="floatingQuantity" placeholder="Số lượng">
                                                 <label for="floatingQuantity">Số lượng</label>
+                                                <div th:if="${#fields.hasErrors('maxUses')}" class="invalid-feedback">
+                                                    <p th:errors="*{maxUses}" class="mb-0"></p>
+                                                </div>
                                             </div>
                                         </div>
+
                                         <div class="col-md-6">
                                             <div class="form-floating">
-                                                <input th:field="*{minTotalAmount}" type="text" class="form-control"
+                                                <input th:field="*{minTotalAmount}" type="number" class="form-control"
+                                                    th:classappend="${#fields.hasErrors('minTotalAmount')} ? 'is-invalid' : ''"
                                                     id="floatingCondition" placeholder="Điều kiện">
                                                 <label for="floatingCondition">Giá trị tối thiểu</label>
+                                                <div th:if="${#fields.hasErrors('minTotalAmount')}"
+                                                    class="invalid-feedback">
+                                                    <p th:errors="*{minTotalAmount}" class="mb-0"></p>
+                                                </div>
                                             </div>
                                         </div>
+
                                         <div class="col-md-12">
                                             <div class="form-floating">
                                                 <input th:field="*{maxUsesUser}" type="number" class="form-control"
+                                                    th:classappend="${#fields.hasErrors('maxUsesUser')} ? 'is-invalid' : ''"
                                                     id="floatingMaxUsesUser" placeholder="Số lần sử dụng">
                                                 <label for="floatingMaxUsesUser">Số lần sử dụng</label>
+                                                <div th:if="${#fields.hasErrors('maxUsesUser')}"
+                                                    class="invalid-feedback">
+                                                    <p th:errors="*{maxUsesUser}" class="mb-0"></p>
+                                                </div>
                                             </div>
                                         </div>
                                         <!-- ---------Loại-------------- -->
@@ -102,18 +142,26 @@
                                         <div class="col-md-12">
                                             <div class="form-floating">
                                                 <input th:field="*{startDate}" type="text"
-                                                    class="form-control datetimepicker bg-white" id="datetimepickerFrom"
-                                                    placeholder="Từ ngày">
+                                                    class="form-control datetimepicker bg-white"
+                                                    th:classappend="${#fields.hasErrors('startDate')} ? 'is-invalid' : ''"
+                                                    id="datetimepickerFrom" placeholder="Từ ngày">
                                                 <label for="datetimepickerFrom">Từ ngày</label>
+                                                <div th:if="${#fields.hasErrors('startDate')}" class="invalid-feedback">
+                                                    <p th:errors="*{startDate}" class="mb-0"></p>
+                                                </div>
                                             </div>
                                         </div>
 
                                         <div class="col-md-12 mt-3">
                                             <div class="form-floating">
                                                 <input th:field="*{endDate}" type="text"
-                                                    class="form-control datetimepicker bg-white" id="datetimepickerTo"
-                                                    placeholder="Đến ngày">
+                                                    class="form-control datetimepicker bg-white"
+                                                    th:classappend="${#fields.hasErrors('endDate')} ? 'is-invalid' : ''"
+                                                    id="datetimepickerTo" placeholder="Đến ngày">
                                                 <label for="datetimepickerTo">Đến ngày</label>
+                                                <div th:if="${#fields.hasErrors('endDate')}" class="invalid-feedback">
+                                                    <p th:errors="*{endDate}" class="mb-0"></p>
+                                                </div>
                                             </div>
                                         </div>
                                         <!-- Trạng thái -->
@@ -136,146 +184,27 @@
                                                 </div>
                                             </div>
                                         </fieldset>
-
                                         <div class="col-md-12">
                                             <div class="form-floating">
                                                 <textarea th:field="*{description}" class="form-control"
+                                                    th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''"
                                                     id="floatingTextarea" placeholder="Mô tả"
                                                     style="height: 100px;"></textarea>
                                                 <label for="floatingTextarea">Mô tả</label>
+                                                <div th:if="${#fields.hasErrors('description')}"
+                                                    class="invalid-feedback">
+                                                    <p th:errors="*{description}" class="mb-0"></p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
 
-                                <!-- Search, Table, Pagination - Bên phải -->
-                                <div class="col-md-7 mt-3">
-                                    <!-- Search input section -->
-                                    <div class="position-relative w-100">
-                                        <span class="position-absolute search start-0 top-50 translate-middle-y ps-2">
-                                            <i class="bi bi-search"></i>
-                                        </span>
-                                        <input class="form-control w-100 ps-5" placeholder="Tìm kiếm bằng #, tên..."
-                                            disabled id="searchInput">
                                     </div>
-                                    <div class="container mt-3">
-                                        <div class="table-responsive mt-3">
-                                            <table class="table table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th scope="col" width="5%">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                id="selectAll" onclick="toggleAll(this)">
-                                                        </th>
-                                                        <th scope="col" width="5%">#</th>
-                                                        <th scope="col" width="20%">Tên</th>
-                                                        <th scope="col" width="20%">Số điện thoại</th>
-                                                        <th scope="col" width="20%">Giới tính</th>
-                                                        <th scope="col" width="20%">Ngày sinh</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <!-- Đổ dữ liệu danh sách khách hàng -->
-                                                    <!-- <tr th:each="customer : ${customers}">
-                                                        <th>
-                                                            <input class="form-check-input" type="checkbox"
-                                                                th:value="${customer.customerId}"
-                                                                name="selectedCustomers" />
-                                                        </th>
-                                                        <td th:text="${customer.customerId}"></td>
-                                                        <td>
-                                                            <img src="https://i.imgur.com/VKOeFyS.png" width="25">
-                                                            <span th:text="${customer.fullname}"></span>
-                                                        </td>
-                                                        <td th:text="${customer.phonenumber}"></td>
-                                                        <td th:text="${customer.gender ? 'Nam' : 'Nữ'}"></td>
-                                                        <td th:text="${customer.birthDate}"></td>
-                                                    </tr> -->
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                    <div class="col-12 text-center mt-3">
+                                        <button type="submit" class="btn btn-outline-primary">Gửi</button>
+                                        <a th:href="@{/admin/vouchers/add}" type="reset"
+                                            class="btn btn-outline-secondary">Làm mới</a>
                                     </div>
 
-                                    <script>
-                                        function toggleCustomerSection() {
-                                            const isPublic = document.querySelector('input[name="isPublic"]:checked').value === 'true';
-                                            const inputs = document.querySelectorAll(
-                                                'input[name="selectedCustomers"], #selectAll, #searchInput, #paginationNav a'
-                                            );
-
-                                            // Vô hiệu hóa hoặc kích hoạt các input và liên kết phân trang tùy theo trạng thái radio
-                                            inputs.forEach(input => input.disabled = isPublic);
-
-                                            // Nếu là phân trang (thẻ <a>), thêm/xóa class 'disabled' để vô hiệu hóa
-                                            document.querySelectorAll('#paginationNav .page-item').forEach(item => {
-                                                item.classList.toggle('disabled', isPublic);
-                                            });
-                                        }
-
-                                        function toggleAll(source) {
-                                            const checkboxes = document.querySelectorAll('input[name="selectedCustomers"]');
-                                            checkboxes.forEach(checkbox => {
-                                                checkbox.checked = source.checked;
-                                            });
-                                        }
-
-                                        // Gọi hàm này ngay khi trang được tải để đảm bảo trạng thái đúng
-                                        document.addEventListener('DOMContentLoaded', toggleCustomerSection);
-                                    </script>
-
-
-                                    <nav aria-label="Page navigation" id="paginationNav">
-                                        <ul class="pagination justify-content-center">
-                                            <!-- Đầu -->
-                                            <li class="page-item">
-                                                <a class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                    href="#" aria-label="First">
-                                                    <span aria-hidden="true">&laquo;</span>
-                                                </a>
-                                            </li>
-                                            <!-- Trước -->
-                                            <li class="page-item">
-                                                <a class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                    href="#" aria-label="Previous">
-                                                    <span aria-hidden="true">&lsaquo;</span>
-                                                </a>
-                                            </li>
-                                            <!-- Trang Số -->
-                                            <li class="page-item"><a
-                                                    class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                    href="#">1</a></li>
-                                            <li class="page-item"><a
-                                                    class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                    href="#">2</a></li>
-                                            <li class="page-item"><a
-                                                    class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                    href="#">3</a></li>
-                                            <li class="page-item disabled"><a
-                                                    class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                    href="#">...</a></li>
-                                            <li class="page-item"><a
-                                                    class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                    href="#">10</a></li>
-                                            <!-- Sau -->
-                                            <li class="page-item">
-                                                <a class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                    href="#" aria-label="Next">
-                                                    <span aria-hidden="true">&rsaquo;</span>
-                                                </a>
-                                            </li>
-                                            <!-- Cuối -->
-                                            <li class="page-item">
-                                                <a class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                    href="#" aria-label="Last">
-                                                    <span aria-hidden="true">&raquo;</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </nav>
-                                </div>
-                                <div class="col-12 text-center mt-3">
-                                    <button type="submit" class="btn btn-outline-primary">Gửi</button>
-                                    <button type="reset" class="btn btn-outline-secondary">Xóa</button>
                                 </div>
 
                             </div>

@@ -40,7 +40,8 @@
                                 </div>
                                 <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
                                     <!-- Xuất Excel -->
-                                    <button class="btn btn-outline-secondary">Xuất Excel</button>
+                                    <a th:href="@{/admin/vouchers/export/excel}" class="btn btn-outline-secondary">Xuất
+                                        Excel</a>
                                     <a th:href="@{/admin/vouchers/add}" class="btn btn-outline-primary ms-4">+ Tạo
                                         mới</a>
                                 </div>
@@ -104,7 +105,7 @@
                                             <th>Trạng thái</th>
                                             <th>Ngày bắt đầu</th>
                                             <th>Ngày kết thúc</th>
-                                            <th>ID người dùng</th>
+                                            <th>ID khách</th>
                                             <th>ID người tạo</th>
                                             <th>Mô tả</th>
                                             <th>Hành động</th>
@@ -115,18 +116,36 @@
                                             <td>[[${voucher.voucherCode}]]</td>
                                             <td>[[${voucher.voucherName}]]</td>
                                             <td>[[${voucher.discountAmount}]]</td>
-                                            <td><span class="badge bg-success">[[${voucher.type}]]</span></td>
+                                            <td>
+                                                <span th:switch="${voucher.type}">
+                                                    <span th:case="1" class="badge bg-success">Giảm giá trực tiếp</span>
+                                                    <span th:case="2" class="badge bg-info">Giảm giá phần trăm</span>
+                                                    <span th:case="3" class="badge bg-warning">Giảm giá vận
+                                                        chuyển</span>
+                                                    <span th:case="4" class="badge bg-primary">Voucher</span>
+                                                </span>
+                                            </td>
                                             <td>[[${voucher.minTotalAmount}]]</td>
                                             <td>[[${voucher.maxTotalAmount}]]</td>
                                             <td>[[${voucher.maxUses}]]</td>
                                             <td>[[${voucher.maxUsesUser}]]</td>
                                             <td>[[${voucher.createAt}]]</td>
-                                            <td><span class="badge bg-info text-dark">[[${voucher.isPublic}]]</span>
+                                            <td><span class="badge bg-info text-dark">[[${voucher.isPublic ? 'Công
+                                                    khai':'Cá Nhân'}]]</span>
                                             </td>
                                             <td>[[${voucher.startDate}]]</td>
                                             <td>[[${voucher.endDate}]]</td>
-                                            <td>[[${voucher.userId}]]</td>
-                                            <td>[[${voucher.createBy}]]</td>
+                                            <td>
+                                                <div th:if="${voucher.voucherCustomers}">
+                                                    <div th:each="voucherCustomer : ${voucher.voucherCustomers}">
+                                                        <p th:text="${voucherCustomer.customer.customerId}"></p>
+                                                    </div>
+                                                </div>
+                                                <div th:unless="${voucher.voucherCustomers}">
+                                                    <p>Không có khách hàng</p>
+                                                </div>
+                                            </td>
+                                            <td>[[${voucher.account.accountId}]]</td>
                                             <td>[[${voucher.description}]]</td>
                                             <td>
                                                 <!-- Chỉnh sửa Voucher -->
@@ -141,6 +160,14 @@
                                                     onclick="return confirm('Bạn có chắc chắn muốn xóa voucher này không?');">
                                                     <i class="bi bi-trash" title="Xóa"></i>
                                                 </a>
+
+                                                <!-- Thêm khách hàng (chỉ hiển thị nếu không công khai) -->
+                                                <span th:if="${!voucher.isPublic}">
+                                                    <a style="cursor: pointer; font-size: 21px; color: green;"
+                                                        th:href="@{/admin/vouchers/addCustomer/{voucherId}(voucherId=${voucher.voucherId})}">
+                                                        <i class="bi bi-person-plus" title="Thêm khách hàng"></i>
+                                                    </a>
+                                                </span>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -197,8 +224,6 @@
                                         </li>
                                     </ul>
                                 </nav>
-
-
                             </div>
                         </div>
                     </div>

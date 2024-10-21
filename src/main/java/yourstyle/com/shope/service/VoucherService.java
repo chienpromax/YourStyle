@@ -1,6 +1,7 @@
 package yourstyle.com.shope.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -22,5 +23,7 @@ public interface VoucherService {
 
     Page<Voucher> advancedSearch(String value, Boolean isPublic, Integer type, LocalDateTime fromDate,
             LocalDateTime toDate, Pageable pageable);
+
+    List<Voucher> findAll();
 
 }

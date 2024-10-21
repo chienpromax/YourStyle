@@ -1,5 +1,6 @@
 package yourstyle.com.shope.model;
 
+import java.util.List;
 import java.io.Serializable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.sql.Timestamp;
 
@@ -60,11 +63,14 @@ public class Voucher implements Serializable {
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp createAt = new Timestamp(System.currentTimeMillis());
 
-    private Integer userId;
-
     private Boolean isPublic;
 
-    @Column(nullable = false)
-    private Integer createBy;
+    @ManyToOne
+    @JoinColumn(name = "createBy", nullable = false)
+    private Account account;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "voucher", fetch = FetchType.EAGER)
+    List<VoucherCustomer> voucherCustomers;
 
 }

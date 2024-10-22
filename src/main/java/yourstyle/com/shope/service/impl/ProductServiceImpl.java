@@ -51,10 +51,6 @@ public class ProductServiceImpl implements ProductService{
 		return productRepository.findAll(sort);
 	}
 
-	// @Override
-    // public Page<Product> searchByNameOrPhone(String value, Pageable pageable) {
-    //     return productRepository.findByFullnameContainingOrPhoneNumberContaining(value, value, pageable);
-    // }
 
 	@Override
 	public List<Product> findAll() {
@@ -76,13 +72,8 @@ public class ProductServiceImpl implements ProductService{
 		productRepository.deleteById(id);
 	}
 
-	// @Override
-    // public List<product> searchByNameOrPhone(String value) {
-    //     return productRepository.findByFullnameContainingOrPhoneNumberContaining(value, value);
-    // }
-
-	// @Override
-    // public boolean existsByPhoneNumber(String phoneNumber) {
-    //     return productRepository.existsByPhoneNumber(phoneNumber);
-    // }
+	@Override
+	public Page<Product> searchByName(String name, Pageable pageable) {
+        return productRepository.findByNameContaining(name, pageable);
+    }
 }

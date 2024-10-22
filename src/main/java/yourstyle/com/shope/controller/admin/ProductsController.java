@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.io.IOException;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -50,6 +51,58 @@ public class ProductsController {
 		return "admin/products/addOrEdit";
 	}
 
+	@GetMapping("/search")
+	public String search(@RequestParam("value") String value,
+			@RequestParam("page") Optional<Integer> page,
+			@RequestParam("size") Optional<Integer> size,
+			Model model) {
+		int currentPage = page.orElse(0);
+		int pageSize = size.orElse(5);
+		Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by("name"));
+
+		// Gọi phương thức tìm kiếm theo tên sản phẩm và phân trang
+		Page<Product> products = productService.searchByName(value, pageable);
+
+		int totalPages = products.getTotalPages();
+		if (totalPages > 0) {
+			int start = Math.max(1, currentPage + 1 - 2);
+			int end = Math.min(currentPage + 1 + 2, totalPages);
+			if (totalPages > 5) {
+				if (end == totalPages) {
+					start = end - 5;
+				} else if (start == 1) {
+					end = start + 5;
+				}
+			}
+			List<Integer> pageNumbers = IntStream.rangeClosed(start, end).boxed().collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		}
+		model.addAttribute("products", products.getContent());
+		model.addAttribute("currentPage", currentPage);
+		model.addAttribute("size", pageSize);
+		model.addAttribute("value", value);
+
+		return "admin/products/list"; // Đường dẫn đến view danh sách sản phẩm
+	}
+
+	@GetMapping("edit/{productId}")
+	public ModelAndView edit(ModelMap model, @PathVariable("productId") Integer productId) {
+		ProductDto productDto = new ProductDto();
+		Optional<Product> optional = productService.findById(productId);
+		List<Category> categories = categoryService.findAll();
+		if (optional.isPresent()) { // tồn tại
+			Product product = optional.get();
+			BeanUtils.copyProperties(product, productDto);
+			productDto.setEdit(true);
+			model.addAttribute("product", productDto);
+			model.addAttribute("categories", categories);
+			return new ModelAndView("admin/products/addOrEdit");
+		}
+		model.addAttribute("messageType", "warning");
+		model.addAttribute("messageContent", "người dùng không tồn tại!");
+		return new ModelAndView("redirect:/admin/products", model);
+	}
+
 	@GetMapping("delete/{productId}")
 	public ModelAndView delete(ModelMap model, @PathVariable("productId") Integer productId) {
 		Optional<Product> product = productService.findById(productId);
@@ -83,7 +136,6 @@ public class ProductsController {
 		Product product = convertToProduct(productDto);
 		List<Category> categories = categoryService.findAll();
 		model.addAttribute("categories", categories);
-		System.out.println(categories);
 		// Kiểm tra lỗi đầu vào
 		if (result.hasErrors()) {
 			model.addAttribute("productDto", productDto);
@@ -157,7 +209,7 @@ public class ProductsController {
 			model.addAttribute("pageNumbers", pageNumbers);
 		}
 
-		model.addAttribute("Products", list.getContent());
+		model.addAttribute("products", list.getContent());
 		model.addAttribute("currentPage", currentPage);
 		model.addAttribute("totalPages", totalPages);
 		model.addAttribute("size", pageSize);
@@ -166,75 +218,3 @@ public class ProductsController {
 	}
 
 }
-
-// @GetMapping("/search")
-// public String search(@RequestParam("value") String value,
-// @RequestParam("page") Optional<Integer> page,
-// @RequestParam("size") Optional<Integer> size,
-// Model model) {
-// int currentPage = page.orElse(0);
-// int pageSize = size.orElse(5);
-// Pageable pageable = PageRequest.of(currentPage, pageSize,
-// Sort.by("fullname"));
-
-// // Gọi phương thức tìm kiếm hỗ trợ phân trang
-// Page<Customer> customers = customerService.searchByNameOrPhone(value,
-// pageable);
-
-// int totalPages = customers.getTotalPages();
-// if (totalPages > 0) {
-// int start = Math.max(1, currentPage + 1 - 2);
-// int end = Math.min(currentPage + 1 + 2, totalPages);
-// if (totalPages > 5) {
-// if (end == totalPages) {
-// start = end - 5;
-// } else if (start == 1) {
-// end = start + 5;
-// }
-// }
-// List<Integer> pageNumbers = IntStream.rangeClosed(start,
-// end).boxed().collect(Collectors.toList());
-// model.addAttribute("pageNumbers", pageNumbers);
-// }
-
-// model.addAttribute("Customers", customers.getContent());
-// model.addAttribute("currentPage", currentPage);
-// model.addAttribute("size", pageSize);
-// model.addAttribute("value", value);
-
-// return "admin/Customers/list";
-// }
-
-// @GetMapping("delete/{customerId}")
-// public ModelAndView delete(ModelMap model, @PathVariable("customerId")
-// Integer customerId) {
-// Optional<Customer> customer = customerService.findById(customerId);
-// if (customer.isPresent()) {
-// customerService.deleteById(customerId);
-// model.addAttribute("messageType", "success");
-// model.addAttribute("messageContent", "Xóa thành công");
-// } else {
-// model.addAttribute("messageType", "error");
-// model.addAttribute("messageContent", "Khách hàng không tồn tại");
-// }
-// return new ModelAndView("redirect:/admin/customers", model);
-// }
-
-// @GetMapping("edit/{customerId}")
-// public ModelAndView edit(ModelMap model, @PathVariable("customerId") Integer
-// customerId) {
-// CustomerDto customerDto = new CustomerDto();
-// Optional<Customer> optional = customerService.findById(customerId);
-// List<Account> accounts = accountService.findAll();
-// if (optional.isPresent()) { // tồn tại
-// Customer customer = optional.get();
-// BeanUtils.copyProperties(customer, customerDto);
-// customerDto.setEdit(true);
-// model.addAttribute("customer", customerDto);
-// model.addAttribute("accounts", accounts);
-// return new ModelAndView("admin/customers/addOrEdit");
-// }
-// model.addAttribute("messageType", "warning");
-// model.addAttribute("messageContent", "người dùng không tồn tại!");
-// return new ModelAndView("redirect:/admin/customers", model);
-// }

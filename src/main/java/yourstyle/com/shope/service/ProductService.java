@@ -22,8 +22,6 @@ public interface ProductService {
 
     Page<Product> findAll(Pageable pageable);
 
-    // Page<Product> searchByNameOrPhone(String value, Pageable pageable);
-
     List<Product> findAll(Sort sort);
 
     <S extends Product> Optional<S> findOne(Example<S> example);
@@ -32,8 +30,6 @@ public interface ProductService {
 
     Product update(Product product);
 
-    // List<Product> searchByNameOrPhone(String value);
-
-    // boolean existsByPhoneNumber(String phoneNumber);
+    Page<Product> searchByName(String name, Pageable pageable);
 
 }

@@ -6,6 +6,7 @@
 
 <body>
   <section layout:fragment="main">
+    <div class="displayNotifications"></div>
     <main id="main" class="main">
       <div class="pagetitle">
         <h1>
@@ -36,16 +37,26 @@
                 <form method="POST" action="/admin/products/saveOrUpdate" th:object="${product}"
                   enctype="multipart/form-data">
                   <div class="row mb-2">
-                    <!-- cột bên trái -->
+                    <!-- Cột bên trái -->
                     <div class="col-md-6">
-                      <div class="form-outline mb-3" data-mdb-input-init>
-                        <input type="text" id="productName" name="name" class="form-control" required />
-                        <label class="form-label" for="productName"><span class="text-danger">*</span> Tên sản
-                          phẩm</label>
+                      <!-- Tên sản phẩm -->
+                      <div class="form-floating mb-3">
+                        <input required type="text" th:field="*{name}" class="form-control" id="floatingName"
+                          placeholder="Tên sản phẩm" />
+                        <label for="floatingName"><span class="text-danger">*</span> Tên sản phẩm</label>
                       </div>
-                      
-                      <select name="category">
-                        <option value="">--  Chọn Doanh Mục  --</option>
+
+                      <!-- Giá sản phẩm -->
+                      <div class="form-floating mb-3">
+                        <input required type="number" th:field="*{price}" class="form-control" id="floatingPrice"
+                          placeholder="Giá" step="0.01" />
+                        <label for="floatingPrice"><span class="text-danger">*</span> Giá</label>
+                      </div>
+
+                      <!-- Danh mục -->
+                      <label for="categorySelect" class="form-label fs-5">Chọn Danh Mục</label>
+                      <select class="form-control mb-3" th:field="*{category.categoryId}" id="categorySelect" required>
+                        <option value="">-------********------</option>
                         <th:block th:each="cat : ${categories}">
                           <option th:value="${cat.categoryId}">
                             <span th:text="${cat.name}">Tên: </span>
@@ -55,44 +66,52 @@
                         </th:block>
                       </select>
 
-
+                      <!-- Chi tiết sản phẩm -->
                       <div class="mb-3">
-                        <label for="productDescription" class="form-label">Mô tả</label>
-                        <textarea class="form-control" name="description" id="productDescription" rows="4"
+                        <label for="productDetail" class="form-label">Chi tiết sản phẩm</label>
+                        <textarea class="form-control" th:field="*{productDetail}" id="productDetail" rows="4"
                           required></textarea>
                       </div>
 
+                      <!-- Mô tả sản phẩm -->
+                      <div class="mb-3">
+                        <label for="description" class="form-label">Mô tả</label>
+                        <textarea class="form-control" th:field="*{description}" id="description" rows="4"
+                          required></textarea>
+                      </div>
+
+                      <!-- Trạng thái sản phẩm -->
                       <label class="form-label"><span class="text-danger">*</span> Trạng thái</label>
                       <div class="form-check mb-3">
-                        <input class="form-check-input" type="radio" name="status" id="statusActive" value="true"
+                        <input class="form-check-input" type="radio" th:field="*{status}" value="true" id="statusActive"
                           required />
                         <label class="form-check-label" for="statusActive"> Hoạt động </label>
                       </div>
                       <div class="form-check mb-3">
-                        <input class="form-check-input" type="radio" name="status" id="statusInactive" value="false" />
+                        <input class="form-check-input" type="radio" th:field="*{status}" value="false"
+                          id="statusInactive" />
                         <label class="form-check-label" for="statusInactive"> Không hoạt động </label>
                       </div>
                     </div>
-                    <!-- cột bên trái -->
 
-                    <!-- cột bên phải -->
+                    <!-- Cột bên trái -->
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label for="imageFile" class="form-label ms-4" style="cursor: pointer">Ảnh sản phẩm</label>
-                        <input type="file" name="imageFile" id="imageFile" class="form-control d-none"
-                          onchange="loadFile(event)" required />
+                        <input type="hidden" th:field="*{image}" />
+                        <label for="avatarInput" class="form-label ms-4" style="cursor: pointer">Ảnh đại diện</label>
+                        <input required type="file" th:field="*{imageFile}" id="avatarInput" class="form-control d-none"
+                          onchange="loadFile(event)" />
                         <div class="avatar_wrapper d-flex align-items-center justify-content-center">
-                          <img id="avatarImage" src="/admin/img/anhnentrang.jpg" alt="Chọn ảnh đại diện"
-                            class="border border-dark border-1" style="
-                                      width: 80%;
-                                      height: auto;
-                                      min-height: 440px;
-                                      cursor: pointer;
-                                      object-fit: cover;" />
+                          <img id="avatarImage" th:src="@{'/uploads/' + ${product.image}}"
+                            class="border border-dark border-1"
+                            style="width: 320px; height: 370px; cursor: pointer; object-fit: cover;"/>
                         </div>
                       </div>
+                      <div th:if="${#fields.hasErrors('imageFile')}" class="text-danger" th:errors="*{imageFile}">Chọn
+                        Ảnh</div>
                     </div>
-                    <!-- cột bên phải -->
+
+                    <!-- Cột bên phải -->
                   </div>
                   <div class="text-center mt-4">
                     <button type="submit" class="btn btn-primary me-3 py-2 px-4 rounded-pill">
@@ -103,7 +122,6 @@
                     </button>
                   </div>
                 </form>
-
                 <!-- End floating Labels Form -->
               </div>
             </div>
@@ -111,9 +129,7 @@
         </div>
       </section>
     </main>
-
-    <script src="/admin/js/staff.js"></script>
-    <script src="/admin/js/customer.js"></script>
+    <script src="/admin/js/addressAPI.js"></script>
   </section>
 </body>
 

@@ -63,7 +63,7 @@
 
                       <div class="col-md-6">
                         <label for="" class="form-label fs-5">Chọn tài khoản</label>
-                        <select th:field="*{account.accountId}" class="form-control" required>
+                        <select th:field="*{account.accountId}">
                           <option  th:each="account : ${accounts}" th:value="${account.accountId}"
                             th:text="${account.email}"></option>
                         </select>

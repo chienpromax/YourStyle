@@ -18,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,6 +50,20 @@ public class ProductsController {
 		return "admin/products/addOrEdit";
 	}
 
+	@GetMapping("delete/{productId}")
+	public ModelAndView delete(ModelMap model, @PathVariable("productId") Integer productId) {
+		Optional<Product> product = productService.findById(productId);
+		if (product.isPresent()) {
+			productService.deleteById(productId);
+			model.addAttribute("messageType", "success");
+			model.addAttribute("messageContent", "Xóa thành công");
+		} else {
+			model.addAttribute("messageType", "error");
+			model.addAttribute("messageContent", "Sản phẩm không tồn tại");
+		}
+		return new ModelAndView("redirect:/admin/products", model);
+	}
+
 	private Product convertToProduct(ProductDto productDto) {
 		Product product = new Product();
 		product.setProductId(productDto.getProductId());
@@ -58,7 +73,7 @@ public class ProductsController {
 		product.setPrice(productDto.getPrice());
 		product.setImage(productDto.getImage());
 		product.setProductDetail(productDto.getProductDetail());
-		product.setCategory(productDto.getCategory()); // Gán category
+		product.setCategory(productDto.getCategory());
 		return product;
 	}
 

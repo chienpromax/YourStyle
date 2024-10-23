@@ -87,6 +87,16 @@ public class VoucherController {
         return new ModelAndView("redirect:/admin/vouchers", model); // Redirect với thông báo
     }
 
+    @GetMapping("deleteCustomer/{voucherId}/{customerId}")
+    public String deleteCustomerOfVoucher(@PathVariable("customerId") Integer customerId,
+            @PathVariable("voucherId") Integer voucherId) {
+        // Xóa bản ghi trong bảng VoucherCustomer theo voucherId và customerId
+        voucherCustomerService.deleteByCustomerIdAndVoucherId(customerId, voucherId);
+
+        // Sau khi xóa, chuyển hướng về trang voucher với thông tin voucherId hiện tại
+        return "redirect:/admin/vouchers/addCustomer/" + voucherId;
+    }
+
     @GetMapping("addCustomer/{voucherId}")
     public ModelAndView addCustomer(ModelMap model,
             @RequestParam(value = "value", required = false) String value,
@@ -101,7 +111,7 @@ public class VoucherController {
             model.addAttribute("voucher", voucher);
 
             int currentPage = page.orElse(0);
-            int pageSize = size.orElse(5);
+            int pageSize = size.orElse(10);
 
             Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by("fullname"));
             Page<Customer> customers = value != null && !value.trim().isEmpty()
@@ -176,21 +186,10 @@ public class VoucherController {
             }
         }
 
-        // Xóa các customer không được chọn
-        List<VoucherCustomer> existingCustomers = voucherCustomerService
-                .findByVoucher_VoucherId(voucherForCustomer.getVoucherId());
+        model.addAttribute("messageType", "success");
+        model.addAttribute("messageContent", "Khách hàng đã được thêm thành công!");
+        return new ModelAndView("redirect:/admin/vouchers/addCustomer/" + voucherForCustomer.getVoucherId(), model);
 
-        // Duyệt qua các khách hàng hiện có trong voucher
-        for (VoucherCustomer vc : existingCustomers) {
-            // Nếu customer không còn được chọn, xóa khỏi voucher
-            if (!selectedIds.contains(vc.getCustomer().getCustomerId())) {
-                voucherCustomerService.deleteByCustomerIdAndVoucherId(vc.getCustomer().getCustomerId(),
-                        voucherForCustomer.getVoucherId());
-            }
-        }
-
-        // Chuyển hướng về trang danh sách voucher
-        return new ModelAndView("redirect:/admin/vouchers", model);
     }
 
     @PostMapping("saveOrUpdate")

@@ -13,7 +13,7 @@
                 <nav>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html">Trang chủ</a></li>
-                        <li class="breadcrumb-item active">Phiếu giảm giá</li>
+                        <li class="breadcrumb-item active">Danh sách phiếu giảm giá</li>
                     </ol>
                 </nav>
             </div><!-- End Page Title -->
@@ -25,19 +25,21 @@
                             <h4>Bảng phiếu</h4>
                             <!-- Tìm kiếm -->
                             <div class="row mb-3">
-                                <!-- Ô tìm kiếm -->
                                 <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
                                     <div class="position-relative w-100">
                                         <form th:action="@{/admin/vouchers/search}" method="get"
                                             class="position-relative">
-                                            <span class="position-absolute start-0 top-50 translate-middle-y ps-2">
+                                            <!-- Nút chứa biểu tượng kính lúp -->
+                                            <button type="submit"
+                                                class="position-absolute start-0 top-50 translate-middle-y ps-2 border-0 bg-transparent">
                                                 <i class="bi bi-search"></i>
-                                            </span>
+                                            </button>
                                             <input class="form-control ps-5" name="value"
-                                                placeholder="Tìm phiêu giảm giá theo..." required>
+                                                placeholder="Tìm phiếu giảm giá theo..." required>
                                         </form>
                                     </div>
                                 </div>
+
                                 <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
                                     <!-- Xuất Excel -->
                                     <a th:href="@{/admin/vouchers/export/excel}" class="btn btn-outline-secondary">Xuất
@@ -86,8 +88,6 @@
                                 </div>
 
                             </form>
-
-
                             <!-- Bảng phiếu giảm giá -->
                             <div class="table-responsive text-center">
                                 <table class="table table-hover">
@@ -105,7 +105,7 @@
                                             <th>Trạng thái</th>
                                             <th>Ngày bắt đầu</th>
                                             <th>Ngày kết thúc</th>
-                                            <th>ID khách</th>
+                                            <th style="width: 150px;" class="no-wrap">ID khách</th>
                                             <th>ID người tạo</th>
                                             <th>Mô tả</th>
                                             <th>Hành động</th>
@@ -136,9 +136,11 @@
                                             <td>[[${voucher.startDate}]]</td>
                                             <td>[[${voucher.endDate}]]</td>
                                             <td>
-                                                <div th:if="${voucher.voucherCustomers}">
-                                                    <div th:each="voucherCustomer : ${voucher.voucherCustomers}">
-                                                        <p th:text="${voucherCustomer.customer.customerId}"></p>
+                                                <div th:if="${voucher.voucherCustomers}"
+                                                    style="max-height: 80px; overflow-y: auto; display: grid; grid-template-columns: repeat(4, 1fr);">
+                                                    <div th:each="voucherCustomer : ${voucher.voucherCustomers}"
+                                                        class="badge bg-secondary m-1">
+                                                        <span th:text="${voucherCustomer.customer.customerId}"></span>
                                                     </div>
                                                 </div>
                                                 <div th:unless="${voucher.voucherCustomers}">
@@ -202,7 +204,7 @@
                                             th:classappend="${vouchers.number == 0} ? 'disabled' : ''">
                                             <a class="page-link"
                                                 th:href="@{/admin/vouchers/search(value=${searchValue}, isPublic=${isPublic}, type=${type}, fromDate=${fromDate}, toDate=${toDate}, size=${vouchers.size}, page=${0})}">
-                                                <i class="bi bi-chevron-double-left"></i>
+                                                Trước
                                             </a>
                                         </li>
 
@@ -219,7 +221,7 @@
                                             class="page-item">
                                             <a class="page-link"
                                                 th:href="@{/admin/vouchers/search(value=${searchValue}, isPublic=${isPublic}, type=${type}, fromDate=${fromDate}, toDate=${toDate}, size=${vouchers.size}, page=${vouchers.totalPages - 1})}">
-                                                <i class="bi bi-chevron-double-right"></i>
+                                                Sau
                                             </a>
                                         </li>
                                     </ul>

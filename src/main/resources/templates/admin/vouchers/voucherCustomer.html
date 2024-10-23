@@ -13,7 +13,7 @@
                 <nav>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html">Trang chủ</a></li>
-                        <li class="breadcrumb-item active">Phiếu giảm giá</li>
+                        <li class="breadcrumb-item active">Thêm người dùng</li>
                     </ol>
                 </nav>
             </div><!-- End Page Title -->
@@ -39,6 +39,10 @@
                         </div>
                         <form th:action="@{/admin/vouchers/saveOrUpdateCustomer}" th:object="${voucher}" method="post">
                             <input type="hidden" th:field="*{voucherId}" /> <!-- Truyền ID của voucher -->
+                            <!-- Truyền lại danh sách đã chọn trước đó -->
+                            <input type="hidden" name="selectedCustomers" th:each="id : ${selectedCustomerIds}"
+                                th:value="${id}">
+
                             <div class="row">
                                 <!-- Search, Table, Pagination - Bên phải -->
                                 <div class="col-md-12">
@@ -57,6 +61,7 @@
                                                         <th scope="col" width="20%">Số điện thoại</th>
                                                         <th scope="col" width="20%">Giới tính</th>
                                                         <th scope="col" width="20%">Ngày sinh</th>
+                                                        <th>Hành động</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -66,6 +71,7 @@
                                                             <input class="form-check-input" type="checkbox"
                                                                 th:value="${customer.customerId}"
                                                                 name="selectedCustomers"
+                                                                th:disabled="${selectedCustomerIds != null && selectedCustomerIds.contains(customer.customerId)}"
                                                                 th:checked="${selectedCustomerIds != null && selectedCustomerIds.contains(customer.customerId)}" />
                                                         </th>
                                                         <td th:text="${customer.customerId}"></td>
@@ -76,6 +82,15 @@
                                                         <td th:text="${customer.phoneNumber}"></td>
                                                         <td th:text="${customer.gender ? 'Nam' : 'Nữ'}"></td>
                                                         <td th:text="${customer.birthday}"></td>
+                                                        <td>
+                                                            <!-- Xóa Voucher chỉ hiển thị cho những khách hàng đã được chọn -->
+                                                            <a style="cursor: pointer; font-size: 21px; color: red;"
+                                                                th:if="${selectedCustomerIds != null && selectedCustomerIds.contains(customer.customerId)}"
+                                                                th:href="@{/admin/vouchers/deleteCustomer/{voucherId}/{customerId}(voucherId=${voucher.voucherId}, customerId=${customer.customerId})}"
+                                                                onclick="return confirm('Bạn có chắc chắn muốn xóa khách hàng này không?');">
+                                                                <i class="bi bi-trash" title="Xóa"></i>
+                                                            </a>
+                                                        </td>
                                                     </tr>
 
                                                 </tbody>
@@ -117,7 +132,6 @@
                                 <div class="form-inline">
                                     <label for="size" class="me-2">Hiển thị:</label>
                                     <select class="form-select" name="size" id="size" onchange="this.form.submit()">
-                                        <option th:selected="${size == 5}" value="5">5</option>
                                         <option th:selected="${size == 10}" value="10">10</option>
                                         <option th:selected="${size == 20}" value="20">20</option>
                                         <option th:selected="${size == 30}" value="30">30</option>

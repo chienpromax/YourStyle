@@ -1,14 +1,13 @@
 document.addEventListener("DOMContentLoaded", function () {
-  console.log('Script loaded successfully.');
 
   const elementInputs = document.querySelectorAll(".form-check-input");
   elementInputs.forEach((elementInput) => {
-    console.log(elementInput);
+
 
     elementInput.addEventListener("change", function () {
       // lấy giá trị categoryId từ thuộc tính data-category-id của checkbox
       const categoryId = this.getAttribute("data-category-id");
-      console.log('data' + categoryId)
+
       if (categoryId) {
         // Lấy phần tử label tương ứng với checkbox thông qua for
         const labelElement = document.querySelector("label[for='" + this.id + "']");
@@ -37,7 +36,7 @@ function toggleStatus(categoryId) {
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
-        console.log(`Trạng thái danh mục có categoryId = ${categoryId} đã được cập nhật`);
+
       } else {
         console.error("Cập nhật thất bại!");
       }
@@ -47,14 +46,6 @@ function toggleStatus(categoryId) {
     });
 }
 
-// ảnh
-const clickImage = document.getElementById("image");
-const inputImage = document.getElementById("imageInput");
-
-// xử lý click mở file ảnh
-clickImage.addEventListener("click", function () {
-  inputImage.click();
-});
 // xử lý load ảnh lên giao diện
 
 function loadFile(event) {
@@ -70,25 +61,87 @@ function loadFile(event) {
   errorMessage.style.display = 'none';
   var output = document.getElementById('image');
   output.src = URL.createObjectURL(event.target.files[0]);
-  output.onload = function() {
-      URL.revokeObjectURL(output.src); // free memory
+  output.onload = function () {
+    URL.revokeObjectURL(output.src); // free memory
   }
 }
 
 // Kiểm tra nếu ảnh chưa được chọn
-document.addEventListener("DOMContentLoaded", function() {
-  document.getElementById('yourFormId').addEventListener('submit', function(event) {
-      var imageInput = document.getElementById('imageInput');
-      var currentImage = document.getElementById('image').src;
-      var errorMessage = document.getElementById('error-message');
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById('yourFormId').addEventListener('submit', function (event) {
+    var imageInput = document.getElementById('imageInput');
+    var currentImage = document.getElementById('image').src;
+    var errorMessage = document.getElementById('error-message');
 
-      // Kiểm tra nếu ảnh chưa được chọn
-      if (currentImage.includes('default-image-path.jpg') && imageInput.files.length === 0) {
-          errorMessage.textContent = "Vui lòng chọn ảnh cho danh mục.";
-          errorMessage.style.display = "block"; // Hiển thị thông báo lỗi
-          event.preventDefault(); // Ngăn không cho form submit nếu chưa chọn ảnh
-      } else {
-          errorMessage.style.display = "none"; // Ẩn thông báo lỗi nếu không có lỗi
-      }
+    // Kiểm tra nếu ảnh chưa được chọn
+    if (currentImage.includes('default-image-path.jpg') && imageInput.files.length === 0) {
+      errorMessage.textContent = "Vui lòng chọn ảnh cho danh mục.";
+      errorMessage.style.display = "block"; // Hiển thị thông báo lỗi
+      event.preventDefault(); // Ngăn không cho form submit nếu chưa chọn ảnh
+    } else {
+      errorMessage.style.display = "none"; // Ẩn thông báo lỗi nếu không có lỗi
+    }
   });
+
+  // xử lý thông báo
+  const urlParams = new URLSearchParams(window.location.search); // lấy url trên đường dẫn web
+  const messageTypeValue = urlParams.get("messageType");
+  const messageContentValue = urlParams.get("messageContent");
+  if (messageTypeValue && messageContentValue) {
+
+    if (messageTypeValue === "success") {
+
+      createToast(
+        messageTypeValue,
+        "fa-solid fa-circle-check",
+        "Thành công",
+        messageContentValue
+      );
+    } else if (messageTypeValue === "warning") {
+      createToast(
+        messageTypeValue,
+        "fa-solid fa-triangle-exclamation",
+        "Cảnh báo",
+        messageContentValue
+      );
+    } else if (messageTypeValue === "error") {
+      createToast(
+        messageTypeValue,
+        "fa-solid fa-circle-exclamation",
+        "Lỗi",
+        messageContentValue
+      );
+    } else if (messageTypeValue === "info") {
+      createToast(
+        messageTypeValue,
+        "fa-solid fa-circle-info",
+        "Thông tin",
+        messageContentValue
+      );
+    }
+  }
+
+  function createToast(type, icon, title, text) {
+
+    const newToast = document.createElement("div");
+    newToast.innerHTML = `<div class="toast ${type}">
+                     <i class="${icon}"></i>
+                     <div class="content">
+                         <div class="title">${title}</div>
+                         <span>${text}</span>
+                     </div>
+                     <i class="close fa-solid fa-xmark" onclick="(this.parentElement).remove()"></i>
+                 </div>`;
+    const displayNotifications = document.querySelector(".displayNotifications");
+    displayNotifications.appendChild(newToast);
+    setTimeout(() => {
+      newToast.remove();
+      const url = new URL(window.location.href); // lấy đường dẫn
+      url.searchParams.delete("messageType"); // tìm messageType và xóa nó đi
+      url.searchParams.delete("messageContent"); // tìm messageContent và xóa nó đi
+      window.history.replaceState(null, "", url.href); // Cập nhật url trên trình duyệt mà không tải lại trang
+    }, 5000);
+  }
 });
+
+

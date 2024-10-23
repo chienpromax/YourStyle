@@ -13,7 +13,7 @@ import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuer
 import yourstyle.com.shope.model.Category;
 
 public interface CategoryService {
-
+    List<Category> getChildCategories();
     long count();
 
     <S extends Category> long count(Example<S> example);

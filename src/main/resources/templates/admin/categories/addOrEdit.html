@@ -7,10 +7,8 @@
 
 <body>
     <section layout:fragment="main">
+        <div class="displayNotifications"></div>
         <main id="main" class="main">
-            <!-- Hiển thị thông báo -->
-            <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
-            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
             <div class="pagetitle">
                 <h1>Danh Mục Sản Phẩm</h1>
                 <nav>
@@ -62,12 +60,12 @@
                                     </div>
 
                                     <div class="row mb-3 py-3">
-                                        <label class="form-label" for="image">Chọn ảnh danh mục</label>
+                                        <label >Chọn ảnh danh mục</label>
 
                                         <!-- Hiển thị ảnh hiện tại nếu có -->
                                         <div>
                                             <img id="image"
-                                                th:src="@{${category != null && category.image != null} ? ${'/uploads/' + category.image} : '/uploads/default-image-path.jpg'}"
+                                                th:src="@{${category != null && category.image != null} ? ${'/uploads/' + category.image} : '/uploads/logo.png'}"
                                                 alt="Chọn ảnh danh mục" width="100" style="cursor: pointer;"
                                                 onclick="document.getElementById('imageInput').click();" />
                                         </div>
@@ -102,10 +100,10 @@
                                     <!-- Table with stripped rows -->
                                     <table class="table table-striped">
                                         <thead>
-                                            <tr>
+                                            <tr style="white-space: nowrap;">
                                                 <th scope="col">Hình ảnh</th>
                                                 <th scope="col">Tên danh mục</th>
-                                                <th scope="col">Doanh mục cha</th>
+                                                <th scope="col" style="white-space: nowrap;">Doanh mục cha</th>
                                                 <th scope="col">Trạng thái</th>
                                                 <th scope="col">Hành động</th>
                                             </tr>
@@ -210,6 +208,7 @@
             </section>
 
         </main>
+
         <script src="/admin/js/categoryAddOrEdit.js"></script>
     </section>
 </body>

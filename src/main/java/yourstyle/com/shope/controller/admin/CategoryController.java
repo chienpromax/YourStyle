@@ -80,82 +80,84 @@ public class CategoryController {
 
             // Lưu danh mục mới
             categoryService.save(category);
-            redirectAttributes.addFlashAttribute("message", "Thêm danh mục thành công!");
+            redirectAttributes.addAttribute("messageType", "success");
+            redirectAttributes.addAttribute("messageContent", "Thêm mới danh mục thành công");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Thêm danh mục thất bại:Tên danh mục đã tồn tại ");
+            redirectAttributes.addAttribute("messageType", "error");
+            redirectAttributes.addAttribute("messageContent", "Thêm mới danh mục không thành công - Tên danh mục đã tồn tại!");
+            
             e.printStackTrace();
         }
         return "redirect:/admin/categories/list";
     }
 
-   
-
     @PostMapping("/update")
-public ModelAndView updateCategory(
-        @ModelAttribute("category") Category category,
-        BindingResult result,
-        @RequestParam("imageFile") MultipartFile imageFile,
-        ModelMap model,
-        RedirectAttributes redirectAttributes) {
+    public ModelAndView updateCategory(
+            @ModelAttribute("category") Category category,
+            BindingResult result,
+            @RequestParam("imageFile") MultipartFile imageFile,
+            ModelMap model,
+            RedirectAttributes redirectAttributes) {
 
-    try {
-        // Xử lý validate nếu có lỗi
-        if (result.hasErrors()) {
+        try {
+            // Xử lý validate nếu có lỗi
+            if (result.hasErrors()) {
+                return new ModelAndView("admin/categories/addOrEdit", model);
+            }
+
+            // Kiểm tra và xử lý danh mục cha nếu có
+            if (category.getParentCategory() != null && category.getParentCategory().getCategoryId() != null) {
+                Category parentCategory = categoryService.findById(category.getParentCategory().getCategoryId())
+                        .orElse(null);
+                category.setParentCategory(parentCategory);
+            }
+
+            // Kiểm tra và xử lý file ảnh
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String contentType = imageFile.getContentType();
+                if (contentType == null || !contentType.startsWith("image/")) {
+                    result.rejectValue("image", "error.category", "File không hợp lệ, vui lòng chọn một file ảnh.");
+                    return new ModelAndView("admin/categories/addOrEdit", model);
+                }
+
+                // Upload tệp ảnh
+                try {
+                    String uploadDir = "src/main/resources/static/uploads/";
+                    String originalFilename = imageFile.getOriginalFilename();
+                    String newFilename = UploadUtils.saveFile(uploadDir, originalFilename, imageFile);
+                    category.setImage(newFilename);
+                } catch (IOException e) {
+                    model.addAttribute("messageType", "error");
+                    model.addAttribute("messageContent", "Lỗi khi tải tệp: " + e.getMessage());
+                    return new ModelAndView("admin/categories/addOrEdit", model);
+                }
+            } else {
+                // Nếu không có tệp ảnh mới và danh mục chưa có ảnh thì báo lỗi
+                if (category.getCategoryId() != null) {
+                    Optional<Category> existingCategory = categoryService.findById(category.getCategoryId());
+                    if (existingCategory.isPresent()) {
+                        category.setImage(existingCategory.get().getImage());
+                    } else if (category.getImage() == null || category.getImage().isEmpty()) {
+                        result.rejectValue("image", "error.category", "Vui lòng chọn một ảnh cho danh mục.");
+                        return new ModelAndView("admin/categories/addOrEdit", model);
+                    }
+                }
+            }
+
+            // Lưu danh mục
+            categoryService.save(category);
+            redirectAttributes.addFlashAttribute("message", "Cập nhật danh mục thành công!");
+            redirectAttributes.addAttribute("messageType", "success");
+            redirectAttributes.addAttribute("messageContent", "Cập nhật thành công");
+
+        } catch (Exception e) {
+            result.rejectValue("name", "error.category", "Cập nhật danh mục thất bại: Tên danh mục đã tồn tại");
+            e.printStackTrace();
             return new ModelAndView("admin/categories/addOrEdit", model);
         }
 
-        // Kiểm tra và xử lý danh mục cha nếu có
-        if (category.getParentCategory() != null && category.getParentCategory().getCategoryId() != null) {
-            Category parentCategory = categoryService.findById(category.getParentCategory().getCategoryId())
-                    .orElse(null);
-            category.setParentCategory(parentCategory);
-        }
-
-        // Kiểm tra và xử lý file ảnh
-        if (imageFile != null && !imageFile.isEmpty()) {
-            String contentType = imageFile.getContentType();
-            if (contentType == null || !contentType.startsWith("image/")) {
-                result.rejectValue("image", "error.category", "File không hợp lệ, vui lòng chọn một file ảnh.");
-                return new ModelAndView("admin/categories/addOrEdit", model);
-            }
-
-            // Upload tệp ảnh
-            try {
-                String uploadDir = "src/main/resources/static/uploads/";
-                String originalFilename = imageFile.getOriginalFilename();
-                String newFilename = UploadUtils.saveFile(uploadDir, originalFilename, imageFile);
-                category.setImage(newFilename);
-            } catch (IOException e) {
-                model.addAttribute("messageType", "error");
-                model.addAttribute("messageContent", "Lỗi khi tải tệp: " + e.getMessage());
-                return new ModelAndView("admin/categories/addOrEdit", model);
-            }
-        } else {
-            // Nếu không có tệp ảnh mới và danh mục chưa có ảnh thì báo lỗi
-            if (category.getCategoryId() != null) {
-                Optional<Category> existingCategory = categoryService.findById(category.getCategoryId());
-                if (existingCategory.isPresent()) {
-                    category.setImage(existingCategory.get().getImage());
-                } else if (category.getImage() == null || category.getImage().isEmpty()) {
-                    result.rejectValue("image", "error.category", "Vui lòng chọn một ảnh cho danh mục.");
-                    return new ModelAndView("admin/categories/addOrEdit", model);
-                }
-            }
-        }
-
-        // Lưu danh mục
-        categoryService.save(category);
-        redirectAttributes.addFlashAttribute("message", "Cập nhật danh mục thành công!");
-
-    } catch (Exception e) {
-        result.rejectValue("name", "error.category", "Cập nhật danh mục thất bại: Tên danh mục đã tồn tại");
-        e.printStackTrace();
-        return new ModelAndView("admin/categories/addOrEdit", model);
+        return new ModelAndView("redirect:/admin/categories/list");
     }
-
-    return new ModelAndView("redirect:/admin/categories/list");
-}
-
 
     @GetMapping("/list")
     public String listCategories(Model model,
@@ -179,10 +181,13 @@ public ModelAndView updateCategory(
         try {
             System.out.println(id);
             categoryService.deleteById(id);
-            redirectAttributes.addFlashAttribute("message", "Xóa danh mục thành công!");
+            redirectAttributes.addAttribute("messageType", "success");
+            redirectAttributes.addAttribute("messageContent", "Xóa danh mục thành công");
+            
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Xóa danh mục thất bại!");
-        }
+            redirectAttributes.addAttribute("messageType", "error");
+            redirectAttributes.addAttribute("messageContent", "Xóa danh mục không thành công");
+                    }
         return "redirect:/admin/categories/list";
     }
 

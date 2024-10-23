@@ -21,7 +21,10 @@ public class CategoryServiceImpl implements CategoryService {
 @Autowired
 private CategoryRepository categoryRepository;
 
-
+@Override
+public List<Category> getChildCategories() {
+   return categoryRepository.findByParentCategoryNotNull();
+}
 @Override
 public long count() {
     return categoryRepository.count();

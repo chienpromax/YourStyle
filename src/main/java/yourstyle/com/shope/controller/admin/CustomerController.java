@@ -94,7 +94,6 @@ public class CustomerController {
 		}
 		return new ModelAndView("redirect:/admin/customers", model);
 	}
-	
 
 	@GetMapping("edit/{customerId}")
 	public ModelAndView edit(ModelMap model, @PathVariable("customerId") Integer customerId) {
@@ -113,7 +112,7 @@ public class CustomerController {
 		model.addAttribute("messageContent", "người dùng không tồn tại!");
 		return new ModelAndView("redirect:/admin/customers", model);
 	}
-	
+
 	// Định nghĩa phương thức chuyển đổi từ CustomerDto sang Customer
 	private Customer convertToCustomer(CustomerDto customerDto) {
 		Customer customer = new Customer();
@@ -133,7 +132,7 @@ public class CustomerController {
 		List<Account> accounts = accountService.findAll();
 		model.addAttribute("accounts", accounts);
 		Customer customer = convertToCustomer(customerDto);
-	
+
 		// Kiểm tra lỗi đầu vào
 		if (result.hasErrors()) {
 			model.addAttribute("customer", customerDto);
@@ -141,22 +140,22 @@ public class CustomerController {
 			model.addAttribute("messageContent", "Lỗi Kiểm tra lại thông tin!");
 			return new ModelAndView("admin/customers/addOrEdit", model);
 		}
-	
+
 		// Kiểm tra file ảnh
 		if (imageFile == null || imageFile.isEmpty()) {
 			result.rejectValue("imageFile", "error.customer", "Vui lòng chọn ảnh đại diện");
 		} else if (!imageFile.getContentType().startsWith("image/")) {
 			result.rejectValue("imageFile", "error.customer", "File không hợp lệ, vui lòng chọn một file ảnh.");
 		}
-	
-		// Kiểm tra số điện thoại
-		if (customerService.existsByPhoneNumber(customerDto.getPhoneNumber())) {
+
+		// Kiểm tra số điện thoại chỉ khi thêm mới khách hàng
+		if (customer.getCustomerId() == null && customerService.existsByPhoneNumber(customerDto.getPhoneNumber())) {
 			model.addAttribute("messageType", "warning");
 			model.addAttribute("messageContent", "SĐT đã được sử dụng!");
 			result.rejectValue("phoneNumber", "error.customer", "Số điện thoại đã tồn tại, vui lòng nhập số khác.");
 			return new ModelAndView("admin/customers/addOrEdit", model);
 		}
-	
+
 		// Xử lý upload tệp
 		if (imageFile != null && !imageFile.isEmpty()) {
 			try {
@@ -176,7 +175,7 @@ public class CustomerController {
 				existingCustomer.ifPresent(c -> customer.setAvatar(c.getAvatar()));
 			}
 		}
-	
+
 		// Xử lý lưu hoặc cập nhật khách hàng
 		if (customer.getCustomerId() != null && customerService.findById(customer.getCustomerId()).isPresent()) {
 			customerService.update(customer);
@@ -187,10 +186,10 @@ public class CustomerController {
 			model.addAttribute("messageType", "success");
 			model.addAttribute("messageContent", "Thêm khách hàng thành công");
 		}
-	
+
 		return new ModelAndView("redirect:/admin/customers", model);
 	}
-	
+
 	@GetMapping("")
 	public String list(Model model, @RequestParam("page") Optional<Integer> page,
 			@RequestParam("size") Optional<Integer> size) {

@@ -1,6 +1,8 @@
 package yourstyle.com.shope.controller.admin;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -12,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -21,8 +25,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -82,7 +88,7 @@ public class ProductsController {
 		model.addAttribute("size", pageSize);
 		model.addAttribute("value", value);
 
-		return "admin/products/list"; // Đường dẫn đến view danh sách sản phẩm
+		return "admin/products/list";
 	}
 
 	@GetMapping("edit/{productId}")
@@ -99,7 +105,7 @@ public class ProductsController {
 			return new ModelAndView("admin/products/addOrEdit");
 		}
 		model.addAttribute("messageType", "warning");
-		model.addAttribute("messageContent", "người dùng không tồn tại!");
+		model.addAttribute("messageContent", "Sản phẩm không tồn tại!");
 		return new ModelAndView("redirect:/admin/products", model);
 	}
 
@@ -215,6 +221,26 @@ public class ProductsController {
 		model.addAttribute("size", pageSize);
 
 		return "admin/Products/list";
+	}
+
+	@PostMapping("toggleStatus/{productId}")
+	@ResponseBody
+	public ResponseEntity<?> toggleProductStatus(@PathVariable("productId") Integer productId,
+			@RequestBody Map<String, Boolean> statusData) {
+		try {
+			boolean newStatus = statusData.get("status");
+			Product product = productService.findById(productId).orElse(null);
+			if (product != null) {
+				product.setStatus(newStatus); // Cập nhật trạng thái sản phẩm
+				productService.save(product);
+				return ResponseEntity.ok(Collections.singletonMap("success", true));
+			} else {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("success", false));
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(Collections.singletonMap("success", false));
+		}
 	}
 
 }

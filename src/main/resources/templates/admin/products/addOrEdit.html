@@ -41,19 +41,19 @@
                     <div class="col-md-6">
                       <input type="hidden" th:field="*{productId}" />
                       <div class="form-floating mb-3">
-                        <input required type="text" th:field="*{name}" class="form-control" id="floatingName"
-                          placeholder="Tên sản phẩm" />
+                        <input type="text" th:field="*{name}" class="form-control" id="floatingName" placeholder="Tên sản phẩm" />
                         <label for="floatingName"><span class="text-danger">*</span> Tên sản phẩm</label>
+                        <div th:if="${#fields.hasErrors('name')}" class="text-danger" th:errors="*{name}">Tên sản phẩm không hợp lệ</div>
                       </div>
-
+                      
                       <div class="form-floating mb-3">
-                        <input required type="number" th:field="*{price}" class="form-control" id="floatingPrice"
-                          placeholder="Giá" step="0.01" />
+                        <input type="number" th:field="*{price}" class="form-control" id="floatingPrice" placeholder="Giá" step="1" />
                         <label for="floatingPrice"><span class="text-danger">*</span> Giá</label>
+                        <div th:if="${#fields.hasErrors('price')}" class="text-danger" th:errors="*{price}">Giá sản phẩm không hợp lệ</div>
                       </div>
 
                       <label for="categorySelect" class="form-label fs-5">Chọn Danh Mục</label>
-                      <select style="color: rgb(247, 120, 141); font-weight: 600;"  class="form-control mb-3" th:field="*{category.categoryId}" id="categorySelect" required>
+                      <select required style="color: rgb(247, 120, 141); font-weight: 600;"  class="form-control mb-3" th:field="*{category.categoryId}" id="categorySelect">
                         <option value="">꧁⁣༒  -----------------   ∩(ミ ˃̵  ω ˂̵ ミ)∩   ----------  /ᐠ - ˕ -マ Ⳋ  ----------------  ༒꧂</option>
                         <th:block th:each="cat : ${categories}">
                           <!-- <option th:value="${cat.categoryId}" th:text="${cat.name}"> -->
@@ -63,11 +63,12 @@
                                 th:text="${cat.parentCategory.name}">Cha</span>)</span>
                           </option>
                         </th:block>
+                        <div th:if="${#fields.hasErrors('category')}" class="text-danger" th:errors="*{category}">Phải chọn doanh mục</div>
                       </select>
 
                       <!-- Danh mục -->
                       <!-- <label for="categorySelect" class="form-label fs-5">Chọn Danh Mục</label>
-                      <select class="form-control mb-3" th:field="*{category.categoryId}" id="categorySelect" required>
+                      <select class="form-control mb-3" th:field="*{category.categoryId}" id="categorySelect">
                         <option value="">꧁⁣༒ ---- ∩ (ミ ˃̵  ω ˂̵ ミ) ∩ --- ༒꧂</option>
                         <th:block th:each="cat : ${categories}">
                           <option th:value="${cat.categoryId}"
@@ -77,22 +78,22 @@
                       </select> -->
 
                       <div class="mb-3">
-                        <label for="productDetail" class="form-label">Chi tiết sản phẩm</label>
-                        <textarea class="form-control" th:field="*{productDetail}" id="productDetail" rows="4"
-                          required></textarea>
+                        <label class="form-label" for="productDetail">Chi tiết sản phẩm</label>
+                        <textarea class="form-control" th:field="*{productDetail}" id="productDetail" rows="4"></textarea>
+                        <div th:if="${#fields.hasErrors('productDetail')}" class="text-danger" th:errors="*{productDetail}">Chi tiết sản phẩm không hợp lệ</div>
                       </div>
 
                       <div class="mb-3">
                         <label for="description" class="form-label">Mô tả</label>
                         <textarea class="form-control" th:field="*{description}" id="description" rows="4"
-                          required></textarea>
+                        ></textarea>
                       </div>
 
                       <label class="form-label mb-3"><span class="text-danger">*</span> Trạng thái</label>
                       <div class="row container">
                         <div class="form-check mb-3 col-md-6">
-                          <input class="form-check-input" type="radio" th:field="*{status}" value="true"
-                            id="statusActive" required />
+                          <input checked class="form-check-input" type="radio" th:field="*{status}" value="true"
+                            id="statusActive" />
                           <label class="form-check-label" for="statusActive"> Hoạt động </label>
                         </div>
                         <div class="form-check mb-3 col-md-6">

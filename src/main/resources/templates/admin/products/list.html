@@ -6,6 +6,7 @@
 
 <body>
     <section layout:fragment="main">
+        <div class="displayNotifications"></div>
         <main id="main" class="main">
             <div class="pagetitle">
                 <h1>Danh sách sản phẩm</h1>
@@ -57,28 +58,39 @@
                                     <tr>
                                         <th scope="col">STT</th>
                                         <th scope="col">ID</th>
+                                        <th scope="col">Ảnh</th>
                                         <th scope="col">Tên sản phẩm</th>
                                         <th scope="col">Tên doanh muc</th>
                                         <th scope="col">Mô tả</th>
                                         <th scope="col">Trạng thái</th>
                                         <th scope="col">Giá</th>
-                                        <th scope="col">Ảnh</th>
                                         <th scope="col">Thao tác</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr th:each="product, stat : ${products}">
                                         <td th:text="${stat.count}"></td>
-                                        <td th:text="${product.productId}"></td>
-                                        <td th:text="${product.name}"></td>
-                                        <td th:text="${product.category.name}"></td>
-                                        <td th:text="${product.description}"></td>
-                                        <td th:text="${product.status} ? 'Còn hàng' : 'Hết hàng'"></td>
-                                        <td th:text="${product.price}"></td>
+                                        <td th:text="${product.productId}" class="product-id"></td>
                                         <td>
                                             <img th:src="@{/uploads/} + ${product.image}" alt="Image" width="50"
                                                 height="50" style="object-fit: cover; border-radius: 10%;" />
                                         </td>
+                                        <td th:text="${product.name}"></td>
+                                        <td th:text="${product.category.name}"></td>
+                                        <td th:text="${product.description}"></td>
+                                        <td>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox"
+                                                       th:id="'statusToggle'+ ${product.productId}"
+                                                       th:checked="${product.status}" />
+                                                <label class="form-check-label"
+                                                       th:for="'statusToggle'+ ${product.productId}">
+                                                       [[${product.status} ? 'Còn hàng' : 'Hết hàng']]
+                                                </label>
+                                            </div>
+                                        </td>
+                                        
+                                        <td th:text="${product.price}"></td>
                                         <td class="text-center">
                                             <a style="cursor: pointer; font-size: 21px; color: green;"
                                                 th:href="@{/admin/products/edit/{id}(id=${product.productId})}">
@@ -137,8 +149,7 @@
                 <!-- end row -->
             </section>
         </main>
-        <script src="/admin/js/accountList.js"></script>
-        <script src="/admin/js/accountAddOrEdit.js"></script>
+
         <script type="text/javascript">
             function confirmDelete(productId) {
                 Swal.fire({
@@ -157,6 +168,9 @@
                 });
             }
         </script>
+
+        <script src="/admin/js/productList.js"></script>
+        <script src="/admin/js/accountAddOrEdit.js"></script>
     </section>
 </body>
 

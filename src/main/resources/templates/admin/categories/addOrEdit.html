@@ -65,7 +65,7 @@
                                         <!-- Hiển thị ảnh hiện tại nếu có -->
                                         <div>
                                             <img id="image"
-                                                th:src="@{${category != null && category.image != null} ? ${'/uploads/' + category.image} : '/uploads/logo.png'}"
+                                                th:src="@{${category != null && category.image != null} ? ${'/uploads/' + category.image} : '/images/logo.png'}"
                                                 alt="Chọn ảnh danh mục" width="100" style="cursor: pointer;"
                                                 onclick="document.getElementById('imageInput').click();" />
                                         </div>

@@ -1381,3 +1381,8 @@ h6 {
   --color         : #3498db;
   background-image: linear-gradient(to right, #3498db55, #22242F 30%);
 }
+
+/* chỉnh badge bên cạnh ảnh sản phẩm trong orderDetail admin  */
+.badge-custom {
+  transform: translate(-15%, 10%);
+}

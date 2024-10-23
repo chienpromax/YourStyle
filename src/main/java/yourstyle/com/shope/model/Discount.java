@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -14,29 +15,26 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.*;
 import java.util.*;
+import java.sql.*;
 
 @SuppressWarnings("serial")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "products")
-public class Product implements Serializable {
+@Table(name = "discounts")
+public class Discount implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer productId;
+    private Integer discountId;
     @Column(length = 255)
-    private String name;
-    @Column(name = "desciption")
-    private String desciption;
-    @Column(name = "status")
-    private Boolean status = true;
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
-    @Column(name = "image")
-    private String image;
-    @OneToMany(mappedBy = "product")
-    private List<ProductVariant> productVariants;
-    @OneToOne(mappedBy = "product")
-    private Discount discount;
+    private String discountName;
+    private String description;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal discountPercent;
+    private Timestamp startDate;
+    private Timestamp endDate;
+    @OneToOne
+    @JoinColumn(name = "productId", referencedColumnName = "productId")
+    private Product product;
 }

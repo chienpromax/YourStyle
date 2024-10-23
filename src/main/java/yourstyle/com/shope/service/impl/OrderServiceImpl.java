@@ -1,5 +1,6 @@
 package yourstyle.com.shope.service.impl;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,9 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import java.util.*;
 import yourstyle.com.shope.model.Order;
-import yourstyle.com.shope.model.OrderStatus;
 import yourstyle.com.shope.repository.OrderRepository;
 import yourstyle.com.shope.service.OrderService;
 
@@ -110,8 +109,13 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public List<Order> findByStatus(OrderStatus status) {
-		return orderRepository.findByStatus(status);
+	public Page<Order> findByStatus(Integer status, Pageable pageable) {
+		return orderRepository.findByStatus(status, pageable);
+	}
+
+	@Override
+	public Page<Order> findByFromDateAndToDate(Timestamp fromDate, Timestamp toDate, Pageable pageable) {
+		return orderRepository.findByFromDateAndToDate(fromDate, toDate, pageable);
 	}
 
 }

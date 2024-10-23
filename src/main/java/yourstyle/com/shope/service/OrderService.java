@@ -1,5 +1,6 @@
 package yourstyle.com.shope.service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,5 +48,7 @@ public interface OrderService {
 
 	Page<Order> findByCustomerFullname(String fullname, Pageable pageable);
 
-	List<Order> findByStatus(OrderStatus status);
+	Page<Order> findByStatus(Integer status, Pageable pageable);
+
+	Page<Order> findByFromDateAndToDate(Timestamp fromDate, Timestamp toDate, Pageable pageable);
 }

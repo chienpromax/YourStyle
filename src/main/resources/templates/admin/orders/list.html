@@ -53,8 +53,8 @@
                                             <input
                                                 type="datetime-local"
                                                 class="form-control"
-                                                id="datetimepickerFrom"
-                                                value="2020-12-22T14:12:56"
+                                                id="datetimeFrom"
+                                                value="2024-10-23T14:12:56"
                                             />
                                             <label for="datetimepickerFrom">Từ ngày</label>
                                         </div>
@@ -64,8 +64,9 @@
                                             <input
                                                 type="datetime-local"
                                                 class="form-control"
-                                                id="datetimepickerTo"
-                                                value="2020-12-22T14:12:56"
+                                                id="datetimeTo"
+                                                value="2024-10-23T14:12:56"
+                                                onchange="filterOrders()"
                                             />
                                             <label for="datetimepickerTo">Đến ngày</label>
                                         </div>
@@ -75,8 +76,8 @@
                                 <!-- Bộ lọc -->
                                 <div class="row mb-3">
                                     <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
-                                        <select class="form-select">
-                                            <option selected disabled>Trạng thái</option>
+                                        <select class="form-select" id="statusSelect">
+                                            <option value="" selected disabled>Trạng thái</option>
                                             <option th:each="status : ${orderStatus}" th:value="${status.code}">
                                                 [[${status.description}]]
                                             </option>
@@ -84,8 +85,13 @@
                                     </div>
                                     <div class="col-lg-4 col-md-12 mb-3 mb-lg-0">
                                         <!-- Xuất Excel -->
-                                        <button class="btn btn-outline-warning fw-bold">Xuất Excel</button>
-                                        <button class="btn btn-outline-warning fw-bold ms-4">+ Tạo hóa đơn</button>
+                                        <a
+                                            th:href="@{/admin/orders/export/excel}"
+                                            class="btn btn-outline-warning fw-bold"
+                                        >
+                                            Xuất Excel
+                                        </a>
+                                        <a href="#" class="btn btn-outline-warning fw-bold ms-4">+ Tạo hóa đơn</a>
                                     </div>
                                 </div>
 
@@ -109,10 +115,10 @@
                                                 <td>[[${iStat.index + 1}]]</td>
                                                 <td>[[${order.orderId}]]</td>
                                                 <td>[[${order.customer.fullname}]]</td>
-                                                <td th:each="orderDetail : ${order.orderDetails}">
-                                                    <span>[[${orderDetail.quantity}]]</span>
+                                                <td>
+                                                    <span>[[${totalQuantities[order.orderId]}]]</span>
                                                 </td>
-                                                <td>[[${order.totalAmount}]]</td>
+                                                <td>[[${totalAmounts[order.orderId]}]]</td>
                                                 <td>[[${order.orderDate}]]</td>
                                                 <td>
                                                     <span class="badge bg-success">[[${order.statusDescription}]]</span>
@@ -193,37 +199,23 @@
             </main>
             <!-- End #main -->
             <script>
-                window.addEventListener("DOMContentLoaded", function (params) {
-                    const statusElement = document.querySelector(".form-select");
-                    statusElement.addEventListener("change", function () {
-                        getStatusValue(statusElement.value);
+                window.addEventListener("DOMContentLoaded", function () {
+                    const statusSelectElement = document.getElementById("statusSelect");
+                    statusSelectElement.addEventListener("change", () => {
+                        const statusValue = statusSelectElement.value;
+                        window.location.href = `/admin/orders?status=${statusValue}`;
                     });
-
-                    function getStatusValue(value) {
-                        console.log(value);
-                        const newStatus = value;
-                        console.log(newStatus);
-
-                        fetch(`/admin/orders/filterStatus`, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({ status: newStatus }),
-                        })
-                            .then((response) => response.json())
-                            .then((data) => {
-                                if (data.success) {
-                                    console.log(`Trạng thái đơn hàng có   ${newStatus} đã được tìm thấy`);
-                                } else {
-                                    console.error("Không tìm thấy!");
-                                }
-                            })
-                            .catch((error) => {
-                                console.error("Có lỗi xảy ra:", error);
-                            });
-                    }
                 });
+                // xử lý lọc từ ngày đến ngày đơn hàng
+                function filterOrders() {
+                    const fromDate = document.getElementById("datetimeFrom").value;
+                    const toDate = document.getElementById("datetimeTo").value;
+                    if (fromDate && toDate) {
+                        if (new Date(fromDate) <= new Date(toDate)) {
+                            window.location.href = `/admin/orders?from_date=${fromDate}&to_date=${toDate}`;
+                        }
+                    }
+                }
             </script>
         </section>
     </body>

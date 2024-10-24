@@ -26,22 +26,22 @@ public class CustomerDto implements Serializable {
 
     private Integer customerId;
 
-    @NotBlank(message = "Vui lòng nhập tên đầy đủ")
-    @Size(max = 50, message = "Tên không được dài quá 50 ký tự")
+    @NotBlank(message = "[ Vui lòng nhập tên đầy đủ ]")
+    @Size(max = 50, message = "[ Tên không được dài quá 50 ký tự ]")
     private String fullname;
 
-    @NotBlank(message = "Vui lòng nhập số điện thoại")
-    @Pattern(regexp = "^(0[0-9]{9})$", message = "Số điện thoại không hợp lệ")
+    @NotBlank(message = "[ Vui lòng nhập số điện thoại ]")
+    @Pattern(regexp = "^(0[0-9]{9})$", message = "[ Số điện thoại không hợp lệ ]")
     private String phoneNumber;
 
-    @NotNull(message = "Vui lòng chọn giới tính")
+    @NotNull(message = "[ Vui lòng chọn giới tính ]")
     private Boolean gender;
 
     private String avatar;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @NotNull(message = "Vui lòng nhập ngày sinh")
-    @Past(message = "Ngày sinh phải là một ngày trong quá khứ")
+    @NotNull(message = "[ Vui lòng nhập ngày sinh ]")
+    @Past(message = "[ Ngày sinh phải là một ngày trong quá khứ ]")
     private Date birthday;
 
     private Account account;

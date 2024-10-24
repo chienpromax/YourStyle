@@ -77,7 +77,7 @@
                         <input type="hidden" th:field="*{avatar}" />
 
                         <label for="avatarInput" class="form-label ms-4" style="cursor: pointer">Ảnh đại diện</label>
-                        <input required type="file" th:field="*{imageFile}" id="avatarInput" class="form-control d-none"
+                        <input type="file" th:field="*{imageFile}" id="avatarInput" class="form-control d-none"
                           onchange="loadFile(event)" />
                         <div class="avatar_wrapper d-flex align-items-center justify-content-center">
                           <img id="avatarImage" th:src="@{'/uploads/' + ${customer.avatar}}"
@@ -85,8 +85,7 @@
                             style="width: 250px; height: 250px; cursor: pointer; object-fit: cover;" />
                         </div>
                       </div>
-                      <div th:if="${#fields.hasErrors('imageFile')}" class="text-danger" th:errors="*{imageFile}">Chọn Ảnh</div>
-
+                      <div th:if="${#fields.hasErrors('imageFile')}" class="text-danger text-center py-2" th:errors="*{imageFile}">Chọn Ảnh</div>
                     </div>
 
                     <!-- cột bên phải -->

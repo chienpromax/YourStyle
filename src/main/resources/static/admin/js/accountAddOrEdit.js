@@ -45,6 +45,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 });
 function createToast(type, icon, title, text) {
+  console.log("toast opened");
   const newToast = document.createElement("div");
   newToast.innerHTML = `<div class="toast ${type}">
                       <i class="${icon}"></i>

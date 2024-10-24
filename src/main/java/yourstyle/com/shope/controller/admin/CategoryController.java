@@ -165,15 +165,19 @@ public class CategoryController {
             @RequestParam(value = "size", defaultValue = "5") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Category> categoryPage = categoryService.findAll(pageable);
-
+    
         model.addAttribute("categoryPage", categoryPage);
-
+    
         /////////////////
         List<Category> listcategoryparents = categoryService.findByParentCategoryIsNull();
         model.addAttribute("listctparents", listcategoryparents);
-
+    
+        // Thêm kích thước trang hiện tại để trả về cho frontend
+        model.addAttribute("size", size);
+    
         return "admin/categories/addOrEdit";
     }
+    
 
     // Xóa danh mục
     @GetMapping("/delete/{id}")

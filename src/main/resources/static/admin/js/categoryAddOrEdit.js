@@ -45,6 +45,8 @@ function toggleStatus(categoryId) {
       console.error("Có lỗi xảy ra:", error);
     });
 }
+const clickImage = document.getElementById("image");
+const inputImage = document.getElementById("imageInput");
 
 // xử lý load ảnh lên giao diện
 
@@ -74,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var errorMessage = document.getElementById('error-message');
 
     // Kiểm tra nếu ảnh chưa được chọn
-    if (currentImage.includes('default-image-path.jpg') && imageInput.files.length === 0) {
+    if (currentImage.includes('logo.png') && imageInput.files.length === 0) {
       errorMessage.textContent = "Vui lòng chọn ảnh cho danh mục.";
       errorMessage.style.display = "block"; // Hiển thị thông báo lỗi
       event.preventDefault(); // Ngăn không cho form submit nếu chưa chọn ảnh
@@ -143,5 +145,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 5000);
   }
 });
+
+   // Hàm thay đổi kích thước trang
+   function changePageSize() {
+    const size = document.getElementById('pageSizeSelect').value;
+    const currentPage = [[$('categoryPage.number')]];;
+    window.location.href = `/admin/categories/list?page=0&size=${size}`;
+}
 
 

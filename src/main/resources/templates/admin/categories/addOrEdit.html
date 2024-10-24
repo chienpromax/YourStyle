@@ -9,14 +9,16 @@
     <section layout:fragment="main">
         <div class="displayNotifications"></div>
         <main id="main" class="main">
-            <div class="pagetitle">
-                <h1>Danh Mục Sản Phẩm</h1>
-                <nav>
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+            <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+            <nav>
+                <div class="pagetitle">
+                    <h1>Danh Mục Sản Phẩm</h1>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="/admin/home">Home</a></li>
                         <li class="breadcrumb-item active">Danh Mục Sản Phẩm</li>
                     </ol>
-                </nav>
+            </nav>
             </div><!-- End Page Title -->
 
             <section class="section">
@@ -60,7 +62,7 @@
                                     </div>
 
                                     <div class="row mb-3 py-3">
-                                        <label >Chọn ảnh danh mục</label>
+                                        <label>Chọn ảnh danh mục</label>
 
                                         <!-- Hiển thị ảnh hiện tại nếu có -->
                                         <div>
@@ -79,7 +81,6 @@
 
 
                                     <div class="text-center">
-                                        <!-- Nút Thêm hoặc Cập nhật tùy theo ngữ cảnh -->
                                         <button type="submit" class="btn btn-primary"
                                             th:text="${category != null} ? 'Cập nhật' : 'Thêm'">Thêm</button>
                                         <button type="reset" class="btn btn-secondary">Làm mới</button>
@@ -179,26 +180,36 @@
                                         </tbody>
                                     </table>
                                 </div>
-
-                                <!-- Pagination -->
-                                <nav aria-label="Page navigation example">
-                                    <ul class="pagination justify-content-center">
-                                        <li class="page-item" th:classappend="${categoryPage.first} ? 'disabled'">
-                                            <a class="page-link"
-                                                th:href="@{'/admin/categories/list?page=' + ${categoryPage.number - 1}}"
-                                                tabindex="-1">Trước</a>
-                                        </li>
-                                        <li class="page-item"
-                                            th:each="i : ${#numbers.sequence(1, categoryPage.totalPages)}">
-                                            <a class="page-link" th:text="${i}"
-                                                th:href="@{'/admin/categories/list?page=' + ${i - 1}}"></a>
-                                        </li>
-                                        <li class="page-item" th:classappend="${categoryPage.last} ? 'disabled'">
-                                            <a class="page-link"
-                                                th:href="@{'/admin/categories/list?page=' + ${categoryPage.number + 1}}">Sau</a>
-                                        </li>
-                                    </ul>
-                                </nav>
+                                <div class="d-flex align-items-center justify-content-between flex-wrap mb-3 mt-2">
+                                    <div class="d-flex align-items-center ">
+                                        <label for="pageSizeSelect" class="me-2">Số mục hiển thị:</label>
+                                        <select id="pageSizeSelect" class="form-select w-auto" onchange="changePageSize()">
+                                            <option value="5" th:selected="${size == 5}">5 mục</option>
+                                            <option value="10" th:selected="${size == 10}">10 mục</option>
+                                            <option value="20" th:selected="${size == 20}">20 mục</option>
+                                        </select>
+                                    </div>
+                                
+                                    <!-- Pagination -->
+                                    <nav aria-label="Page navigation example" class="mt-2 mt-md-0">
+                                        <ul class="pagination justify-content-end mb-0">
+                                            <li class="page-item" th:classappend="${categoryPage.first} ? 'disabled'">
+                                                <a class="page-link"
+                                                   th:href="@{'/admin/categories/list?page=' + ${categoryPage.number - 1} + '&size=' + ${size}}"
+                                                   tabindex="-1">Trước</a>
+                                            </li>
+                                            <li class="page-item" th:each="i : ${#numbers.sequence(1, categoryPage.totalPages)}">
+                                                <a class="page-link" th:text="${i}"
+                                                   th:href="@{'/admin/categories/list?page=' + ${i - 1} + '&size=' + ${size}}"></a>
+                                            </li>
+                                            <li class="page-item" th:classappend="${categoryPage.last} ? 'disabled'">
+                                                <a class="page-link"
+                                                   th:href="@{'/admin/categories/list?page=' + ${categoryPage.number + 1} + '&size=' + ${size}}">Sau</a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                                
                             </div>
                         </div>
                     </div>

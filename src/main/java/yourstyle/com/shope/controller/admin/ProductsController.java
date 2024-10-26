@@ -40,6 +40,7 @@ import yourstyle.com.shope.model.Size;
 import yourstyle.com.shope.service.CategoryService;
 import yourstyle.com.shope.service.ColorService;
 import yourstyle.com.shope.service.ProductService;
+import yourstyle.com.shope.service.SizeService;
 import yourstyle.com.shope.utils.UploadUtils;
 import yourstyle.com.shope.validation.admin.ProductDto;
 
@@ -56,6 +57,9 @@ public class ProductsController {
 	@Autowired
 	ColorService colorService;
 
+	@Autowired
+	SizeService sizeService;
+
 	@GetMapping("/add")
     public String addProductForm(Model model) {
         List<Category> categories = categoryService.findAll();
@@ -64,7 +68,8 @@ public class ProductsController {
         model.addAttribute("categories", categories);
         model.addAttribute("colors", colors);
         model.addAttribute("color", new Color());
-        model.addAttribute("size", new Size());
+		model.addAttribute("size", new Size());
+		model.addAttribute("sizes", sizeService.findAll());
         model.addAttribute("productImage", new ProductImage());
         model.addAttribute("product", new ProductDto());
         

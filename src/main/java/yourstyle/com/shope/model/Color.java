@@ -26,8 +26,5 @@ public class Color {
     @Column(nullable = false, unique = true)
     private String colorName;
 
-    @Transient
-    private boolean isEdit;
-
 }
 

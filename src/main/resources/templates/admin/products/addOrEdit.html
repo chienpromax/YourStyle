@@ -145,11 +145,11 @@
                 </form>
                 <hr>
                 <!-- End floating Labels Form -->
-                <div class="row py-4">
+                <div class="row py-4 justify-content-center bg-secondary text-center">
                   <!-- Form quản lý Màu sắc -->
-                  <div class="col-md-4 bg-dark py-3 text-white rounded">
+                  <div class="col-md-5 bg-dark py-3 text-white rounded mx-3">
                     <form method="POST" action="/admin/colors/save" th:object="${color}">
-                      <h4>Quản lý Màu sắc</h4>
+                      <h4 >Quản lý Màu sắc</h4>
                       <div class="form-floating mb-3">
                         <input required type="text" th:field="*{colorName}" class="bg-dark text-white form-control"
                           placeholder="Tên màu sắc" />
@@ -158,18 +158,20 @@
                           Tên màu sắc không hợp lệ
                         </div>
                       </div>
-                      <button class="btn btn-primary text-center">Lưu</button>
+                      <div class="text-center">
+                        <button class="btn btn-primary">Lưu</button>
+                      </div>
                     </form>
-
+                
                     <!-- Danh sách màu sắc -->
                     <div class="py-5">
-                      <h4>Danh sách Màu sắc</h4>
+                      <h4 class="bg-white py-3 text-dark">Danh sách Màu sắc</h4>
                       <table class="table text-center text-white">
                         <thead>
                           <tr>
                             <th>ID</th>
                             <th>Tên màu sắc</th>
-                            <th>Xóa mầu</th>
+                            <th>Xóa màu</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -177,12 +179,8 @@
                             <td th:text="${color.colorId}"></td>
                             <td th:text="${color.colorName}"></td>
                             <td>
-                              <!-- <a style="cursor: pointer; font-size: 21px; color: green;"
-                                th:href="@{/admin/colors/edit/{id}(id=${color.colorId})}">
-                                <i class="bi bi-pencil-square"></i>
-                              </a> -->
                               <button style="border: none; background: none; color: red;"
-                                th:attr="onclick=|confirmDelete(${color.colorId});|">
+                                th:attr="onclick=|confirmDeleteColor(${color.colorId});|">
                                 <i class="bi bi-trash3 ps-1"></i>
                               </button>
                             </td>
@@ -191,44 +189,42 @@
                       </table>
                     </div>
                   </div>
-
+                
                   <!-- Form quản lý Kích thước -->
-                  <div class="col-md-4 bg-dark py-3 text-white rounded">
+                  <div class="col-md-5 bg-dark py-3 text-white rounded mx-3"> 
                     <form method="POST" action="/admin/sizes/save" th:object="${size}">
-                      <h4>Quản lý Màu sắc</h4>
+                      <h4>Quản lý Kích thước</h4>
                       <div class="form-floating mb-3">
-                        <input required type="text" th:field="*{colorName}" class="bg-dark text-white form-control"
-                          placeholder="Tên màu sắc" />
-                        <label for="colorName">Tên màu sắc</label>
-                        <div th:if="${#fields.hasErrors('colorName')}" class="text-danger" th:errors="*{colorName}">
-                          Tên màu sắc không hợp lệ
+                        <input required type="text" th:field="*{sizeName}" class="bg-dark text-white form-control"
+                          placeholder="Tên kích thước" />
+                        <label for="sizeName">Tên kích thước</label>
+                        <div th:if="${#fields.hasErrors('sizeName')}" class="text-danger" th:errors="*{sizeName}">
+                          Tên kích thước không hợp lệ
                         </div>
                       </div>
-                      <button class="btn btn-primary text-center">Lưu</button>
+                      <div class="text-center">
+                        <button class="btn btn-primary">Lưu</button>
+                      </div>
                     </form>
-
-                    <!-- Danh sách màu sắc -->
+                
+                    <!-- Danh sách kích thước -->
                     <div class="py-5">
-                      <h4>Danh sách Màu sắc</h4>
+                      <h4 class="bg-white py-3 text-dark">Danh sách Kích thước</h4>
                       <table class="table text-center text-white">
                         <thead>
                           <tr>
                             <th>ID</th>
-                            <th>Tên màu sắc</th>
-                            <th>Xóa mầu</th>
+                            <th>Tên kích thước</th>
+                            <th>Xóa kích thước</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr th:each="color : ${colors}">
-                            <td th:text="${color.colorId}"></td>
-                            <td th:text="${color.colorName}"></td>
+                          <tr th:each="size : ${sizes}">
+                            <td th:text="${size.sizeId}"></td>
+                            <td th:text="${size.sizeName}"></td>
                             <td>
-                              <!-- <a style="cursor: pointer; font-size: 21px; color: green;"
-                                th:href="@{/admin/colors/edit/{id}(id=${color.colorId})}">
-                                <i class="bi bi-pencil-square"></i>
-                              </a> -->
                               <button style="border: none; background: none; color: red;"
-                                th:attr="onclick=|confirmDelete(${color.colorId});|">
+                                th:attr="onclick=|confirmDeleteSize(${size.sizeId});|">
                                 <i class="bi bi-trash3 ps-1"></i>
                               </button>
                             </td>
@@ -237,25 +233,8 @@
                       </table>
                     </div>
                   </div>
-
-
-                  <!-- Form quản lý Ảnh Thumbnail -->
-                  <div class="col-md-4">
-                    <form method="POST" action="/admin/productImages/saveOrUpdate" th:object="${productImage}"
-                      enctype="multipart/form-data">
-                      <h4>Quản lý ảnh Thumbnail</h4>
-                      <div class="form-group">
-                        <label for="imageUrl">Chọn ảnh thumbnail</label>
-                        <input type="file" th:field="*{imageUrl}" class="form-control" id="imageUrl" />
-                        <div th:if="${#fields.hasErrors('imageUrl')}" class="text-danger" th:errors="*{imageUrl}">
-                          Ảnh không hợp lệ
-                        </div>
-                      </div>
-                      <button class="btn btn-primary">Lưu</button>
-                    </form>
-                  </div>
-
                 </div>
+                
               </div>
             </div>
           </div>
@@ -264,7 +243,7 @@
     </main>
 
     <script type="text/javascript">
-      function confirmDelete(productId) {
+      function confirmDeleteColor(colorId) {
         Swal.fire({
           title: 'Bạn có chắc chắn muốn xóa?',
           text: "Bạn sẽ không thể hoàn tác sau khi xóa!",
@@ -276,11 +255,29 @@
           cancelButtonText: 'Hủy'
         }).then((result) => {
           if (result.isConfirmed) {
-            window.location.href = '/admin/colors/delete/' + productId;
+            window.location.href = '/admin/colors/delete/' + colorId;
+          }
+        });
+      }
+    
+      function confirmDeleteSize(sizeId) {
+        Swal.fire({
+          title: 'Bạn có chắc chắn muốn xóa?',
+          text: "Bạn sẽ không thể hoàn tác sau khi xóa!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'xóa nó!',
+          cancelButtonText: 'Hủy'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/admin/sizes/delete/' + sizeId;
           }
         });
       }
     </script>
+    
     <script src="/admin/js/customer.js"></script>
     <script src="/admin/js/productList.js"></script>
     <script src="/admin/js/accountAddOrEdit.js"></script>

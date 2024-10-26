@@ -1,25 +1,42 @@
 package yourstyle.com.shope.controller.admin;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+import jakarta.validation.Valid;
 import yourstyle.com.shope.model.Size;
+import yourstyle.com.shope.service.SizeService;
 
 @Controller
+@RequestMapping("/admin/sizes")
 public class SizeController {
 
-    @GetMapping("/admin/sizes/saveOrUpdate")
-    public String showSizeForm(Model model) {
-        model.addAttribute("size", new Size());
-        return "admin/products/addOrEdit";
+    @Autowired
+    private SizeService sizeService;
+
+    @PostMapping("/save")
+    public String saveSize(@Valid @ModelAttribute("size") Size size, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("sizes", sizeService.findAll());
+            return "admin/products/addOrEdit";
+        }
+        sizeService.save(size);
+        return "redirect:/admin/products/add";
     }
 
-    @PostMapping("/admin/sizes/saveOrUpdate")
-    public String saveOrUpdateSize(@ModelAttribute("size") Size size) {
-
-        return "redirect:/admin/sizes";
+    @GetMapping("/delete/{id}")
+    public String deleteSize(@PathVariable("id") Integer id, ModelMap model) {
+        sizeService.deleteById(id);
+        model.addAttribute("messageType", "success");
+        model.addAttribute("messageContent", "Xóa thành công");
+        return "redirect:/admin/products/add";
     }
 }

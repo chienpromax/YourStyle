@@ -33,8 +33,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import yourstyle.com.shope.model.Category;
+import yourstyle.com.shope.model.Color;
 import yourstyle.com.shope.model.Product;
+import yourstyle.com.shope.model.ProductImage;
+import yourstyle.com.shope.model.Size;
 import yourstyle.com.shope.service.CategoryService;
+import yourstyle.com.shope.service.ColorService;
 import yourstyle.com.shope.service.ProductService;
 import yourstyle.com.shope.utils.UploadUtils;
 import yourstyle.com.shope.validation.admin.ProductDto;
@@ -49,13 +53,23 @@ public class ProductsController {
 	@Autowired
 	ProductService productService;
 
-	@GetMapping("add")
-	public String add(Model model) {
-		List<Category> categories = categoryService.findAll();
-		model.addAttribute("categories", categories);
-		model.addAttribute("product", new ProductDto());
-		return "admin/products/addOrEdit";
-	}
+	@Autowired
+	ColorService colorService;
+
+	@GetMapping("/add")
+    public String addProductForm(Model model) {
+        List<Category> categories = categoryService.findAll();
+        List<Color> colors = colorService.findAll();
+
+        model.addAttribute("categories", categories);
+        model.addAttribute("colors", colors);
+        model.addAttribute("color", new Color());
+        model.addAttribute("size", new Size());
+        model.addAttribute("productImage", new ProductImage());
+        model.addAttribute("product", new ProductDto());
+        
+        return "admin/products/addOrEdit";
+    }
 
 	@GetMapping("/search")
 	public String search(@RequestParam("value") String value,

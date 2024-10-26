@@ -7,7 +7,7 @@
 <body>
   <section layout:fragment="main">
     <div class="displayNotifications"></div>
-    <main id="main" class="main">
+    <main id="main" class="main py-5">
       <div class="pagetitle">
         <h1>
           <span th:if="${product.isEdit}">Cập nhật</span>
@@ -41,20 +41,26 @@
                     <div class="col-md-6">
                       <input type="hidden" th:field="*{productId}" />
                       <div class="form-floating mb-3">
-                        <input type="text" th:field="*{name}" class="form-control" id="floatingName" placeholder="Tên sản phẩm" />
+                        <input type="text" th:field="*{name}" class="form-control" id="floatingName"
+                          placeholder="Tên sản phẩm" />
                         <label for="floatingName"><span class="text-danger">*</span> Tên sản phẩm</label>
-                        <div th:if="${#fields.hasErrors('name')}" class="text-danger" th:errors="*{name}">Tên sản phẩm không hợp lệ</div>
+                        <div th:if="${#fields.hasErrors('name')}" class="text-danger" th:errors="*{name}">Tên sản phẩm
+                          không hợp lệ</div>
                       </div>
-                      
+
                       <div class="form-floating mb-3">
-                        <input type="number" th:field="*{price}" class="form-control" id="floatingPrice" placeholder="Giá" step="1" />
+                        <input type="number" th:field="*{price}" class="form-control" id="floatingPrice"
+                          placeholder="Giá" step="1" />
                         <label for="floatingPrice"><span class="text-danger">*</span> Giá</label>
-                        <div th:if="${#fields.hasErrors('price')}" class="text-danger" th:errors="*{price}">Giá sản phẩm không hợp lệ</div>
+                        <div th:if="${#fields.hasErrors('price')}" class="text-danger" th:errors="*{price}">Giá sản phẩm
+                          không hợp lệ</div>
                       </div>
 
                       <label for="categorySelect" class="form-label fs-5">Chọn Danh Mục</label>
-                      <select required style="color: rgb(247, 120, 141); font-weight: 600;"  class="form-control mb-3" th:field="*{category.categoryId}" id="categorySelect">
-                        <option value="">꧁⁣༒  -----------------   ∩(ミ ˃̵  ω ˂̵ ミ)∩   ----------  /ᐠ - ˕ -マ Ⳋ  ----------------  ༒꧂</option>
+                      <select required style="color: rgb(247, 120, 141); font-weight: 600;" class="form-control mb-3"
+                        th:field="*{category.categoryId}" id="categorySelect">
+                        <option value="">꧁⁣༒ ----------------- ∩(ミ ˃̵ ω ˂̵ ミ)∩ ---------- /ᐠ - ˕ -マ Ⳋ ----------------
+                          ༒꧂</option>
                         <th:block th:each="cat : ${categories}">
                           <!-- <option th:value="${cat.categoryId}" th:text="${cat.name}"> -->
                           <option th:value="${cat.categoryId}">
@@ -63,7 +69,8 @@
                                 th:text="${cat.parentCategory.name}">Cha</span>)</span>
                           </option>
                         </th:block>
-                        <div th:if="${#fields.hasErrors('category')}" class="text-danger" th:errors="*{category}">Phải chọn doanh mục</div>
+                        <div th:if="${#fields.hasErrors('category')}" class="text-danger" th:errors="*{category}">Phải
+                          chọn doanh mục</div>
                       </select>
 
                       <!-- Danh mục -->
@@ -79,14 +86,15 @@
 
                       <div class="mb-3">
                         <label class="form-label" for="productDetail">Chi tiết sản phẩm</label>
-                        <textarea class="form-control" th:field="*{productDetail}" id="productDetail" rows="4"></textarea>
-                        <div th:if="${#fields.hasErrors('productDetail')}" class="text-danger" th:errors="*{productDetail}">Chi tiết sản phẩm không hợp lệ</div>
+                        <textarea class="form-control" th:field="*{productDetail}" id="productDetail"
+                          rows="4"></textarea>
+                        <div th:if="${#fields.hasErrors('productDetail')}" class="text-danger"
+                          th:errors="*{productDetail}">Chi tiết sản phẩm không hợp lệ</div>
                       </div>
 
                       <div class="mb-3">
                         <label for="description" class="form-label">Mô tả</label>
-                        <textarea class="form-control" th:field="*{description}" id="description" rows="4"
-                        ></textarea>
+                        <textarea class="form-control" th:field="*{description}" id="description" rows="4"></textarea>
                       </div>
 
                       <label class="form-label mb-3"><span class="text-danger">*</span> Trạng thái</label>
@@ -135,14 +143,146 @@
                     </button>
                   </div>
                 </form>
+                <hr>
                 <!-- End floating Labels Form -->
+                <div class="row py-4">
+                  <!-- Form quản lý Màu sắc -->
+                  <div class="col-md-4 bg-dark py-3 text-white rounded">
+                    <form method="POST" action="/admin/colors/save" th:object="${color}">
+                      <h4>Quản lý Màu sắc</h4>
+                      <div class="form-floating mb-3">
+                        <input required type="text" th:field="*{colorName}" class="bg-dark text-white form-control"
+                          placeholder="Tên màu sắc" />
+                        <label for="colorName">Tên màu sắc</label>
+                        <div th:if="${#fields.hasErrors('colorName')}" class="text-danger" th:errors="*{colorName}">
+                          Tên màu sắc không hợp lệ
+                        </div>
+                      </div>
+                      <button class="btn btn-primary text-center">Lưu</button>
+                    </form>
+
+                    <!-- Danh sách màu sắc -->
+                    <div class="py-5">
+                      <h4>Danh sách Màu sắc</h4>
+                      <table class="table text-center text-white">
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Tên màu sắc</th>
+                            <th>Xóa mầu</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr th:each="color : ${colors}">
+                            <td th:text="${color.colorId}"></td>
+                            <td th:text="${color.colorName}"></td>
+                            <td>
+                              <!-- <a style="cursor: pointer; font-size: 21px; color: green;"
+                                th:href="@{/admin/colors/edit/{id}(id=${color.colorId})}">
+                                <i class="bi bi-pencil-square"></i>
+                              </a> -->
+                              <button style="border: none; background: none; color: red;"
+                                th:attr="onclick=|confirmDelete(${color.colorId});|">
+                                <i class="bi bi-trash3 ps-1"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <!-- Form quản lý Kích thước -->
+                  <div class="col-md-4 bg-dark py-3 text-white rounded">
+                    <form method="POST" action="/admin/sizes/save" th:object="${size}">
+                      <h4>Quản lý Màu sắc</h4>
+                      <div class="form-floating mb-3">
+                        <input required type="text" th:field="*{colorName}" class="bg-dark text-white form-control"
+                          placeholder="Tên màu sắc" />
+                        <label for="colorName">Tên màu sắc</label>
+                        <div th:if="${#fields.hasErrors('colorName')}" class="text-danger" th:errors="*{colorName}">
+                          Tên màu sắc không hợp lệ
+                        </div>
+                      </div>
+                      <button class="btn btn-primary text-center">Lưu</button>
+                    </form>
+
+                    <!-- Danh sách màu sắc -->
+                    <div class="py-5">
+                      <h4>Danh sách Màu sắc</h4>
+                      <table class="table text-center text-white">
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Tên màu sắc</th>
+                            <th>Xóa mầu</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr th:each="color : ${colors}">
+                            <td th:text="${color.colorId}"></td>
+                            <td th:text="${color.colorName}"></td>
+                            <td>
+                              <!-- <a style="cursor: pointer; font-size: 21px; color: green;"
+                                th:href="@{/admin/colors/edit/{id}(id=${color.colorId})}">
+                                <i class="bi bi-pencil-square"></i>
+                              </a> -->
+                              <button style="border: none; background: none; color: red;"
+                                th:attr="onclick=|confirmDelete(${color.colorId});|">
+                                <i class="bi bi-trash3 ps-1"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+
+                  <!-- Form quản lý Ảnh Thumbnail -->
+                  <div class="col-md-4">
+                    <form method="POST" action="/admin/productImages/saveOrUpdate" th:object="${productImage}"
+                      enctype="multipart/form-data">
+                      <h4>Quản lý ảnh Thumbnail</h4>
+                      <div class="form-group">
+                        <label for="imageUrl">Chọn ảnh thumbnail</label>
+                        <input type="file" th:field="*{imageUrl}" class="form-control" id="imageUrl" />
+                        <div th:if="${#fields.hasErrors('imageUrl')}" class="text-danger" th:errors="*{imageUrl}">
+                          Ảnh không hợp lệ
+                        </div>
+                      </div>
+                      <button class="btn btn-primary">Lưu</button>
+                    </form>
+                  </div>
+
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
     </main>
+
+    <script type="text/javascript">
+      function confirmDelete(productId) {
+        Swal.fire({
+          title: 'Bạn có chắc chắn muốn xóa?',
+          text: "Bạn sẽ không thể hoàn tác sau khi xóa!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'xóa nó!',
+          cancelButtonText: 'Hủy'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/admin/colors/delete/' + productId;
+          }
+        });
+      }
+    </script>
     <script src="/admin/js/customer.js"></script>
+    <script src="/admin/js/productList.js"></script>
     <script src="/admin/js/accountAddOrEdit.js"></script>
   </section>
 </body>

@@ -28,9 +28,5 @@ public interface ColorService {
     <S extends Color> Optional<S> findOne(Example<S> example);
 
     <S extends Color> S save(S entity);
-
-    Color update(Color color);
-
-    Page<Color> searchByName(String name, Pageable pageable);
     
 }

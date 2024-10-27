@@ -126,7 +126,8 @@
                         </div>
                       </div>
                       <div th:if="${#fields.hasErrors('imageFile')}" class="text-danger" th:errors="*{imageFile}">Chọn
-                        Ảnh</div>
+                        Ảnh
+                      </div>
                     </div>
 
                     <!-- Cột bên phải -->
@@ -138,18 +139,101 @@
                     <button class="btn btn-primary rounded-pill py-2 px-4 me-3" th:unless="*{isEdit}">
                       Thêm sản phẩm
                     </button>
-                    <button type="reset" class="btn btn-secondary py-2 px-4 rounded-pill">
+                    <button type="reset" class="btn btn-secondary py-2 px-4 me-3 rounded-pill">
                       Làm mới
                     </button>
+                    <button th:if="*{isEdit}" type="button" class="btn btn-warning px-4 me-3 rounded-pill"
+                      data-bs-toggle="modal" data-bs-target="#exampleModal">
+                      Giảm giá sản phẩm
+                    </button>
+
                   </div>
                 </form>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                  aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered modal-xl">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Quản lý giảm giá</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <h4 class="bg-white py-3 text-dark">Thêm Mã Giảm Giá</h4>
+                        <form method="POST" action="/admin/discounts/save" th:object="${discount}">
+                          <input type="hidden" name="productId" th:value="${productId}" />
+                          <input type="hidden" th:field="*{discountId}" />
+                          <div class="form-floating mb-3">
+                            <input required type="text" th:field="*{discountName}" class="form-control"
+                              placeholder="Tên Giảm Giá" />
+                            <label for="discountName">Tên Giảm Giá</label>
+                          </div>
+                          <div class="form-floating mb-3">
+                            <textarea th:field="*{description}" class="form-control" placeholder="Mô Tả"></textarea>
+                            <label for="description">Mô Tả</label>
+                          </div>
+                          <div class="form-floating mb-3">
+                            <input required type="number" step="0.01" th:field="*{discountPercent}" class="form-control"
+                              placeholder="Phần Trăm Giảm Giá" />
+                            <label for="discountPercent">Phần Trăm Giảm Giá (%)</label>
+                          </div>
+                          <div class="form-floating mb-3">
+                            <input required type="datetime-local" th:field="*{startDate}" class="form-control"
+                              placeholder="Ngày Bắt Đầu" />
+                            <label for="startDate">Ngày Bắt Đầu</label>
+                          </div>
+                          <div class="form-floating mb-3">
+                            <input required type="datetime-local" th:field="*{endDate}" class="form-control"
+                              placeholder="Ngày Kết Thúc" />
+                            <label for="endDate">Ngày Kết Thúc</label>
+                          </div>
+                          <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Lưu Mã Giảm Giá</button>
+                          </div>
+                        </form>
+                        <h4 class="bg-white py-3 text-dark">Danh sách Giảm giá</h4>
+                        <table class="table text-center text-dark bg-light">
+                          <thead>
+                            <tr>
+                              <th>ID</th>
+                              <th>Tên Giảm Giá</th>
+                              <th>Mô Tả</th>
+                              <th>Phần Trăm Giảm Giá</th>
+                              <th>Ngày Bắt Đầu</th>
+                              <th>Ngày Kết Thúc</th>
+                              <th>Hành Động</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr th:each="discount : ${discounts}">
+                              <td th:text="${discount.discountId}"></td>
+                              <td th:text="${discount.discountName}"></td>
+                              <td th:text="${discount.description}"></td>
+                              <td th:text="${discount.discountPercent} + '%'"></td>
+                              <td th:text="${discount.startDate}"></td>
+                              <td th:text="${discount.endDate}"></td>
+                              <td>
+                                <button style="border: none; background: none; color: red;"
+                                  th:attr="onclick=|confirmDeleteDiscount(${discount.discountId});|">
+                                  <i class="bi bi-trash3 ps-1"></i>
+                                </button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <hr>
                 <!-- End floating Labels Form -->
-                <div class="row py-4 justify-content-center bg-secondary text-center">
+                <div class="row py-4 justify-content-center bg-secondary text-center rounded">
                   <!-- Form quản lý Màu sắc -->
                   <div class="col-md-5 bg-dark py-3 text-white rounded mx-3">
                     <form method="POST" action="/admin/colors/save" th:object="${color}">
-                      <h4 >Quản lý Màu sắc</h4>
+                      <h4>Quản lý Màu sắc</h4>
                       <div class="form-floating mb-3">
                         <input required type="text" th:field="*{colorName}" class="bg-dark text-white form-control"
                           placeholder="Tên màu sắc" />
@@ -159,10 +243,10 @@
                         </div>
                       </div>
                       <div class="text-center">
-                        <button class="btn btn-primary">Lưu</button>
+                        <button class="btn btn-primary">Thêm</button>
                       </div>
                     </form>
-                
+
                     <!-- Danh sách màu sắc -->
                     <div class="py-5">
                       <h4 class="bg-white py-3 text-dark">Danh sách Màu sắc</h4>
@@ -189,9 +273,9 @@
                       </table>
                     </div>
                   </div>
-                
+
                   <!-- Form quản lý Kích thước -->
-                  <div class="col-md-5 bg-dark py-3 text-white rounded mx-3"> 
+                  <div class="col-md-5 bg-dark py-3 text-white rounded mx-3">
                     <form method="POST" action="/admin/sizes/save" th:object="${size}">
                       <h4>Quản lý Kích thước</h4>
                       <div class="form-floating mb-3">
@@ -203,10 +287,10 @@
                         </div>
                       </div>
                       <div class="text-center">
-                        <button class="btn btn-primary">Lưu</button>
+                        <button class="btn btn-primary">Thêm</button>
                       </div>
                     </form>
-                
+
                     <!-- Danh sách kích thước -->
                     <div class="py-5">
                       <h4 class="bg-white py-3 text-dark">Danh sách Kích thước</h4>
@@ -234,7 +318,6 @@
                     </div>
                   </div>
                 </div>
-                
               </div>
             </div>
           </div>
@@ -259,7 +342,7 @@
           }
         });
       }
-    
+
       function confirmDeleteSize(sizeId) {
         Swal.fire({
           title: 'Bạn có chắc chắn muốn xóa?',
@@ -277,7 +360,7 @@
         });
       }
     </script>
-    
+
     <script src="/admin/js/customer.js"></script>
     <script src="/admin/js/productList.js"></script>
     <script src="/admin/js/accountAddOrEdit.js"></script>

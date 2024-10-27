@@ -34,11 +34,12 @@ import org.springframework.web.servlet.ModelAndView;
 
 import yourstyle.com.shope.model.Category;
 import yourstyle.com.shope.model.Color;
+import yourstyle.com.shope.model.Discount;
 import yourstyle.com.shope.model.Product;
-import yourstyle.com.shope.model.ProductImage;
 import yourstyle.com.shope.model.Size;
 import yourstyle.com.shope.service.CategoryService;
 import yourstyle.com.shope.service.ColorService;
+import yourstyle.com.shope.service.DiscountService;
 import yourstyle.com.shope.service.ProductService;
 import yourstyle.com.shope.service.SizeService;
 import yourstyle.com.shope.utils.UploadUtils;
@@ -50,31 +51,64 @@ public class ProductsController {
 
 	@Autowired
 	CategoryService categoryService;
-
 	@Autowired
 	ProductService productService;
-
 	@Autowired
 	ColorService colorService;
-
 	@Autowired
 	SizeService sizeService;
+	@Autowired
+	DiscountService discountService;
 
 	@GetMapping("/add")
-    public String addProductForm(Model model) {
-        List<Category> categories = categoryService.findAll();
-        List<Color> colors = colorService.findAll();
+	public String addProductForm(Model model) {
+		List<Category> categories = categoryService.findAll();
+		List<Color> colors = colorService.findAll();
+		List<Size> sizes = sizeService.findAll();
+		List<Discount> discounts = discountService.findAll();
 
-        model.addAttribute("categories", categories);
-        model.addAttribute("colors", colors);
-        model.addAttribute("color", new Color());
+		model.addAttribute("categories", categories);
+		model.addAttribute("colors", colors);
+		model.addAttribute("color", new Color());
 		model.addAttribute("size", new Size());
-		model.addAttribute("sizes", sizeService.findAll());
-        model.addAttribute("productImage", new ProductImage());
-        model.addAttribute("product", new ProductDto());
-        
-        return "admin/products/addOrEdit";
-    }
+		model.addAttribute("sizes", sizes);
+		model.addAttribute("discount", new Discount());
+		model.addAttribute("discounts", discounts);
+		model.addAttribute("product", new ProductDto());
+
+		return "admin/products/addOrEdit";
+	}
+
+	@GetMapping("edit/{productId}")
+	public ModelAndView edit(ModelMap model, @PathVariable("productId") Integer productId) {
+		ProductDto productDto = new ProductDto();
+		Optional<Product> optional = productService.findById(productId);
+
+		if (optional.isPresent()) {
+			Product product = optional.get();
+			BeanUtils.copyProperties(product, productDto);
+			productDto.setEdit(true);
+
+			List<Discount> discounts = discountService.findByProductId(productId);
+
+			model.addAttribute("product", productDto);
+			model.addAttribute("discounts", discounts); // Thêm thông tin giảm giá vào model
+			model.addAttribute("categories", categoryService.findAll());
+			model.addAttribute("colors", colorService.findAll());
+			model.addAttribute("sizes", sizeService.findAll());
+			model.addAttribute("color", new Color());
+			model.addAttribute("size", new Size());
+			model.addAttribute("discount", new Discount());
+			model.addAttribute("productId", productId);
+
+			return new ModelAndView("admin/products/addOrEdit", model);
+		}
+
+		// Xử lý khi sản phẩm không tồn tại
+		model.addAttribute("messageType", "warning");
+		model.addAttribute("messageContent", "Sản phẩm không tồn tại!");
+		return new ModelAndView("redirect:/admin/products", model);
+	}
 
 	@GetMapping("/search")
 	public String search(@RequestParam("value") String value,
@@ -85,7 +119,6 @@ public class ProductsController {
 		int pageSize = size.orElse(5);
 		Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by("name"));
 
-		// Gọi phương thức tìm kiếm theo tên sản phẩm và phân trang
 		Page<Product> products = productService.searchByName(value, pageable);
 
 		int totalPages = products.getTotalPages();
@@ -108,24 +141,6 @@ public class ProductsController {
 		model.addAttribute("value", value);
 
 		return "admin/products/list";
-	}
-
-	@GetMapping("edit/{productId}")
-	public ModelAndView edit(ModelMap model, @PathVariable("productId") Integer productId) {
-		ProductDto productDto = new ProductDto();
-		Optional<Product> optional = productService.findById(productId);
-		List<Category> categories = categoryService.findAll();
-		if (optional.isPresent()) { // tồn tại
-			Product product = optional.get();
-			BeanUtils.copyProperties(product, productDto);
-			productDto.setEdit(true);
-			model.addAttribute("product", productDto);
-			model.addAttribute("categories", categories);
-			return new ModelAndView("admin/products/addOrEdit");
-		}
-		model.addAttribute("messageType", "warning");
-		model.addAttribute("messageContent", "Sản phẩm không tồn tại!");
-		return new ModelAndView("redirect:/admin/products", model);
 	}
 
 	@GetMapping("delete/{productId}")

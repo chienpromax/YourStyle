@@ -59,18 +59,4 @@ public class ColorServiceImpl implements ColorService {
     public <S extends Color> S save(S entity) {
         return colorRepository.save(entity);
     }
-
-    @Override
-    public Color update(Color color) {
-        if (colorRepository.existsById(color.getColorId())) {
-            return colorRepository.save(color);
-        } else {
-            throw new IllegalArgumentException("Color not found with id: " + color.getColorId());
-        }
-    }
-
-    @Override
-    public Page<Color> searchByName(String name, Pageable pageable) {
-        return colorRepository.findByColorNameContaining(name, pageable);
-    }
 }

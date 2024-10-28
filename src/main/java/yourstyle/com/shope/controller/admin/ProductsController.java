@@ -100,7 +100,7 @@ public class ProductsController {
 			model.addAttribute("size", new Size());
 			model.addAttribute("discount", new Discount());
 			model.addAttribute("productId", productId);
-			model.addAttribute("isEdit", true); // Thêm thuộc tính isEdit vào model
+			model.addAttribute("isEdit", true);
 	
 			return new ModelAndView("admin/products/addOrEdit", model);
 		}

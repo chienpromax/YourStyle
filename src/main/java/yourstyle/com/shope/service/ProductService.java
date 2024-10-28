@@ -32,4 +32,6 @@ public interface ProductService {
 
     Page<Product> searchByName(String name, Pageable pageable);
 
+    List<Product> findByCategoryId(Integer categoryId);
+
 }

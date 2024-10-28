@@ -1,5 +1,7 @@
 package yourstyle.com.shope.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +13,6 @@ import yourstyle.com.shope.model.Product;
 public interface ProductRepository extends JpaRepository<Product, Integer>{
 
     Page<Product> findByNameContaining(String name, Pageable pageable);
+    
+    List<Product> findByCategory_CategoryId(Integer categoryId);
 }

@@ -159,10 +159,11 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <div class="modal-body">
-                        <h4 class="bg-white py-3 text-dark">Thêm Mã Giảm Giá</h4>
-                        <form class="py-3" method="POST" th:action="@{/admin/discounts/save}" th:object="${discount}">
+                        <h4 th:if="${isEdit}" class="bg-white py-3 text-dark">Thêm Mã Giảm Giá</h4>
+                        <form th:if="${isEdit}" class="py-3" method="POST" th:action="@{/admin/discounts/save}"
+                          th:object="${discount}">
                           <input type="hidden" th:field="*{discountId}" />
-                          <input type="hidden" name="productId" th:value="${product.productId}" />
+                          <input type="hidden" name="productId" th:value="${productId}" />
                           <div class="form-floating mb-3">
                             <input required type="text" th:field="*{discountName}" class="form-control"
                               placeholder="Tên Giảm Giá" />
@@ -214,11 +215,10 @@
                               <td th:text="${discount.startDate}"></td>
                               <td th:text="${discount.endDate}"></td>
                               <td>
-                                <a style="cursor: pointer; font-size: 21px; color: green;"
+                                <a th:if="${isEdit}" style="cursor: pointer; font-size: 21px; color: green;"
                                   th:href="@{/admin/discounts/edit/{discountId}(discountId=${discount.discountId}, productId=${product.productId})}">
                                   <i class="bi bi-eye"></i>
                                 </a>
-
                                 <button style="border: none; background: none; color: red;"
                                   th:attr="onclick=|confirmDeleteDiscount(${discount.discountId});|">
                                   <i class="bi bi-trash3 ps-1"></i>

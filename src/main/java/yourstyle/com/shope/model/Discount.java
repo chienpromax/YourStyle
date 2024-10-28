@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -49,5 +50,8 @@ public class Discount {
     @ManyToOne
     @JoinColumn(name = "productId", nullable = false)
     private Product product;
+
+    @Transient // Để không lưu vào database
+    private boolean isEdit = false;
 
 }

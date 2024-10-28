@@ -3,10 +3,11 @@ package yourstyle.com.shope.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.CascadeType;
+import org.springframework.format.annotation.DateTimeFormat;
+
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,11 +38,14 @@ public class Discount {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal discountPercent;
 
+
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime startDate;
-
+    
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime endDate;
-
+    
     @ManyToOne
     @JoinColumn(name = "productId", nullable = false)
     private Product product;

@@ -142,11 +142,10 @@
                     <button type="reset" class="btn btn-secondary py-2 px-4 me-3 rounded-pill">
                       Làm mới
                     </button>
-                    <button th:if="*{isEdit}" type="button" class="btn btn-warning px-4 me-3 rounded-pill"
-                      data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <button type="button" class="btn btn-warning px-4 me-3 rounded-pill" data-bs-toggle="modal"
+                      data-bs-target="#exampleModal">
                       Giảm giá sản phẩm
                     </button>
-
                   </div>
                 </form>
 
@@ -156,14 +155,14 @@
                   <div class="modal-dialog modal-dialog-centered modal-xl">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Quản lý giảm giá</h5>
+                        <h3 class="modal-title" id="exampleModalLabel">Quản lý giảm giá</h3>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <div class="modal-body">
                         <h4 class="bg-white py-3 text-dark">Thêm Mã Giảm Giá</h4>
-                        <form method="POST" action="/admin/discounts/save" th:object="${discount}">
-                          <input type="hidden" name="productId" th:value="${productId}" />
+                        <form class="py-3" method="POST" th:action="@{/admin/discounts/save}" th:object="${discount}">
                           <input type="hidden" th:field="*{discountId}" />
+                          <input type="hidden" name="productId" th:value="${product.productId}" />
                           <div class="form-floating mb-3">
                             <input required type="text" th:field="*{discountName}" class="form-control"
                               placeholder="Tên Giảm Giá" />
@@ -179,19 +178,20 @@
                             <label for="discountPercent">Phần Trăm Giảm Giá (%)</label>
                           </div>
                           <div class="form-floating mb-3">
-                            <input required type="datetime-local" th:field="*{startDate}" class="form-control"
-                              placeholder="Ngày Bắt Đầu" />
+                            <input required type="datetime-local" th:field="*{startDate}"
+                              th:value="${formattedStartDate}" class="form-control" placeholder="Ngày Bắt Đầu" />
                             <label for="startDate">Ngày Bắt Đầu</label>
                           </div>
                           <div class="form-floating mb-3">
-                            <input required type="datetime-local" th:field="*{endDate}" class="form-control"
-                              placeholder="Ngày Kết Thúc" />
+                            <input required type="datetime-local" th:field="*{endDate}" th:value="${formattedEndDate}"
+                              class="form-control" placeholder="Ngày Kết Thúc" />
                             <label for="endDate">Ngày Kết Thúc</label>
                           </div>
                           <div class="text-center">
                             <button type="submit" class="btn btn-primary">Lưu Mã Giảm Giá</button>
                           </div>
                         </form>
+
                         <h4 class="bg-white py-3 text-dark">Danh sách Giảm giá</h4>
                         <table class="table text-center text-dark bg-light">
                           <thead>
@@ -214,6 +214,11 @@
                               <td th:text="${discount.startDate}"></td>
                               <td th:text="${discount.endDate}"></td>
                               <td>
+                                <a style="cursor: pointer; font-size: 21px; color: green;"
+                                  th:href="@{/admin/discounts/edit/{discountId}(discountId=${discount.discountId}, productId=${product.productId})}">
+                                  <i class="bi bi-eye"></i>
+                                </a>
+
                                 <button style="border: none; background: none; color: red;"
                                   th:attr="onclick=|confirmDeleteDiscount(${discount.discountId});|">
                                   <i class="bi bi-trash3 ps-1"></i>
@@ -226,7 +231,6 @@
                     </div>
                   </div>
                 </div>
-
                 <hr>
                 <!-- End floating Labels Form -->
                 <div class="row py-4 justify-content-center bg-secondary text-center rounded">
@@ -356,6 +360,23 @@
         }).then((result) => {
           if (result.isConfirmed) {
             window.location.href = '/admin/sizes/delete/' + sizeId;
+          }
+        });
+      }
+
+      function confirmDeleteDiscount(discountId) {
+        Swal.fire({
+          title: 'Bạn có chắc chắn muốn xóa?',
+          text: "Bạn sẽ không thể hoàn tác sau khi xóa!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'xóa nó!',
+          cancelButtonText: 'Hủy'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/admin/discounts/delete/' + discountId;
           }
         });
       }

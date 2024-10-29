@@ -33,5 +33,8 @@ public interface ProductVariantService {
 
     boolean existsById(Integer id);
 
-    // Page<ProductVariant> searchByName(String name, Pageable pageable);
+    List<ProductVariant> getAllProductVariantsOrderedByPrice();
+
+    Page<ProductVariant> searchByProductName(String productName, Pageable pageable);
+
 }

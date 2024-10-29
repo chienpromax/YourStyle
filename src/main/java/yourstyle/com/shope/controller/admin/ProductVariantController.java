@@ -72,6 +72,40 @@ public class ProductVariantController {
         return "admin/productVariants/addOrEdit";
     }
 
+    @GetMapping("/search")
+    public String searchProductVariants(@RequestParam("value") String value,
+                                        @RequestParam("page") Optional<Integer> page,
+                                        @RequestParam("size") Optional<Integer> size,
+                                        Model model) {
+        int currentPage = page.orElse(0);
+        int pageSize = size.orElse(5);
+        Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by("product.name")); // Sắp xếp theo tên sản phẩm
+    
+        Page<ProductVariant> productVariants = productVariantService.searchByProductName(value, pageable);
+    
+        int totalPages = productVariants.getTotalPages();
+        if (totalPages > 0) {
+            int start = Math.max(1, currentPage + 1 - 2);
+            int end = Math.min(currentPage + 1 + 2, totalPages);
+            if (totalPages > 5) {
+                if (end == totalPages) {
+                    start = end - 5;
+                } else if (start == 1) {
+                    end = start + 5;
+                }
+            }
+            List<Integer> pageNumbers = IntStream.rangeClosed(start, end).boxed().collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+    
+        model.addAttribute("productVariants", productVariants.getContent());
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("size", pageSize);
+        model.addAttribute("value", value);
+    
+        return "admin/productVariants/list";
+    }
+
     @GetMapping("edit/{variantId}")
     public ModelAndView edit(ModelMap model, @PathVariable("variantId") Integer variantId) {
         Optional<ProductVariant> optional = productVariantService.findById(variantId);

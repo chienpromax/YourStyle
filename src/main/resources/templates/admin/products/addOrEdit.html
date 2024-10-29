@@ -145,7 +145,7 @@
                           <div th:each="image : ${productImages}" class="img-container">
                             <img th:src="@{/uploads/} + ${image.imageUrl}" class="preview-image" alt="Product Image" />
                             <button type="button" class="delete-button"
-                              th:onclick="'deleteImage(\'' + ${image.imageId} + '\')'">X</button>
+                            th:attr="onclick='confirmDeleteImage(' + ${image.imageId} + ')'">X</button>
                           </div>
                         </div>
                       </div>

@@ -8,6 +8,7 @@ import java.nio.file.StandardCopyOption;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,12 @@ public class ProductImageController {
 
     @Autowired
     private ProductImageService productImageService;
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteImage(@PathVariable Integer id) {
+        productImageService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 
     @PostMapping("/{productId}/images")
     public ResponseEntity<Void> uploadProductImages(

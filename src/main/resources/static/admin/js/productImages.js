@@ -92,3 +92,33 @@ function previewImages(event) {
     reader.readAsDataURL(file);
   }
 }
+
+function confirmDeleteImage(imageId) {
+  console.log("Image ID:", imageId);
+  Swal.fire({
+    title: "Bạn có chắc chắn muốn xóa hình ảnh này?",
+    text: "Bạn sẽ không thể hoàn tác sau khi xóa!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Xóa!",
+    cancelButtonText: "Hủy",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      fetch(`/api/products/delete/${imageId}`, {
+        method: "DELETE",
+      }).then((response) => {
+        console.log(`Fetching: /api/products/delete/${imageId}`);
+        if (response.ok) {
+          Swal.fire("Đã xóa!", "Hình ảnh đã được xóa thành công.", "success");
+          setTimeout(() => {
+            location.reload();
+          }, 1500);
+        } else {
+          Swal.fire("Lỗi!", "Có lỗi xảy ra khi xóa hình ảnh.", "error");
+        }
+      });
+    }
+  });
+}

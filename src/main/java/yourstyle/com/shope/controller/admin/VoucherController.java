@@ -46,6 +46,7 @@ import yourstyle.com.shope.validation.admin.VoucherDTO;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 
 @Controller
 @RequestMapping("admin/vouchers")
@@ -208,7 +209,6 @@ public class VoucherController {
             model.addAttribute("customers", customers); // Thêm danh sách khách hàng vào model
             return new ModelAndView("admin/vouchers/addOrEdit", model);
         }
-
         // Khởi tạo đối tượng Voucher để lưu vào DB
         Voucher voucher = new Voucher();
         BeanUtils.copyProperties(voucherDTO, voucher); // Copy dữ liệu từ DTO sang entity
@@ -324,13 +324,19 @@ public class VoucherController {
     }
 
     @GetMapping("delete/{voucherId}")
-    public String getMethodName(@PathVariable("voucherId") Integer voucherId) {
+    public ModelAndView getMethodName(ModelMap model, @PathVariable("voucherId") Integer voucherId) {
 
-        // Xóa tất cả các bản ghi liên quan trong VoucherCustomer trước
-        voucherCustomerService.deleteByVoucherId(voucherId);
-
-        voucherService.deleteByVoucherId(voucherId);
-        return "redirect:/admin/vouchers";
+        if (voucherId != null) {
+            // Xóa tất cả các bản ghi liên quan trong VoucherCustomer trước
+            voucherCustomerService.deleteByVoucherId(voucherId);
+            voucherService.deleteByVoucherId(voucherId);
+            model.addAttribute("messageType", "success");
+            model.addAttribute("messageContent", "Xóa thành công");
+        } else {
+            model.addAttribute("messageType", "error");
+            model.addAttribute("messageContent", "Khách hàng không tồn tại");
+        }
+        return new ModelAndView("redirect:/admin/vouchers", model);
     }
 
     @GetMapping("export/excel")

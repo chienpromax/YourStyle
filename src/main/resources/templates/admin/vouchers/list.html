@@ -158,8 +158,7 @@
 
                                                 <!-- Xóa Voucher -->
                                                 <a style="cursor: pointer; font-size: 21px; color: red;"
-                                                    th:href="@{/admin/vouchers/delete/{voucherId}(voucherId=${voucher.voucherId})}"
-                                                    onclick="return confirm('Bạn có chắc chắn muốn xóa voucher này không?');">
+                                                    th:attr="onclick=|confirmDelete(${voucher.voucherId});|">
                                                     <i class="bi bi-trash" title="Xóa"></i>
                                                 </a>
 
@@ -231,8 +230,26 @@
                     </div>
                 </div>
             </section>
-
         </main><!-- End #main -->
+        <script type="text/javascript">
+            function confirmDelete(voucherId) {
+                Swal.fire({
+                    title: 'Bạn có chắc chắn muốn xóa?',
+                    text: "Bạn sẽ không thể hoàn tác sau khi xóa!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'xóa nó!',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/admin/vouchers/delete/' + voucherId;
+                    }
+                });
+            }
+        </script>
+        <script src="/admin/js/accountAddOrEdit.js"></script>
     </section>
 </body>
 

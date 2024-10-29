@@ -9,7 +9,7 @@
         <main id="main" class="main">
 
             <div class="pagetitle">
-                <h1>Phiếu giảm giá</h1>
+                <h1><a th:href="@{/admin/vouchers}">Phiếu giảm giá</a></h1>
                 <nav>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html">Trang chủ</a></li>
@@ -23,16 +23,15 @@
                     <div class="card-body">
                         <form th:action="@{/admin/vouchers/saveOrUpdate}" th:object="${voucher}" method="post">
                             <div class="row">
-                                <!-- Form Section - Bên trái -->
                                 <div class="col-md-12 mt-3">
                                     <div class="row g-3">
-
                                         <!-- Hiển thị voucherId chỉ khi chỉnh sửa -->
                                         <div class="col-md-12" th:if="${voucher.voucherId != null}">
                                             <div class="form-floating">
                                                 <input th:field="*{voucherId}" th:value="${voucher.voucherId}"
                                                     class="form-control" id="floatingVoucherId" readonly>
-                                                <label for="floatingVoucherId">ID Voucher</label>
+                                                <label for="floatingVoucherId"><i class="bi bi-person-badge"></i> ID
+                                                    Voucher</label>
                                             </div>
                                         </div>
                                         <div class="col-md-12">
@@ -40,7 +39,8 @@
                                                 <input th:field="*{voucherCode}" type="text" class="form-control"
                                                     th:classappend="${#fields.hasErrors('voucherCode')} ? 'is-invalid' : ''"
                                                     id="floatingMa" placeholder="Mã phiếu giảm giá">
-                                                <label for="floatingMa">Mã phiếu giảm giá</label>
+                                                <label for="floatingMa"><i class="bi bi-upc-scan"></i> Mã phiếu giảm
+                                                    giá</label>
                                                 <!-- Hiển thị lỗi voucherCode -->
                                                 <div th:if="${#fields.hasErrors('voucherCode')}"
                                                     class="invalid-feedback">
@@ -53,7 +53,8 @@
                                                 <input th:field="*{voucherName}" type="text" class="form-control"
                                                     th:classappend="${#fields.hasErrors('voucherName')} ? 'is-invalid' : ''"
                                                     id="floatingName" placeholder="Tên phiếu giảm giá">
-                                                <label for="floatingName">Tên phiếu giảm giá</label>
+                                                <label for="floatingName"><i class="bi bi-ticket-perforated"> </i>Tên
+                                                    phiếu giảm giá</label>
                                                 <!-- Hiển thị lỗi voucherName -->
                                                 <div th:if="${#fields.hasErrors('voucherName')}"
                                                     class="invalid-feedback">
@@ -66,7 +67,8 @@
                                                 <input th:field="*{discountAmount}" type="number" class="form-control"
                                                     th:classappend="${#fields.hasErrors('discountAmount')} ? 'is-invalid' : ''"
                                                     id="floatingDiscountValue" placeholder="Số tiền giảm giá">
-                                                <label for="floatingDiscountValue">Giảm giá</label>
+                                                <label for="floatingDiscountValue"><i class="bi bi-percent"></i> Giảm
+                                                    giá</label>
                                                 <div th:if="${#fields.hasErrors('discountAmount')}"
                                                     class="invalid-feedback">
                                                     <p th:errors="*{discountAmount}" class="mb-0"></p>
@@ -79,7 +81,8 @@
                                                 <input th:field="*{maxTotalAmount}" type="number" class="form-control"
                                                     th:classappend="${#fields.hasErrors('maxTotalAmount')} ? 'is-invalid' : ''"
                                                     id="floatingMaxDiscount" placeholder="Giá trị tối đa">
-                                                <label for="floatingMaxDiscount">Giá trị tối đa</label>
+                                                <label for="floatingMaxDiscount"><i class="bi bi-cash-stack"></i> Giá
+                                                    trị tối đa</label>
                                                 <div th:if="${#fields.hasErrors('maxTotalAmount')}"
                                                     class="invalid-feedback">
                                                     <p th:errors="*{maxTotalAmount}" class="mb-0"></p>
@@ -92,7 +95,8 @@
                                                 <input th:field="*{maxUses}" type="number" class="form-control"
                                                     th:classappend="${#fields.hasErrors('maxUses')} ? 'is-invalid' : ''"
                                                     id="floatingQuantity" placeholder="Số lượng">
-                                                <label for="floatingQuantity">Số lượng</label>
+                                                <label for="floatingQuantity"><i class="bi bi-box-seam"></i> Số
+                                                    lượng</label>
                                                 <div th:if="${#fields.hasErrors('maxUses')}" class="invalid-feedback">
                                                     <p th:errors="*{maxUses}" class="mb-0"></p>
                                                 </div>
@@ -104,7 +108,8 @@
                                                 <input th:field="*{minTotalAmount}" type="number" class="form-control"
                                                     th:classappend="${#fields.hasErrors('minTotalAmount')} ? 'is-invalid' : ''"
                                                     id="floatingCondition" placeholder="Điều kiện">
-                                                <label for="floatingCondition">Giá trị tối thiểu</label>
+                                                <label for="floatingCondition"><i class="bi bi-check2-circle"></i> Giá
+                                                    trị tối thiểu</label>
                                                 <div th:if="${#fields.hasErrors('minTotalAmount')}"
                                                     class="invalid-feedback">
                                                     <p th:errors="*{minTotalAmount}" class="mb-0"></p>
@@ -135,7 +140,7 @@
                                                     <option th:value="3">Giảm giá vận chuyển</option>
                                                     <option th:value="4">Voucher</option>
                                                 </select>
-                                                <label for="inputState">Loại</label>
+                                                <label for="inputState"><i class="bi bi-tags"></i> Loại</label>
                                             </div>
                                         </div>
                                         <!-- Date and time picker -->
@@ -145,7 +150,8 @@
                                                     class="form-control datetimepicker bg-white"
                                                     th:classappend="${#fields.hasErrors('startDate')} ? 'is-invalid' : ''"
                                                     id="datetimepickerFrom" placeholder="Từ ngày">
-                                                <label for="datetimepickerFrom">Từ ngày</label>
+                                                <label for="datetimepickerFrom"><i class="bi bi-calendar-event"></i> Từ
+                                                    ngày</label>
                                                 <div th:if="${#fields.hasErrors('startDate')}" class="invalid-feedback">
                                                     <p th:errors="*{startDate}" class="mb-0"></p>
                                                 </div>
@@ -158,7 +164,8 @@
                                                     class="form-control datetimepicker bg-white"
                                                     th:classappend="${#fields.hasErrors('endDate')} ? 'is-invalid' : ''"
                                                     id="datetimepickerTo" placeholder="Đến ngày">
-                                                <label for="datetimepickerTo">Đến ngày</label>
+                                                <label for="datetimepickerTo"><i class="bi bi-calendar-event"></i> Đến
+                                                    ngày</label>
                                                 <div th:if="${#fields.hasErrors('endDate')}" class="invalid-feedback">
                                                     <p th:errors="*{endDate}" class="mb-0"></p>
                                                 </div>
@@ -166,7 +173,8 @@
                                         </div>
                                         <!-- Trạng thái -->
                                         <fieldset class="row mt-3">
-                                            <legend class="col-form-label col-sm-4">Trạng thái</legend>
+                                            <legend class="col-form-label col-sm-4"><i class="bi bi-toggle-on"></i>
+                                                Trạng thái</legend>
                                             <div class="col-sm-8 d-flex align-items-center">
                                                 <div class="form-check me-3">
                                                     <input th:field="*{isPublic}" class="form-check-input" type="radio"
@@ -190,7 +198,8 @@
                                                     th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''"
                                                     id="floatingTextarea" placeholder="Mô tả"
                                                     style="height: 100px;"></textarea>
-                                                <label for="floatingTextarea">Mô tả</label>
+                                                <label for="floatingTextarea"><i class="bi bi-info-circle"></i> Mô
+                                                    tả</label>
                                                 <div th:if="${#fields.hasErrors('description')}"
                                                     class="invalid-feedback">
                                                     <p th:errors="*{description}" class="mb-0"></p>
@@ -200,11 +209,12 @@
 
                                     </div>
                                     <div class="col-12 text-center mt-3">
-                                        <button type="submit" class="btn btn-outline-primary">Gửi</button>
+                                        <button type="submit" class="btn btn-outline-primary"><i class="bi bi-send"></i>
+                                            Gửi</button>
                                         <a th:href="@{/admin/vouchers/add}" type="reset"
-                                            class="btn btn-outline-secondary">Làm mới</a>
+                                            class="btn btn-outline-secondary"><i class="bi bi-arrow-clockwise"></i>Làm
+                                            mới</a>
                                     </div>
-
                                 </div>
 
                             </div>

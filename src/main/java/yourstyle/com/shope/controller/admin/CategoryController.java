@@ -36,7 +36,7 @@ import yourstyle.com.shope.model.Category;
 import yourstyle.com.shope.service.CategoryService;
 import yourstyle.com.shope.utils.UploadUtils;
 
-@Controller
+@Controller("adminCategoryController")
 @RequestMapping("admin/categories/")
 public class CategoryController {
     @Autowired

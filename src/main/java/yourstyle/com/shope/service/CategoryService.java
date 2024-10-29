@@ -13,6 +13,9 @@ import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuer
 import yourstyle.com.shope.model.Category;
 
 public interface CategoryService {
+    List<Category> findParentCategories();
+    List<Category> findChildCategories(Integer parentId);
+
     List<Category> getChildCategories();
     long count();
 

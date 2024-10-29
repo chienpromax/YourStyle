@@ -59,8 +59,8 @@
                         <div class="dropdown">
                             <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow"
                                 href="#" id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
-                                <img src="/site/images/logo/meme-meo-nham-hiem.png" class="rounded-circle"
-                                   width="25" height="25" alt="Black and White Portrait of a Man" loading="lazy" />
+                                <img src="/site/images/logo/meme-meo-nham-hiem.png" class="rounded-circle" width="25"
+                                    height="25" alt="Black and White Portrait of a Man" loading="lazy" />
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
                                 <li>
@@ -71,7 +71,8 @@
                                     <a class="dropdown-item" th:href="@{/yourstyle/accounts/register}">ĐĂNG KÝ</a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" th:href="@{/yourstyle/accounts/forgot-password}">QUÊN MẬT KHẨU</a>
+                                    <a class="dropdown-item" th:href="@{/yourstyle/accounts/forgot-password}">QUÊN MẬT
+                                        KHẨU</a>
                                 </li>
                             </ul>
                         </div>
@@ -81,253 +82,37 @@
         </section>
         <section>
             <nav class="navbar navbar-expand-lg bg-body-tertiary">
-                <!-- Container wrapper -->
-                <div class="container-fluid ">
-                    <button data-mdb-button-init class="navbar-toggler px-0" type="button" data-mdb-collapse-init
-                        data-mdb-target="#navbarExample6" aria-controls="navbarExample6" aria-expanded="false"
-                        aria-label="Toggle navigation">
-                        <i class="fa-solid fa-play"></i>
-                    </button>
+                <div class="container-fluid">
+                    <ul class="navbar-nav me-auto ps-lg-0">
+                        <li th:each="parentCategory : ${parentCategories}"
+                            class="nav-item dropdown position-static mx-3">
+                            <a th:href="@{#}" class="nav-link dropdown-toggle" data-mdb-dropdown-init
+                                th:text="${parentCategory.name}" role="button" aria-expanded="false"></a>
 
-                    <div class="container collapse navbar-collapse" id="navbarExample6">
-                        <ul class="navbar-nav me-auto ps-lg-0" style="padding-left: 0.15rem">
-                            <li class="nav-item dropdown position-static mx-3">
-                                <a data-mdb-dropdown-init class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-                                    role="button" aria-expanded="false">
-                                    ÁO NỮ
-                                </a>
-                                <div class="dropdown-menu w-100 mt-0" aria-labelledby="navbarDropdown" style="
-                                      border-top-left-radius: 0;
-                                      border-top-right-radius: 0;
-                                      ">
+                                <div class="dropdown-menu w-100 mt-0 rounded-0">
                                     <div class="container">
-                                        <div class="row my-4">
-                                            <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
-                                                <p class="text-uppercase font-weight-bold">
-                                                    ÁO LEN
-                                                </p>
-                                                <a href="/allproduct">
-                                                    <div class="bg-image hover-overlay ripple mb-3"
-                                                        data-mdb-ripple-color="light">
-                                                        <img src="/site/images/ao/ao-cong-so-thoi-trang.png"
-                                                            class="img-fluid" />
+                                        <div class="row my-4 flex-row flex-nowrap overflow-auto" >
+                                            <div th:each="childCategory : ${parentCategory.childCategories}"
+                                                class="col-6 col-sm-4 col-md-2 mb-3 text-center d-flex flex-column align-items-center">
+                                                
+                                                <p class="text-uppercase fw-bold" th:text="${childCategory.name}"></p>
+                                                <a th:href="@{/allproduct}">
+                                                    <div class="bg-image hover-overlay ripple mb-3" data-mdb-ripple-color="light"
+                                                         style="width: 150px; height: 150px; overflow: hidden; border-radius: 8px;">
+                                                        <img th:src="@{/uploads/{image}(image=${childCategory.image})}"
+                                                             style="width: 100%; height: 100%; object-fit: cover;" alt="Category Image"/>
                                                     </div>
                                                 </a>
-                                            </div>
-                                            <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
-                                                <p class="text-uppercase font-weight-bold">
-                                                    ÁO SƠ MI
-                                                </p>
-                                                <a href="123">
-                                                    <div class="bg-image hover-overlay ripple mb-3"
-                                                        data-mdb-ripple-color="light">
-                                                        <img src="/site/images/ao/103128-ao-somi-cong-so-251.png"
-                                                            class="img-fluid" />
-                                                    </div>
-                                                </a>
-                                            </div>
-                                            <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
-                                                <p class="text-uppercase font-weight-bold">
-                                                    ÁO KHOÁC
-                                                </p>
-                                                <a href="123">
-                                                    <div class="bg-image hover-overlay ripple mb-3"
-                                                        data-mdb-ripple-color="light">
-                                                        <img src="/site/images/ao/ÁO khoác.png" class="img-fluid" />
-                                                    </div>
-                                                </a>
-                                            </div>
-                                            <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
-                                                <p class="text-uppercase font-weight-bold">
-                                                    ÁO KHOÁC
-                                                </p>
-                                                <a href="123">
-                                                    <div class="bg-image hover-overlay ripple mb-3"
-                                                        data-mdb-ripple-color="light">
-                                                        <img src="/site/images/ao/ÁO khoác.png" class="img-fluid" />
-                                                    </div>
-                                                </a>
-                                            </div>
-                                            <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
-                                                <p class="text-uppercase font-weight-bold">
-                                                    ÁO LEN
-                                                </p>
-                                                <a href="123">
-                                                    <div class="bg-image hover-overlay ripple mb-3"
-                                                        data-mdb-ripple-color="light">
-                                                        <img src="/site/images/ao/ao-cong-so-thoi-trang.png"
-                                                            class="img-fluid" />
-                                                    </div>
-                                                </a>
-                                            </div>
-                                            <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
-                                                <p class="text-uppercase font-weight-bold">
-                                                    ÁO SƠ MI
-                                                </p>
-                                                <a href="123">
-                                                    <div class="bg-image hover-overlay ripple mb-3"
-                                                        data-mdb-ripple-color="light">
-                                                        <img src="/site/images/ao/103128-ao-somi-cong-so-251.png"
-                                                            class="img-fluid" />
-                                                    </div>
-                                                </a>
+                                                
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </li>
-
-                            <li class="nav-item dropdown position-static mx-3">
-                                <a data-mdb-dropdown-init class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-                                    role="button" aria-expanded="false">
-                                    ÁO NAM
-                                </a>
-                                <div class="dropdown-menu w-100 mt-0" aria-labelledby="navbarDropdown" style="
-                                      border-top-left-radius: 0;
-                                      border-top-right-radius: 0;
-                                      ">
-                                    <div class="container">
-                                        <div class="row my-4">
-                                            <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
-                                                <p class="text-uppercase font-weight-bold">
-                                                    ÁO CHOÀNG SIÊU NhÂN
-                                                </p>
-                                                <a href="123">
-                                                    <div class="bg-image hover-overlay ripple mb-3"
-                                                        data-mdb-ripple-color="light">
-                                                        <img src="/site/images/ao/ÁO SIÊU NHÂN.png"
-                                                            class="img-fluid" />
-                                                    </div>
-                                                </a>
-                                            </div>
-                                            <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
-                                                <p class="text-uppercase font-weight-bold">
-                                                    ÁO LEN
-                                                </p>
-                                                <a href="123">
-                                                    <div class="bg-image hover-overlay ripple mb-3"
-                                                        data-mdb-ripple-color="light">
-                                                        <img src="/site/images/ao/ÁO LÊN NAM.png"
-                                                            class="img-fluid" />
-                                                    </div>
-                                                </a>
-                                            </div>
-                                            <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
-                                                <p class="text-uppercase font-weight-bold">
-                                                    ÁO SƠ MI
-                                                </p>
-                                                <a href="123">
-                                                    <div class="bg-image hover-overlay ripple mb-3"
-                                                        data-mdb-ripple-color="light">
-                                                        <img src="/site/images/ao/SƠ MI NAM.png" class="img-fluid" />
-                                                    </div>
-                                                </a>
-                                            </div>
-                                            <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
-                                                <p class="text-uppercase font-weight-bold">
-                                                    ÁO KHOÁC
-                                                </p>
-                                                <a href="123">
-                                                    <div class="bg-image hover-overlay ripple mb-3"
-                                                        data-mdb-ripple-color="light">
-                                                        <img src="/site/images/ao/ÁO KHOÁC NAM.png"
-                                                            class="img-fluid" />
-                                                    </div>
-                                                </a>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-
-                            <li class="nav-item dropdown position-static mx-3">
-                                <a data-mdb-dropdown-init class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-                                    role="button" aria-expanded="false">
-                                    GIẦY
-                                </a>
-                                <div class="dropdown-menu w-100 mt-0" aria-labelledby="navbarDropdown" style="
-                                      border-top-left-radius: 0;
-                                      border-top-right-radius: 0;
-                                      ">
-                                    <div class="container">
-                                        <div class="row my-4">
-                                            <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
-                                                <p class="text-uppercase font-weight-bold">
-                                                    GIẦY THỂ THAO
-                                                </p>
-                                                <a href="123">
-                                                    <div class="bg-image hover-overlay ripple mb-3"
-                                                        data-mdb-ripple-color="light">
-                                                        <img src="/site/images/ao/GIẦY THỂ THAO.png"
-                                                            class="img-fluid" />
-                                                    </div>
-                                                </a>
-                                            </div>
-                                            <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
-                                                <p class="text-uppercase font-weight-bold">
-                                                    GIẦY CAO BỒI
-                                                </p>
-                                                <a href="123">
-                                                    <div class="bg-image hover-overlay ripple mb-3"
-                                                        data-mdb-ripple-color="light">
-                                                        <img src="/site/images/ao/GIẦY CAO BỒI.png"
-                                                            class="img-fluid" />
-                                                    </div>
-                                                </a>
-                                            </div>
-                                            <div class="col-md-2 mb-3 mb-md-0 align-items-center text-center">
-                                                <p class="text-uppercase font-weight-bold">
-                                                    GIẦY CAO GÓT
-                                                </p>
-                                                <a href="123">
-                                                    <div class="bg-image hover-overlay ripple mb-3"
-                                                        data-mdb-ripple-color="light">
-                                                        <img src="/site/images/ao/GIẦY CAO GOT.jpg"
-                                                            class="img-fluid" />
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-
-                            <li class="nav-item dropdown position-static mx-3">
-                                <a data-mdb-dropdown-init class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-                                    role="button" aria-expanded="false">
-                                    TÚI SÁCH
-                                </a>
-                                <div class="dropdown-menu w-100 mt-0" aria-labelledby="navbarDropdown" style="
-                                      border-top-left-radius: 0;
-                                      border-top-right-radius: 0;
-                                      ">
-                                    <div class="container">
-                                        <div class="row my-4">
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-
-                            <li class="nav-item dropdown position-static mx-3">
-                                <a data-mdb-dropdown-init class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-                                    role="button" aria-expanded="false">
-                                    ĐÔ TRANG SỨC
-                                </a>
-                                <div class="dropdown-menu w-100 mt-0" aria-labelledby="navbarDropdown" style="
-                                      border-top-left-radius: 0;
-                                      border-top-right-radius: 0;
-                                      ">
-                                    <div class="container">
-                                        <div class="row my-4">
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+                        </li>
+                    </ul>
                 </div>
             </nav>
+
         </section>
     </section>
 </body>

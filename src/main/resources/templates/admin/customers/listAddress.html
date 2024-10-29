@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/index.html}">
+
+<head>
+    <title>Quản lý Địa chỉ Khách hàng</title>
+</head>
+
+<body>
+    <section layout:fragment="main">
+        <div class="displayNotifications"></div>
+        <main id="main" class="main">
+            <div class="pagetitle">
+                <h1>Địa chỉ khách hàng</h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="index.html">Trang chủ/</a>
+                        </li>
+                        <li>
+                            <a th:href="@{/admin/customers}">
+                                <span>&nbsp; Khách hàng</span>
+                            </a>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+            <!-- End Page Title -->
+
+            <section class="section">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body mt-4">
+                                <!-- Form thêm địa chỉ mới -->
+                                <h6>Thêm địa chỉ mới</h6>
+                                <form th:action="@{/admin/addresses/saveOrUpdate}" th:object="${address}" method="post">
+                                    <div class="row">
+                                        <input type="hidden" th:field="*{addressId}" />
+                                        <input type="hidden" name="customerId" th:value="${customerId}" />
+
+                                        <!-- Street -->
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-floating">
+                                                <input type="text" th:field="*{street}" class="form-control"
+                                                    th:classappend="${#fields.hasErrors('street')} ? 'is-invalid' : ''"
+                                                    id="floatingstreet" placeholder="Địa chỉ cụ thể" required />
+                                                <label for="floatingstreet"><span class="text-danger">*</span> Địa chỉ
+                                                    cụ thể</label>
+
+                                                <!-- Hiển thị lỗi cho trường street -->
+                                                <div th:if="${#fields.hasErrors('street')}" class="invalid-feedback">
+                                                    <p th:errors="*{street}" class="mb-0"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- City -->
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-floating">
+                                                <input type="text" th:field="*{city}" class="form-control"
+                                                    th:classappend="${#fields.hasErrors('city')} ? 'is-invalid' : ''"
+                                                    id="floatingCity" placeholder="Tỉnh/thành phố" required />
+                                                <label for="floatingCity"><span class="text-danger">*</span> Tỉnh/Thành
+                                                    phố</label>
+
+                                                <div th:if="${#fields.hasErrors('city')}" class="invalid-feedback">
+                                                    <p th:errors="*{city}" class="mb-0"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- District -->
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-floating">
+                                                <input type="text" th:field="*{district}" class="form-control"
+                                                    th:classappend="${#fields.hasErrors('district')} ? 'is-invalid' : ''"
+                                                    id="floatingdistrict" placeholder="Quận/huyện" required />
+                                                <label for="floatingdistrict"><span class="text-danger">*</span>
+                                                    Quận/Huyện</label>
+
+                                                <div th:if="${#fields.hasErrors('district')}" class="invalid-feedback">
+                                                    <p th:errors="*{district}" class="mb-0"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Ward -->
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-floating">
+                                                <input type="text" th:field="*{ward}" class="form-control"
+                                                    th:classappend="${#fields.hasErrors('ward')} ? 'is-invalid' : ''"
+                                                    id="floatingward" placeholder="Xã/phường/thị trấn" required />
+                                                <label for="floatingward"><span class="text-danger">*</span>
+                                                    Xã/Phường/Thị trấn</label>
+
+                                                <div th:if="${#fields.hasErrors('ward')}" class="invalid-feedback">
+                                                    <p th:errors="*{ward}" class="mb-0"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <button type="submit" class="btn btn-outline-primary"
+                                                th:text="${address.addressId != null ? 'Cập nhật' : 'Thêm Địa chỉ'}"></button>
+                                        </div>
+                                    </div>
+                                </form>
+
+
+                                <!-- Danh sách địa chỉ hiện có -->
+                                <div class="table-responsive mt-5">
+                                    <table class="table table-striped-columns">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">STT</th>
+                                                <th scope="col">ID</th>
+                                                <th scope="col">Địa chỉ cụ thể</th>
+                                                <th scope="col">Tỉnh/Thành phố</th>
+                                                <th scope="col">Quận/Huyện</th>
+                                                <th scope="col">Xã/Phường</th>
+                                                <th scope="col">Mặc định</th>
+                                                <th scope="col">Thao tác</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="address, stat : ${addresses}">
+                                                <td th:text="${stat.count}"></td>
+                                                <td th:text="${address.addressId}"></td>
+                                                <td th:text="${address.street}"></td>
+                                                <td th:text="${address.city}"></td>
+                                                <td th:text="${address.district}"></td>
+                                                <td th:text="${address.ward}"></td>
+                                                <td th:text="${address.isDefault ? 'Có' : 'Không'}"></td>
+                                                <td class="text-center">
+                                                    <!-- Thao tác chỉnh sửa và xóa địa chỉ -->
+                                                    <a style="cursor: pointer; font-size: 21px; color: green;"
+                                                        th:href="@{/admin/addresses/edit/{addressId}(addressId=${address.addressId}, customerId=${customerId})}">
+                                                        <i class="bi bi-pencil-square" title="Chỉnh sửa địa chỉ"></i>
+                                                    </a>
+                                                    <!-- Liên kết xóa địa chỉ -->
+                                                    <a style="cursor: pointer; font-size: 21px; color: red;"
+                                                        th:href="@{/admin/addresses/delete/{addressId}(addressId=${address.addressId}, customerId=${customerId})}"
+                                                        onclick="return confirm('Bạn có chắc chắn muốn xóa địa chỉ này không?');">
+                                                        <i class="bi bi-trash" title="Xóa"></i>
+                                                    </a>
+
+                                                    <!-- Đặt làm địa chỉ mặc định -->
+                                                    <a style="cursor: pointer; font-size: 21px; color: rgb(0, 128, 255);"
+                                                        th:href="@{/admin/addresses/setDefault/{addressId}(addressId=${address.addressId}, customerId=${customerId})}"
+                                                        th:if="${!address.isDefault}">
+                                                        <i class="bi bi-star-fill" title="Đặt làm địa chỉ mặc định"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <script src="/admin/js/customer.js"></script>
+    </section>
+</body>
+
+</html>

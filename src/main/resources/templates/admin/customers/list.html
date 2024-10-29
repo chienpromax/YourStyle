@@ -90,6 +90,11 @@
                         th:attr="onclick=|confirmDelete(${customer.customerId});|">
                         <i class="bi bi-trash3 ps-1"></i>
                       </button>
+                      <!-- Thêm địa chỉ -->
+                      <a style="cursor: pointer; font-size: 21px; color: rgb(0, 28, 128);"
+                        th:href="@{/admin/addresses/listAddress/{customerId}(customerId=${customer.customerId})}">
+                        <i class="bi bi-geo-alt-fill" title="Thêm địa chỉ"></i>
+                      </a>
                     </td>
                   </tr>
                 </tbody>

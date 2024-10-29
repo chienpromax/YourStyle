@@ -15,7 +15,7 @@ import yourstyle.com.shope.repository.ProductVariantRepository;
 import yourstyle.com.shope.service.ProductVariantService;
 
 @Service
-public class ProductVariantImpl implements ProductVariantService {
+public class ProductVariantServiceImpl implements ProductVariantService {
 
     @Autowired
     private ProductVariantRepository productVariantRepository;

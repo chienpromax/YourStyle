@@ -1,24 +1,35 @@
 package yourstyle.com.shope.controller.admin;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-import yourstyle.com.shope.model.ProductImage;
+import yourstyle.com.shope.service.ProductImageService;
 
-@Controller
+@RestController
+@RequestMapping("/api/products")
 public class ProductImageController {
-    @GetMapping("/admin/productimages/saveOrUpdate")
-    public String showProductImageForm(Model model) {
-        model.addAttribute("productImage", new ProductImage());
-        return "admin/products/addOrEdit";
-    }
 
-    @PostMapping("/admin/productimages/saveOrUpdate")
-    public String saveOrUpdateProductImage(@ModelAttribute("productImage") ProductImage ProductImage) {
+    @Autowired
+    private ProductImageService productImageService;
 
-        return "redirect:/admin/productimages";
+    @PostMapping("/{productId}/images")
+    public ResponseEntity<Void> uploadProductImages(
+            @PathVariable Integer productId,
+            @RequestParam("imageFiles") MultipartFile[] imageFiles) {
+        productImageService.saveProductImages(productId, imageFiles);
+        return ResponseEntity.ok().build();
     }
+    
 }

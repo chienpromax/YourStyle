@@ -1381,3 +1381,52 @@ h6 {
   --color         : #3498db;
   background-image: linear-gradient(to right, #3498db55, #22242F 30%);
 }
+
+/* img thumnail */
+#additionalImagesPreview {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 10px 0;
+}
+
+#additionalImagesPreview div {
+  margin-right: 10px;
+  position: relative;
+}
+
+.image-preview-container {
+  display: flex;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.img-container {
+  position: relative;
+  margin-right: 10px;
+  width: 70px;
+  height: 100px;
+  overflow: hidden;
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.delete-button {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background-color: rgba(255, 0, 0, 0.7);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: none;
+}
+
+.img-container:hover .delete-button {
+  opacity: 0.7;
+  display: block;
+}

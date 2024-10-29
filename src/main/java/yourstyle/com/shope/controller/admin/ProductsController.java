@@ -36,10 +36,12 @@ import yourstyle.com.shope.model.Category;
 import yourstyle.com.shope.model.Color;
 import yourstyle.com.shope.model.Discount;
 import yourstyle.com.shope.model.Product;
+import yourstyle.com.shope.model.ProductImage;
 import yourstyle.com.shope.model.Size;
 import yourstyle.com.shope.service.CategoryService;
 import yourstyle.com.shope.service.ColorService;
 import yourstyle.com.shope.service.DiscountService;
+import yourstyle.com.shope.service.ProductImageService;
 import yourstyle.com.shope.service.ProductService;
 import yourstyle.com.shope.service.SizeService;
 import yourstyle.com.shope.utils.UploadUtils;
@@ -59,6 +61,8 @@ public class ProductsController {
 	SizeService sizeService;
 	@Autowired
 	DiscountService discountService;
+	@Autowired
+	ProductImageService productImageService;
 
 	@GetMapping("/add")
 	public String addProductForm(Model model) {
@@ -88,17 +92,20 @@ public class ProductsController {
 			Product product = optional.get();
 			BeanUtils.copyProperties(product, productDto);
 			productDto.setEdit(true);
-	
+
+			List<ProductImage> productImages = productImageService.findByProductId(productId);
 			List<Discount> discounts = discountService.findByProductId(productId);
 	
 			model.addAttribute("product", productDto);
-			model.addAttribute("discounts", discounts); // Thêm thông tin giảm giá vào model
+			model.addAttribute("discounts", discounts);
 			model.addAttribute("categories", categoryService.findAll());
 			model.addAttribute("colors", colorService.findAll());
 			model.addAttribute("sizes", sizeService.findAll());
+			model.addAttribute("productImages", productImages);
 			model.addAttribute("color", new Color());
 			model.addAttribute("size", new Size());
 			model.addAttribute("discount", new Discount());
+			model.addAttribute("productImage", new ProductImage());
 			model.addAttribute("productId", productId);
 			model.addAttribute("isEdit", true);
 	

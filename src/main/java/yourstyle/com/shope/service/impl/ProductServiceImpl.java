@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import yourstyle.com.shope.model.Product;
-import yourstyle.com.shope.model.ProductVariant;
 import yourstyle.com.shope.repository.ProductRepository;
 import yourstyle.com.shope.service.ProductService;
 

@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
   layout:decorate="~{admin/index.html}">
 
-<head> </head>
+<head></head>
 
 <body>
   <section layout:fragment="main">
@@ -128,8 +128,28 @@
                       <div th:if="${#fields.hasErrors('imageFile')}" class="text-danger" th:errors="*{imageFile}">Chọn
                         Ảnh
                       </div>
-                    </div>
 
+                      <!-- Khu vực thêm ảnh nhỏ -->
+                      <div th:if="${product.isEdit}"
+                        class="form-group mt-4 border border-dark border-1 p-3 rounded shadow bg-light">
+                        <button type="button" class="btn btn-primary" id="customFileButton">Chọn ảnh bổ sung</button>
+                        <button type="button" class="btn btn-success" id="saveImagesButton">Lưu ảnh</button>
+                        <input type="file" id="additionalImages" class="form-control d-none" multiple accept="image/*"
+                          onchange="previewImages(event)" />
+                        <!-- Hiển thị ảnh bổ sung -->
+                        <div id="additionalImagesPreview" class="mt-2"></div>
+                        <!-- Hiển thị ảnh bổ sung -->
+
+                        <h5>Danh sách ảnh sản phẩm</h5>
+                        <div id="additionalImagesPreview" class="mt-2">
+                          <div th:each="image : ${productImages}" class="img-container">
+                            <img th:src="@{/uploads/} + ${image.imageUrl}" class="preview-image" alt="Product Image" />
+                            <button type="button" class="delete-button"
+                              th:onclick="'deleteImage(\'' + ${image.imageId} + '\')'">X</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                     <!-- Cột bên phải -->
                   </div>
                   <div class="text-center mt-4">
@@ -380,8 +400,10 @@
           }
         });
       }
+
     </script>
 
+    <script src="/admin/js/productImages.js"></script>
     <script src="/admin/js/customer.js"></script>
     <script src="/admin/js/productList.js"></script>
     <script src="/admin/js/accountAddOrEdit.js"></script>

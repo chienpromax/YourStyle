@@ -56,3 +56,12 @@
   }
 
 })();
+
+//Thoi gian moi them
+document.addEventListener('DOMContentLoaded', function () {
+  flatpickr(".datetimepicker", {
+    enableTime: true,
+    dateFormat: "Y-m-d H:i", // Định dạng chuẩn ISO
+    time_24hr: true // Hiển thị giờ theo 24h
+  });
+});

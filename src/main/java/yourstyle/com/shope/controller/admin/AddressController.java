@@ -83,6 +83,18 @@ public class AddressController {
         Customer customer = customerService.findById(customerId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid customer ID"));
 
+        // Kiểm tra số lượng địa chỉ hiện có của khách hàng
+        List<Address> addresses = addressService.findByCustomerId(customerId);
+        if (addresses.size() >= 3 && addressDTO.getAddressId() == null) {
+            // Nếu đã có 3 địa chỉ và địa chỉ mới chưa tồn tại, hiển thị thông báo lỗi
+            model.addAttribute("address", addressDTO);
+            model.addAttribute("messageType", "error");
+            model.addAttribute("messageContent", "Khách hàng chỉ có thể có tối đa 3 địa chỉ!");
+            model.addAttribute("addresses", addresses);
+            model.addAttribute("customerId", customerId);
+            return new ModelAndView("admin/customers/listAddress", model);
+        }
+
         // Tạo hoặc cập nhật địa chỉ
         Address address;
         if (addressDTO.getAddressId() != null) {
@@ -94,6 +106,9 @@ public class AddressController {
             address.setDistrict(addressDTO.getDistrict());
             address.setWard(addressDTO.getWard());
             address.setIsDefault(addressDTO.getIsDefault());
+
+            model.addAttribute("messageType", "success");
+            model.addAttribute("messageContent", "Cập nhật địa chỉ thành công!");
         } else {
             // Nếu địa chỉ chưa tồn tại, tạo mới
             address = new Address();
@@ -103,13 +118,16 @@ public class AddressController {
             address.setDistrict(addressDTO.getDistrict());
             address.setWard(addressDTO.getWard());
             address.setIsDefault(addressDTO.getIsDefault());
+
+            model.addAttribute("messageType", "success");
+            model.addAttribute("messageContent", "Thêm địa chỉ mới thành công!");
         }
 
         // Lưu địa chỉ
         addressService.save(address);
 
         // Lấy lại danh sách địa chỉ của khách hàng để cập nhật trên trang
-        List<Address> addresses = addressService.findByCustomerId(customerId);
+        addresses = addressService.findByCustomerId(customerId);
         model.addAttribute("address", new AddressDTO()); // Đặt lại form trống
         model.addAttribute("addresses", addresses);
         model.addAttribute("customerId", customerId);
@@ -122,8 +140,15 @@ public class AddressController {
             @RequestParam("customerId") Integer customerId,
             ModelMap model) {
 
-        // Xóa địa chỉ dựa trên addressId
-        addressService.deleteById(addressId);
+        if (addressId != null) {
+            // Xóa địa chỉ dựa trên addressId
+            addressService.deleteById(addressId);
+            model.addAttribute("messageType", "success");
+            model.addAttribute("messageContent", "Xóa thành công");
+        } else {
+            model.addAttribute("messageType", "error");
+            model.addAttribute("messageContent", "Địa chỉ không tồn tại");
+        }
 
         // Lấy lại danh sách địa chỉ sau khi xóa
         List<Address> addresses = addressService.findByCustomerId(customerId);

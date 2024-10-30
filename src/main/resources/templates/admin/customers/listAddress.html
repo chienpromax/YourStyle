@@ -8,14 +8,24 @@
 
 <body>
     <section layout:fragment="main">
-        <div class="displayNotifications"></div>
+        <div class="displayNotifications">
+            <div th:if="${messageType == 'success'}" class="alert alert-success alert-dismissible fade show"
+                role="alert">
+                <span th:text="${messageContent}">Thành công!</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${messageType == 'error'}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${messageContent}">Đã xảy ra lỗi, vui lòng thử lại!</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
         <main id="main" class="main">
             <div class="pagetitle">
                 <h1>Địa chỉ khách hàng</h1>
                 <nav>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
-                            <a href="index.html">Trang chủ/</a>
+                            <a href="">Trang chủ/</a>
                         </li>
                         <li>
                             <a th:href="@{/admin/customers}">
@@ -139,8 +149,7 @@
                                                     </a>
                                                     <!-- Liên kết xóa địa chỉ -->
                                                     <a style="cursor: pointer; font-size: 21px; color: red;"
-                                                        th:href="@{/admin/addresses/delete/{addressId}(addressId=${address.addressId}, customerId=${customerId})}"
-                                                        onclick="return confirm('Bạn có chắc chắn muốn xóa địa chỉ này không?');">
+                                                        th:attr="onclick=|confirmDelete(${address.addressId}, ${customerId});|">
                                                         <i class="bi bi-trash" title="Xóa"></i>
                                                     </a>
 
@@ -161,6 +170,24 @@
                 </div>
             </section>
         </main>
+        <script type="text/javascript">
+            function confirmDelete(addressId, customerId) {
+                Swal.fire({
+                    title: 'Bạn có chắc chắn muốn xóa?',
+                    text: "Bạn sẽ không thể hoàn tác sau khi xóa!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Xóa nó!',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/admin/addresses/delete/' + addressId + '?customerId=' + customerId;
+                    }
+                });
+            }
+        </script>
 
         <script src="/admin/js/customer.js"></script>
     </section>

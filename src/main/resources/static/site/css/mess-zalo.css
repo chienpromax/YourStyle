@@ -1,0 +1,33 @@
+.float-contact {
+    position: fixed;
+    bottom: 60px;
+    left: 20px;
+    z-index: 99999;
+}
+
+.chat-zalo, .chat-facebook, .call-hotline {
+    display: block;
+    margin-bottom: 10px;
+    line-height: 0;
+}
+
+/* CSS cho hiệu ứng rung */
+.chat-facebook, .chat-zalo img {
+    animation: shake 2s infinite; /* Cho icon rung liên tục */
+    transition: transform 0.2s ease-in-out;
+}
+
+/* Tạo keyframes cho hiệu ứng rung */
+@keyframes shake {
+    10%, 100% {
+        transform: translateX(0);
+    }
+    20%, 60% {
+        transform: translateX(-3px);
+    }
+    40%, 80% {
+        transform: translateX(3px);
+    }
+}
+
+

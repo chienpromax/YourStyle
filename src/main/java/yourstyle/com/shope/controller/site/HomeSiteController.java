@@ -20,10 +20,6 @@ public class HomeSiteController {
     @RequestMapping({ "/", "/home" })
     public String showHomePage(Model model) {
         List<Category> parentCategories = categoryService.findParentCategories();
-        parentCategories.forEach(parent -> {
-            System.out.println("Parent: " + parent.getName());
-            parent.getChildCategories().forEach(child -> System.out.println(" - Child: " + child.getName()));
-        });
         model.addAttribute("parentCategories", parentCategories);
         return "site/pages/home";
     }

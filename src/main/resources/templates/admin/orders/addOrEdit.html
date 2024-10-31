@@ -25,7 +25,13 @@
                 <section class="section dashboard">
                     <div class="col-lg-12 col-md-12">
                         <div class="card card-stepper">
-                            <div class="card-body p-5">
+                            <div th:if="${order.status.code == 0}">
+                                <div class="order-status text-danger text-center">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                    <p>Đơn hàng [[${order.orderId}]] đã bị hủy</p>
+                                </div>
+                            </div>
+                            <div class="card-body p-5" id="cardStatus" th:unless="${order.status.code == 0}">
                                 <!-- Progress bar -->
                                 <ul id="progressbar-2">
                                     <li
@@ -67,31 +73,80 @@
                                 </ul>
 
                                 <!-- Icons with status -->
-                                <div class="d-flex justify-content-between mt-4 ordericon">
-                                    <div class="icon text-center ms-4">
-                                        <i class="bi bi-clipboard-check-fill"></i>
-                                        <p class="step-text mt-2">Đặt hàng</p>
+                                <div
+                                    class="d-flex justify-content-between align-items-center mt-4 ordericon text-center"
+                                >
+                                    <div class="d-flex flex-column border border-warning rounded-2 p-2">
+                                        <div class="icon text-center">
+                                            <i class="bi bi-clipboard-check-fill"></i>
+                                            <p class="step-text mt-2">Đặt hàng</p>
+                                        </div>
+                                        <p th:if="${order.status.code >= 1}">
+                                            [[${#dates.format(order.orderDate,'dd-MM-yyyy HH:mm:ss')}]]
+                                        </p>
+                                        <p th:unless="${order.status.code >= 1}" class="timeUpdatedStatus">
+                                            dd-MM-yyyy HH:mm:ss
+                                        </p>
                                     </div>
-                                    <div class="icon text-center ms-4">
-                                        <i class="bi bi-box-seam-fill"></i>
-                                        <p class="step-text mt-2">Đang đóng gói</p>
+                                    <div class="d-flex flex-column border border-warning rounded-2 p-2">
+                                        <div class="icon text-center">
+                                            <i class="bi bi-box-seam-fill"></i>
+                                            <p class="step-text mt-2">Đang đóng gói</p>
+                                        </div>
+                                        <p th:if="${order.status.code >= 2}">
+                                            [[${#dates.format(order.statusUpdatedAt,'dd-MM-yyyy HH:mm:ss')}]]
+                                        </p>
+                                        <p th:unless="${order.status.code >= 2}" class="timeUpdatedStatus">
+                                            dd-MM-yyyy HH:mm:ss
+                                        </p>
                                     </div>
-                                    <div class="icon text-center">
-                                        <i class="bi bi-truck-front-fill"></i>
-                                        <p class="step-text mt-2">Đã giao cho vận chuyển</p>
+                                    <div class="d-flex flex-column border border-warning rounded-2 p-2">
+                                        <div class="icon text-center">
+                                            <i class="bi bi-truck-front-fill"></i>
+                                            <p class="step-text mt-2">Đã giao cho vận chuyển</p>
+                                        </div>
+                                        <p th:if="${order.status.code >= 3}">
+                                            [[${#dates.format(order.statusUpdatedAt,'dd-MM-yyyy HH:mm:ss')}]]
+                                        </p>
+                                        <p th:unless="${order.status.code >= 3}" class="timeUpdatedStatus">
+                                            dd-MM-yyyy HH:mm:ss
+                                        </p>
                                     </div>
-                                    <div class="icon text-center me-2">
-                                        <i class="bi bi-rocket-takeoff-fill"></i>
-                                        <p class="step-text mt-2">Đang giao hàng</p>
+                                    <div class="d-flex flex-column border border-warning rounded-2 p-2">
+                                        <div class="icon text-center">
+                                            <i class="bi bi-rocket-takeoff-fill"></i>
+                                            <p class="step-text mt-2">Đang giao hàng</p>
+                                        </div>
+                                        <p th:if="${order.status.code >= 4}">
+                                            [[${#dates.format(order.statusUpdatedAt,'dd-MM-yyyy HH:mm:ss')}]]
+                                        </p>
+                                        <p th:unless="${order.status.code >= 4}" class="timeUpdatedStatus">
+                                            dd-MM-yyyy HH:mm:ss
+                                        </p>
                                     </div>
-                                    <div class="icon text-center">
-                                        <i class="bi bi-house-check-fill"></i>
-                                        <p class="step-text mt-2">Hoàn thành</p>
-                                        <!-- <p class="step-text mt-2">Trả hàng</p> -->
+                                    <div class="d-flex flex-column border border-warning rounded-2 p-2">
+                                        <div class="icon text-center">
+                                            <i class="bi bi-house-check-fill"></i>
+                                            <p class="step-text mt-2">Hoàn thành</p>
+                                        </div>
+                                        <p th:if="${order.status.code >= 5}">
+                                            [[${#dates.format(order.statusUpdatedAt,'dd-MM-yyyy HH:mm:ss')}]]
+                                        </p>
+                                        <p th:unless="${order.status.code >= 5}" class="timeUpdatedStatus">
+                                            dd-MM-yyyy HH:mm:ss
+                                        </p>
                                     </div>
-                                    <div class="icon text-center">
-                                        <i class="bi bi-arrow-repeat"></i>
-                                        <p class="step-text mt-2">Trả hàng</p>
+                                    <div class="d-flex flex-column border border-warning rounded-2 p-2">
+                                        <div class="icon text-center">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                            <p class="step-text mt-2">Trả hàng</p>
+                                        </div>
+                                        <p th:if="${order.status.code == 6}">
+                                            [[${#dates.format(order.statusUpdatedAt,'dd-MM-yyyy HH:mm:ss')}]]
+                                        </p>
+                                        <p th:unless="${order.status.code == 6}" class="timeUpdatedStatus">
+                                            dd-MM-yyyy HH:mm:ss
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -123,88 +178,15 @@
                         <div class="card-body">
                             <div class="container mt-4">
                                 <div class="row">
-                                    <div class="col-md-12 d-flex align-items-center mb-2">
-                                        <h5 class="mb-0">Danh sách sản phẩm</h5>
-                                    </div>
-                                    <!-- <div class="col-md-3 mb-2 d-flex justify-content-end">
-                                        <button class="btn btn-outline-primary">Thêm sản phẩm</button>
-                                    </div> -->
-                                    <hr class="" />
-                                </div>
-                                <table class="table-borderless table text-center table-responsive">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Ảnh</th>
-                                            <th scope="col">Tên sản phẩm</th>
-                                            <th scope="col">Màu</th>
-                                            <th scope="col">Size</th>
-                                            <th scope="col">Giá</th>
-                                            <th scope="col">Số lượng</th>
-                                            <th scope="col" class="">Thành tiền</th>
-                                            <!-- <th scope="col" class="text-end"></th> -->
-                                        </tr>
-                                    </thead>
-                                    <tbody class="dssp">
-                                        <tr th:each="orderDetail : ${orderDetails}" class="align-middle">
-                                            <td scope="row" class="position-relative">
-                                                <img
-                                                    th:src="@{'/admin/img/'+${orderDetail.productVariant.product.image}}"
-                                                    alt=""
-                                                    class="img-fluid rounded-circle object-cover w-100 h-100"
-                                                />
-                                                <span
-                                                    class="badge bg-success badge-custom position-absolute top-0 right-0"
-                                                    th:if="${orderDetail.productVariant.product.discount}"
-                                                >
-                                                    [[${#numbers.formatDecimal(orderDetail.productVariant.product.discount.discountPercent,0,'POINT',0,'COMMA')}]]
-                                                    %
-                                                </span>
-                                            </td>
-                                            <td>[[${orderDetail.productVariant.product.name}]]</td>
-                                            <td>[[${orderDetail.productVariant.color.colorName}]]</td>
-                                            <td>[[${orderDetail.productVariant.size.sizeName}]]</td>
-                                            <td>
-                                                <span th:unless="${orderDetail.productVariant.product.discount}">
-                                                    [[${orderDetail.price}]]
-                                                </span>
-                                                <span
-                                                    th:if="${orderDetail.productVariant.product.discount}"
-                                                    class="text-decoration-line-through d-block"
-                                                >
-                                                    [[${orderDetail.price}]]
-                                                </span>
-                                                <span
-                                                    th:if="${orderDetail.productVariant.product.discount}"
-                                                    class="text-danger fw-bold"
-                                                    th:text="${orderDetail.price * (1 - orderDetail.productVariant.product.discount.discountPercent / 100)}"
-                                                ></span>
-                                            </td>
-                                            <td>[[${orderDetail.quantity}]]</td>
-                                            <td class="text-danger fw-bold">
-                                                <span
-                                                    th:if="${orderDetail.productVariant.product.discount}"
-                                                    th:text="${(orderDetail.quantity) * (orderDetail.price * (1 - orderDetail.productVariant.product.discount.discountPercent / 100))}"
-                                                ></span>
-                                                <span th:unless="${orderDetail.productVariant.product.discount}">
-                                                    [[${orderDetail.price} * ${orderDetail.quantity}]]
-                                                </span>
-                                            </td>
-                                            <!-- <td class="text-end">
-                                                <button class="btn btn-outline-danger btn-sm">Xóa</button>
-                                            </td> -->
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="container mt-4">
-                                <div class="row">
                                     <h5 class="col-md-10 d-flex align-items-center">Thông tin đơn hàng</h5>
                                     <div class="col-md-2 mb-2 d-flex justify-content-end">
-                                        <button class="btn btn-outline-primary">Cập nhật</button>
+                                        <button
+                                            class="btn btn-outline-primary"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalIdUpdateOrder"
+                                        >
+                                            Cập nhật
+                                        </button>
                                     </div>
                                     <hr />
                                 </div>
@@ -238,58 +220,554 @@
                                     <div class="col-md-8">
                                         <p>
                                             <strong>Địa chỉ:</strong>
+                                            <span th:if="${#lists.isEmpty(customer.addresses.?[isDefault])}">
+                                                <span class="text-danger">
+                                                    Không có địa chỉ mặc định!Vui lòng để địa chỉ mặc định!
+                                                </span>
+                                            </span>
                                             <span th:each="address : ${customer.addresses}">
                                                 <span th:if="${address.isDefault}">
                                                     [[${address.street + ', '+ address.ward + ', ' + address.district +
                                                     ', ' + address.city}]]
                                                 </span>
-                                                <span th:unless="${address.isDefault}">
-                                                    <span class="text-danger">
-                                                        Không có địa chỉ mặc định! Vui lòng để địa chỉ mặc định!
-                                                    </span>
-                                                </span>
                                             </span>
                                         </p>
                                     </div>
                                 </div>
-                                <!-- Thông tin bổ sung về thanh toán -->
-                                <div class="row mt-4">
-                                    <div class="col-md-4">
-                                        <div class="card p-4 shadow-sm border-0">
-                                            <div class="d-flex flex-column align-items-center">
-                                                <div class="mb-2">
-                                                    <i class="bi bi-percent text-success" style="font-size: 1.5rem"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal cập nhật thông tin đơn hàng -->
+                    <div
+                        class="modal fade"
+                        id="modalIdUpdateOrder"
+                        tabindex="-1"
+                        data-bs-backdrop="static"
+                        data-bs-keyboard="false"
+                        role="dialog"
+                        aria-labelledby="modalTitleId"
+                        aria-hidden="true"
+                    >
+                        <div
+                            class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl"
+                            role="document"
+                        >
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalTitleId3">Cập nhật thông tin</h5>
+                                    <button
+                                        type="button"
+                                        class="btn-close"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    ></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="text-end mb-3">
+                                        <button
+                                            class="btn btn-outline-warning"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modalIdSelectAddress"
+                                            id="btnSelectAddress"
+                                        >
+                                            Chọn địa chỉ
+                                        </button>
+                                    </div>
+                                    <form action="" method="post" th:object="${customer}">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-floating">
+                                                    <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        id="floatinghovaten"
+                                                        placeholder="Họ và tên"
+                                                        th:field="*{fullname}"
+                                                    />
+                                                    <label for="floatinghovaten">
+                                                        <span class="text-danger">*</span>
+                                                        Họ và tên
+                                                    </label>
                                                 </div>
-                                                <p class="text-center mb-1"><strong>Phiếu giảm giá</strong></p>
-                                                <p class="badge bg-success p-2">[[${order.voucher.voucherName}]]</p>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-floating">
+                                                    <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        id="floatingsodienthoai"
+                                                        placeholder="Số điện thoại"
+                                                        th:field="*{phoneNumber}"
+                                                    />
+                                                    <label for="floatingsodienthoai">
+                                                        <span class="text-danger">*</span>
+                                                        Số điện thoại
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="card p-4 shadow-sm border-0">
-                                            <div class="d-flex flex-column align-items-center">
-                                                <div class="mb-2">
-                                                    <i class="bi bi-tags text-warning" style="font-size: 1.5rem"></i>
+
+                                        <div class="row" th:each="address : *{addresses}" th:if="${address.isDefault}">
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-floating">
+                                                    <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        id="floatingstreet"
+                                                        placeholder="Địa chị cụ thể"
+                                                        th:field="*{addresses[0].street}"
+                                                    />
+                                                    <label for="floatingstreet">
+                                                        <span class="text-danger">*</span>
+                                                        Địa chị cụ thể
+                                                    </label>
                                                 </div>
-                                                <p class="text-center mb-1"><strong>Giảm giá từ cửa hàng</strong></p>
-                                                <p class="text-warning fw-bold"></p>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-floating">
+                                                    <input
+                                                        class="form-control"
+                                                        id="floatingcity"
+                                                        placeholder="Tỉnh/thành phố"
+                                                        th:field="*{addresses[0].city}"
+                                                    />
+                                                    <label for="floatingCity">
+                                                        <span class="text-danger">*</span>
+                                                        Tỉnh/thành phố
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-floating">
+                                                    <input
+                                                        name=""
+                                                        id="floatingdistrict"
+                                                        class="form-control"
+                                                        placeholder="Quận/huyện"
+                                                        th:field="*{addresses[0].district}"
+                                                    />
+                                                    <label for="floatingdistrict">
+                                                        <span class="text-danger">*</span>
+                                                        Quận/huyện
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-floating">
+                                                    <input
+                                                        name=""
+                                                        id="floatingward"
+                                                        class="form-control"
+                                                        placeholder="Xã/phường/thị trấn"
+                                                        th:field="*{addresses[0].ward}"
+                                                    />
+
+                                                    <label for="floatingward">
+                                                        <span class="text-danger">*</span>
+                                                        Xã/phường/thị trấn
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <hr />
+                                            <div class="col-md-12 text-end">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Hủy
+                                                </button>
+                                                <button type="button" class="btn btn-danger">Xác nhận</button>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="card p-4 shadow-sm border-0">
-                                            <div class="d-flex flex-column align-items-center">
-                                                <div class="mb-2">
-                                                    <i
-                                                        class="bi bi-cash-coin text-danger"
-                                                        style="font-size: 1.5rem"
-                                                    ></i>
+                                        <!-- địa chỉ của khách hàng chưa có địa chỉ mặc định -->
+                                        <div
+                                            class="row"
+                                            th:each="address : *{addresses}"
+                                            th:unless="${address.isDefault}"
+                                        >
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-floating">
+                                                    <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        id="floatingstreet1"
+                                                        placeholder="Địa chị cụ thể"
+                                                    />
+                                                    <label for="floatingstreet">
+                                                        <span class="text-danger">*</span>
+                                                        Địa chị cụ thể
+                                                    </label>
                                                 </div>
-                                                <p class="text-center mb-1"><strong>Tổng tiền</strong></p>
-                                                <p class="text-danger fw-bold">[[${formattedTotalAmount}]]</p>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-floating">
+                                                    <select class="form-select floatingcity" id="">
+                                                        <option selected>Chọn Tỉnh/thành phố</option>
+                                                    </select>
+                                                    <label for="floatingCity">
+                                                        <span class="text-danger">*</span>
+                                                        Chọn Tỉnh/thành phố
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-floating">
+                                                    <select name="" id="" class="form-select floatingdistrict" disabled>
+                                                        <option selected>Chọn Quận/huyện</option>
+                                                    </select>
+                                                    <label for="floatingdistrict">
+                                                        <span class="text-danger">*</span>
+                                                        Quận/huyện
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-floating">
+                                                    <select name="" id="" class="form-select floatingward" disabled>
+                                                        <option selected>Chọn Xã/phường/thị trấn</option>
+                                                    </select>
+                                                    <label for="floatingward">
+                                                        <span class="text-danger">*</span>
+                                                        Xã/phường/thị trấn
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <hr />
+                                            <div class="col-md-12 text-end">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Hủy
+                                                </button>
+                                                <button type="button" class="btn btn-danger">Xác nhận</button>
                                             </div>
                                         </div>
+                                        <!-- địa chỉ của khách hàng chưa có địa chỉ mặc định -->
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal cập nhật thông tin đơn hàng -->
+                    <!-- modal chọn địa chỉ -->
+                    <div
+                        class="modal fade"
+                        id="modalIdSelectAddress"
+                        tabindex="-1"
+                        data-bs-backdrop="static"
+                        data-bs-keyboard="false"
+                        role="dialog"
+                        aria-labelledby="modalTitleId"
+                        aria-hidden="true"
+                    >
+                        <div
+                            class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl"
+                            role="document"
+                        >
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalTitleId4">Danh sách địa chỉ</h5>
+                                    <button
+                                        type="button"
+                                        class="btn-close btn-lg"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    ></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-borderless">
+                                            <thead>
+                                                <tr>
+                                                    <th>STT</th>
+                                                    <th>Tên người nhận</th>
+                                                    <th>Số điện thoại</th>
+                                                    <th>Đường</th>
+                                                    <th>Xã/phường/thị trấn</th>
+                                                    <th>Quận/huyện</th>
+                                                    <th>Tỉnh/thành phố</th>
+                                                    <th>Thao tác</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="address,iterStat: ${customer.addresses}">
+                                                    <td>[[${iterStat.index + 1}]]</td>
+                                                    <td>[[${customer.fullname}]]</td>
+                                                    <td>[[${customer.phoneNumber}]]</td>
+                                                    <td>[[${address.street}]]</td>
+                                                    <td>[[${address.ward}]]</td>
+                                                    <td>[[${address.district}]]</td>
+                                                    <td>[[${address.city}]]</td>
+                                                    <td><a href="" class="btn btn-outline-warning">Chọn</a></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
+                                </div>
+                                <div class="modal-footer text-start">
+                                    <button
+                                        type="button"
+                                        class="btn btn-outline-warning"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalIdAddAddress"
+                                        id="btnAddAddress"
+                                    >
+                                        Thêm địa chỉ
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- modal chọn địa chỉ -->
+                    <!-- Modal thêm địa chỉ-->
+                    <div
+                        class="modal fade"
+                        id="modalIdAddAddress"
+                        tabindex="-1"
+                        data-bs-backdrop="static"
+                        role="dialog"
+                        aria-labelledby="modalTitleId"
+                        aria-hidden="true"
+                    >
+                        <div
+                            class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg"
+                            role="document"
+                        >
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalTitleId5">Thêm địa chỉ</h5>
+                                    <button
+                                        type="button"
+                                        class="btn-close"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    ></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="" method="post">
+                                        <!-- địa chỉ của khách hàng chưa có địa chỉ mặc định -->
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-floating">
+                                                    <input
+                                                        type="text"
+                                                        class="form-control floatingstreet"
+                                                        id=""
+                                                        placeholder="Địa chị cụ thể"
+                                                    />
+                                                    <label for="floatingstreet">
+                                                        <span class="text-danger">*</span>
+                                                        Địa chị cụ thể
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-floating">
+                                                    <select class="form-select floatingcity" id="">
+                                                        <option selected>Chọn Tỉnh/thành phố</option>
+                                                    </select>
+                                                    <label for="floatingCity">
+                                                        <span class="text-danger">*</span>
+                                                        Chọn Tỉnh/thành phố
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-floating">
+                                                    <select name="" id="" class="form-select floatingdistrict" disabled>
+                                                        <option selected>Chọn Quận/huyện</option>
+                                                    </select>
+                                                    <label for="floatingdistrict">
+                                                        <span class="text-danger">*</span>
+                                                        Quận/huyện
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-floating">
+                                                    <select name="" id="" class="form-select floatingward" disabled>
+                                                        <option selected>Chọn Xã/phường/thị trấn</option>
+                                                    </select>
+                                                    <label for="floatingward">
+                                                        <span class="text-danger">*</span>
+                                                        Xã/phường/thị trấn
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <hr />
+                                            <div class="col-md-12 text-end">
+                                                <button type="button" class="btn btn-outline-warning">TẠO MỚI</button>
+                                            </div>
+                                        </div>
+                                        <!-- địa chỉ của khách hàng chưa có địa chỉ mặc định -->
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal thêm địa chỉ-->
+                    <!-- Lịch sử thanh toán -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="container mt-4">
+                                <div class="row">
+                                    <h5 class="col-md-12">Lịch sử thanh toán</h5>
+                                    <hr />
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-borderless text-center">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Số tiền</th>
+                                                <th scope="col">Thời gian</th>
+                                                <th scope="col">Loại giao dịch</th>
+                                                <th scope="col">PTTT</th>
+                                                <th scope="col">Trạng thái</th>
+                                                <th scope="col">Ghi chú</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="dssp">
+                                            <tr>
+                                                <td>[[${voucherTotalSum}]]</td>
+                                                <td>[[${#dates.format(order.orderDate, 'dd-MM-yyyy HH:mm:ss')}]]</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td>[[${order.statusDescription}]]</td>
+                                                <td>[[${order.note}]]</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Lịch sử thanh toán -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="container mt-4">
+                                <div class="row">
+                                    <div class="col-md-12 d-flex align-items-center mb-2">
+                                        <h5 class="mb-0">Danh sách sản phẩm</h5>
+                                    </div>
+                                    <hr class="" />
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-group-divider text-center">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Ảnh</th>
+                                                <th scope="col">Tên sản phẩm</th>
+                                                <th scope="col">Màu</th>
+                                                <th scope="col">Size</th>
+                                                <th scope="col">Giá</th>
+                                                <th scope="col">Số lượng</th>
+                                                <th scope="col" class="">Thành tiền</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="dssp">
+                                            <tr th:each="orderDetail,iterStat : ${orderDetails}" class="align-middle">
+                                                <td scope="row" class="position-relative">
+                                                    <img
+                                                        th:src="@{'/admin/img/'+${orderDetail.productVariant.product.image}}"
+                                                        alt=""
+                                                        class="img-fluid rounded-circle object-cover w-100 h-100"
+                                                    />
+                                                    <span
+                                                        class="badge bg-success badge-custom position-absolute top-0 right-0"
+                                                        th:if="${orderDetail.productVariant.product.discount}"
+                                                    >
+                                                        [[${#numbers.formatDecimal(orderDetail.productVariant.product.discount.discountPercent,0,'POINT',0,'COMMA')}]]
+                                                        %
+                                                    </span>
+                                                </td>
+                                                <td>[[${orderDetail.productVariant.product.name}]]</td>
+                                                <td>[[${orderDetail.productVariant.color.colorName}]]</td>
+                                                <td>[[${orderDetail.productVariant.size.sizeName}]]</td>
+                                                <td>
+                                                    <span th:unless="${orderDetail.productVariant.product.discount}">
+                                                        [[${orderDetailFormattedPrices[iterStat.index]['oldPrice']}]]
+                                                    </span>
+                                                    <span
+                                                        th:if="${orderDetail.productVariant.product.discount}"
+                                                        class="text-decoration-line-through d-block"
+                                                    >
+                                                        [[${orderDetailFormattedPrices[iterStat.index]['oldPrice']}]]
+                                                    </span>
+                                                    <span
+                                                        th:if="${orderDetail.productVariant.product.discount}"
+                                                        class="text-danger fw-bold"
+                                                    >
+                                                        [[${orderDetailFormattedPrices[iterStat.index]['discountedPrice']}]]
+                                                    </span>
+                                                </td>
+                                                <td>[[${orderDetail.quantity}]]</td>
+                                                <td class="text-danger fw-bold">
+                                                    <span th:if="${orderDetail.productVariant.product.discount}">
+                                                        [[${orderDetailFormattedPrices[iterStat.index]['discountIntoMoney']}]]
+                                                    </span>
+                                                    <span th:unless="${orderDetail.productVariant.product.discount}">
+                                                        [[${orderDetailFormattedPrices[iterStat.index]['intoMoney']}]]
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td class="fw-bold text-black">Tổng tiền:</td>
+                                                <td class="text-danger fw-bold">[[${totalSum}]]</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Lịch sử thanh toán -->
+
+                    <div class="card p-4 shadow-sm border-0 voucherOrder">
+                        <div class="row mt-4">
+                            <div class="col-md-3">
+                                <div class="d-flex flex-column align-items-center">
+                                    <div class="mb-2">
+                                        <i class="bi bi-percent text-success" style="font-size: 1.5rem"></i>
+                                    </div>
+                                    <p class="text-center mb-1"><strong>Phiếu giảm giá</strong></p>
+                                    <p class="badge bg-success p-2">[[${order.voucher.voucherName}]]</p>
+                                </div>
+                            </div>
+                            <div class="col-md-5"></div>
+                            <div class="col-md-4">
+                                <div class="d-flex justify-content-between">
+                                    <!-- <div class="mb-2">
+                                        <i
+                                            class="bi bi-cash-coin text-danger"
+                                            style="font-size: 1.5rem"
+                                        ></i>
+                                    </div> -->
+                                    <p class="text-center mb-1"><strong>Tổng tiền hàng:</strong></p>
+                                    <p class="text-danger fw-bold">[[${totalSum}]]</p>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <p class="text-center mb-1"><strong>Giảm giá:</strong></p>
+                                    <p class="text-center mb-1">
+                                        <strong>[[${formattedVoucher}]]</strong>
+                                    </p>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <p class="text-center mb-1"><strong>Phí vận chuyển:</strong></p>
+                                    <p class="text-center mb-1">
+                                        <input
+                                            type="text"
+                                            class="text-end"
+                                            name="shippingFee"
+                                            th:value="${shippingFee}"
+                                            disabled
+                                        />
+                                    </p>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <p class="text-center mb-1"><strong>TỔNG TIỀN:</strong></p>
+                                    <p class="text-center mb-1 fw-bold text-danger">[[${voucherTotalSum}]]</p>
                                 </div>
                             </div>
                         </div>
@@ -303,6 +781,8 @@
                     const orderId = orderElement.textContent;
                     const steps = document.querySelectorAll("#progressbar-2 li");
                     document.getElementById("btnConfirm").addEventListener("click", () => {
+                        console.log("xác nhận");
+
                         let currentStatus = 1;
                         steps.forEach((step) => {
                             if (step.classList.contains("active")) {
@@ -312,8 +792,22 @@
                         if (currentStatus < steps.length) {
                             const nextStatus = currentStatus + 1;
                             UpdateUI(nextStatus);
-                            // gọi hàm cập nhật trạng thái
-                            updateStatus(orderId, nextStatus);
+
+                            Swal.fire({
+                                title: "Bạn có chắc chắn muốn thay đổi trạng thái?",
+                                text: "Trạng thái sẽ được cập nhật",
+                                icon: "warning",
+                                showCancelButton: true,
+                                confirmButtonColor: "#3085d6",
+                                cancelButtonColor: "#d33",
+                                confirmButtonText: "Xác nhận",
+                                cancelButtonText: "Hủy",
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // gọi hàm cập nhật trạng thái
+                                    updateStatus(orderId, nextStatus);
+                                }
+                            });
                         }
                     });
                     document.getElementById("btnPreviousStatus").addEventListener("click", () => {
@@ -326,9 +820,49 @@
                         if (currentStatus > 1) {
                             const previousStatus = currentStatus - 1;
                             UpdateUI(previousStatus);
-                            // gọi hàm cập nhật trạng thái
-                            updateStatus(orderId, previousStatus);
+                            Swal.fire({
+                                title: "Bạn có chắc chắn muốn thay đổi trạng thái?",
+                                text: "Trạng thái sẽ được cập nhật",
+                                icon: "warning",
+                                showCancelButton: true,
+                                confirmButtonColor: "#3085d6",
+                                cancelButtonColor: "#d33",
+                                confirmButtonText: "Xác nhận",
+                                cancelButtonText: "Hủy",
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // gọi hàm cập nhật trạng thái
+                                    updateStatus(orderId, previousStatus);
+                                }
+                            });
                         }
+                    });
+                    document.getElementById("btnCancel").addEventListener("click", () => {
+                        const cancelStatus = 0;
+                        // gọi hàm cập nhật trạng thái
+                        updateStatus(orderId, cancelStatus);
+                        Swal.fire({
+                            title: "Bạn có chắc chắn muốn thay đổi trạng thái?",
+                            text: "Trạng thái sẽ được cập nhật",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#3085d6",
+                            cancelButtonColor: "#d33",
+                            confirmButtonText: "Xác nhận",
+                            cancelButtonText: "Hủy",
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // cập nhật hình ảnh
+                                const cardStatusElement = document.getElementById("cardStatus");
+                                cardStatusElement.innerHTML = "";
+                                const newStatusElement = document.createElement("div");
+                                newStatusElement.innerHTML = `<div class="order-status text-danger text-center">
+                        <i class="bi bi-x-circle-fill"></i>
+                        <p >Đơn hàng ${orderId} đã bị hủy</p>
+                        </div>`;
+                                cardStatusElement.appendChild(newStatusElement);
+                            }
+                        });
                     });
                     function updateStatus(orderId, status) {
                         fetch("http://localhost:8080/api/admin/orders/update-status", {
@@ -392,6 +926,28 @@
                     }
                 });
             </script>
+            <script>
+                window.addEventListener("DOMContentLoaded", () => {
+                    const mainModal = new bootstrap.Modal(document.getElementById("modalIdUpdateOrder"));
+                    const selectAddressModal = new bootstrap.Modal(document.getElementById("modalIdSelectAddress"));
+                    const addAddressModal = new bootstrap.Modal(document.getElementById("modalIdAddAddress"));
+
+                    document.getElementById("modalIdSelectAddress").addEventListener("shown.bs.modal", () => {
+                        mainModal.hide();
+                    });
+                    document.getElementById("modalIdAddAddress").addEventListener("shown.bs.modal", () => {
+                        mainModal.hide();
+                        selectAddressModal.show();
+                    });
+                    document.getElementById("modalIdAddAddress").addEventListener("hidden.bs.modal", () => {
+                        selectAddressModal.show();
+                    });
+                    document.getElementById("modalIdSelectAddress").addEventListener("hidden.bs.modal", () => {
+                        mainModal.show();
+                    });
+                });
+            </script>
+            <script src="/admin/js/addressAPI.js"></script>
         </section>
     </body>
 </html>

@@ -1164,12 +1164,12 @@ h6 {
   display        : flex;
   justify-content: space-between;
   padding        : 0;
-  min-width      : 1050px;
+  width          : 1000px;
 }
 
 #progressbar-2 li {
   list-style-type: none;
-  width          : 20%;
+  width          : 15%;
   text-align     : center;
   position       : relative;
 }
@@ -1185,29 +1185,132 @@ h6 {
   border-radius   : 50%;
   line-height     : 37px;
   display         : block;
-  margin          : 0 auto 10px 40px;
+  margin          : 0 auto 10px 10px;
+}
 
+#progressbar-2 li:first-child::before {
+  position   : absolute;
+  z-index    : 2;
+  margin-left: 28%;
+}
+
+#progressbar-2 li:nth-child(2)::before {
+  margin-left: 25%;
+  position   : absolute;
+  z-index    : 2;
+}
+
+#progressbar-2 li:nth-child(3)::before {
+  margin-left: 25%;
+  z-index    : 2;
+  position   : absolute;
+}
+
+#progressbar-2 li:nth-child(4)::before {
+  margin-left: 25%;
+  z-index    : 2;
+  position   : absolute;
+}
+
+#progressbar-2 li:nth-child(5)::before {
+  margin-left: 25%;
+  z-index    : 2;
+  position   : absolute;
+}
+
+#progressbar-2 li:last-child::before {
+  margin-left: 20%;
 }
 
 #progressbar-2 li::after {
   content         : '';
   position        : absolute;
-  width           : 100%;
+  width           : 200%;
   height          : 5px;
   background-color: #c5cae9;
   top             : 17px;
-  left            : -65%;
+  left            : -80%;
   z-index         : -1;
+
 }
 
 #progressbar-2 li:first-child::after {
   content: none;
 }
 
+#progressbar-2 li:nth-child(2)::after {
+  width      : 140px;
+  margin-left: 22px;
+}
+
+#progressbar-2 li:nth-child(3)::after {
+  width      : 150px;
+  margin-left: 12px;
+}
+
+#progressbar-2 li:nth-child(4)::after {
+  width      : 150px;
+  margin-left: 12px;
+}
+
+#progressbar-2 li:nth-child(5)::after {
+  width      : 150px;
+  margin-left: 12px;
+}
+
+#progressbar-2 li:last-child:after {
+  width      : 150px;
+  margin-left: 12px;
+}
+
+#progressbar-2 li.active:nth-child(2)::after {
+  z-index: 1;
+}
+
+#progressbar-2 li.active:nth-child(3)::after {
+  z-index: 1;
+  width  : 150px;
+}
+
+#progressbar-2 li.active:nth-child(4)::after {
+  z-index: 1;
+  width  : 150px;
+}
+
+#progressbar-2 li.active:nth-child(5)::after {
+  z-index: 1;
+  width  : 150px;
+}
+
+#progressbar-2 li.active:last-child::after {
+  width: 150px;
+}
+
 #progressbar-2 li.active::before,
 #progressbar-2 li.active::after {
   background-color: #6520ff;
   color           : white;
+
+}
+
+/* chỉnh thời gian gần trạng thái đơn hàng*/
+.timeUpdatedStatus {
+  color    : transparent;
+  font-size: 15px;
+}
+
+/* trạng thái đơn hàng bị hủy */
+.order-status {
+  font-size: 2rem;
+}
+
+.order-status i {
+  font-size: 4rem;
+}
+
+.ordericon {
+  width      : 1000px;
+  margin-left: -2%;
 }
 
 .ordericon .icon i {
@@ -1385,4 +1488,21 @@ h6 {
 /* chỉnh badge bên cạnh ảnh sản phẩm trong orderDetail admin  */
 .badge-custom {
   transform: translate(-15%, 10%);
+}
+
+/* khoảng cách giảm giá đơn hàng và footer */
+.voucherOrder {
+  margin-bottom: 6rem;
+}
+
+/* cột ghi chú trong lịch sử thanh toán */
+.note-cell {
+  /* Giới hạn chiều rộng */
+  max-width    : 400px;
+  /* Ẩn nội dung bị tràn */
+  overflow     : hidden;
+  /* Hiển thị dấu "..." */
+  text-overflow: ellipsis;
+  /* Không cho phép xuống dòng */
+  white-space  : nowrap;
 }

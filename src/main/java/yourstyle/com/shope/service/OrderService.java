@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Order;
 import yourstyle.com.shope.model.OrderStatus;
 
@@ -51,4 +52,6 @@ public interface OrderService {
 	Page<Order> findByStatus(Integer status, Pageable pageable);
 
 	Page<Order> findByFromDateAndToDate(Timestamp fromDate, Timestamp toDate, Pageable pageable);
+
+	List<Order> findByCustomer(Customer customer);
 }

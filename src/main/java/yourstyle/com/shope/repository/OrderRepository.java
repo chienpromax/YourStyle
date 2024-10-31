@@ -5,8 +5,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Order;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Integer> {
@@ -21,4 +24,10 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     @Query("SELECT o FROM Order o WHERE o.orderDate BETWEEN ?1 AND ?2")
     Page<Order> findByFromDateAndToDate(Timestamp fromDate, Timestamp toDate, Pageable pageable);
+
+    @Query("SELECT o FROM Order o WHERE o.status = ?1 AND o.orderDate BETWEEN ?2 AND ?3")
+    Page<Order> findByFromDateAndToDate(Integer status, Timestamp fromDate, Timestamp toDate, Pageable pageable);
+
+    // TÌM kiếm đơn hàng theo khách hàng
+    List<Order> findByCustomer(Customer customer);
 }

@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,6 +38,14 @@ public class Order implements Serializable {
     private int status = 1;
     @Column(nullable = true)
     private String note;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "transactionType")
+    private TransactionType transactionType;
+    private String paymentMethod;
+    private String transactionStatus;
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    private Timestamp statusUpdatedAt;
+
     @ManyToOne
     @JoinColumn(name = "customerId", referencedColumnName = "customerId", nullable = false)
     private Customer customer;
@@ -54,5 +65,10 @@ public class Order implements Serializable {
 
     public String getStatusDescription() {
         return OrderStatus.fromCode(this.status).getDescription();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        statusUpdatedAt = new Timestamp(System.currentTimeMillis());
     }
 }

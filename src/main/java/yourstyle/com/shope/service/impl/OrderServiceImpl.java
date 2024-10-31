@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Order;
 import yourstyle.com.shope.repository.OrderRepository;
 import yourstyle.com.shope.service.OrderService;
@@ -116,6 +118,11 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public Page<Order> findByFromDateAndToDate(Timestamp fromDate, Timestamp toDate, Pageable pageable) {
 		return orderRepository.findByFromDateAndToDate(fromDate, toDate, pageable);
+	}
+
+	@Override
+	public List<Order> findByCustomer(Customer customer) {
+		return orderRepository.findByCustomer(customer);
 	}
 
 }

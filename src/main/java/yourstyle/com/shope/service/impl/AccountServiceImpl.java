@@ -12,7 +12,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import yourstyle.com.shope.model.Role;
 import yourstyle.com.shope.model.Account;
+import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.repository.AccountRepository;
+import yourstyle.com.shope.repository.CustomerRepository;
 import yourstyle.com.shope.repository.RoleRepository;
 import yourstyle.com.shope.service.AccountService;
 import org.springframework.mail.SimpleMailMessage;
@@ -22,14 +24,17 @@ import java.util.UUID;
 
 @Service
 public class AccountServiceImpl implements AccountService {
-	
+	 @Autowired
+    private CustomerRepository customerRepository;
 	@Autowired
 	private AccountRepository accountRepository;
 	@Autowired
 	private JavaMailSender mailSender;
 	@Autowired
 	private RoleRepository roleRepository;
-
+	public AccountServiceImpl() {
+	}
+	
 	public AccountServiceImpl(AccountRepository accountRepository) {
 		this.accountRepository = accountRepository;
 	}
@@ -78,42 +83,49 @@ public class AccountServiceImpl implements AccountService {
 	public Page<Account> findByUsernameOrEmail(String value, Pageable pageable) {
 		return accountRepository.findByUsernameOrEmail(value, pageable);
 	}
+	@Override
+    public boolean existsByEmail(String email) {
+        return accountRepository.existsByEmail(email);
+    }
+	  @Override
+	    public boolean existsByUsername(String username) {
+	        return accountRepository.existsByUsername(username);
+	    }
 	    
 	    @Override
 	    public Account findByUsernameOrEmail(String username, String email) {
 	        return accountRepository.findByUsernameOrEmail(username, email);
 	    }
-
+	    @Override
 	    public void register(Account account, String confirmPassword) {
 	        String password = account.getPassword().trim();
 	        confirmPassword = confirmPassword.trim();
-
-	        // Kiểm tra mật khẩu
+	        
 	        if (!password.equals(confirmPassword)) {
 	            throw new IllegalArgumentException("Mật khẩu không khớp!");
 	        }
-
-	        // Tìm và thiết lập đối tượng Role với roleId = 1
 	        Role role = roleRepository.findById(1)
-	            .orElseThrow(() -> new IllegalArgumentException("Vai trò không tồn tại!"));
-	        account.setRole(role); // Gán vai trò vào tài khoản
-
+	                .orElseThrow(() -> new IllegalArgumentException("Vai trò không tồn tại!"));
+	        account.setRole(role);
 	        if (accountRepository.findByEmail(account.getEmail()).isPresent()) {
 	            throw new IllegalArgumentException("Email đã tồn tại!");
 	        }
-
-	        // Kiểm tra tên đăng nhập
 	        if (accountRepository.findByUsername(account.getUsername()).isPresent()) {
 	            throw new IllegalArgumentException("Tên đăng nhập đã tồn tại!");
 	        }
-
+	        System.out.println("RoleId: " + role.getRoleId());
+	        System.out.println("Account before saving: " + account);
 	        try {
-	            account.setPassword(password); // Không mã hóa mật khẩu
-	            accountRepository.save(account); // Lưu tài khoản vào cơ sở dữ liệu
+	            account.setPassword(password);
+	            Account savedAccount = accountRepository.save(account);
+	            Customer newCustomer = new Customer();
+	            newCustomer.setAccount(savedAccount);
+	            customerRepository.save(newCustomer);
 	        } catch (DataIntegrityViolationException e) {
 	            throw new RuntimeException("Có lỗi xảy ra khi tạo tài khoản: " + e.getMessage());
 	        }
 	    }
+
 
 	    @Override
 	    public Account login(String username, String password) {

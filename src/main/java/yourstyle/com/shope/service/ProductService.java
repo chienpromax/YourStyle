@@ -12,24 +12,27 @@ import yourstyle.com.shope.model.Product;
 
 public interface ProductService {
 
-    void deleteById(Integer id);
+	void deleteById(Integer id);
 
-    long count();
+	long count();
 
-    Optional<Product> findById(Integer id);
+	Optional<Product> findById(Integer id);
 
-    List<Product> findAll();
+	List<Product> findAll();
 
-    Page<Product> findAll(Pageable pageable);
+	Page<Product> findAll(Pageable pageable);
 
-    List<Product> findAll(Sort sort);
+	List<Product> findAll(Sort sort);
 
-    <S extends Product> Optional<S> findOne(Example<S> example);
+	<S extends Product> Optional<S> findOne(Example<S> example);
 
-    <S extends Product> S save(S entity);
+	<S extends Product> S save(S entity);
 
-    Product update(Product product);
+	Product update(Product product);
 
-    Page<Product> searchByName(String name, Pageable pageable);
+	Page<Product> searchByName(String name, Pageable pageable);
+
+	List<Product> getAllProducts();
+
 
 }

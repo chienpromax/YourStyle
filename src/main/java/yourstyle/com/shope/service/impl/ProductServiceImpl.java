@@ -76,4 +76,8 @@ public class ProductServiceImpl implements ProductService{
 	public Page<Product> searchByName(String name, Pageable pageable) {
         return productRepository.findByNameContaining(name, pageable);
     }
+	
+	public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
 }

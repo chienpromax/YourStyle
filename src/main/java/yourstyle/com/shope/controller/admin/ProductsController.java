@@ -58,10 +58,8 @@ public class ProductsController {
 	}
 
 	@GetMapping("/search")
-	public String search(@RequestParam("value") String value,
-			@RequestParam("page") Optional<Integer> page,
-			@RequestParam("size") Optional<Integer> size,
-			Model model) {
+	public String search(@RequestParam("value") String value, @RequestParam("page") Optional<Integer> page,
+			@RequestParam("size") Optional<Integer> size, Model model) {
 		int currentPage = page.orElse(0);
 		int pageSize = size.orElse(5);
 		Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by("name"));
@@ -191,6 +189,8 @@ public class ProductsController {
 		return new ModelAndView("redirect:/admin/products", model);
 	}
 
+	
+	// nó trùng chỗ ni nè Thành @getMapping("") với @getMapping là 1 á  
 	@GetMapping("")
 	public String list(Model model, @RequestParam("page") Optional<Integer> page,
 			@RequestParam("size") Optional<Integer> size) {
@@ -242,5 +242,13 @@ public class ProductsController {
 					.body(Collections.singletonMap("success", false));
 		}
 	}
+
+
+//	@GetMapping
+//	public String listProducts(Model model) {
+//		List<Product> products = productService.getAllProducts();
+//		model.addAttribute("products", products);
+//		return "productList"; // Tên của view (HTML template)
+//	}
 
 }

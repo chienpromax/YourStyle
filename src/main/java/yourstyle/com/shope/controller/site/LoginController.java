@@ -29,7 +29,9 @@ public class LoginController {
             HttpSession session) {
         try {
             Account account = accountService.login(username, password); // Sử dụng đối tượng Account
-            session.setAttribute("userName", account.getUsername()); // Lưu tên người dùng vào session
+            session.setAttribute("accountId", account.getAccountId()); // Lưu tên người dùng vào session
+            System.out.println("id tài khoản: "+account.getAccountId());
+            session.setAttribute("userName", account.getUsername());
             return "redirect:/home"; // Điều hướng tới trang chính sau khi đăng nhập thành công
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());

@@ -32,15 +32,14 @@ public interface AccountService {
 	
 	Account findByUsernameOrEmail(String username,String email);
 
-	// Phương thức đăng ký tài khoản
     void register(Account account, String confirmPassword);
     
-    // Phương thức đăng nhập
     Account login(String username, String password);
     
-    // Phương thức gửi liên kết đặt lại mật khẩu qua email
     boolean sendResetPasswordLink(String email);
     
-    // Phương thức đặt lại mật khẩu bằng token, mật khẩu mới và mật khẩu xác nhận
     void resetPassword(String token, String newPassword, String confirmPassword);
+    boolean existsByEmail(String email);
+    boolean existsByUsername(String username);
+
 }

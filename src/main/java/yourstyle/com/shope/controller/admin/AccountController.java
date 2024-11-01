@@ -66,6 +66,7 @@ public class AccountController {
 		if (optional.isPresent()) { // tồn tại
 			Account account = optional.get();
 			BeanUtils.copyProperties(account, accountDto);
+			accountDto.setPassword(""); // Để trống mật khẩu khi chỉnh sửa
 			accountDto.setEdit(true);
 			model.addAttribute("account", accountDto);
 			model.addAttribute("roles", roles);
@@ -75,6 +76,7 @@ public class AccountController {
 		model.addAttribute("messageContent", "Tài khoản không tồn tại!");
 		return new ModelAndView("redirect:/admin/accounts", model);
 	}
+	
 
 	@PostMapping("saveOrUpdate")
 	public ModelAndView saveOrUpdate(ModelMap model, @Valid @ModelAttribute("account") AccountDto accountDto,
@@ -84,8 +86,10 @@ public class AccountController {
 			model.addAttribute("roles", roles);
 			return new ModelAndView("admin/accounts/addOrEdit");
 		}
+	
 		Account existingAccount = accountService.findByUsernameOrEmail(accountDto.getUsername(), accountDto.getEmail());
-		if (existingAccount != null && !(existingAccount.getAccountId() == accountDto.getAccountId())) {
+	
+		if (existingAccount != null && !existingAccount.getAccountId().equals(accountDto.getAccountId())) {
 			if (existingAccount.getEmail().equals(accountDto.getEmail())) {
 				model.addAttribute("messageType", "error");
 				model.addAttribute("messageContent", "Email đã được sử dụng!");
@@ -95,27 +99,29 @@ public class AccountController {
 			model.addAttribute("messageContent", "Tên tài khoản đã tồn tại!");
 			return new ModelAndView("redirect:/admin/accounts/add", model);
 		}
+	
 		Account account = new Account();
-		Role role = roleService.findById(roleId).get();
+		Role role = roleService.findById(roleId).orElse(null);
 		accountDto.setRole(role);
+	
 		BeanUtils.copyProperties(accountDto, account);
-
 		boolean isNew = accountDto.getAccountId() == null;
+	
 		if (isNew || (accountDto.getPassword() != null && !accountDto.getPassword().isEmpty())) {
 			account.setPassword(bCryptPasswordEncoder.encode(accountDto.getPassword()));
 		} else {
 			account.setPassword(existingAccount.getPassword());
 		}
-
+	
 		accountService.save(account);
-		// kiểm tra xem thêm mới hay là cập nhật
-		// boolean isNew = accountDto.getAccountId() == null
-        model.addAttribute("messageType", "success");
-        model.addAttribute("messageContent", isNew ? "Thêm tài khoản thành công" : "Cập nhật tài khoản thành công");
-		
+	
+		model.addAttribute("messageType", "success");
+		model.addAttribute("messageContent", isNew ? "Thêm tài khoản thành công" : "Cập nhật tài khoản thành công");
+	
 		return new ModelAndView("redirect:/admin/accounts", model);
 	}
-
+	
+	
 	@GetMapping("")
 	public String list(Model model, @RequestParam("page") Optional<Integer> page,
 			@RequestParam("size") Optional<Integer> size) {

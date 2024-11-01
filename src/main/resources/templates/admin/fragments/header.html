@@ -198,7 +198,7 @@
                 alt="Profile"
                 class="rounded-circle"
               />
-              <span class="d-none d-md-block dropdown-toggle ps-2"
+              <span class="d-none d-md-block dropdown-toggle ps-2" th:text="${#authentication.principal.username}"
                 >Văn Tuấn</span
               > </a
             ><!-- End Profile Iamge Icon -->
@@ -207,7 +207,9 @@
               class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile"
             >
               <li class="dropdown-header">
-                <h6>Trần Văn Tuấn</h6>
+                <h6>
+                  <span class="dropdown-item" th:text="${#authentication.principal.username}"></span>
+                </h6>
                 <span>Admin</span>
               </li>
               <li>
@@ -252,9 +254,8 @@
               <li>
                 <hr class="dropdown-divider" />
               </li>
-
-              <li>
-                <a class="dropdown-item d-flex align-items-center" href="#">
+              <li sec:authorize="isAuthenticated()">
+                <a class="dropdown-item d-flex align-items-center" th:href="@{/yourstyle/accounts/logout}">
                   <i class="bi bi-box-arrow-right"></i>
                   <span>Đăng xuất</span>
                 </a>

@@ -36,9 +36,9 @@ public class SecurityConfig {
                         .failureUrl("/yourstyle/accounts/login?error=true")
                         .usernameParameter("username")
                         .passwordParameter("password")
-                        .failureHandler((request, response, authenticationException) -> {
-                            System.out.println("Login failed: " + authenticationException.getMessage());
-                        })
+                        // .failureHandler((request, response, authenticationException) -> {
+                        //     System.out.println("Login failed: " + authenticationException.getMessage());
+                        // })
                         .successHandler((request, response, authentication) -> {
                             boolean isAdmin = authentication.getAuthorities().stream()
                                     .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));

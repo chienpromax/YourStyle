@@ -24,13 +24,13 @@ public class CustomUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
         Account account = accountService.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail);
         if (account == null) {
-            System.out.println("User not found: " + usernameOrEmail);
+            // System.out.println("User not found: " + usernameOrEmail);
             throw new UsernameNotFoundException("User not found with username or email: " + usernameOrEmail);
         }
         
-        System.out.println("User found: " + account.getUsername());
-        System.out.println("Stored password: " + account.getPassword());
-        System.out.println("Stored role: " + account.getRole());
+        // System.out.println("User found: " + account.getUsername());
+        // System.out.println("Stored password: " + account.getPassword());
+        // System.out.println("Stored role: " + account.getRole());
         return new CustomUserDetails(account);
     }
     

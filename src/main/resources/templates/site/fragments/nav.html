@@ -63,19 +63,26 @@
                                     height="25" alt="Black and White Portrait of a Man" loading="lazy" />
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
-                                <li>
-                                    <a class="dropdown-item" th:href="@{/yourstyle/accounts/login}">ĐĂNG NHẬP</a>
-
+                                <!-- Hiển thị tên người dùng nếu đã đăng nhập -->
+                                <li sec:authorize="isAuthenticated()">
+                                    <span class="dropdown-item" th:text="${#authentication.principal.username}"></span>
                                 </li>
-                                <li>
+                                <li sec:authorize="!isAuthenticated()">
+                                    <a class="dropdown-item" th:href="@{/yourstyle/accounts/login}">ĐĂNG NHẬP</a>
+                                </li>
+                                <li sec:authorize="!isAuthenticated()">
                                     <a class="dropdown-item" th:href="@{/yourstyle/accounts/register}">ĐĂNG KÝ</a>
                                 </li>
-                                <li>
-                                    <a class="dropdown-item" th:href="@{/yourstyle/accounts/forgot-password}">QUÊN MẬT
-                                        KHẨU</a>
+                                <li sec:authorize="!isAuthenticated()">
+                                    <a class="dropdown-item" th:href="@{/yourstyle/accounts/forgot-password}">QUÊN MẬT KHẨU</a>
+                                </li>
+                                <!-- Nút Đăng xuất chỉ hiển thị khi đã đăng nhập -->
+                                <li sec:authorize="isAuthenticated()">
+                                    <a class="dropdown-item" th:href="@{/yourstyle/accounts/logout}">ĐĂNG XUẤT</a>
                                 </li>
                             </ul>
                         </div>
+                        
                     </div>
                 </div>
             </nav>

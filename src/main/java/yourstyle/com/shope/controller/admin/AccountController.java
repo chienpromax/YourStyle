@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -46,6 +47,8 @@ public class AccountController {
 	AccountService accountService;
 	@Autowired
 	RoleService roleService;
+	@Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	@GetMapping("add")
 	public String add(Model model) {
@@ -96,16 +99,20 @@ public class AccountController {
 		Role role = roleService.findById(roleId).get();
 		accountDto.setRole(role);
 		BeanUtils.copyProperties(accountDto, account);
+
+		boolean isNew = accountDto.getAccountId() == null;
+		if (isNew || (accountDto.getPassword() != null && !accountDto.getPassword().isEmpty())) {
+			account.setPassword(bCryptPasswordEncoder.encode(accountDto.getPassword()));
+		} else {
+			account.setPassword(existingAccount.getPassword());
+		}
+
 		accountService.save(account);
 		// kiểm tra xem thêm mới hay là cập nhật
-		boolean isNew = accountDto.getAccountId() == null;
-		if (isNew) {
-			model.addAttribute("messageType", "success");
-			model.addAttribute("messageContent", "Thêm tài khoản thành công");
-		} else {
-			model.addAttribute("messageType", "success");
-			model.addAttribute("messageContent", "Cập nhật tài khoản thành công");
-		}
+		// boolean isNew = accountDto.getAccountId() == null
+        model.addAttribute("messageType", "success");
+        model.addAttribute("messageContent", isNew ? "Thêm tài khoản thành công" : "Cập nhật tài khoản thành công");
+		
 		return new ModelAndView("redirect:/admin/accounts", model);
 	}
 

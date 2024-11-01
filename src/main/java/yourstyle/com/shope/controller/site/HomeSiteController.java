@@ -13,11 +13,12 @@ import yourstyle.com.shope.model.Category;
 import yourstyle.com.shope.service.CategoryService;
 
 @Controller
+@RequestMapping("/yourstyle")
 public class HomeSiteController {
     @Autowired
     private CategoryService categoryService;
 
-    @RequestMapping({ "/", "/home" })
+    @RequestMapping("/home")
     public String showHomePage(Model model) {
         List<Category> parentCategories = categoryService.findParentCategories();
         parentCategories.forEach(parent -> {

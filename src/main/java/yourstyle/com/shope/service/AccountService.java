@@ -32,4 +32,5 @@ public interface AccountService {
 	
 	Account findByUsernameOrEmail(String username,String email);
 
+	Account findByUsername(String username);
 }

@@ -59,8 +59,7 @@
                       <label for="categorySelect" class="form-label fs-5">Chọn Danh Mục</label>
                       <select required style="color: rgb(247, 120, 141); font-weight: 600;" class="form-control mb-3"
                         th:field="*{category.categoryId}" id="categorySelect">
-                        <option value="">꧁⁣༒ ----------------- ∩(ミ ˃̵ ω ˂̵ ミ)∩ ---------- /ᐠ - ˕ -マ Ⳋ ----------------
-                          ༒꧂</option>
+                        <option value="">꧁⁣༒ ----------------- ∩(ミ ˃̵ ω ˂̵ ミ)∩ ---------- /ᐠ - ˕ -マ Ⳋ ---------------- ༒꧂</option>
                         <th:block th:each="cat : ${categories}">
                           <!-- <option th:value="${cat.categoryId}" th:text="${cat.name}"> -->
                           <option th:value="${cat.categoryId}">
@@ -69,8 +68,6 @@
                                 th:text="${cat.parentCategory.name}">Cha</span>)</span>
                           </option>
                         </th:block>
-                        <div th:if="${#fields.hasErrors('category')}" class="text-danger" th:errors="*{category}">Phải
-                          chọn doanh mục</div>
                       </select>
 
                       <!-- Danh mục -->
@@ -88,8 +85,6 @@
                         <label class="form-label" for="productDetail">Chi tiết sản phẩm</label>
                         <textarea class="form-control" th:field="*{productDetail}" id="productDetail"
                           rows="4"></textarea>
-                        <div th:if="${#fields.hasErrors('productDetail')}" class="text-danger"
-                          th:errors="*{productDetail}">Chi tiết sản phẩm không hợp lệ</div>
                       </div>
 
                       <div class="mb-3">

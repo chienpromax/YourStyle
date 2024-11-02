@@ -46,7 +46,7 @@ public class Product implements Serializable {
     @Column(columnDefinition = "TEXT")
     private String image;
 
-    @Column(columnDefinition = "JSON", nullable = true)
+    @Column(columnDefinition = "TEXT", nullable = true)
     private String productDetail;
 
     @ManyToOne

@@ -24,6 +24,7 @@
   <link rel="stylesheet" href="/site/css/login.css">
   <link rel="stylesheet" href="/site/css/register.css">
   <link rel="stylesheet" href="/site/css/forgotpassword.css">
+  <link rel="stylesheet" href="/site/css/mess-zalo.css">
   <link rel="stylesheet" href="/site/css/personalinformation.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
   
@@ -56,6 +57,21 @@
     AOS.init();
   </script>
 
+  
+<!-- Zalo Chat -->
+<div class="float-contact">
+  <div class="chat-zalo">
+      <a th:href="@{'https://zalo.me/0899871800'}" target="_blank">
+          <img title="Chat Zalo" th:src="@{'/images/zalo.webp'}" alt="zalo-icon" width="40" height="40" />
+      </a>
+  </div>
+  <!-- Facebook Chat -->
+  <div class="chat-facebook">
+      <a th:href="@{'https://m.me/468726266327729'}" target="_blank">
+          <img title="Chat Messenger" th:src="@{'/images/mess.png'}" alt="facebook-icon" width="40" height="40" />
+      </a>
+  </div>
+ 
 </body>
 
 </html>

@@ -146,7 +146,6 @@ public class CategoryController {
 
             // Lưu danh mục
             categoryService.save(category);
-            redirectAttributes.addFlashAttribute("message", "Cập nhật danh mục thành công!");
             redirectAttributes.addAttribute("messageType", "success");
             redirectAttributes.addAttribute("messageContent", "Cập nhật thành công");
 

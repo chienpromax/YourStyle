@@ -15,20 +15,20 @@ import yourstyle.com.shope.repository.ProductRepository;
 import yourstyle.com.shope.service.ProductService;
 
 @Service
-public class ProductServiceImpl implements ProductService{
-    
-    @Autowired
+public class ProductServiceImpl implements ProductService {
+
+	@Autowired
 	ProductRepository productRepository;
 
-    @Autowired
-    public ProductServiceImpl(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
+	@Autowired
+	public ProductServiceImpl(ProductRepository productRepository) {
+		this.productRepository = productRepository;
+	}
 
 	@Override
-    public Product update(Product product) {
-        return productRepository.save(product);
-    }
+	public Product update(Product product) {
+		return productRepository.save(product);
+	}
 
 	@Override
 	public <S extends Product> S save(S entity) {
@@ -39,18 +39,16 @@ public class ProductServiceImpl implements ProductService{
 	public <S extends Product> Optional<S> findOne(Example<S> example) {
 		return productRepository.findOne(example);
 	}
-    
 
 	@Override
-    public Page<Product> findAll(Pageable pageable) {
-        return productRepository.findAll(pageable);
-    }
+	public Page<Product> findAll(Pageable pageable) {
+		return productRepository.findAll(pageable);
+	}
 
 	@Override
 	public List<Product> findAll(Sort sort) {
 		return productRepository.findAll(sort);
 	}
-
 
 	@Override
 	public List<Product> findAll() {
@@ -75,11 +73,16 @@ public class ProductServiceImpl implements ProductService{
 	@Override
 	public Page<Product> searchByName(String name, Pageable pageable) {
 		return productRepository.findByNameContaining(name, pageable);
-    }
-	
+	}
+
 	@Override
 	public List<Product> findByCategoryId(Integer categoryId) {
 		return productRepository.findByCategory_CategoryId(categoryId);
-    }
-	
+	}
+
+	@Override
+	public List<Product> findSimilarProducts(Integer categoryId, Integer productId) {
+		return productRepository.findSimilarProducts(categoryId, productId);
+	}
+
 }

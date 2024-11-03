@@ -34,4 +34,5 @@ public interface ProductService {
 
     List<Product> findByCategoryId(Integer categoryId);
 
+    List<Product> findSimilarProducts(Integer categoryId, Integer productId);
 }

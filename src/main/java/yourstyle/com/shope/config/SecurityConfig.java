@@ -37,7 +37,7 @@ public class SecurityConfig {
                         .usernameParameter("username")
                         .passwordParameter("password")
                         // .failureHandler((request, response, authenticationException) -> {
-                        //     System.out.println("Login failed: " + authenticationException.getMessage());
+                        // System.out.println("Login failed: " + authenticationException.getMessage());
                         // })
                         .successHandler((request, response, authentication) -> {
                             boolean isAdmin = authentication.getAuthorities().stream()

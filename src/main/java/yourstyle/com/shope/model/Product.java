@@ -2,8 +2,11 @@ package yourstyle.com.shope.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,6 +15,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
@@ -58,5 +63,13 @@ public class Product implements Serializable {
 
     @Transient // Để không lưu vào database
     private MultipartFile imageFile;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "product")
+    private Discount discount;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "product")
+    private List<ProductVariant> productVariants;
 
 }

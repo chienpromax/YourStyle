@@ -1,4 +1,5 @@
 package yourstyle.com.shope.repository;
+
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,4 +26,7 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
     // @Param("color") String color,
     // @Param("size") String size,
     // Pageable pageable);
+
+    @Query("SELECT pv FROM ProductVariant pv WHERE pv.product.productId = ?1")
+    List<ProductVariant> findByProductId(Integer productId);
 }

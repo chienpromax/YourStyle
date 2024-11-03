@@ -10,9 +10,8 @@ import org.springframework.data.domain.Sort;
 
 import yourstyle.com.shope.model.ProductVariant;
 
-
 public interface ProductVariantService {
-    
+
     void deleteById(Integer id);
 
     long count();
@@ -36,5 +35,7 @@ public interface ProductVariantService {
     List<ProductVariant> getAllProductVariantsOrderedByPrice();
 
     Page<ProductVariant> searchByProductName(String productName, Pageable pageable);
+
+    List<ProductVariant> findByProductId(Integer productId);
 
 }

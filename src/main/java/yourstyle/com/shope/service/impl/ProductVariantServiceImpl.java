@@ -69,7 +69,7 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     public boolean existsById(Integer id) {
         return productVariantRepository.existsById(id);
     }
-    
+
     @Override
     public List<ProductVariant> getAllProductVariantsOrderedByPrice() {
         return productVariantRepository.findAllOrderByProductPrice();
@@ -78,5 +78,10 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     @Override
     public Page<ProductVariant> searchByProductName(String productName, Pageable pageable) {
         return productVariantRepository.findByProductNameContainingIgnoreCase(productName, pageable);
+    }
+
+    @Override
+    public List<ProductVariant> findByProductId(Integer productId) {
+        return productVariantRepository.findByProductId(productId);
     }
 }

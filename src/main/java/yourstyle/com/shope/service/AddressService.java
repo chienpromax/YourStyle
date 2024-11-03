@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import yourstyle.com.shope.model.Address;
+import yourstyle.com.shope.validation.admin.AddressDto;
 
 public interface AddressService {
 
@@ -38,4 +39,5 @@ public interface AddressService {
 
 	List<Address> findByAddressCustomerID(Integer customerId);
 
+	List<AddressDto> findByAddressDtoCustomerID(Integer customerId);
 }

@@ -13,9 +13,10 @@ import org.springframework.stereotype.Service;
 import yourstyle.com.shope.model.Address;
 import yourstyle.com.shope.repository.AddressRepository;
 import yourstyle.com.shope.service.AddressService;
+import yourstyle.com.shope.validation.admin.AddressDto;
 
 @Service
-public class AddressServiceImpl implements AddressService{
+public class AddressServiceImpl implements AddressService {
 	@Autowired
 	AddressRepository addressRepository;
 
@@ -87,7 +88,10 @@ public class AddressServiceImpl implements AddressService{
 	public void delete(Address entity) {
 		addressRepository.delete(entity);
 	}
-	
-	
-	
+
+	@Override
+	public List<AddressDto> findByAddressDtoCustomerID(Integer customerId) {
+		return addressRepository.findByAddressDtoCustomerID(customerId);
+	}
+
 }

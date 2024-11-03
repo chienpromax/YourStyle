@@ -184,6 +184,7 @@
                                             class="btn btn-outline-primary"
                                             data-bs-toggle="modal"
                                             data-bs-target="#modalIdUpdateOrder"
+                                            onclick="setDefaultAddress()"
                                         >
                                             Cập nhật
                                         </button>
@@ -226,7 +227,7 @@
                                                 </span>
                                             </span>
                                             <span th:each="address : ${customer.addresses}">
-                                                <span th:if="${address.isDefault}">
+                                                <span th:if="${address.isDefault}" id="setDefaultAddress">
                                                     [[${address.street + ', '+ address.ward + ', ' + address.district +
                                                     ', ' + address.city}]]
                                                 </span>
@@ -373,71 +374,16 @@
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                                     Hủy
                                                 </button>
-                                                <button type="button" class="btn btn-danger">Xác nhận</button>
-                                            </div>
-                                        </div>
-                                        <!-- địa chỉ của khách hàng chưa có địa chỉ mặc định -->
-                                        <div
-                                            class="row"
-                                            th:each="address : *{addresses}"
-                                            th:unless="${address.isDefault}"
-                                        >
-                                            <div class="col-md-6 mb-3">
-                                                <div class="form-floating">
-                                                    <input
-                                                        type="text"
-                                                        class="form-control"
-                                                        id="floatingstreet1"
-                                                        placeholder="Địa chị cụ thể"
-                                                    />
-                                                    <label for="floatingstreet">
-                                                        <span class="text-danger">*</span>
-                                                        Địa chị cụ thể
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <div class="form-floating">
-                                                    <select class="form-select floatingcity" id="">
-                                                        <option selected>Chọn Tỉnh/thành phố</option>
-                                                    </select>
-                                                    <label for="floatingCity">
-                                                        <span class="text-danger">*</span>
-                                                        Chọn Tỉnh/thành phố
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <div class="form-floating">
-                                                    <select name="" id="" class="form-select floatingdistrict" disabled>
-                                                        <option selected>Chọn Quận/huyện</option>
-                                                    </select>
-                                                    <label for="floatingdistrict">
-                                                        <span class="text-danger">*</span>
-                                                        Quận/huyện
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <div class="form-floating">
-                                                    <select name="" id="" class="form-select floatingward" disabled>
-                                                        <option selected>Chọn Xã/phường/thị trấn</option>
-                                                    </select>
-                                                    <label for="floatingward">
-                                                        <span class="text-danger">*</span>
-                                                        Xã/phường/thị trấn
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <hr />
-                                            <div class="col-md-12 text-end">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                    Hủy
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-danger"
+                                                    onclick="submitAddress()"
+                                                    data-bs-dismiss="modal"
+                                                >
+                                                    Xác nhận
                                                 </button>
-                                                <button type="button" class="btn btn-danger">Xác nhận</button>
                                             </div>
                                         </div>
-                                        <!-- địa chỉ của khách hàng chưa có địa chỉ mặc định -->
                                     </form>
                                 </div>
                             </div>
@@ -484,8 +430,11 @@
                                                     <th>Thao tác</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                <tr th:each="address,iterStat: ${customer.addresses}">
+                                            <tbody class="listAddress">
+                                                <tr
+                                                    th:each="address,iterStat: ${customer.addresses}"
+                                                    th:unless="${address.isDefault}"
+                                                >
                                                     <td>[[${iterStat.index + 1}]]</td>
                                                     <td>[[${customer.fullname}]]</td>
                                                     <td>[[${customer.phoneNumber}]]</td>
@@ -493,7 +442,27 @@
                                                     <td>[[${address.ward}]]</td>
                                                     <td>[[${address.district}]]</td>
                                                     <td>[[${address.city}]]</td>
-                                                    <td><a href="" class="btn btn-outline-warning">Chọn</a></td>
+                                                    <td>
+                                                        <a
+                                                            href="javascript:void(0);"
+                                                            class="btn btn-outline-warning"
+                                                            onclick="selectAddress(this)"
+                                                            data-bs-dismiss="modal"
+                                                            id="selectAddress"
+                                                        >
+                                                            Chọn
+                                                        </a>
+                                                    </td>
+                                                    <input
+                                                        type="hidden"
+                                                        th:value="${address.addressId}"
+                                                        id="inputAddressId"
+                                                    />
+                                                    <input
+                                                        type="hidden"
+                                                        th:value="${customer.customerId}"
+                                                        id="inputCustomerId"
+                                                    />
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -539,63 +508,84 @@
                                     ></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="" method="post">
-                                        <!-- địa chỉ của khách hàng chưa có địa chỉ mặc định -->
-                                        <div class="row">
-                                            <div class="col-md-6 mb-3">
-                                                <div class="form-floating">
-                                                    <input
-                                                        type="text"
-                                                        class="form-control floatingstreet"
-                                                        id=""
-                                                        placeholder="Địa chị cụ thể"
-                                                    />
-                                                    <label for="floatingstreet">
-                                                        <span class="text-danger">*</span>
-                                                        Địa chị cụ thể
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <div class="form-floating">
-                                                    <select class="form-select floatingcity" id="">
-                                                        <option selected>Chọn Tỉnh/thành phố</option>
-                                                    </select>
-                                                    <label for="floatingCity">
-                                                        <span class="text-danger">*</span>
-                                                        Chọn Tỉnh/thành phố
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <div class="form-floating">
-                                                    <select name="" id="" class="form-select floatingdistrict" disabled>
-                                                        <option selected>Chọn Quận/huyện</option>
-                                                    </select>
-                                                    <label for="floatingdistrict">
-                                                        <span class="text-danger">*</span>
-                                                        Quận/huyện
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <div class="form-floating">
-                                                    <select name="" id="" class="form-select floatingward" disabled>
-                                                        <option selected>Chọn Xã/phường/thị trấn</option>
-                                                    </select>
-                                                    <label for="floatingward">
-                                                        <span class="text-danger">*</span>
-                                                        Xã/phường/thị trấn
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <hr />
-                                            <div class="col-md-12 text-end">
-                                                <button type="button" class="btn btn-outline-warning">TẠO MỚI</button>
+                                    <!-- thêm địa chỉ cho khách hàng-->
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-floating">
+                                                <input
+                                                    type="hidden"
+                                                    th:value="${customer.customerId}"
+                                                    id="inputCustomerId"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    class="form-control floatingstreet"
+                                                    id="street"
+                                                    placeholder="Địa chị cụ thể"
+                                                    name="floatingstreet"
+                                                    required
+                                                />
+                                                <label for="floatingstreet">
+                                                    <span class="text-danger">*</span>
+                                                    Địa chị cụ thể
+                                                </label>
                                             </div>
                                         </div>
-                                        <!-- địa chỉ của khách hàng chưa có địa chỉ mặc định -->
-                                    </form>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-floating">
+                                                <input
+                                                    class="form-control floatingcity"
+                                                    id="city"
+                                                    name="floatingcity"
+                                                    required
+                                                />
+                                                <label for="floatingCity">
+                                                    <span class="text-danger">*</span>
+                                                    Chọn Tỉnh/thành phố
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-floating">
+                                                <input
+                                                    name="floatingdistrict"
+                                                    id="district"
+                                                    class="form-control floatingdistrict"
+                                                    required
+                                                />
+                                                <label for="floatingdistrict">
+                                                    <span class="text-danger">*</span>
+                                                    Quận/huyện
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-floating">
+                                                <input
+                                                    name="floatingward"
+                                                    id="ward"
+                                                    class="form-control floatingward"
+                                                    required
+                                                />
+                                                <label for="floatingward">
+                                                    <span class="text-danger">*</span>
+                                                    Xã/phường/thị trấn
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <div class="col-md-12 text-end">
+                                            <button
+                                                type="button"
+                                                class="btn btn-outline-warning"
+                                                onclick="addAddress()"
+                                                data-bs-dismiss="modal"
+                                            >
+                                                TẠO MỚI
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!-- thêm địa chỉ cho khách hàng-->
                                 </div>
                             </div>
                         </div>
@@ -625,9 +615,9 @@
                                             <tr>
                                                 <td>[[${voucherTotalSum}]]</td>
                                                 <td>[[${#dates.format(order.orderDate, 'dd-MM-yyyy HH:mm:ss')}]]</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>[[${order.statusDescription}]]</td>
+                                                <td>[[${order.transactionType}]]</td>
+                                                <td>[[${order.paymentMethod}]]</td>
+                                                <td>[[${order.transactionStatus}]]</td>
                                                 <td>[[${order.note}]]</td>
                                             </tr>
                                         </tbody>
@@ -775,179 +765,7 @@
                 </section>
             </main>
             <!-- End #main -->
-            <script>
-                window.addEventListener("DOMContentLoaded", () => {
-                    const orderElement = document.getElementById("orderId");
-                    const orderId = orderElement.textContent;
-                    const steps = document.querySelectorAll("#progressbar-2 li");
-                    document.getElementById("btnConfirm").addEventListener("click", () => {
-                        console.log("xác nhận");
-
-                        let currentStatus = 1;
-                        steps.forEach((step) => {
-                            if (step.classList.contains("active")) {
-                                currentStatus = parseInt(step.getAttribute("data-status"));
-                            }
-                        });
-                        if (currentStatus < steps.length) {
-                            const nextStatus = currentStatus + 1;
-                            UpdateUI(nextStatus);
-
-                            Swal.fire({
-                                title: "Bạn có chắc chắn muốn thay đổi trạng thái?",
-                                text: "Trạng thái sẽ được cập nhật",
-                                icon: "warning",
-                                showCancelButton: true,
-                                confirmButtonColor: "#3085d6",
-                                cancelButtonColor: "#d33",
-                                confirmButtonText: "Xác nhận",
-                                cancelButtonText: "Hủy",
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    // gọi hàm cập nhật trạng thái
-                                    updateStatus(orderId, nextStatus);
-                                }
-                            });
-                        }
-                    });
-                    document.getElementById("btnPreviousStatus").addEventListener("click", () => {
-                        let currentStatus = 1;
-                        steps.forEach((step) => {
-                            if (step.classList.contains("active")) {
-                                currentStatus = parseInt(step.getAttribute("data-status"));
-                            }
-                        });
-                        if (currentStatus > 1) {
-                            const previousStatus = currentStatus - 1;
-                            UpdateUI(previousStatus);
-                            Swal.fire({
-                                title: "Bạn có chắc chắn muốn thay đổi trạng thái?",
-                                text: "Trạng thái sẽ được cập nhật",
-                                icon: "warning",
-                                showCancelButton: true,
-                                confirmButtonColor: "#3085d6",
-                                cancelButtonColor: "#d33",
-                                confirmButtonText: "Xác nhận",
-                                cancelButtonText: "Hủy",
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    // gọi hàm cập nhật trạng thái
-                                    updateStatus(orderId, previousStatus);
-                                }
-                            });
-                        }
-                    });
-                    document.getElementById("btnCancel").addEventListener("click", () => {
-                        const cancelStatus = 0;
-                        // gọi hàm cập nhật trạng thái
-                        updateStatus(orderId, cancelStatus);
-                        Swal.fire({
-                            title: "Bạn có chắc chắn muốn thay đổi trạng thái?",
-                            text: "Trạng thái sẽ được cập nhật",
-                            icon: "warning",
-                            showCancelButton: true,
-                            confirmButtonColor: "#3085d6",
-                            cancelButtonColor: "#d33",
-                            confirmButtonText: "Xác nhận",
-                            cancelButtonText: "Hủy",
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                // cập nhật hình ảnh
-                                const cardStatusElement = document.getElementById("cardStatus");
-                                cardStatusElement.innerHTML = "";
-                                const newStatusElement = document.createElement("div");
-                                newStatusElement.innerHTML = `<div class="order-status text-danger text-center">
-                        <i class="bi bi-x-circle-fill"></i>
-                        <p >Đơn hàng ${orderId} đã bị hủy</p>
-                        </div>`;
-                                cardStatusElement.appendChild(newStatusElement);
-                            }
-                        });
-                    });
-                    function updateStatus(orderId, status) {
-                        fetch("http://localhost:8080/api/admin/orders/update-status", {
-                            method: "PUT",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({ orderId: orderId, status: status }),
-                        })
-                            .then((reponse) => {
-                                if (reponse.ok) {
-                                    return reponse.text();
-                                } else {
-                                    throw new Error("Cập nhật trạng thái thất bại!");
-                                }
-                            })
-                            .then((message) => {
-                                createToast("success", "fa-solid fa-circle-check", "thành công", message);
-                            })
-                            .catch((error) => {
-                                console.log("Lỗi khi cập nhật trạng thái ", error);
-                                createToast(
-                                    "error",
-                                    "fa-solid fa-circle-exclamation",
-                                    "Lỗi",
-                                    "Cập nhật trạng thái thất bại!"
-                                );
-                            });
-                    }
-                    function UpdateUI(nextStatus) {
-                        const steps = document.querySelectorAll("#progressbar-2 li");
-
-                        steps.forEach((step) => {
-                            step.classList.add("text-muted");
-                            step.classList.remove("active");
-                        });
-                        for (let i = 0; i < steps.length; i++) {
-                            const step = steps[i];
-                            const stepStatus = parseInt(step.getAttribute("data-status"));
-                            if (stepStatus <= nextStatus) {
-                                step.classList.add("active");
-                                step.classList.remove("text-muted");
-                            }
-                        }
-                    }
-                    function createToast(type, icon, title, text) {
-                        const newToast = document.createElement("div");
-                        newToast.innerHTML = `<div class="toast ${type}">
-                        <i class="${icon}"></i>
-                        <div class="content">
-                            <div class="title">${title}</div>
-                            <span>${text}</span>
-                        </div>
-                        <i class="close fa-solid fa-xmark" onclick="(this.parentElement).remove()"></i>
-                    </div>`;
-                        const displayNotifications = document.querySelector(".displayNotifications");
-                        displayNotifications.appendChild(newToast);
-                        setTimeout(() => {
-                            newToast.remove();
-                        }, 5000);
-                    }
-                });
-            </script>
-            <script>
-                window.addEventListener("DOMContentLoaded", () => {
-                    const mainModal = new bootstrap.Modal(document.getElementById("modalIdUpdateOrder"));
-                    const selectAddressModal = new bootstrap.Modal(document.getElementById("modalIdSelectAddress"));
-                    const addAddressModal = new bootstrap.Modal(document.getElementById("modalIdAddAddress"));
-
-                    document.getElementById("modalIdSelectAddress").addEventListener("shown.bs.modal", () => {
-                        mainModal.hide();
-                    });
-                    document.getElementById("modalIdAddAddress").addEventListener("shown.bs.modal", () => {
-                        mainModal.hide();
-                        selectAddressModal.show();
-                    });
-                    document.getElementById("modalIdAddAddress").addEventListener("hidden.bs.modal", () => {
-                        selectAddressModal.show();
-                    });
-                    document.getElementById("modalIdSelectAddress").addEventListener("hidden.bs.modal", () => {
-                        mainModal.show();
-                    });
-                });
-            </script>
-            <script src="/admin/js/addressAPI.js"></script>
+            <script src="/admin/js/order.js"></script>
         </section>
     </body>
 </html>

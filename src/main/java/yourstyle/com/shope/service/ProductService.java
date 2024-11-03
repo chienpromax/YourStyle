@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Example;
 
+import yourstyle.com.shope.model.Category;
 import yourstyle.com.shope.model.Product;
 
 public interface ProductService {
@@ -32,4 +33,5 @@ public interface ProductService {
 
     Page<Product> searchByName(String name, Pageable pageable);
 
+    List<Product> findByCategory(Category category);
 }

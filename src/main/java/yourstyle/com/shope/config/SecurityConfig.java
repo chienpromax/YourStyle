@@ -26,7 +26,7 @@ public class SecurityConfig {
                         .requestMatchers("/yourstyle/home").permitAll()
                         .requestMatchers("/yourstyle/accounts/**").permitAll()
                         .requestMatchers("/yourstyle/product/**").permitAll()
-                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                        // .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/yourstyle/carts/**", "/yourstyle/VNPays/**")
                         .hasAnyAuthority("ROLE_ADMIN", "ROLE_USER", "ROLE_EMPLOYEE")
                         .anyRequest().authenticated())

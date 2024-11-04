@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{site/index.html}">
+
+<head>
+</head>
+
+<body>
+    <!--===== main =======-->
+    <section class="py-5 container" layout:fragment="main">
+        <div class="setepaction d-flex justify-content-center">
+
+        </div>
+        <div class="row py-5">
+            <div class="col-md-8">
+                <div class="table-responsive">
+                    <table class="table border">
+                        <thead>
+                            <tr class="text-center">
+                                <th scope="col">Ảnh</th>
+                                <th scope="col">Tên</th>
+                                <th scope="col">Giá</th>
+                                <th scope="col">Số lượng</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            <tr class="">
+                                <td scope="row">
+                                    <a href="">
+                                        <img src="/site/images/product/product-1.webp" width="70px" height="150px"
+                                            class="img-fluid">
+                                    </a>
+                                </td>
+                                <td>ÁO 12345</td>
+                                <td>100.000</td>
+                                <td>
+                                    <div class="form-outline" data-mdb-input-init>
+                                        <input min="1" max="5" type="number" id="form12" class="form-control"
+                                            readonly />
+                                        <label class="form-label" for="form12">Số Lượng</label>
+                                    </div>
+                                </td>
+                                <td><a href="">X</a></td>
+                            </tr>
+                            <tr class="">
+                                <td scope="row">
+                                    <a href="">
+                                        <img src="/site/images/product/product-1.webp" width="70px" height="150px"
+                                            class="img-fluid">
+                                    </a>
+                                </td>
+                                <td>ÁO 12345</td>
+                                <td>100.000</td>
+                                <td>
+                                    <div class="form-outline" data-mdb-input-init>
+                                        <input min="1" max="5" type="number" id="form12" class="form-control"
+                                            readonly />
+                                        <label class="form-label" for="form12">Số Lượng</label>
+                                    </div>
+                                </td>
+                                <td><a href="">X</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <h3 class="p-2">Tóm Tắt Đơn Hàng</h3>
+                    <div class="card-body">
+                        <h5 class="card-title pb-3">Giá ước tính: <span class="float-end">100.000 Đ</span></h5>
+                        <a class="py-5" th:href="@{/yourstyle/orderdetail}">
+                            <button class="btn-cart-detail">THÊM VÀO GIỎ HÀNG</button>
+                        </a>
+                    </div>
+                </div>
+                <div class="row pt-4 d-flex align-items-center justify-content-center">
+                    <h5 class="text-center fw-bolder">CHẤP NHẬN THANH TOÁN</h5>
+                    <span class="col-2 pt-2">
+                        <a class="footer-info-me" target="_blank" rel="noopener noreferrer">
+                            <img src="/site/images/logo/paypal.png" class="img-fluid client-logo">
+                        </a>
+                    </span>
+                    <span class="col-2 pt-2">
+                        <a class="footer-info-me" target="_blank" rel="noopener noreferrer">
+                            <img src="/site/images/logo/vnpay.png" class="img-fluid client-logo">
+                        </a>
+                    </span>
+                    <span class="col-2 pt-2">
+                        <a class="footer-info-me" target="_blank" rel="noopener noreferrer">
+                            <img src="/site/images/logo/zalo.png" class="img-fluid client-logo">
+                        </a>
+                    </span>
+                    <span class="col-2 pt-2">
+                        <a class="footer-info-me" target="_blank" rel="noopener noreferrer">
+                            <img src="/site/images/logo/momo.webp" class="img-fluid client-logo">
+                        </a>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

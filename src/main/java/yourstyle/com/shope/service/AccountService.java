@@ -7,7 +7,6 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-
 import yourstyle.com.shope.model.Account;
 
 public interface AccountService {
@@ -27,10 +26,23 @@ public interface AccountService {
 	<S extends Account> Optional<S> findOne(Example<S> example);
 
 	<S extends Account> S save(S entity);
-	
-	Page<Account> findByUsernameOrEmail(String name,Pageable pageable);
-	
-	Account findByUsernameOrEmail(String username,String email);
+
+	Page<Account> findByUsernameOrEmail(String name, Pageable pageable);
+
+	Account findByUsernameOrEmail(String username, String email);
 
 	Account findByUsername(String username);
+
+	void register(Account account, String confirmPassword);
+
+	Account login(String username, String password);
+
+	boolean sendResetPasswordLink(String email);
+
+	void resetPassword(String token, String newPassword, String confirmPassword);
+
+	boolean existsByEmail(String email);
+
+	boolean existsByUsername(String username);
+	
 }

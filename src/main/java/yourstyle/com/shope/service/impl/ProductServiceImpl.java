@@ -82,4 +82,7 @@ public class ProductServiceImpl implements ProductService{
 		return productRepository.findByCategory_CategoryId(categoryId);
     }
 	
+	public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
 }

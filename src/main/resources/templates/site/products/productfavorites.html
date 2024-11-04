@@ -1,152 +1,44 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-    layout:decorate="~{site/index.html}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{site/index.html}">
 
 <head>
 </head>
 
 <body>
-    <!--===== main =======-->
-    <section class="py-5 container" layout:fragment="main">
+	<section class="py-5 container" layout:fragment="main">
+		<h1 class="alert alert-success "  th:if="${message}" th:text="${message}"></h1>
 
-        <!-- product favorite -->
-        <div class="row text-center">
-            <h2 class="fw-bolder">CÁC SẢN PHẨM YÊU THÍCH</h2>
-        </div>
-        <section class="product__home">
-            <div class="row pt-3">
-                <hr class="border border-2 border-primary">
-                <div class="col-md-3 pt-5" data-aos="fade-up">
-                    <div class="card product-card">
-                        <a href="">
-                            <img src="/site/images/product/product-2.webp" class="img-fluid">
-                        </a>
-                        <div class="p-2">
-                            <h5>Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
-                                <a href="">
-                                    <i class="fa-solid fa-x"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 pt-5" data-aos="fade-up">
-                    <div class="card product-card">
-                        <a href="">
-                            <img src="/site/images/product/product-1.webp" class="img-fluid">
-                        </a>
-                        <div class="p-2">
-                            <h5> Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
-                                <a href="">
-                                    <i class="fa-solid fa-x"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 pt-5" data-aos="fade-up">
-                    <div class="card product-card">
-                        <a href="">
-                            <img src="/site/images/product/product-2.webp" class="img-fluid">
-                        </a>
-                        <div class="p-2">
-                            <h5>Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
-                                <a href="">
-                                    <i class="fa-solid fa-x"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 pt-5" data-aos="fade-up">
-                    <div class="card product-card">
-                        <a href="">
-                            <img src="/site/images/product/product-2.webp" class="img-fluid">
-                        </a>
-                        <div class="p-2">
-                            <h5> Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
-                                <a href="">
-                                    <i class="fa-solid fa-x"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 pt-5" data-aos="fade-up">
-                    <div class="card product-card">
-                        <a href="">
-                            <img src="/site/images/product/product-2.webp" class="img-fluid">
-                        </a>
-                        <div class="p-2">
-                            <h5> Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
-                                <a href="">
-                                    <i class="fa-solid fa-x"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 pt-5" data-aos="fade-up">
-                    <div class="card product-card">
-                        <a href="">
-                            <img src="/site/images/product/product-2.webp" class="img-fluid">
-                        </a>
-                        <div class="p-2">
-                            <h5> Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
-                                <a href="">
-                                    <i class="fa-solid fa-x"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 pt-5" data-aos="fade-up">
-                    <div class="card product-card">
-                        <a href="">
-                            <img src="/site/images/product/product-1.webp" class="img-fluid">
-                        </a>
-                        <div class="p-2">
-                            <h5> Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
-                                <a href="">
-                                    <i class="fa-solid fa-x"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 pt-5" data-aos="fade-up">
-                    <div class="card product-card">
-                        <a href="">
-                            <img src="/site/images/product/product-2.webp" class="img-fluid">
-                        </a>
-                        <div class="p-2">
-                            <h5> Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
-                                <a href="">
-                                    <i class="fa-solid fa-x"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </section>
+		<!-- sản phẩm yêu thích -->
+		<hr class="separator" />
+		<section class="favorite-products">
+			<div class="row text-center">
+				<h2 class="fw-bolder">SẢN PHẨM YÊU THÍCH</h2>
+			</div>
+			<div class="row">
+				<div class="col-md-3" th:each="product : ${favoriteProducts}">
+					<div class="card product-card">
+						<a th:href="@{/productdetail/{id}(id=${product.productId})}">
+							<img th:src="@{/uploads/{image}(image=${product.image})}"
+							class="card-img-top img-fluid" alt="Hình ảnh sản phẩm">
+						</a>
+						<div class="card-body text-center">
+							<div class="product-info">
+								<h5 class="card-title" th:text="${product.name}"></h5>
+								<a
+									th:href="@{/yourstyle/productfavorites/removefavorite/{id}(id=${product.productId})}"
+									aria-label="Xóa Khỏi Yêu Thích"> <i
+									class="bi bi-heart-fill" id="heart-${product.productId}"></i>
+								</a>
+							</div>
+							<p class="text-danger fw-bolder"
+								th:text="${product.price} + ' Đ'"></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</section>
 </body>
-
 </html>

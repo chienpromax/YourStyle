@@ -1,0 +1,15 @@
+@charset "ISO-8859-1";
+ .product-card {
+            margin-bottom: 30px; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 5px; 
+            transition: transform 0.2s; 
+        }
+
+        .product-card:hover {
+            transform: scale(1.05); 
+        }
+
+        .favorite-products h2 {
+            margin-bottom: 20px; 
+        }

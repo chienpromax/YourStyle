@@ -87,7 +87,7 @@ public class ProductsController {
 	public ModelAndView edit(ModelMap model, @PathVariable("productId") Integer productId) {
 		ProductDto productDto = new ProductDto();
 		Optional<Product> optional = productService.findById(productId);
-	
+
 		if (optional.isPresent()) {
 			Product product = optional.get();
 			BeanUtils.copyProperties(product, productDto);
@@ -95,7 +95,7 @@ public class ProductsController {
 
 			List<ProductImage> productImages = productImageService.findByProductId(productId);
 			List<Discount> discounts = discountService.findByProductId(productId);
-	
+
 			model.addAttribute("product", productDto);
 			model.addAttribute("discounts", discounts);
 			model.addAttribute("categories", categoryService.findAll());
@@ -108,16 +108,16 @@ public class ProductsController {
 			model.addAttribute("productImage", new ProductImage());
 			model.addAttribute("productId", productId);
 			model.addAttribute("isEdit", true);
-	
+
 			return new ModelAndView("admin/products/addOrEdit", model);
 		}
-	
+
 		// Xử lý khi sản phẩm không tồn tại
 		model.addAttribute("messageType", "warning");
 		model.addAttribute("messageContent", "Sản phẩm không tồn tại!");
 		return new ModelAndView("redirect:/admin/products", model);
 	}
-	
+
 	@GetMapping("/search")
 	public String search(@RequestParam("value") String value,
 			@RequestParam("page") Optional<Integer> page,

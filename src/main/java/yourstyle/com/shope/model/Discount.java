@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
@@ -39,19 +39,18 @@ public class Discount {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal discountPercent;
 
-
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime startDate;
-    
+
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime endDate;
-    
-    @ManyToOne
-    @JoinColumn(name = "productId", nullable = false)
-    private Product product;
 
     @Transient // Để không lưu vào database
     private boolean isEdit = false;
+
+    @OneToOne
+    @JoinColumn(name = "productId", nullable = false)
+    private Product product;
 
 }

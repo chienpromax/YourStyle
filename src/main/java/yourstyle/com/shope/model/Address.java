@@ -37,5 +37,6 @@ public class Address implements Serializable {
     private Boolean isDefault;
     @ManyToOne()
     @JoinColumn(name = "customerId", referencedColumnName = "customerId")
+    @JsonBackReference
     private Customer customer;
 }

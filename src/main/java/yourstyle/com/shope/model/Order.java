@@ -43,15 +43,32 @@ public class Order implements Serializable {
     private TransactionType transactionType;
     private String paymentMethod;
     private String transactionStatus;
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
-    private Timestamp statusUpdatedAt;
+    @Column(name = "packedAt")
+    private Timestamp packedAt;
+
+    @Column(name = "shippedAt")
+    private Timestamp shippedAt;
+
+    @Column(name = "inTransitAt")
+    private Timestamp inTransitAt;
+
+    @Column(name = "completedAt")
+    private Timestamp completedAt;
+
+    @Column(name = "returnedAt")
+    private Timestamp returnedAt;
+
+    @Column(name = "canceledAt")
+    private Timestamp canceledAt;
 
     @ManyToOne
     @JoinColumn(name = "customerId", referencedColumnName = "customerId", nullable = false)
     private Customer customer;
+
     @ManyToOne
     @JoinColumn(name = "voucherId", referencedColumnName = "voucherId", nullable = true)
     private Voucher voucher;
+
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
     private List<OrderDetail> orderDetails;
 
@@ -65,10 +82,5 @@ public class Order implements Serializable {
 
     public String getStatusDescription() {
         return OrderStatus.fromCode(this.status).getDescription();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        statusUpdatedAt = new Timestamp(System.currentTimeMillis());
     }
 }

@@ -2,8 +2,15 @@ window.addEventListener("DOMContentLoaded", () => {
     const orderElement = document.getElementById("orderId");
     const orderId = orderElement.textContent;
     const steps = document.querySelectorAll("#progressbar-2 li");
-    document.getElementById("btnConfirm").addEventListener("click", () => {
-        let currentStatus = 1;
+    let currentStatus = 1;
+    const statuses = [
+        { id: 1, text: "Xác nhận đang đóng gói" },
+        { id: 2, text: "Xác nhận đã giao cho vận chuyển" },
+        { id: 3, text: "Xác nhận đang giao hàng" },
+        { id: 4, text: "Xác nhận hoàn thành" },
+        { id: 5, text: "Xác nhận trả hàng" },
+    ];
+    document.getElementById("btnConfirm").addEventListener("click", function () {
         steps.forEach((step) => {
             if (step.classList.contains("active")) {
                 currentStatus = parseInt(step.getAttribute("data-status"));
@@ -11,8 +18,6 @@ window.addEventListener("DOMContentLoaded", () => {
         });
         if (currentStatus < steps.length) {
             const nextStatus = currentStatus + 1;
-            UpdateUI(nextStatus);
-
             Swal.fire({
                 title: "Bạn có chắc chắn muốn thay đổi trạng thái?",
                 text: "Trạng thái sẽ được cập nhật",
@@ -24,10 +29,20 @@ window.addEventListener("DOMContentLoaded", () => {
                 cancelButtonText: "Hủy",
             }).then((result) => {
                 if (result.isConfirmed) {
+                    UpdateUI(nextStatus); // cập nhật giao diện
                     // gọi hàm cập nhật trạng thái
                     updateStatus(orderId, nextStatus);
                 }
             });
+        }
+        // this sẽ tham chiếu đến nút xác nhận nếu mình click vào
+        if (currentStatus < statuses.length) {
+            this.textContent = statuses[currentStatus - 1].text + " ";
+            const icon = document.createElement("i");
+            icon.className = "fas fa-arrow-right";
+            this.appendChild(icon);
+        } else {
+            this.textContent = statuses[statuses.length - 1].text + " ";
         }
     });
     document.getElementById("btnPreviousStatus").addEventListener("click", () => {
@@ -39,7 +54,6 @@ window.addEventListener("DOMContentLoaded", () => {
         });
         if (currentStatus > 1) {
             const previousStatus = currentStatus - 1;
-            UpdateUI(previousStatus);
             Swal.fire({
                 title: "Bạn có chắc chắn muốn thay đổi trạng thái?",
                 text: "Trạng thái sẽ được cập nhật",
@@ -51,6 +65,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 cancelButtonText: "Hủy",
             }).then((result) => {
                 if (result.isConfirmed) {
+                    UpdateUI(previousStatus); // cập nhật giao diện
                     // gọi hàm cập nhật trạng thái
                     updateStatus(orderId, previousStatus);
                 }
@@ -60,8 +75,8 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("btnCancel").addEventListener("click", () => {
         const cancelStatus = 0;
         Swal.fire({
-            title: "Bạn có chắc chắn muốn thay đổi trạng thái?",
-            text: "Trạng thái sẽ được cập nhật",
+            title: `Bạn có chắc chắn muốn hủy đơn hàng ${orderId}?`,
+            text: `Trạng thái đơn hàng ${orderId} sẽ được cập nhật`,
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -94,13 +109,17 @@ window.addEventListener("DOMContentLoaded", () => {
         })
             .then((reponse) => {
                 if (reponse.ok) {
-                    return reponse.text();
+                    return reponse.json();
                 } else {
                     throw new Error("Cập nhật trạng thái thất bại!");
                 }
             })
-            .then((message) => {
-                createToast("success", "fa-solid fa-circle-check", "thành công", message);
+            .then((data) => {
+                const { orderId } = data;
+                createToast("success", "fa-solid fa-circle-check", "thành công", "Cập nhật trạng thái thành công");
+                setTimeout(() => {
+                    window.location.href = `/admin/orders/detail/${orderId}`;
+                }, 1000);
             })
             .catch((error) => {
                 console.log("Lỗi khi cập nhật trạng thái ", error);
@@ -181,18 +200,37 @@ window.addEventListener("DOMContentLoaded", () => {
             }
         });
     };
+    let selectedCity = "";
+    let selectedDistrict = "";
+    let selectedWard = "";
+    // Lắng nghe sự kiện change cho select city
+    document.getElementById("city").addEventListener("change", function () {
+        const selectectElement = document.getElementById("city"); // Lấy giá trị thành phố đã chọn
+        const selectedOption = selectectElement.options[selectectElement.selectedIndex];
+        selectedCity = selectedOption.textContent;
+    });
+    // Lắng nghe sự kiện change cho select city
+    document.getElementById("district").addEventListener("change", function () {
+        const selectectElement = document.getElementById("district"); // Lấy giá trị thành phố đã chọn
+        const selectedOption = selectectElement.options[selectectElement.selectedIndex];
+        selectedDistrict = selectedOption.textContent; // Lấy giá trị thành phố đã chọn
+    });
+    // Lắng nghe sự kiện change cho select city
+    document.getElementById("ward").addEventListener("change", function () {
+        const selectectElement = document.getElementById("ward"); // Lấy giá trị thành phố đã chọn
+        const selectedOption = selectectElement.options[selectectElement.selectedIndex];
+        selectedWard = selectedOption.textContent; // Lấy giá trị thành phố đã chọn
+    });
     // Hàm thêm mới địa chỉ trong modal
     window.addAddress = function () {
         let streetInput = document.getElementById("street");
-        let cityInput = document.getElementById("city");
-        let districtInput = document.getElementById("district");
-        let wardInput = document.getElementById("ward");
         let inputCustomerId = document.getElementById("inputCustomerId");
+
         let addressData = {
             street: streetInput.value,
-            city: cityInput.value,
-            district: districtInput.value,
-            ward: wardInput.value,
+            city: selectedCity.trim(),
+            district: selectedDistrict.trim(),
+            ward: selectedWard.trim(),
             customerId: inputCustomerId.value,
         };
         if (streetInput && cityInput && districtInput && wardInput && inputCustomerId) {
@@ -204,13 +242,33 @@ window.addEventListener("DOMContentLoaded", () => {
                 },
                 body: JSON.stringify(addressData),
             })
-                .then((response) => response.json())
-                .then((address) => {
-                    console.log(address);
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
+                .then((addresses) => {
+                    console.log(addresses);
+                    const filteredData = addresses.map((address) => ({
+                        // trả về đối tượng phải có (
+                        addressId: address.addressId,
+                        street: address.street,
+                        ward: address.ward,
+                        district: address.district,
+                        city: address.city,
+                        customer: {
+                            customerId: address.customer.customerId,
+                            fullname: address.customer.fullname,
+                            phoneNumber: address.customer.phoneNumber,
+                        },
+                    }));
+
                     const listAddressTable = document.querySelector(".listAddress");
                     listAddressTable.innerHTML = "";
                     let addressRows = "";
-                    address.forEach((address, index) => {
+
+                    filteredData.forEach((address, index) => {
                         addressRows += `
                             <tr>
                                 <td>${index + 1}</td>
@@ -247,43 +305,6 @@ window.addEventListener("DOMContentLoaded", () => {
             console.log("Không có dữ liệu!");
         }
     };
-    // cập nhật dữ liệu sau khi thêm mới 1 địa chỉ
-    function updateAddressList(address) {
-        const tbody = document.querySelector("#modalIdSelectAddress tbody");
-        const newRow = document.createElement("tr");
-        newRow.innerHTML = `
-        <td>${tbody.children.length + 1}</td>
-        <td>${address.customer.fullname}</td>
-        <td>${address.customer.phoneNumber}</td>
-        <td>${address.street}</td>
-        <td>${address.ward}</td>
-        <td>${address.district}</td>
-        <td>${address.city}</td>
-        <td>
-       <a
-        href="javascript:void(0);"
-        class="btn btn-outline-warning"
-        onclick="selectAddress(this)"
-        data-bs-dismiss="modal"
-        id="selectAddress"
-        >
-        Chọn
-       </a>
-       </td>
-        <input
-        type="hidden"
-        th:value="${address.addressId}"
-        id="inputAddressId"
-        />
-        <input
-        type="hidden"
-        th:value="${address.customer.customerId}"
-        id="inputCustomerId"
-        />
-        `;
-        // thêm hàng mới vào bảng
-        tbody.appendChild(newRow);
-    }
     // hàm buộc dự liệu địa chỉ mặc định lên form
     window.setDefaultAddress = function () {
         let addressText = document.getElementById("setDefaultAddress").textContent;

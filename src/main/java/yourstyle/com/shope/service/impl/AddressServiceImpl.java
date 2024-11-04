@@ -2,8 +2,11 @@ package yourstyle.com.shope.service.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +22,8 @@ import yourstyle.com.shope.validation.admin.AddressDto;
 public class AddressServiceImpl implements AddressService {
 	@Autowired
 	AddressRepository addressRepository;
+	@Autowired
+	private Converter<Address, AddressDto> addressToAddressDtoConverter;
 
 	public AddressServiceImpl(AddressRepository addressRepository) {
 		this.addressRepository = addressRepository;
@@ -91,7 +96,8 @@ public class AddressServiceImpl implements AddressService {
 
 	@Override
 	public List<AddressDto> findByAddressDtoCustomerID(Integer customerId) {
-		return addressRepository.findByAddressDtoCustomerID(customerId);
+		List<Address> address = addressRepository.findByAddressCustomerID(customerId);
+		return address.stream().map(addressToAddressDtoConverter::convert).collect(Collectors.toList());
 	}
 
 }

@@ -21,4 +21,15 @@ public class AddressDto implements Serializable {
     private boolean isDefault = false;
     private Integer customerId;
     private Customer customer;
+
+    public AddressDto(Integer addressId, String street, String ward, String district, String city, Customer customer,
+            boolean isDefault) {
+        this.addressId = addressId;
+        this.street = street;
+        this.ward = ward;
+        this.district = district;
+        this.city = city;
+        this.customer = customer;
+        this.isDefault = isDefault;
+    }
 }

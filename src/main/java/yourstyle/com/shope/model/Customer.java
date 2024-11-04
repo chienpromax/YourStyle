@@ -59,15 +59,18 @@ public class Customer implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "accountId", referencedColumnName = "accountId", nullable = false)
+    @JsonIgnore
     private Account account;
 
-    @OneToMany(mappedBy = "customer")
+    @JsonIgnore
+    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
     private List<Order> orders;
-
-    @OneToMany(mappedBy = "customer")
+    @JsonIgnore
+    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
     private List<Voucher> vouchers;
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<Address> addresses;
 
     @Override

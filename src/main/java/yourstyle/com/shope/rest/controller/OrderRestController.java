@@ -1,10 +1,11 @@
 package yourstyle.com.shope.rest.controller;
 
+import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import yourstyle.com.shope.model.Address;
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Order;
@@ -37,23 +41,48 @@ public class OrderRestController {
     CustomerService customerService;
 
     @PutMapping("update-status")
-    public ResponseEntity<String> updateStatusOrder(@RequestBody Map<String, Integer> data, ModelMap model) {
+    public ResponseEntity<Map<String, Object>> updateStatusOrder(@RequestBody Map<String, Integer> data,
+            ModelMap model) {
         Integer orderId = data.get("orderId");
         Integer newStatus = data.get("status");
+        Map<String, Object> response = new HashMap<>();
         if (orderId != null && newStatus != null) {
             Optional<Order> orderOptional = orderService.findById(orderId);
             if (orderOptional.isPresent()) {
                 Order order = orderOptional.get();
                 OrderStatus orderStatus = OrderStatus.fromCode(newStatus);
                 order.setStatus(orderStatus);
+                switch (newStatus) {
+                    case 0:
+                        order.setCanceledAt(new Timestamp(System.currentTimeMillis()));
+                        break;
+                    case 2:
+                        order.setPackedAt(new Timestamp(System.currentTimeMillis()));
+                        break;
+                    case 3:
+                        order.setShippedAt(new Timestamp(System.currentTimeMillis()));
+                        break;
+                    case 4:
+                        order.setInTransitAt(new Timestamp(System.currentTimeMillis()));
+                        break;
+                    case 5:
+                        order.setCompletedAt(new Timestamp(System.currentTimeMillis()));
+                        break;
+                    case 6:
+                        order.setReturnedAt(new Timestamp(System.currentTimeMillis()));
+                        break;
+                    default:
+                        break;
+                }
                 orderService.save(order);
 
-                return ResponseEntity.ok("Cập nhật trạng thái đơn hàng thành công");
+                response.put("orderId", orderId);
+                return ResponseEntity.ok(response);
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy đơn hàng!");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Không tìm thấy đơn hàng!"));
             }
         }
-        return ResponseEntity.badRequest().body("Dữ liệu không hợp lệ");
+        return ResponseEntity.badRequest().body(Map.of("message", "Dữ liệu không hợp lệ"));
     }
 
     // xác nhận lưu địa chỉ
@@ -77,31 +106,31 @@ public class OrderRestController {
 
     // thêm địa chỉ mới trong modal
     @PostMapping("addAddress")
-    public ResponseEntity<List<Address>> addAddress(@RequestBody AddressDto addressDto, Model model) {
+    public ResponseEntity<List<AddressDto>> addAddress(@RequestBody AddressDto addressDto) {
         try {
             Optional<Customer> customerOptional = customerService.findById(addressDto.getCustomerId());
 
+            if (!customerOptional.isPresent()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+            System.out.println("Length of city: " + addressDto.getCity().length());
+
             Customer customer = customerOptional.get();
-            System.out.println("customer: " + customer);
             Address address = new Address();
             address.setCustomer(customer);
-            address.setStreet(addressDto.getStreet());
-            address.setWard(addressDto.getWard());
-            address.setDistrict(addressDto.getDistrict());
-            address.setCity(addressDto.getCity());
+            address.setStreet(addressDto.getStreet().trim());
+            address.setWard(addressDto.getWard().trim());
+            address.setDistrict(addressDto.getDistrict().trim());
+            address.setCity(addressDto.getCity().trim());
             address.setIsDefault(false);
             addressService.save(address);
 
-            List<Address> addresses = addressService.findByAddressCustomerID(customer.getCustomerId());
-            return ResponseEntity.ok(addresses);
-            // In dữ liệu JSON ra console
-            // System.out.println("Response JSON: " + response);
-            // return ResponseEntity.ok(response);
+            List<AddressDto> addressesDtos = addressService.findByAddressDtoCustomerID(customer.getCustomerId());
+            return ResponseEntity.ok(addressesDtos);
         } catch (Exception e) {
-            e.printStackTrace(); // In ra thông báo lỗi chi tiết
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-
     }
 
 }

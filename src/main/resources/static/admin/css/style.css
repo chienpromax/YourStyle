@@ -1201,25 +1201,49 @@ h6 {
 }
 
 #progressbar-2 li:nth-child(3)::before {
-  margin-left: 25%;
+  margin-left: 24%;
   z-index    : 2;
   position   : absolute;
 }
 
 #progressbar-2 li:nth-child(4)::before {
-  margin-left: 25%;
+  margin-left: 22%;
   z-index    : 2;
   position   : absolute;
 }
 
 #progressbar-2 li:nth-child(5)::before {
-  margin-left: 25%;
+  margin-left: 20%;
   z-index    : 2;
   position   : absolute;
 }
 
 #progressbar-2 li:last-child::before {
+  margin-left: 19%;
+}
+
+#progressbar-2 li.active:nth-child(2)::before {
+  margin-left: 25%;
+  z-index    : 2;
+  position   : absolute;
+}
+
+#progressbar-2 li.active:nth-child(3)::before {
   margin-left: 20%;
+  z-index    : 2;
+  position   : absolute;
+}
+
+#progressbar-2 li.active:nth-child(4)::before {
+  margin-left: 20%;
+  z-index    : 2;
+  position   : absolute;
+}
+
+#progressbar-2 li.active:nth-child(5)::before {
+  margin-left: 20%;
+  z-index    : 2;
+  position   : absolute;
 }
 
 #progressbar-2 li::after {
@@ -1239,7 +1263,7 @@ h6 {
 }
 
 #progressbar-2 li:nth-child(2)::after {
-  width      : 140px;
+  width      : 150px;
   margin-left: 22px;
 }
 
@@ -1316,6 +1340,10 @@ h6 {
 .ordericon .icon i {
   font-size: 2rem;
   color    : #6520ff;
+}
+
+.card-body .step-text {
+  font-size: 12px;
 }
 
 .error-404 h1 {

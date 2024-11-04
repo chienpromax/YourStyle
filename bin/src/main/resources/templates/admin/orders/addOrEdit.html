@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/index.html}">
+
+<head> </head>
+
+<body>
+    <section layout:fragment="main">
+        <main id="main" class="main">
+
+            <div class="pagetitle">
+                <h1>Đơn hàng</h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Trang chủ</a></li>
+                        <li class="breadcrumb-item active">Đơn hàng</li>
+                    </ol>
+                </nav>
+            </div><!-- End Page Title -->
+
+            <section class="section dashboard">
+
+                <div class="col-lg-12 col-md-12">
+                    <div class="card card-stepper">
+                        <div class="card-body p-5">
+                            <!-- Progress bar -->
+                            <ul id="progressbar-2" class="d-flex justify-content-between">
+                                <li class="active text-center" id="step1"></li>
+                                <li class="active text-center" id="step2"></li>
+                                <li class="text-muted text-center" id="step3"></li>
+                                <li class="text-muted text-center" id="step4"></li>
+                            </ul>
+
+                            <!-- Icons with status -->
+                            <div class="d-flex justify-content-between mt-4 ordericon">
+                                <div class="icon text-center ms-4">
+                                    <i class="bi bi-clipboard-check-fill"></i>
+                                    <p class="step-text mt-2">Tạo đơn</p>
+                                </div>
+                                <div class="icon text-center ms-3">
+                                    <i class="bi bi-box-seam-fill"></i>
+                                    <p class="step-text mt-2">Xác nhận</p>
+                                </div>
+                                <div class="icon text-center">
+                                    <i class="bi bi-rocket-takeoff-fill"></i>
+                                    <p class="step-text mt-2">Đang đến</p>
+                                </div>
+                                <div class="icon text-center me-4">
+                                    <i class="bi bi-house-check-fill"></i>
+                                    <p class="step-text mt-2">Hoàn thành</p>
+                                    <p class="step-text mt-2">Trả hàng</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mt-3">
+                            <div class="col-lg-12 col-md-12 mb-3 mb-lg-0">
+                                <button class="btn btn-outline-primary">Xác nhận giao hàng</button>
+                                <button class="btn btn-outline-danger ms-4">- Hủy đơn</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="container mt-4">
+                            <div class="row">
+                                <div class="col-md-9 d-flex align-items-center">
+                                    <h5 class="mb-0">Danh sách sản phẩm</h5>
+                                </div>
+                                <div class="col-md-3 mb-2 d-flex justify-content-end">
+                                    <button class="btn btn-outline-primary">Thêm sản phẩm</button>
+                                </div>
+                                <hr class="w-100">
+                            </div>
+                            <table class="table-responsive table-borderless">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="width: 10%;">Ảnh</th>
+                                        <th scope="col" style="width: 35%;">Tên sản phẩm</th>
+                                        <th scope="col" style="width: 15%;">Giá</th>
+                                        <th scope="col" style="width: 10%;">Số lượng</th>
+                                        <th scope="col" class="text-end" style="width: 15%;">Tổng tiền</th>
+                                        <th scope="col" class="text-end" style="width: 15%;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="dssp">
+                                    <tr>
+                                        <th scope="row"><a href="#"><img src="assets/img/product-1.jpg" alt=""></a></th>
+                                        <td><a href="#" class="text-primary fw-bold">Ut inventore ipsa voluptas
+                                                nulla</a>
+                                        </td>
+                                        <td>$64</td>
+                                        <td>
+                                            <input type="number" class="form-control" value="124" min="0">
+                                        </td>
+                                        <td class="text-end">$5,828</td>
+                                        <td class="text-end">
+                                            <button class="btn btn-outline-danger btn-sm">Xóa</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"><a href="#"><img src="assets/img/product-2.jpg" alt=""></a></th>
+                                        <td><a href="#" class="text-primary fw-bold">Exercitationem similique
+                                                doloremque</a>
+                                        </td>
+                                        <td>$46</td>
+                                        <td>
+                                            <input type="number" class="form-control" value="98" min="0">
+                                        </td>
+                                        <td class="text-end">$4,508</td>
+                                        <td class="text-end">
+                                            <button class="btn btn-outline-danger btn-sm">Xóa</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"><a href="#"><img src="assets/img/product-3.jpg" alt=""></a></th>
+                                        <td><a href="#" class="text-primary fw-bold">Doloribus nisi exercitationem</a>
+                                        </td>
+                                        <td>$59</td>
+                                        <td>
+                                            <input type="number" class="form-control" value="74" min="0">
+                                        </td>
+                                        <td class="text-end">$4,366</td>
+                                        <td class="text-end">
+                                            <button class="btn btn-outline-danger btn-sm">Xóa</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"><a href="#"><img src="assets/img/product-4.jpg" alt=""></a></th>
+                                        <td><a href="#" class="text-primary fw-bold">Officiis quaerat sint rerum
+                                                error</a>
+                                        </td>
+                                        <td>$32</td>
+                                        <td>
+                                            <input type="number" class="form-control" value="63" min="0">
+                                        </td>
+                                        <td class="text-end">$2,016</td>
+                                        <td class="text-end">
+                                            <button class="btn btn-outline-danger btn-sm">Xóa</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"><a href="#"><img src="assets/img/product-5.jpg" alt=""></a></th>
+                                        <td><a href="#" class="text-primary fw-bold">Sit unde debitis delectus
+                                                repellendus</a></td>
+                                        <td>$79</td>
+                                        <td>
+                                            <input type="number" class="form-control" value="41" min="0">
+                                        </td>
+                                        <td class="text-end">$3,239</td>
+                                        <td class="text-end">
+                                            <button class="btn btn-outline-danger btn-sm">Xóa</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="container mt-4">
+                            <div class="row">
+                                <h5 class="col-md-10 d-flex align-items-center">Thông tin đơn hàng</h5>
+                                <div class="col-md-2 mb-2 d-flex justify-content-end">
+                                    <button class="btn btn-outline-primary">Cập nhật</button>
+                                </div>
+                                <hr>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <p><strong>Mã: </strong>HD13</p>
+                                    <p><strong>Sđt người nhận: </strong>0169921621</p>
+                                </div>
+                                <div class="col-md-5">
+                                    <p><strong>Tên khách hàng: </strong><input type="text"
+                                            value="Nguyễn Thị Thùy Dương">
+                                    </p>
+                                    <p><strong>Địa chỉ: </strong>Số nhà, tên đường, tên quận, thành phố</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <p><strong>Loại:</strong> <span class="badge bg-primary">Giao hàng</span></p>
+                                    <p><strong>Trạng thái:</strong> <span class="badge bg-warning text-dark">Chờ giao
+                                            hàng</span></p>
+                                </div>
+                            </div>
+                            <!-- Thông tin bổ sung về thanh toán -->
+                            <div class="row mt-4">
+                                <div class="col-md-4">
+                                    <div class="card p-4 shadow-sm border-0">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="mb-2">
+                                                <i class="bi bi-percent text-success" style="font-size: 1.5rem;"></i>
+                                            </div>
+                                            <p class="text-center mb-1"><strong>Phiếu giảm giá</strong></p>
+                                            <p class="badge bg-success p-2">50% OFF</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card p-4 shadow-sm border-0">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="mb-2">
+                                                <i class="bi bi-tags text-warning" style="font-size: 1.5rem;"></i>
+                                            </div>
+                                            <p class="text-center mb-1"><strong>Giảm giá</strong></p>
+                                            <p class="text-warning fw-bold">-$10</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card p-4 shadow-sm border-0">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <div class="mb-2">
+                                                <i class="bi bi-cash-coin text-danger" style="font-size: 1.5rem;"></i>
+                                            </div>
+                                            <p class="text-center mb-1"><strong>Tổng tiền</strong></p>
+                                            <p class="text-danger fw-bold">$100</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main><!-- End #main -->
+    </section>
+</body>
+
+</html>

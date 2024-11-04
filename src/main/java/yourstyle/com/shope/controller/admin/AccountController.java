@@ -36,10 +36,6 @@ import yourstyle.com.shope.service.AccountService;
 import yourstyle.com.shope.service.RoleService;
 import yourstyle.com.shope.validation.admin.AccountDto;
 
-import yourstyle.com.shope.model.Account;
-import yourstyle.com.shope.model.Customer;
-import yourstyle.com.shope.service.AccountService;
-
 @Controller
 @RequestMapping("admin/accounts")
 public class AccountController {

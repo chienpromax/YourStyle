@@ -1,0 +1,85 @@
+/* Container chính chứa ảnh đại diện và các thông tin */
+.personal-info-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: nowrap; /* Đảm bảo không xuống hàng */
+    height:auto;
+}
+
+/* Phần ảnh đại diện (30%) */
+.avatar-section {
+    flex: 0 0 30%;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.avatar-section i {
+    font-size: 6rem;
+    color: #285944;
+}
+
+.avatar-section .upload-btn {
+    margin-top: 20px;
+    border-radius: 20px;
+    background-color: #285944;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+}
+
+/* Phần thông tin cá nhân (35%) */
+.info-section {
+    flex: 0 0 35%;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.input-icon {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.input-icon i {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #285944;
+}
+
+.input-icon input, .input-icon select {
+    padding-left: 2.5rem;
+}
+
+/* Phần liên hệ và bảo mật (35%) */
+.contact-section {
+    flex: 0 0 35%;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.divider {
+    border-left: 3px solid #285944;
+}
+
+.social-link-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.social-link-container .btn {
+    border-radius: 20px;
+}
+
+.info-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}

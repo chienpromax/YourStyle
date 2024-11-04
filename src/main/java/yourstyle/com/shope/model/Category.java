@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+
 @Table(name = "categories")
 public class Category implements Serializable {
 
@@ -21,7 +22,7 @@ public class Category implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "categoryId")
     private Integer categoryId;
-
+    
     @Column(name = "name", nullable = false, length = 100, unique = true)
     private String name;
 
@@ -38,8 +39,11 @@ public class Category implements Serializable {
 
     @Transient // Để không lưu vào database
     private MultipartFile imageFile;
-
-    @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    
+    @OneToMany(mappedBy = "parentCategory", fetch = FetchType.EAGER)
     private List<Category> childCategories;
+
+
+
 
 }

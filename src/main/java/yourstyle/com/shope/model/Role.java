@@ -1,7 +1,6 @@
 package yourstyle.com.shope.model;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -30,4 +29,5 @@ public class Role implements Serializable{
 	private String name;
     @OneToMany(mappedBy = "role", fetch = FetchType.EAGER)
     private Set<Account> accounts;
+	
 }

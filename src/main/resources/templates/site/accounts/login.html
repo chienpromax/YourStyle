@@ -7,11 +7,16 @@
 
 <body>
     <section class="py-5 container" layout:fragment="main">
-        <section class="login-section">
-            <div class="login-container row mx-auto">
-                <!-- Form đăng nhập (bên trái) -->
-                <div class="login-form col-md-6">
-                    <h1>Đăng Nhập</h1>
+		<section class="login-section">
+			<div class="login-container row mx-auto">
+				<!-- Form đăng nhập (bên trái) -->
+				<div class="login-form col-md-6">
+					<h1>Đăng Nhập</h1>
+					<!-- Thông báo lỗi -->
+					<div th:if="${errorMessage}" class="alert alert-danger"
+						role="alert">
+						<p th:text="${errorMessage}"></p>
+					</div>
                     <div class="btn-container">
                         <button class="btn btn-google btn-icon">
                             <i class="bi bi-google"></i>
@@ -32,23 +37,25 @@
                                 <input type="password" id="password" name="password" class="form-control" required />
                                 <label class="form-label" for="password">Mật khẩu</label>
                             </div>
-                            <p class="text-center">
-                                <a href="/forgot-password" style="text-decoration: none; color: black;">Quên mật khẩu</a>
-                            </p>
-                            <button type="submit" class="btn btn-custom w-100">Đăng Nhập</button>
-                            <div>
-                                <p th:if="${errorMessage}" th:text="${errorMessage}" class="text-danger"></p>
-                            </div>                            
+                           <p class="text-center">
+								<a th:href="@{/yourstyle/accounts/forgotpassword}"
+									style="text-decoration: none; color: black;">Quên mật khẩu</a>
+							</p>
+                            <button type="submit" class="btn btn-custom w-100">Đăng Nhập</button>                          
                         </form>
                     </div>
                 </div>
 
-                <!-- Thông tin đăng ký (bên phải) -->
-                <div class="register-info col-md-6">
-                    <h2>Hello, Friend!</h2>
-                    <p>Đăng ký với thông tin cá nhân của bạn để bắt đầu sử dụng dịch vụ.</p>
-                    <button class="btn btn-light w-100">Đăng Ký</button>
-                </div>
+               <!-- Thông tin đăng ký (bên phải) -->
+				<div class="register-info col-md-6">
+					<h2>Hello, Friend!</h2>
+					<p>Đăng ký với thông tin cá nhân của bạn để bắt đầu sử dụng
+						dịch vụ.</p>
+					<!-- Thẻ <a> để chuyển tới trang đăng ký -->
+					<a th:href="@{/yourstyle/accounts/register}">
+						<button class="btn btn-light w-100">Đăng Ký</button>
+					</a>
+				</div>
             </div>		
         </section>
     </section>

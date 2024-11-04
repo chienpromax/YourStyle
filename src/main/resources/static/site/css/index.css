@@ -494,6 +494,9 @@
     align-items: center;
     justify-content: space-between;
 }
+.text-pink {
+    color: pink; /* Hoặc bất kỳ mã màu nào bạn muốn */
+}
 
 
 .footer-flow {
@@ -560,4 +563,12 @@
 .footer-info .menu:hover {
     color: rgb(0, 0, 0);
     border: 1px solid rgb(255, 170, 0);
+}
+.text-pink {
+    color: pink; /* Hoặc bất kỳ mã màu nào bạn muốn */
+}
+.alert {
+	position: relative;
+	top: 16px;
+	right: 16px;
 }

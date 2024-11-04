@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{admin/index.html}">
+
+  <head> </head>
+  
+  <body>
+    <section layout:fragment="main">
+      <div class="displayNotifications"></div>
+      <main id="main" class="main">
+        <div class="pagetitle">
+          <h1>
+            <span th:if="${account.isEdit}">Cập nhật</span>
+            <span th:unless="${account.isEdit}">Tạo</span> tài khoản
+          </h1>
+          <nav>
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a href="index.html">Trang chủ</a>
+              </li>
+              <li class="breadcrumb-item active">Tài khoản</li>
+            </ol>
+          </nav>
+        </div>
+        <!-- End Page Title -->
+
+        <section class="section">
+          <div class="card">
+            <div class="card-body mt-4">
+              <!-- Floating Labels Form -->
+              <form
+                novalidate
+                class="row g-3"
+                th:action="@{/admin/accounts/saveOrUpdate}"
+                th:object="${account}"
+                method="post"
+              >
+                <div class="col-md-12">
+                  <input
+                    type="hidden"
+                    class="form-control"
+                    id="floatingaccountId"
+                    th:field="*{accountId}"
+                  />
+                  <div class="form-floating">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="floatingtennguoidung"
+                      placeholder="Nhập tên tài khoản"
+                      th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : 'is-valid' "
+                      th:field="*{username}"
+                      required
+                    />
+                    <label for="floatingtennguoidung"
+                      ><span class="text-danger">*</span> Tên tài khoản</label
+                    >
+                  </div>
+                  <div
+                    class="is-invalid"
+                    th:if="${#fields.hasErrors('username')}"
+                  >
+                    <small
+                      class="form-text text-danger"
+                      th:text="${#fields.errors('username')}"
+                    ></small>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="form-floating" th:unless="${account.isEdit}"> 
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="floatingmatkhau"
+                      placeholder="Mật khẩu"
+                      th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : 'is-valid'"
+                      th:field="*{password}"
+                      required
+                    />
+                    <label for="floatingmatkhau"
+                      ><span class="text-danger">*</span> Mật khẩu</label
+                    >
+                  </div>
+                  <div
+                    class="is-invalid"
+                    th:if="${#fields.hasErrors('password')}"
+                  >
+                    <small
+                      class="form-text text-danger"
+                      th:text="${#fields.errors('password')}"
+                    ></small>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="form-floating">
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="floatingemail"
+                      placeholder="Địa chỉ Email"
+                      th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : 'is-valid'"
+                      th:field="*{email}"
+                      required
+                    />
+                    <label for="floatingemail"
+                      ><span class="text-danger">*</span> Địa chỉ Email</label
+                    >
+                  </div>
+                  <div class="is-invalid" th:if="${#fields.hasErrors('email')}">
+                    <small
+                      class="form-text text-danger"
+                      th:text="${#fields.errors('email')}"
+                    ></small>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <label for="role" class="form-label"
+                    ><span class="text-danger">*</span> Vai trò</label
+                  >
+                  <select class="form-select" id="role" name="roleId">
+                    <option value="" disabled>Chọn vai trò</option>
+                    <option
+                      th:each="role : ${roles}"
+                      th:value="${role.roleId}"
+                      th:selected="${role.roleId == account.role?.roleId}"
+                    >
+                      [[${role.name}]]
+                    </option>
+                  </select>
+                </div>
+                <div class="text-center mt-3">
+                  <button
+                    class="btn btn-primary rounded-pill py-2 px-4 me-3"
+                    th:if="*{isEdit}"
+                  >
+                    Cập nhật
+                  </button>
+                  <button
+                    class="btn btn-primary rounded-pill py-2 px-4 me-3"
+                    th:unless="*{isEdit}"
+                  >
+                    Tạo tài khoản
+                  </button>
+                  <a
+                    th:href="@{/admin/accounts/add}"
+                    class="btn btn-secondary rounded-pill py-2 px-4"
+                    th:unless="*{isEdit}"
+                  >
+                    Làm mới
+                  </a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+      </main>
+      <script src="/admin/js/accountAddOrEdit.js"></script>
+    </section>
+  </body>
+</html>
+

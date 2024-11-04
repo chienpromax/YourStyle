@@ -7,6 +7,8 @@ import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,37 +32,61 @@ import lombok.NoArgsConstructor;
 @Table(name = "customers")
 public class Customer implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer customerId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer customerId;
 
-    @Column(nullable = false, length = 50)
-    private String fullname;
+	@Column(nullable = true, length = 50)
+	private String fullname;
 
-    @Column(nullable = false, length = 15)
-    private String phoneNumber;
+	@Column(nullable = false, length = 15)
+	private String phoneNumber;
 
-    @Column(nullable = true)
-    private Boolean gender;
+	@Column(nullable = true)
+	private Boolean gender;
 
-    @Column(length = 300)
-    private String avatar;
+	@Column(length = 300)
+	private String avatar;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Column(nullable = true)
-    @Temporal(TemporalType.DATE)
-    private Date birthday;
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@Column(nullable = true)
+	@Temporal(TemporalType.DATE)
+	private Date birthday;
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private Timestamp createDate = new Timestamp(System.currentTimeMillis());
+	@Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+	private Timestamp createDate = new Timestamp(System.currentTimeMillis());
 
-    @OneToOne
-    @JoinColumn(name = "accountId", referencedColumnName = "accountId", nullable = false)
-    private Account account;
+	@OneToOne
+	@JoinColumn(name = "accountId", referencedColumnName = "accountId", nullable = false)
+	@JsonIgnore
+	private Account account;
 
-    private boolean isEdit = false;
+	private boolean isEdit = false;
 
-    @Transient // Để không lưu vào database
-    private MultipartFile imageFile;
+	@Transient // Để không lưu vào database
+	private MultipartFile imageFile;
+	
+	@Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        Customer customer = (Customer) obj;
+        return customerId != null && customerId.equals(customer.customerId);
+    }
 
+    @Override
+    public int hashCode() {
+        return customerId != null ? customerId.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "customerId=" + customerId +
+                ", fullname='" + fullname + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                '}';
+    }
 }

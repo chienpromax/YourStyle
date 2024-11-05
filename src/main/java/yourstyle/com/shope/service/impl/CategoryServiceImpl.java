@@ -13,7 +13,7 @@ import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuer
 import org.springframework.stereotype.Service;
 
 import yourstyle.com.shope.model.Category;
-import yourstyle.com.shope.reponsitory.CategoryRepository;
+import yourstyle.com.shope.repository.CategoryRepository;
 import yourstyle.com.shope.service.CategoryService;
 
 @Service

@@ -104,13 +104,14 @@
                                                 class="col-6 col-sm-4 col-md-2 mb-3 text-center d-flex flex-column align-items-center">
                                                 
                                                 <p class="text-uppercase fw-bold" th:text="${childCategory.name}"></p>
-                                                <a th:href="@{/allproduct}">
+                                                <a th:href="@{/allproduct(categoryId=${childCategory.categoryId})}">
                                                     <div class="bg-image hover-overlay ripple mb-3" data-mdb-ripple-color="light"
                                                          style="width: 150px; height: 150px; overflow: hidden; border-radius: 8px;">
                                                         <img th:src="@{/uploads/{image}(image=${childCategory.image})}"
                                                              style="width: 100%; height: 100%; object-fit: cover;" alt="Category Image"/>
                                                     </div>
                                                 </a>
+                                                
                                                 
                                             </div>
                                         </div>

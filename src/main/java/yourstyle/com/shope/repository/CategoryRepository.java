@@ -1,4 +1,4 @@
-package yourstyle.com.shope.reponsitory;
+package yourstyle.com.shope.repository;
 
 
 import org.springframework.data.domain.Page;

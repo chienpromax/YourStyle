@@ -1,9 +1,12 @@
 package yourstyle.com.shope.controller.site.products;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,11 +19,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import yourstyle.com.shope.model.Color;
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Product;
 import yourstyle.com.shope.model.ProductImage;
 import yourstyle.com.shope.model.ProductVariant;
 import yourstyle.com.shope.model.Review;
+import yourstyle.com.shope.model.Size;
 import yourstyle.com.shope.service.AccountService;
 import yourstyle.com.shope.service.CustomerService;
 import yourstyle.com.shope.service.ProductImageService;
@@ -54,12 +59,16 @@ public class ProductDetailController {
             @RequestParam("page") Optional<Integer> page, Model model) {
         Optional<Product> productOptional = productService.findById(productId);
 
-        // Kiểm tra nếu sản phẩm tồn tại
         if (productOptional.isPresent()) {
             Product product = productOptional.get();
 
-            // Lấy danh sách biến thể của sản phẩm
             List<ProductVariant> productVariants = productVariantService.findByProductId(product.getProductId());
+            Set<Color> uniqueColors = productVariants.stream()
+                    .map(ProductVariant::getColor)
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+            Set<Size> uniqueSizes = productVariants.stream()
+                    .map(ProductVariant::getSize)
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
 
             List<ProductImage> productImages = productImageService.findByProductId(productId);
 
@@ -87,7 +96,8 @@ public class ProductDetailController {
                     .orElse(0.0); // Nếu không có đánh giá, đặt rating trung bình là 0
 
             model.addAttribute("product", product);
-            model.addAttribute("productVariants", productVariants);
+            model.addAttribute("uniqueColors", uniqueColors);
+            model.addAttribute("uniqueSizes", uniqueSizes);
             model.addAttribute("similarProducts", similarProducts);
             model.addAttribute("reviewsPage", reviewsPage); // Thêm danh sách đánh giá vào model
             model.addAttribute("averageRating", averageRating);
@@ -95,8 +105,6 @@ public class ProductDetailController {
 
             return "site/products/productdetail";
         } else {
-            // Xử lý khi sản phẩm không tồn tại (có thể chuyển hướng về trang khác hoặc
-            // thông báo lỗi)
             model.addAttribute("error", "Sản phẩm không tồn tại");
             return "redirect:/yourstyle/home";
         }

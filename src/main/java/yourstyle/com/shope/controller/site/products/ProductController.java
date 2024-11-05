@@ -15,28 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import yourstyle.com.shope.model.Product;
 import yourstyle.com.shope.service.ProductService;
 
-// @Controller
-// @RequestMapping("/allproduct")
-// public class ProductController {
-
-//     @Autowired
-//     private ProductService productService; // Dịch vụ để lấy sản phẩm
-
-//     @GetMapping
-//     public String getAllProducts(@RequestParam(required = false) Integer categoryId, Model model) {
-//         List<Product> products;
-
-//         if (categoryId != null) {
-//             products = productService.findByCategory_CategoryId(categoryId); // Lấy sản phẩm theo danh mục
-//         } else {
-//             products = productService.findAll(); // Lấy tất cả sản phẩm nếu không có categoryId
-//         }
-
-//         model.addAttribute("products", products);
-//         return "/site/products/allproduct"; 
-//     }
-    
-// }
 @Controller
 @RequestMapping("/allproduct")
 public class ProductController {

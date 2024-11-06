@@ -1,5 +1,5 @@
 .product-card {
-    height: 100%;
+    height: 95%;
     /* Đặt chiều cao cho thẻ sản phẩm */
     display: flex;
     flex-direction: column;

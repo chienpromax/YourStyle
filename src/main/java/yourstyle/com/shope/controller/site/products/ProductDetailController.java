@@ -55,28 +55,29 @@ public class ProductDetailController {
     public String productDetail(@PathVariable("productId") Integer productId,
             @RequestParam("page") Optional<Integer> page, Model model) {
         Optional<Product> productOptional = productService.findById(productId);
-    
+
         // Kiểm tra nếu sản phẩm tồn tại
         if (productOptional.isPresent()) {
             Product product = productOptional.get();
-    
+
             // Lấy danh sách biến thể của sản phẩm
             List<ProductVariant> productVariants = productVariantService.findByProductId(product.getProductId());
-    
+
             // Chọn productVariantId mặc định, ví dụ: chọn biến thể đầu tiên
             Integer selectedVariantId = productVariants.isEmpty() ? null : productVariants.get(0).getProductVariantId();
-    
+
             // Thêm selectedVariantId vào model để Thymeleaf sử dụng
             model.addAttribute("selectedVariantId", selectedVariantId);
-    
+
             // Các xử lý khác như lấy hình ảnh sản phẩm, đánh giá, v.v.
             List<ProductImage> productImages = productImageService.findByProductId(productId);
-            List<Product> similarProducts = productService.findSimilarProducts(product.getCategory().getCategoryId(), product.getProductId());
+            List<Product> similarProducts = productService.findSimilarProducts(product.getCategory().getCategoryId(),
+                    product.getProductId());
             Collections.shuffle(similarProducts);
             if (similarProducts.size() > 4) {
                 similarProducts = similarProducts.subList(0, 4);
             }
-    
+
             int currentPage = page.orElse(0); // trang hiện tại
             Pageable pageable = PageRequest.of(currentPage, 5);
             Page<Review> reviewsPage = reviewService.findByProductId(product.getProductId(), pageable);
@@ -86,21 +87,21 @@ public class ProductDetailController {
                     .mapToInt(review -> review.getRating() != null ? review.getRating() : 0)
                     .average()
                     .orElse(0.0);
-    
+
             model.addAttribute("product", product);
             model.addAttribute("productVariants", productVariants);
             model.addAttribute("similarProducts", similarProducts);
             model.addAttribute("reviewsPage", reviewsPage);
             model.addAttribute("averageRating", averageRating);
             model.addAttribute("productImages", productImages);
-    
+
             return "site/products/productdetail";
         } else {
             model.addAttribute("error", "Sản phẩm không tồn tại");
             return "redirect:/yourstyle/home";
         }
     }
-    
+
     @PostMapping("/product/review")
     public String reviewProduct(@RequestParam String comment, Authentication authentication,
             @RequestParam Integer productId) {
@@ -116,32 +117,53 @@ public class ProductDetailController {
         return "redirect:/product/detail/" + productId; // Chuyển hướng về trang chi tiết sản phẩm
     }
 
-
+    
     @PostMapping("/yourstyle/carts/addtocart")
     public String addToCart(@RequestParam("productVariantId") Integer productVariantId,
-                            @RequestParam("colorOptions") Integer selectedColorId,
-                            @RequestParam("sizeOptions") Integer selectedSizeId,
+                            @RequestParam("colorId") Integer colorId,
+                            @RequestParam("sizeId") Integer sizeId,
+                            @RequestParam("quantity") Integer quantity,
                             Authentication authentication) {
-        // Xử lý thêm sản phẩm vào giỏ hàng với các lựa chọn
-        System.out.println("Selected Product Variant ID: " + productVariantId);
-        System.out.println("Selected Color ID: " + selectedColorId);
-        System.out.println("Selected Size ID: " + selectedSizeId);
+    
         if (authentication == null || !authentication.isAuthenticated()) {
             return "redirect:/site/accounts/login";
         }
     
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Integer accountId = userDetails.getAccountId();
-    
-        // Lấy customerId từ accountId
         Customer customer = customerRepository.findByAccount_AccountId(accountId);
         if (customer == null) {
             return "redirect:/site/accounts/login";
         }
     
-        orderService.addProductToCart(customer.getCustomerId(), productVariantId);
+        // Gọi phương thức `addProductToCart` với đầy đủ 5 tham số, bao gồm `quantity`
+        orderService.addProductToCart(customer.getCustomerId(), productVariantId, colorId, sizeId, quantity);
     
         return "redirect:/yourstyle/carts/cartdetail";
-    }    
+    }
+
+
+    // @PostMapping("/yourstyle/carts/addtocart")
+    // public String addToCart(@RequestParam("productVariantId") Integer productVariantId,
+    //         @RequestParam("colorId") Integer colorId,
+    //         @RequestParam("sizeId") Integer sizeId,
+    //         Authentication authentication) {
+
+    //     if (authentication == null || !authentication.isAuthenticated()) {
+    //         return "redirect:/site/accounts/login";
+    //     }
+
+    //     CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+    //     Integer accountId = userDetails.getAccountId();
+    //     Customer customer = customerRepository.findByAccount_AccountId(accountId);
+    //     if (customer == null) {
+    //         return "redirect:/site/accounts/login";
+    //     }
+
+    //     // Gọi phương thức `addProductToCart` với đầy đủ 4 tham số
+    //     orderService.addProductToCart(customer.getCustomerId(), productVariantId, colorId, sizeId);
+
+    //     return "redirect:/yourstyle/carts/cartdetail";
+    // }
 
 }

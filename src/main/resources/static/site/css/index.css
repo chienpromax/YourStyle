@@ -80,104 +80,6 @@
     font-family: 'Dancing Script', cursive;
 }
 
-
-/* cart show */
-/* .cart-shopping {
-    visibility: hidden;
-    position: absolute;
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    width: 320px;
-    padding: 10px;
-    right: 0px;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 1.2s ease;
-}
-
-.cart-title:hover {
-    color: rgb(0, 119, 132);
-}
-
-.nav-item-cart {
-    position: relative;
-}
-
-.nav-link.cart-link:hover+.cart-shopping,
-.nav-item-cart:hover .cart-shopping {
-    visibility: visible;
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.nav-item-cart:hover .cart-shopping {
-    visibility: visible;
-}
-
-.cart-count {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgb(214, 124, 93);
-    color: white;
-    border-radius: 45px;
-    min-width: 18px;
-    height: 18px;
-    margin-top: -15px;
-    margin-left: -8px;
-    font-size: 0.9rem;
-}
-
-.btn-Cart {
-    background: rgb(0, 119, 132);
-    border: 3px solid rgb(0, 119, 132);
-    font-weight: 600;
-    transition: 0.6s;
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: white;
-}
-
-.btn-Cart:hover {
-    background-color: rgb(255, 255, 255);
-    color: rgb(0, 119, 132);
-}
-
-.btn-Cart:hover>a {
-    color: rgb(0, 119, 132);
-}
-
-.btn-Cart>a {
-    color: rgb(255, 255, 255);
-    text-decoration: none;
-}
-
-.btn-Cart2 {
-    background: rgb(214, 124, 93);
-    border: 3px solid rgb(0, 119, 132);
-    font-weight: 600;
-    transition: 0.6s;
-    font-size: 1.2rem;
-    font-weight: 600;
-}
-
-.btn-Cart2:hover {
-    background-color: rgb(255, 255, 255);
-    color: rgb(0, 119, 132);
-    border: 3px solid rgb(214, 124, 93);
-}
-
-.btn-Cart2:hover>a {
-    color: rgb(0, 119, 132);
-}
-
-.btn-Cart2>a {
-    color: rgb(255, 255, 255);
-    text-decoration: none;
-} */
-
-
 /* main */
 
 .product-card img {
@@ -605,4 +507,11 @@
     margin: 0px;
     border: none;
     background: none;
+}
+
+.product-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
 }

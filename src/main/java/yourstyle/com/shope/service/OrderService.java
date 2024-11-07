@@ -50,6 +50,6 @@ public interface OrderService {
 	public List<Order> findByCustomerAndStatus(Customer customer, int status);
 
 	//thêm giỏ hàng
-	void addProductToCart(Integer customerid, Integer productVariantId);
+	void addProductToCart(Integer customerid, Integer productVariantId, Integer colorId, Integer sizeId, Integer quantity);
 
 }

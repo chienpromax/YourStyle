@@ -21,7 +21,6 @@ public class HomeSiteController {
     private ProductService productService;
 
     @RequestMapping("/home")
-
     public String showHomePage(Model model, Authentication authentication) {
         List<Category> parentCategories = categoryService.findParentCategories();
 

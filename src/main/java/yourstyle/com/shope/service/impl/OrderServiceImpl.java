@@ -126,14 +126,12 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public void addProductToCart(Integer customerId, Integer productVariantId) {
-		// Tìm đơn hàng có trạng thái chờ thanh toán của khách hàng
+	public void addProductToCart(Integer customerId, Integer productVariantId, Integer colorId, Integer sizeId,
+			Integer quantity) {
 		Order order = orderRepository.findOrderByCustomerIdAndStatus(customerId);
 
-		// Nếu chưa có hóa đơn nào, tạo hóa đơn mới
 		if (order == null) {
 			order = new Order();
-			// Tìm Customer bằng customerId
 			Customer customer = customerRepository.findById(customerId)
 					.orElseThrow(() -> new RuntimeException("Customer không tồn tại với ID: " + customerId));
 
@@ -144,24 +142,21 @@ public class OrderServiceImpl implements OrderService {
 			orderRepository.save(order);
 		}
 
-		// Kiểm tra sản phẩm đã tồn tại trong đơn hàng chưa
 		Optional<OrderDetail> existingOrderDetail = orderDetailRepository
-				.findOneByOrderAndProductVariant(order.getOrderId(), productVariantId);
+				.findOneByOrderAndProductVariant(order.getOrderId(), productVariantId, colorId, sizeId);
 
 		if (existingOrderDetail.isPresent()) {
-			// Nếu sản phẩm đã có trong giỏ hàng, tăng số lượng
 			OrderDetail orderDetail = existingOrderDetail.get();
-			orderDetail.setQuantity(orderDetail.getQuantity() + 1);
+			orderDetail.setQuantity(orderDetail.getQuantity() + quantity); // Cập nhật theo số lượng từ input
 			orderDetailRepository.save(orderDetail);
 		} else {
-			// Nếu sản phẩm chưa có trong giỏ hàng, thêm sản phẩm mới
 			Optional<ProductVariant> productVt = productVariantRepository.findById(productVariantId);
 			if (productVt.isPresent()) {
 				ProductVariant productVariant = productVt.get();
 				OrderDetail newOrderDetail = new OrderDetail();
 				newOrderDetail.setOrder(order);
 				newOrderDetail.setProductVariant(productVariant);
-				newOrderDetail.setQuantity(1);
+				newOrderDetail.setQuantity(quantity); // Thiết lập số lượng theo input
 
 				Product product = productVariant.getProduct();
 				newOrderDetail.setPrice(product.getPrice());
@@ -169,4 +164,48 @@ public class OrderServiceImpl implements OrderService {
 			}
 		}
 	}
+
 }
+
+// @Override
+// public void addProductToCart(Integer customerId, Integer productVariantId,
+// Integer colorId, Integer sizeId) {
+// Order order = orderRepository.findOrderByCustomerIdAndStatus(customerId);
+
+// if (order == null) {
+// order = new Order();
+// Customer customer = customerRepository.findById(customerId)
+// .orElseThrow(() -> new RuntimeException("Customer không tồn tại với ID: " +
+// customerId));
+
+// order.setCustomer(customer);
+// order.setOrderDate(new Timestamp(System.currentTimeMillis()));
+// order.setTotalAmount(BigDecimal.ZERO);
+// order.setStatus(OrderStatus.fromCode(1));
+// orderRepository.save(order);
+// }
+
+// Optional<OrderDetail> existingOrderDetail = orderDetailRepository
+// .findOneByOrderAndProductVariant(order.getOrderId(), productVariantId,
+// colorId, sizeId);
+
+// if (existingOrderDetail.isPresent()) {
+// OrderDetail orderDetail = existingOrderDetail.get();
+// orderDetail.setQuantity(orderDetail.getQuantity() + 1);
+// orderDetailRepository.save(orderDetail);
+// } else {
+// Optional<ProductVariant> productVt =
+// productVariantRepository.findById(productVariantId);
+// if (productVt.isPresent()) {
+// ProductVariant productVariant = productVt.get();
+// OrderDetail newOrderDetail = new OrderDetail();
+// newOrderDetail.setOrder(order);
+// newOrderDetail.setProductVariant(productVariant);
+// newOrderDetail.setQuantity(1);
+
+// Product product = productVariant.getProduct();
+// newOrderDetail.setPrice(product.getPrice());
+// orderDetailRepository.save(newOrderDetail);
+// }
+// }
+// }

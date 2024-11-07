@@ -308,15 +308,15 @@
 			<div class="row text-center">
 				<h2 class="fw-bolder" style="margin-top: 7px">TẤT CẢ SẢN PHẨM</h2>
 			</div>
-			<div class="row  py-5">
-				<div class="col-md-3" th:each="product : ${products}">
+			<div class="row py-5">
+				<div class="col-md-3 pt-5" th:each="product : ${products}" data-aos="fade-up">
 					<div class="card product-card">
 						<a th:href="@{/product/detail/{id}(id=${product.productId})}">
 							<img th:src="@{/uploads/} + ${product.image}" class="img-fluid" alt="Hình ảnh sản phẩm">
 						</a>
 						<div class="p-2">
 							<div class="product-info">
-								<h5 th:text="${product.name}"></h5>
+								<h5 class="product-name" th:text="${product.name}"></h5>
 								<a href="javascript:void(0)" th:onclick="'addToFavorite(' + ${product.productId} + ');'"
 									aria-label="Thêm vào yêu thích"> <i class="bi bi-heart"
 										id="heart-${product.productId}"></i>

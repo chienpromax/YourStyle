@@ -1,7 +1,8 @@
 package yourstyle.com.shope.model;
 
 public enum OrderStatus {
-    ALL_ORDERS(7, "Tất cả"),
+    // ALL_ORDERS(7, "Tất cả"),
+    ALL_ORDERS(7, "thanh toán"),
     CANCELED(0, "Đơn hàng bị hủy"),
     PLACED(1, "Đã đặt hàng"),
     PACKING(2, "Đang đóng gói"),

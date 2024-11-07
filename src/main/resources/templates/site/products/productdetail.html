@@ -152,24 +152,24 @@
                 <div class="price-section">
                     <!-- Kiểm tra nếu có discount thì hiển thị giá giảm và giá gốc -->
                     <span class="price-discount text-danger fw-bold" th:if="${product.discount != null}"
-                        th:text="${#numbers.formatDecimal(product.price - product.price * product.discount.discountPercent / 100, 0, 0)}">
+                          th:text="${#numbers.formatDecimal(product.price - product.price * product.discount.discountPercent / 100, 1, 'COMMA', 3, 'POINT') + ' Đ'}">
                     </span>
                     <span class="price-original ms-2 text-muted" th:if="${product.discount != null}">
-                        <del th:text="${#numbers.formatDecimal(product.price, 0, 0)}"></del>
+                        <del th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT') + ' Đ'}"></del>
                     </span>
                     <span class="badge bg-danger ms-2" th:if="${product.discount != null}"
-                        th:text="'-' + ${#numbers.formatDecimal(product.discount.discountPercent, 0, 0)} + '%'">
+                          th:text="'-' + ${#numbers.formatDecimal(product.discount.discountPercent, 0, 0)} + '%'">
                     </span>
-
+                
                     <!-- Hiển thị giá gốc nếu không có discount -->
                     <span class="price-product fw-bold" th:if="${product.discount == null}"
-                        th:text="${#numbers.formatDecimal(product.price, 0, 0)}">
+                          th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT') + ' Đ'}">
                     </span>
                 </div>
+                
                 <hr>
                 <form th:action="@{/yourstyle/carts/addtocart}" method="post">
-                    <!-- Trường ẩn để giữ productVariantId đã chọn -->
-                    <input type="hidden" id="selectedVariantId" name="productVariantId" th:value="${selectedVariantId}">
+
                     <!-- Màu sắc -->
                     <div class="mt-3">
                         <h5>Màu sắc: </h5>
@@ -177,8 +177,10 @@
                             <th:block th:each="variant : ${productVariants}">
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input color-option" type="radio" name="colorOptions"
-                                        th:id="'color-' + ${variant.color.colorId}" th:value="${variant.productVariantId}"
-                                        th:attr="data-color-name=${variant.color.colorName}" 
+                                        th:id="'color-' + ${variant.color.colorId}"
+                                        th:data-color="${variant.color.colorId}" th:data-size="${variant.size.sizeId}"
+                                        th:data-variant="${variant.productVariantId}"
+                                        th:attr="data-color-name=${variant.color.colorName}"
                                         th:checked="${variant.color.colorId == selectedColorId}">
                                     <label class="form-check-label" th:for="'color-' + ${variant.color.colorId}"
                                         th:text="${variant.color.colorName}"></label>
@@ -186,9 +188,7 @@
                             </th:block>
                         </div>
                     </div>
-                
-                    <hr>
-                    
+
                     <!-- Kích thước -->
                     <div class="mt-3">
                         <h5>Kích thước: </h5>
@@ -196,8 +196,10 @@
                             <th:block th:each="variant : ${productVariants}">
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input size-option" type="radio" name="sizeOptions"
-                                        th:id="'size-' + ${variant.size.sizeId}" th:value="${variant.productVariantId}"
-                                        th:attr="data-size-name=${variant.size.sizeName}" 
+                                        th:id="'size-' + ${variant.size.sizeId}"
+                                        th:data-color="${variant.color.colorId}" th:data-size="${variant.size.sizeId}"
+                                        th:data-variant="${variant.productVariantId}"
+                                        th:attr="data-size-name=${variant.size.sizeName}"
                                         th:checked="${variant.size.sizeId == selectedSizeId}">
                                     <label class="form-check-label" th:for="'size-' + ${variant.size.sizeId}"
                                         th:text="${variant.size.sizeName}"></label>
@@ -205,28 +207,40 @@
                             </th:block>
                         </div>
                     </div>
-                
-                    <hr>
-                
-                    <!-- Số lượng -->
-                    <div class="mt-3">
-                        <span class="me-3">SỐ LƯỢNG: </span>
-                        <input type="number" style="width: 50%;" min="1" max="5">
+
+                    <div class="col-md-12 mt-3">
+                        <div class="form-floating">
+                            <input type="number" id="quantityInput" name="quantity" min="1" max="5" class="form-control" placeholder="Số Lượng" required>
+                            <label for="quantityInput">Số Lượng</label>
+                        </div>
                     </div>
-                
+                    
+
                     <ul>
                         <th:block th:each="variant : ${productVariants}">
                             <li>ID: <span th:text="${variant.productVariantId}">Variant ID</span></li>
+                            <li>ColorId: <span th:text="${variant.color.colorId}">ColorId</span></li>
                             <li>Color: <span th:text="${variant.color.colorName}">Color</span></li>
+                            <li>SizeId: <span th:text="${variant.size.sizeId}">SizeId</span></li>
                             <li>Size: <span th:text="${variant.size.sizeName}">Size</span></li>
                         </th:block>
                     </ul>
 
                     <div class="mt-4 p-3 d-flex justify-content-between align-items-center text-center border">
+
+                        <!-- Trường ẩn để giữ productVariantId đã chọn -->
+                        <input type="hidden" id="selectedVariantId" name="productVariantId" value="">
+                        <input type="hidden" id="selectedColorId" name="colorId" value="">
+                        <input type="hidden" id="selectedSizeId" name="sizeId" value="">
                         <button class="add-to-cart-btn" type="submit">THÊM VÀO GIỎ HÀNG</button>
+                        
+                        <a href="/productfavorites">
+                            <i class="fa-regular fa-heart fs-3 fs-dark"></i>
+                        </a>
                     </div>
+                    
                 </form>
-                
+
                 <div class="py-4 text-center">
                     <p>96% Khách hàng cho rằng nó đúng với kích thước</p>
                     <!-- Button trigger modal -->
@@ -278,7 +292,7 @@
                                     th:text="${#numbers.formatDecimal(p.price - p.price * p.discount.discountPercent / 100, 0, 0)} + 'đ'">
                                 </p>
                                 <p class="price-original text-muted mb-0">
-                                    <del th:text="${#numbers.formatDecimal(p.price, 0, 0)} + 'đ'"></del>
+                                    <del th:text="${#numbers.formatDecimal(p.price, 1, 'COMMA', 3, 'POINT') + ' Đ'}"></del>
                                 </p>
                                 <span class="discount-badge badge bg-danger ms-2">
                                     -[[${#numbers.formatDecimal(p.discount.discountPercent, 0, 0)}]]%
@@ -287,28 +301,28 @@
                             <!-- Nếu không có giảm giá, chỉ hiển thị giá gốc -->
                             <div th:if="${p.discount == null}">
                                 <p class="price-similar-product text-danger fw-bold mb-0"
-                                    th:text="${#numbers.formatDecimal(p.price, 0, 0)} + 'đ'"></p>
+                                th:text="${#numbers.formatDecimal(p.price, 1, 'COMMA', 3, 'POINT') + ' Đ'}"></p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
+        <script src="/site/js/cartDetail.js"></script>
         <script>
-            function formatCurrency(amount) {
-                // Đảm bảo giá trị là số và định dạng theo kiểu có dấu chấm phân cách hàng nghìn
-                return parseInt(amount).toLocaleString('vi-VN') + 'đ';
-            }
+            // function formatCurrency(amount) {
+            //     // Đảm bảo giá trị là số và định dạng theo kiểu có dấu chấm phân cách hàng nghìn
+            //     return parseInt(amount).toLocaleString('vi-VN') + 'đ';
+            // }
 
-            // Định dạng giá trị của các phần tử có class "price-discount" và "price-original"
-            document.addEventListener("DOMContentLoaded", function () {
-                document.querySelectorAll('.price-discount, .price-original, .price-similar-product, .price-product').forEach(function (element) {
-                    if (element.textContent.trim() !== "") {
-                        element.textContent = formatCurrency(element.textContent);
-                    }
-                });
-            });
+            // // Định dạng giá trị của các phần tử có class "price-discount" và "price-original"
+            // document.addEventListener("DOMContentLoaded", function () {
+            //     document.querySelectorAll('.price-discount, .price-original, .price-similar-product, .price-product').forEach(function (element) {
+            //         if (element.textContent.trim() !== "") {
+            //             element.textContent = formatCurrency(element.textContent);
+            //         }
+            //     });
+            // });
         </script>
 
 

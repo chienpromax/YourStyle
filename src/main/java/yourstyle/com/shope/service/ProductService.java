@@ -34,8 +34,12 @@ public interface ProductService {
 
     List<Product> findByCategoryId(Integer categoryId);
 
-	List<Product> getAllProducts();
+    List<Product> getAllProducts();
 
     List<Product> findSimilarProducts(Integer categoryId, Integer productId);
 
+    List<Product> findByCategory_CategoryId(Integer categoryId); // Phương thức tìm theo categoryId
+
+    Page<Product> findByCategory_CategoryId(Integer categoryId, Pageable pageable);
+    
 }

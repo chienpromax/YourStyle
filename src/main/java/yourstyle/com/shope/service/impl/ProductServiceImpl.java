@@ -5,9 +5,9 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import yourstyle.com.shope.model.Product;
@@ -20,11 +20,19 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	ProductRepository productRepository;
 
-	@Autowired
 	public ProductServiceImpl(ProductRepository productRepository) {
 		this.productRepository = productRepository;
 	}
 
+	@Override
+	public List<Product> findByCategory_CategoryId(Integer categoryId) {
+		return productRepository.findByCategory_CategoryId(categoryId);
+	}
+
+	@Override
+    public Page<Product> findByCategory_CategoryId(Integer categoryId, Pageable pageable) {
+        return productRepository.findByCategory_CategoryId(categoryId, pageable);
+    }
 	@Override
 	public Product update(Product product) {
 		return productRepository.save(product);
@@ -78,12 +86,11 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public List<Product> findByCategoryId(Integer categoryId) {
 		return productRepository.findByCategory_CategoryId(categoryId);
-    }
-	
-	public List<Product> getAllProducts() {
-        return productRepository.findAll();
-    }
+	}
 
+	public List<Product> getAllProducts() {
+		return productRepository.findAll();
+	}
 
 	@Override
 	public List<Product> findSimilarProducts(Integer categoryId, Integer productId) {

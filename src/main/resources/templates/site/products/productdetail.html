@@ -167,46 +167,66 @@
                     </span>
                 </div>
                 <hr>
-                <div class="mt-3">
-                    <h5>Màu sắc: </h5>
-                    <div class="product-color">
-                        <th:block th:each="variant : ${productVariants}">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="colorOptions"
-                                    th:id="'color-' + ${variant.color.colorId}" th:value="${variant.color.colorName}">
-                                <label class="form-check-label" th:for="'color-' + ${variant.color.colorId}"
-                                    th:text="${variant.color.colorName}"></label>
-                            </div>
-                        </th:block>
+                <form th:action="@{/yourstyle/carts/addtocart}" method="post">
+                    <!-- Trường ẩn để giữ productVariantId đã chọn -->
+                    <input type="hidden" id="selectedVariantId" name="productVariantId" th:value="${selectedVariantId}">
+                    <!-- Màu sắc -->
+                    <div class="mt-3">
+                        <h5>Màu sắc: </h5>
+                        <div class="product-color">
+                            <th:block th:each="variant : ${productVariants}">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input color-option" type="radio" name="colorOptions"
+                                        th:id="'color-' + ${variant.color.colorId}" th:value="${variant.productVariantId}"
+                                        th:attr="data-color-name=${variant.color.colorName}" 
+                                        th:checked="${variant.color.colorId == selectedColorId}">
+                                    <label class="form-check-label" th:for="'color-' + ${variant.color.colorId}"
+                                        th:text="${variant.color.colorName}"></label>
+                                </div>
+                            </th:block>
+                        </div>
                     </div>
-                </div>
-                <hr>
-                <div class="mt-3">
-                    <h5>Kích thước: </h5>
-                    <div class="product-size">
-                        <th:block th:each="variant : ${productVariants}">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="sizeOptions"
-                                    th:id="'size-' + ${variant.size.sizeId}" th:value="${variant.size.sizeName}">
-                                <label class="form-check-label" th:for="'size-' + ${variant.size.sizeId}"
-                                    th:text="${variant.size.sizeName}"></label>
-                            </div>
-                        </th:block>
+                
+                    <hr>
+                    
+                    <!-- Kích thước -->
+                    <div class="mt-3">
+                        <h5>Kích thước: </h5>
+                        <div class="product-size">
+                            <th:block th:each="variant : ${productVariants}">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input size-option" type="radio" name="sizeOptions"
+                                        th:id="'size-' + ${variant.size.sizeId}" th:value="${variant.productVariantId}"
+                                        th:attr="data-size-name=${variant.size.sizeName}" 
+                                        th:checked="${variant.size.sizeId == selectedSizeId}">
+                                    <label class="form-check-label" th:for="'size-' + ${variant.size.sizeId}"
+                                        th:text="${variant.size.sizeName}"></label>
+                                </div>
+                            </th:block>
+                        </div>
                     </div>
-                </div>
-                <hr>
-                <div class="mt-3">
-                    <span class="me-3">SỐ LƯỢNG: </span>
-                    <input type="number" style="width: 50%;" min="1" max="5">
-                </div>
-                <div class="mt-4 p-3 d-flex justify-content-between align-items-center text-center border">
-                    <a href="/yourstyle/cartdetail">
-                        <button class="add-to-cart-btn">THÊM VÀO GIỎ HÀNG</button>
-                    </a>
-                    <a href="/productfavorites">
-                        <i class="fa-regular fa-heart fs-3 fs-dark"></i>
-                    </a>
-                </div>
+                
+                    <hr>
+                
+                    <!-- Số lượng -->
+                    <div class="mt-3">
+                        <span class="me-3">SỐ LƯỢNG: </span>
+                        <input type="number" style="width: 50%;" min="1" max="5">
+                    </div>
+                
+                    <ul>
+                        <th:block th:each="variant : ${productVariants}">
+                            <li>ID: <span th:text="${variant.productVariantId}">Variant ID</span></li>
+                            <li>Color: <span th:text="${variant.color.colorName}">Color</span></li>
+                            <li>Size: <span th:text="${variant.size.sizeName}">Size</span></li>
+                        </th:block>
+                    </ul>
+
+                    <div class="mt-4 p-3 d-flex justify-content-between align-items-center text-center border">
+                        <button class="add-to-cart-btn" type="submit">THÊM VÀO GIỎ HÀNG</button>
+                    </div>
+                </form>
+                
                 <div class="py-4 text-center">
                     <p>96% Khách hàng cho rằng nó đúng với kích thước</p>
                     <!-- Button trigger modal -->
@@ -247,7 +267,7 @@
             <div th:each="p : ${similarProducts}" class="col-md-3 pt-5" data-aos="fade-up">
                 <div class="card product-card">
                     <a th:href="@{/allproduct}">
-                        <img th:src="@{/site/images/product/product-2.webp}" class="img-fluid">
+                        <img th:src="@{/uploads/} + ${p.image}" class="img-fluid">
                     </a>
                     <div class="p-2">
                         <h5 class="product-name" th:text="${p.name}"></h5>

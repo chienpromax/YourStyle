@@ -33,10 +33,16 @@
                     </div>
 
                     <div class="d-flex align-items-center pt-3">
-                        <a class="link-secondary me-3" href="/yourstyle/cartdetail">
+                        <a class="link-secondary me-3" data-bs-toggle="modal" data-bs-target="#cartModal">
                             <i class="fas fa-shopping-cart"></i>
-                            <span class="badge rounded-pill badge-notification bg-danger">1</span>
+                            <span class="badge rounded-pill badge-notification bg-danger"
+                                th:text="${cartItemCount}"></span>
+
                         </a>
+
+                        <!-- Modal -->
+                        <div th:replace="~{site/carts/cartshopping :: cartshopping}"></div>
+                        
                         <a class="link-secondary me-3"
 							th:href="@{/yourstyle/productfavorites}"> <i
 							class="fa-solid fa-heart"></i>
@@ -106,7 +112,7 @@
                                                 <p class="text-uppercase fw-bold" th:text="${childCategory.name}"></p>
                                                 <a th:href="@{/allproduct}">
                                                     <div class="bg-image hover-overlay ripple mb-3" data-mdb-ripple-color="light"
-                                                         style="width: 150px; height: 150px; overflow: hidden; border-radius: 8px;">
+                                                         style="width: 200px; height: 150px; overflow: hidden; border-radius: 8px;">
                                                         <img th:src="@{/uploads/{image}(image=${childCategory.image})}"
                                                              style="width: 100%; height: 100%; object-fit: cover;" alt="Category Image"/>
                                                     </div>

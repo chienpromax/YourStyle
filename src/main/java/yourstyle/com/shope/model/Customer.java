@@ -80,6 +80,7 @@ public class Customer implements Serializable {
     public int hashCode() {
         return customerId != null ? customerId.hashCode() : 0;
     }
+	
 
     @Override
     public String toString() {

@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+</head>
+
+<body>
+    <section th:fragment="cartshopping">
+        <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-mb modal-dialog-cart">
+                <div class="modal-content" style="border-radius: 0; border: 5px solid black;">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="cartModalLabel"
+                            style="font-family: 'Dancing Script', cursive; font-weight: 700;">YourStyle Hãy Mặc Theo
+                            Cách Của Bạn</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive bg-light">
+                            <table class="table bg-light">
+                                <tbody th:each="orderDetail : ${orderDetails}">
+                                    <tr class="align-items-stretch">
+                                        <td class="text-center" scope="row">
+                                            <a href="">
+                                                <img th:src="@{/uploads/} + ${orderDetail.productVariant.product.image}"
+                                                    alt="Image" width="100"
+                                                    style="object-fit: cover; max-height: 150px;" class="img-fluid" />
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <span th:text="${orderDetail.productVariant.product.name}"
+                                                style="font-size: 0.9rem;"></span><br>
+                                            <span th:text="${orderDetail.productVariant.color.colorName}"
+                                                style="font-size: 0.8rem;"></span> /
+                                            <span th:text="${orderDetail.productVariant.size.sizeName}"
+                                                style="font-size: 0.8rem;"></span>
+                                            <div style="margin-top: 10px;">
+                                                <span
+                                                    th:text="${#numbers.formatDecimal(orderDetail.productVariant.product.price, 1, 'COMMA', 3, 'POINT')+ ' Đ'}"
+                                                    style="font-size: 0.9rem;"></span>
+                                            </div>
+                                            <div class="pt-1">
+                                                <span>SL: <span th:text="${orderDetail.quantity}"></span></span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center d-flex justify-content-center"
+                                            style="min-height: 170px;">
+                                            <!-- Action Icons -->
+                                            <div class="d-flex gap-1">
+                                                <form action="/yourstyle/carts/removeProduct" method="post">
+                                                    <input type="hidden" name="orderDetailId" th:value="${orderDetail.orderDetailId}" />
+                                                    <button type="submit" class="icon-cartDetail-button">
+                                                        <i class="bi bi-trash icon-cartDetail-button px-1"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <h5 class="text-center">
+                        <strong>Tổng tiền thu: </strong>
+                        <span th:text="${#numbers.formatDecimal(totalAmount, 1, 'COMMA', 2, 'POINT')+ ' Đ'}"></span>
+                    </h5>
+
+                    <div class="modal-footer justify-content-center">
+                        <hr>
+                        <div class="row">
+                            <a href="/yourstyle/carts/cartdetail" style="color: white; text-decoration: none;">
+                                <button type="button" class="btn"
+                                    style="background-color: black; border: none; color: white;">
+                                    Xem giỏ hàng
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

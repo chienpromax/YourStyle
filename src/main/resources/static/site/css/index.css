@@ -448,7 +448,7 @@
 
 /* ========footer======== */
 .footer {
-    background-color: rgb(228, 228, 228);
+    background-color: rgb(250, 250, 250);
 }
 
 
@@ -494,10 +494,6 @@
     align-items: center;
     justify-content: space-between;
 }
-.text-pink {
-    color: pink; /* Hoặc bất kỳ mã màu nào bạn muốn */
-}
-
 
 .footer-flow {
     /* background: linear-gradient(0, rgb(0, 0, 0), rgb(33, 33, 33)); */
@@ -571,4 +567,42 @@
 	position: relative;
 	top: 16px;
 	right: 16px;
+}
+
+.bg-image img {
+    transition: transform 0.3s ease;
+}
+
+.bg-image:hover img {
+    transform: scale(1.1); 
+}
+
+
+/* cart */
+.product-item {
+    margin-bottom: 15px;
+    padding: 10px;
+}
+.product-info {
+    text-align: left;
+    margin-left: 10px;
+}
+
+@media (max-width: 768px) {
+    .product-item {
+        margin-bottom: 10px;
+    }
+}
+
+@media (min-width: 768px) {
+    .product-item {
+        margin-bottom: 20px; 
+    }
+}
+
+.icon-cartDetail-button {
+    padding: 0px;
+    margin: 0px;
+    border: none;
+    background: none;
 }

@@ -227,6 +227,9 @@
                         </th:block>
                     </ul>
                     
+                    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+                        <span th:text="${errorMessage}"></span>
+                    </div>                    
 
                     <div class="mt-4 p-3 d-flex justify-content-between align-items-center text-center border">
 

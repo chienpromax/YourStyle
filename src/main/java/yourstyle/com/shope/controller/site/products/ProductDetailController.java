@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import yourstyle.com.shope.model.Color;
 import yourstyle.com.shope.model.CustomUserDetails;
@@ -54,6 +55,36 @@ public class ProductDetailController {
     private OrderService orderService;
     @Autowired
     private CustomerRepository customerRepository;
+
+    @PostMapping("/yourstyle/carts/addtocart")
+    public String addToCart(@RequestParam("productVariantId") Integer productVariantId,
+            @RequestParam("colorId") Integer colorId,
+            @RequestParam("sizeId") Integer sizeId,
+            @RequestParam("quantity") Integer quantity,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/site/accounts/login";
+        }
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Integer accountId = userDetails.getAccountId();
+        Customer customer = customerRepository.findByAccount_AccountId(accountId);
+        if (customer == null) {
+            return "redirect:/site/accounts/login";
+        }
+
+        try {
+            orderService.addProductToCart(customer.getCustomerId(), productVariantId, colorId, sizeId, quantity);
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/yourstyle/carts/cartdetail";
+        }
+
+        return "redirect:/yourstyle/carts/cartdetail";
+    }
+
 
     @GetMapping("/product/detail/{productId}")
     public String productDetail(@PathVariable("productId") Integer productId,
@@ -124,30 +155,6 @@ public class ProductDetailController {
         review.setCustomer(customer.get()); // Đảm bảo rằng bạn đã có id của sản phẩm
         reviewService.save(review); // Giả định rằng bạn đã có phương thức save trong ReviewService
         return "redirect:/product/detail/" + productId; // Chuyển hướng về trang chi tiết sản phẩm
-    }
-
-    @PostMapping("/yourstyle/carts/addtocart")
-    public String addToCart(@RequestParam("productVariantId") Integer productVariantId,
-            @RequestParam("colorId") Integer colorId,
-            @RequestParam("sizeId") Integer sizeId,
-            @RequestParam("quantity") Integer quantity,
-            Authentication authentication) {
-
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return "redirect:/site/accounts/login";
-        }
-
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Integer accountId = userDetails.getAccountId();
-        Customer customer = customerRepository.findByAccount_AccountId(accountId);
-        if (customer == null) {
-            return "redirect:/site/accounts/login";
-        }
-
-        // Gọi phương thức `addProductToCart` với đầy đủ 5 tham số, bao gồm `quantity`
-        orderService.addProductToCart(customer.getCustomerId(), productVariantId, colorId, sizeId, quantity);
-
-        return "redirect:/yourstyle/carts/cartdetail";
     }
 
 }

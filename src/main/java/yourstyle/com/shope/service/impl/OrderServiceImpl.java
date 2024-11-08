@@ -126,43 +126,52 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public void addProductToCart(Integer customerId, Integer productVariantId, Integer colorId, Integer sizeId,
-			Integer quantity) {
+	public void addProductToCart(Integer customerId, Integer productVariantId, Integer colorId, Integer sizeId, Integer quantity) {
 		Order order = orderRepository.findOrderByCustomerIdAndStatus(customerId);
-
+	
 		if (order == null) {
 			order = new Order();
 			Customer customer = customerRepository.findById(customerId)
 					.orElseThrow(() -> new RuntimeException("Customer không tồn tại với ID: " + customerId));
-
+	
 			order.setCustomer(customer);
 			order.setOrderDate(new Timestamp(System.currentTimeMillis()));
 			order.setTotalAmount(BigDecimal.ZERO);
 			order.setStatus(OrderStatus.fromCode(1));
 			orderRepository.save(order);
 		}
-
-		Optional<OrderDetail> existingOrderDetail = orderDetailRepository
-				.findOneByOrderAndProductVariant(order.getOrderId(), productVariantId, colorId, sizeId);
-
-		if (existingOrderDetail.isPresent()) {
-			OrderDetail orderDetail = existingOrderDetail.get();
-			orderDetail.setQuantity(orderDetail.getQuantity() + quantity); // Cập nhật theo số lượng từ input
-			orderDetailRepository.save(orderDetail);
-		} else {
-			Optional<ProductVariant> productVt = productVariantRepository.findById(productVariantId);
-			if (productVt.isPresent()) {
-				ProductVariant productVariant = productVt.get();
-				OrderDetail newOrderDetail = new OrderDetail();
-				newOrderDetail.setOrder(order);
-				newOrderDetail.setProductVariant(productVariant);
-				newOrderDetail.setQuantity(quantity); // Thiết lập số lượng theo input
-
-				Product product = productVariant.getProduct();
-				newOrderDetail.setPrice(product.getPrice());
-				orderDetailRepository.save(newOrderDetail);
+	
+		Optional<ProductVariant> productVt = productVariantRepository.findById(productVariantId);
+		if (productVt.isPresent()) {
+			ProductVariant productVariant = productVt.get();
+	
+			// Kiểm tra nếu số lượng còn lại đủ để thêm vào giỏ hàng
+			if (productVariant.getQuantity() >= quantity) {
+				Optional<OrderDetail> existingOrderDetail = orderDetailRepository
+						.findOneByOrderAndProductVariant(order.getOrderId(), productVariantId, colorId, sizeId);
+	
+				if (existingOrderDetail.isPresent()) {
+					OrderDetail orderDetail = existingOrderDetail.get();
+					orderDetail.setQuantity(orderDetail.getQuantity() + quantity);
+					orderDetailRepository.save(orderDetail);
+				} else {
+					OrderDetail newOrderDetail = new OrderDetail();
+					newOrderDetail.setOrder(order);
+					newOrderDetail.setProductVariant(productVariant);
+					newOrderDetail.setQuantity(quantity);
+					newOrderDetail.setPrice(productVariant.getProduct().getPrice());
+					orderDetailRepository.save(newOrderDetail);
+				}
+	
+				productVariant.setQuantity(productVariant.getQuantity() - quantity);
+				productVariantRepository.save(productVariant);
+	
+			} else {
+				throw new RuntimeException("Không đủ số lượng sản phẩm trong kho.");
 			}
+		} else {
+			throw new RuntimeException("Product Variant không tồn tại với ID: " + productVariantId);
 		}
 	}
-
+	
 }

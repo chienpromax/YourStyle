@@ -39,34 +39,43 @@
                                 </td>
                                 <td class="text-center d-flex align-items-end justify-content-center"
                                     style="min-height: 163px;">
-                                    <div class="me-2">
-                                        <select style="font-size: 0.7rem; width: 80px;"
-                                            class="form-select quantity-selector rounded-pill" aria-label="Quantity">
+                                    <form action="/yourstyle/carts/updateQuantity" method="post" class="px-2">
+                                        <input type="hidden" name="orderDetailId"
+                                            th:value="${orderDetail.orderDetailId}" />
+                                        <select style="font-size: 0.7rem; width: 90px;" name="quantity"
+                                            class="form-select quantity-selector rounded-pill"
+                                            onchange="this.form.submit()">
                                             <option th:selected="${orderDetail.quantity == 1}" value="1">SL: 1</option>
                                             <option th:selected="${orderDetail.quantity == 2}" value="2">SL: 2</option>
                                             <option th:selected="${orderDetail.quantity == 3}" value="3">SL: 3</option>
                                             <option th:selected="${orderDetail.quantity == 4}" value="4">SL: 4</option>
                                             <option th:selected="${orderDetail.quantity == 5}" value="5">SL: 5</option>
+                                            <option th:selected="${orderDetail.quantity == 10}" value="5">SL: 10</option>
+                                            <option th:selected="${orderDetail.quantity == 15}" value="5">SL: 15</option>
                                         </select>
-                                    </div>
+                                    </form>
+
 
                                     <!-- Action Icons -->
                                     <div class="d-flex gap-1">
                                         <div class="d-flex gap-1">
-                                            <form action="/yourstyle/carts/" method="post">
-                                                <input type="hidden" name="orderDetailId" th:value="${orderDetail.orderDetailId}" />
+                                            <form action="" method="post">
+                                                <input type="hidden" name="orderDetailId"
+                                                    th:value="${orderDetail.orderDetailId}" />
                                                 <button type="submit" class="icon-cartDetail-button">
                                                     <i class="bi bi-search icon-cartDetail-button px-1"></i>
                                                 </button>
                                             </form>
-                                            <form action="/yourstyle/carts/" method="post">
-                                                <input type="hidden" name="orderDetailId" th:value="${orderDetail.orderDetailId}" />
+                                            <form action="" method="post">
+                                                <input type="hidden" name="orderDetailId"
+                                                    th:value="${orderDetail.orderDetailId}" />
                                                 <button type="submit" class="icon-cartDetail-button">
                                                     <i class="bi bi-heart icon-cartDetail-button px-1"></i>
                                                 </button>
                                             </form>
                                             <form action="/yourstyle/carts/removeProduct" method="post">
-                                                <input type="hidden" name="orderDetailId" th:value="${orderDetail.orderDetailId}" />
+                                                <input type="hidden" name="orderDetailId"
+                                                    th:value="${orderDetail.orderDetailId}" />
                                                 <button type="submit" class="icon-cartDetail-button">
                                                     <i class="bi bi-trash icon-cartDetail-button px-1"></i>
                                                 </button>
@@ -184,6 +193,7 @@
                 </div>
             </div>
         </div>
+        <script src="/site/js/cartDetail.js"></script>
     </section>
 </body>
 

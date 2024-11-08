@@ -3,6 +3,7 @@ package yourstyle.com.shope.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +16,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -90,4 +92,9 @@ public class Customer implements Serializable {
                 ", phoneNumber='" + phoneNumber + '\'' +
                 '}';
     }
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "customer")
+    private List<Address> addresses;
+
 }

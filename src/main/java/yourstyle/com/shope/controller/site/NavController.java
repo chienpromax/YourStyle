@@ -38,7 +38,7 @@ public class NavController {
         return categoryService.findParentCategories();
     }
 
-     @ModelAttribute("orderDetails")
+    @ModelAttribute("orderDetails")
     public List<OrderDetail> populateCartDetails(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -52,7 +52,7 @@ public class NavController {
 
             if (customerId != null) {
                 List<OrderDetail> orderDetails = orderDetailRepository.findByOrder_Customer_CustomerId(customerId);
-                model.addAttribute("totalAmount", calculateTotalAmount(orderDetails));
+                // model.addAttribute("totalAmount", calculateTotalAmount(orderDetails));
 
                 long uniqueProductVariantCount = orderDetails.stream()
                         .map(orderDetail -> orderDetail.getProductVariant())
@@ -68,12 +68,11 @@ public class NavController {
         return new ArrayList<>();
     }
 
-    private BigDecimal calculateTotalAmount(List<OrderDetail> orderDetails) {
-        return orderDetails.stream()
-                .map(orderDetail -> BigDecimal.valueOf(orderDetail.getQuantity())
-                        .multiply(orderDetail.getProductVariant().getProduct().getPrice()))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
+    // private BigDecimal calculateTotalAmount(List<OrderDetail> orderDetails) {
+    //     return orderDetails.stream()
+    //             .map(orderDetail -> BigDecimal.valueOf(orderDetail.getQuantity())
+    //                     .multiply(orderDetail.getProductVariant().getProduct().getPrice()))
+    //             .reduce(BigDecimal.ZERO, BigDecimal::add);
+    // }
 
 }

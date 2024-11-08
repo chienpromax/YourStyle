@@ -17,6 +17,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @SuppressWarnings("serial")
@@ -51,6 +52,7 @@ public class Discount {
 
     @OneToOne
     @JoinColumn(name = "productId", nullable = false)
+    @EqualsAndHashCode.Exclude
     private Product product;
 
 }

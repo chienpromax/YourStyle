@@ -22,6 +22,7 @@ import jakarta.persistence.Transient;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @SuppressWarnings("serial")
@@ -66,6 +67,7 @@ public class Product implements Serializable {
 
     @JsonIgnore
     @OneToOne(mappedBy = "product")
+    @EqualsAndHashCode.Exclude
     private Discount discount;
 
     @JsonIgnore

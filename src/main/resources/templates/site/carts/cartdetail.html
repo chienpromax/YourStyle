@@ -32,9 +32,25 @@
                                     <span th:text="${orderDetail.productVariant.size.sizeName}"
                                         style="font-size: 0.8rem;"></span>
                                     <div style="margin-top: 10px;">
-                                        <span
-                                            th:text="${#numbers.formatDecimal(orderDetail.productVariant.product.price, 1, 'COMMA', 3, 'POINT')+ ' Đ'}"
-                                            style="font-size: 0.9rem;"></span>
+                                        <div style="margin-top: 10px;">
+                                            <span class="text-danger fw-bold"
+                                                th:if="${orderDetail.productVariant.product.discount != null}"
+                                                th:text="${#numbers.formatDecimal(orderDetail.productVariant.product.price - orderDetail.productVariant.product.price * orderDetail.productVariant.product.discount.discountPercent / 100, 1, 'COMMA', 3, 'POINT') + ' Đ'}">
+                                            </span>
+                                            <span class="text-muted ms-2"
+                                                th:if="${orderDetail.productVariant.product.discount != null}">
+                                                <del
+                                                    th:text="${#numbers.formatDecimal(orderDetail.productVariant.product.price, 1, 'COMMA', 3, 'POINT') + ' Đ'}"></del>
+                                            </span>
+                                            <span class="badge bg-danger ms-2"
+                                                th:if="${orderDetail.productVariant.product.discount != null}"
+                                                th:text="'-' + ${#numbers.formatDecimal(orderDetail.productVariant.product.discount.discountPercent, 0, 0)} + '%'">
+                                            </span>
+
+                                            <span th:if="${orderDetail.productVariant.product.discount == null}"
+                                                th:text="${#numbers.formatDecimal(orderDetail.productVariant.product.price, 1, 'COMMA', 3, 'POINT') + ' Đ'}">
+                                            </span>
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="text-center d-flex align-items-end justify-content-center"
@@ -50,8 +66,10 @@
                                             <option th:selected="${orderDetail.quantity == 3}" value="3">SL: 3</option>
                                             <option th:selected="${orderDetail.quantity == 4}" value="4">SL: 4</option>
                                             <option th:selected="${orderDetail.quantity == 5}" value="5">SL: 5</option>
-                                            <option th:selected="${orderDetail.quantity == 10}" value="5">SL: 10</option>
-                                            <option th:selected="${orderDetail.quantity == 15}" value="5">SL: 15</option>
+                                            <option th:selected="${orderDetail.quantity == 10}" value="5">SL: 10
+                                            </option>
+                                            <option th:selected="${orderDetail.quantity == 15}" value="5">SL: 15
+                                            </option>
                                         </select>
                                     </form>
 

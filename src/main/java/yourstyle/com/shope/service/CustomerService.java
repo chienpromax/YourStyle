@@ -35,5 +35,7 @@ public interface CustomerService {
 	List<Customer> searchByNameOrPhone(String value);
 
 	boolean existsByPhoneNumber(String phoneNumber);
-	
+
+	Customer findByAccountId(Integer accountId);
+
 }

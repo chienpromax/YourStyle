@@ -14,10 +14,14 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
     List<Customer> findByFullnameContainingOrPhoneNumberContaining(String fullname, String phoneNumber);
 
-    Page<Customer> findByFullnameContainingOrPhoneNumberContaining(String fullname, String phoneNumber, Pageable pageable);
+    Page<Customer> findByFullnameContainingOrPhoneNumberContaining(String fullname, String phoneNumber,
+            Pageable pageable);
 
     boolean existsByPhoneNumber(String phoneNumber);
 
     @Query("SELECT c FROM Customer c WHERE c.account.accountId = ?1")
-    Customer  findByCustomerAccountId(Integer accountId);
+    Customer findByCustomerAccountId(Integer accountId);
+
+    @Query("SELECT c FROM Customer c WHERE c.account.accountId = ?1")
+    Customer findByAccountId(Integer accountId);
 }

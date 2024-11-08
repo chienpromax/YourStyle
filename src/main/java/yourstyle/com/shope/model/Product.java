@@ -3,6 +3,7 @@ package yourstyle.com.shope.model;
 import java.io.Serializable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,6 +17,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.*;
 import java.util.*;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @SuppressWarnings("serial")
 @Data
@@ -37,9 +41,11 @@ public class Product implements Serializable {
     private BigDecimal price;
     @Column(name = "image")
     private String image;
-    @OneToMany(mappedBy = "product")
-    private List<ProductVariant> productVariants;
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private List<ProductVariant> productVariants; // đang lỗi đoạn này
     @OneToOne(mappedBy = "product")
+    @JsonBackReference
     private Discount discount;
     @ManyToOne
     @JoinColumn(name = "categoryId", referencedColumnName = "categoryId")

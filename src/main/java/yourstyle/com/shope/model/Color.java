@@ -12,7 +12,9 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.*;;
+import java.util.*;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;;
 
 @SuppressWarnings("serial")
 @Data
@@ -27,5 +29,6 @@ public class Color implements Serializable {
     @Column(nullable = false, length = 30, unique = true)
     private String colorName;
     @OneToMany(mappedBy = "color")
+    @JsonManagedReference
     private List<ProductVariant> productVariants;
 }

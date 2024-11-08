@@ -12,7 +12,7 @@ public class JacksonConfig {
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.getFactory().setStreamWriteConstraints(
-                StreamWriteConstraints.builder().maxNestingDepth(2000).build());
+                StreamWriteConstraints.builder().maxNestingDepth(3000).build());
         return mapper;
     }
 }

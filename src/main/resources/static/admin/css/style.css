@@ -1235,7 +1235,7 @@ h6 {
 }
 
 #progressbar-2 li.active:nth-child(4)::before {
-  margin-left: 20%;
+  margin-left: 18%;
   z-index    : 2;
   position   : absolute;
 }

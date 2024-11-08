@@ -14,6 +14,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @SuppressWarnings("serial")
 @Data
 @NoArgsConstructor
@@ -27,5 +29,6 @@ public class Size implements Serializable {
     @Column(nullable = false, length = 5, unique = true)
     private String sizeName;
     @OneToMany(mappedBy = "size")
+    @JsonManagedReference
     private List<ProductVariant> productVariants;
 }

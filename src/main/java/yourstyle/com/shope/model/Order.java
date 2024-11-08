@@ -3,6 +3,7 @@ package yourstyle.com.shope.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,12 +15,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.*;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @SuppressWarnings("serial")
 @Data
@@ -43,23 +46,6 @@ public class Order implements Serializable {
     private TransactionType transactionType;
     private String paymentMethod;
     private String transactionStatus;
-    @Column(name = "packedAt")
-    private Timestamp packedAt;
-
-    @Column(name = "shippedAt")
-    private Timestamp shippedAt;
-
-    @Column(name = "inTransitAt")
-    private Timestamp inTransitAt;
-
-    @Column(name = "completedAt")
-    private Timestamp completedAt;
-
-    @Column(name = "returnedAt")
-    private Timestamp returnedAt;
-
-    @Column(name = "canceledAt")
-    private Timestamp canceledAt;
 
     @ManyToOne
     @JoinColumn(name = "customerId", referencedColumnName = "customerId", nullable = false)
@@ -70,7 +56,14 @@ public class Order implements Serializable {
     private Voucher voucher;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<OrderDetail> orderDetails;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<OrderStatusHistory> orderStatusHistories;
+
+    @Transient
+    private OrderStatusHistory orderStatusHistory;
 
     public OrderStatus getStatus() {
         return OrderStatus.fromCode(status);

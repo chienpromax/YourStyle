@@ -16,7 +16,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.sql.*;
-import java.util.*;;
+import java.util.*;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;;
 
 @SuppressWarnings("serial")
 @Data
@@ -36,14 +39,18 @@ public class ProductVariant implements Serializable {
     private Timestamp updateAt;
     @ManyToOne
     @JoinColumn(name = "sizeId", referencedColumnName = "sizeId")
+    @JsonBackReference
     private Size size;
     @ManyToOne
     @JoinColumn(name = "colorId", referencedColumnName = "colorId")
+    @JsonBackReference
     private Color color;
     @ManyToOne
     @JoinColumn(name = "productId", referencedColumnName = "productId")
+    @JsonBackReference
     private Product product;
     @OneToMany(mappedBy = "productVariant")
+    @JsonManagedReference
     private List<OrderDetail> orderdetails;
 
     @PrePersist

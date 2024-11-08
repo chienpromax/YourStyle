@@ -18,6 +18,8 @@ import lombok.NoArgsConstructor;
 import java.math.*;
 import java.sql.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @SuppressWarnings("serial")
 @Data
 @NoArgsConstructor
@@ -36,9 +38,11 @@ public class OrderDetail implements Serializable {
     private Timestamp updateAt;
     @ManyToOne
     @JoinColumn(name = "orderId", referencedColumnName = "orderId", nullable = false)
+    @JsonBackReference
     private Order order;
     @ManyToOne
     @JoinColumn(name = "productVariantId", referencedColumnName = "productVariantId", nullable = true)
+    @JsonBackReference
     private ProductVariant productVariant;
 
     @PrePersist

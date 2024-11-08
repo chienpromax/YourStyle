@@ -10,7 +10,8 @@ window.addEventListener("DOMContentLoaded", () => {
         { id: 4, text: "Xác nhận hoàn thành" },
         { id: 5, text: "Xác nhận trả hàng" },
     ];
-    document.getElementById("btnConfirm").addEventListener("click", function () {
+    document.getElementById("btnConfirm").addEventListener("click", function (e) {
+        e.preventDefault();
         steps.forEach((step) => {
             if (step.classList.contains("active")) {
                 currentStatus = parseInt(step.getAttribute("data-status"));
@@ -142,6 +143,9 @@ window.addEventListener("DOMContentLoaded", () => {
             }
         }
     }
+    window.downloadInvoice = function (orderId) {
+        window.open(`/api/invoices/generate?orderId=${orderId}`, "_blank");
+    };
     // hàm chọn địa chỉ buộc dữ liệu lên form
     window.selectAddress = function (button) {
         // lấy tr chưa các td
@@ -224,7 +228,7 @@ window.addEventListener("DOMContentLoaded", () => {
     // Hàm thêm mới địa chỉ trong modal
     window.addAddress = function () {
         let streetInput = document.getElementById("street");
-        let inputCustomerId = document.getElementById("inputCustomerId");
+        let inputCustomerId = document.getElementById("customerId");
 
         let addressData = {
             street: streetInput.value,
@@ -233,7 +237,7 @@ window.addEventListener("DOMContentLoaded", () => {
             ward: selectedWard.trim(),
             customerId: inputCustomerId.value,
         };
-        if (streetInput && cityInput && districtInput && wardInput && inputCustomerId) {
+        if (streetInput && inputCustomerId) {
             // Thực hiện gọi API fetch
             fetch("/api/admin/orders/addAddress", {
                 method: "POST",
@@ -336,22 +340,4 @@ window.addEventListener("DOMContentLoaded", () => {
             newToast.remove();
         }, 5000);
     }
-
-    const mainModal = new bootstrap.Modal(document.getElementById("modalIdUpdateOrder"));
-    const selectAddressModal = new bootstrap.Modal(document.getElementById("modalIdSelectAddress"));
-    const addAddressModal = new bootstrap.Modal(document.getElementById("modalIdAddAddress"));
-
-    document.getElementById("modalIdSelectAddress").addEventListener("shown.bs.modal", () => {
-        mainModal.hide();
-    });
-    document.getElementById("modalIdAddAddress").addEventListener("shown.bs.modal", () => {
-        mainModal.hide();
-        selectAddressModal.show();
-    });
-    document.getElementById("modalIdAddAddress").addEventListener("hidden.bs.modal", () => {
-        selectAddressModal.show();
-    });
-    document.getElementById("modalIdSelectAddress").addEventListener("hidden.bs.modal", () => {
-        mainModal.show();
-    });
 });

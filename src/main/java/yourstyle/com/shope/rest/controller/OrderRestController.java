@@ -24,9 +24,11 @@ import yourstyle.com.shope.model.Address;
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Order;
 import yourstyle.com.shope.model.OrderStatus;
+import yourstyle.com.shope.model.OrderStatusHistory;
 import yourstyle.com.shope.service.AddressService;
 import yourstyle.com.shope.service.CustomerService;
 import yourstyle.com.shope.service.OrderService;
+import yourstyle.com.shope.service.OrderStatusHistoryService;
 import yourstyle.com.shope.validation.admin.AddressDto;
 
 @CrossOrigin("*")
@@ -39,6 +41,8 @@ public class OrderRestController {
     AddressService addressService;
     @Autowired
     CustomerService customerService;
+    @Autowired
+    OrderStatusHistoryService orderStatusHistoryService;
 
     @PutMapping("update-status")
     public ResponseEntity<Map<String, Object>> updateStatusOrder(@RequestBody Map<String, Integer> data,
@@ -51,30 +55,37 @@ public class OrderRestController {
             if (orderOptional.isPresent()) {
                 Order order = orderOptional.get();
                 OrderStatus orderStatus = OrderStatus.fromCode(newStatus);
+
+                OrderStatusHistory orderStatusHistory = new OrderStatusHistory();
+                orderStatusHistory.setOrder(order);
+                orderStatusHistory.setStatus(orderStatus.getDescription());
+                orderStatusHistory.setStatusTime(new Timestamp(System.currentTimeMillis()));
+                orderStatusHistoryService.save(orderStatusHistory);
+
                 order.setStatus(orderStatus);
-                switch (newStatus) {
-                    case 0:
-                        order.setCanceledAt(new Timestamp(System.currentTimeMillis()));
-                        break;
-                    case 2:
-                        order.setPackedAt(new Timestamp(System.currentTimeMillis()));
-                        break;
-                    case 3:
-                        order.setShippedAt(new Timestamp(System.currentTimeMillis()));
-                        break;
-                    case 4:
-                        order.setInTransitAt(new Timestamp(System.currentTimeMillis()));
-                        break;
-                    case 5:
-                        order.setCompletedAt(new Timestamp(System.currentTimeMillis()));
-                        break;
-                    case 6:
-                        order.setReturnedAt(new Timestamp(System.currentTimeMillis()));
-                        break;
-                    default:
-                        break;
-                }
                 orderService.save(order);
+                // switch (newStatus) {
+                // case 0:
+                // order.setCanceledAt(new Timestamp(System.currentTimeMillis()));
+                // break;
+                // case 2:
+                // order.setPackedAt(new Timestamp(System.currentTimeMillis()));
+                // break;
+                // case 3:
+                // order.setShippedAt(new Timestamp(System.currentTimeMillis()));
+                // break;
+                // case 4:
+                // order.setInTransitAt(new Timestamp(System.currentTimeMillis()));
+                // break;
+                // case 5:
+                // order.setCompletedAt(new Timestamp(System.currentTimeMillis()));
+                // break;
+                // case 6:
+                // order.setReturnedAt(new Timestamp(System.currentTimeMillis()));
+                // break;
+                // default:
+                // break;
+                // }
 
                 response.put("orderId", orderId);
                 return ResponseEntity.ok(response);

@@ -7,16 +7,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import io.micrometer.common.util.StringUtils;
-
 import java.util.*;
 import java.math.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-
 import org.springframework.ui.*;
-
 import yourstyle.com.shope.model.Category;
 import yourstyle.com.shope.model.Color;
 import yourstyle.com.shope.model.Customer;

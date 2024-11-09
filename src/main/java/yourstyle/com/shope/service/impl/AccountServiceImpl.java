@@ -151,10 +151,6 @@ public class AccountServiceImpl implements AccountService {
 		}
 		return account;
 	}
-
-	
-
-
 	
 	@Override
 	public boolean sendResetPasswordLink(String email) {
@@ -212,4 +208,9 @@ public class AccountServiceImpl implements AccountService {
 		return accountRepository.findByUsername(username)
 				.orElseThrow(() -> new IllegalArgumentException("Tên đăng nhập không tồn tại!"));
 	}
+
+	@Override
+    public Optional<Account> findByEmail(String email) {
+        return accountRepository.findByEmail(email);
+    }
 }

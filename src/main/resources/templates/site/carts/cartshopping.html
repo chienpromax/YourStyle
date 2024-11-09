@@ -70,7 +70,9 @@
                     </div>
                     <h5 class="text-center">
                         <strong>Tổng tiền thu: </strong>
-                        <span th:text="${#numbers.formatDecimal(totalAmount, 1, 'COMMA', 2, 'POINT')+ ' Đ'}"></span>
+                        <strong>
+                            <span th:text="${#numbers.formatDecimal(totalAmount, 1, 'COMMA', 3, 'POINT')+ ' Đ'}"></span>
+                        </strong>
                     </h5>
 
                     <div class="modal-footer justify-content-center">

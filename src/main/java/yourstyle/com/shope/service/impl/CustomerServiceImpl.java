@@ -84,4 +84,9 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.existsByPhoneNumber(phoneNumber);
     }
 
+	@Override
+    public Customer findByAccountId(Integer accountId) {
+        return customerRepository.findByAccount_AccountId(accountId);
+    }
+
 }

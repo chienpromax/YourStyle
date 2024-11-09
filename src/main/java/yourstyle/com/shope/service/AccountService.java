@@ -45,4 +45,6 @@ public interface AccountService {
 
 	boolean existsByUsername(String username);
 	
+	Optional<Account> findByEmail(String email);
+
 }

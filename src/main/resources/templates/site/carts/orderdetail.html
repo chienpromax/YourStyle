@@ -8,77 +8,84 @@
 <body>
     <!--===== main =======-->
     <section class="py-5 container bg-light-subtle" layout:fragment="main">
-        <div class="row p-2 ">
+        <div class="row py-2 mx-1">
             <div class="col-lg-8 bg-white border-end">
                 <h3 class="my-4">ĐỊA CHỈ GIAO HÀNG</h3>
-                <form>
+                <form action="/yourstyle/carts/save" method="post" th:object="${customer}">
+                    <input type="hidden" name="account.accountId" th:value="${customer.account.accountId}" />
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="firstName" class="form-label">Họ*</label>
-                            <input type="text" class="form-control" id="firstName" required>
-                            <div class="form-text">Họ phải chứa 2-40 ký tự</div>
+                            <label for="firstName" class="form-label">Họ và tên</label> 
+                            <input type="text" class="form-control" id="firstName" name="fullname" th:field="*{fullname}" required>
                         </div>
+                
                         <div class="col-md-6 mb-3">
-                            <label for="lastName" class="form-label">Tên*</label>
-                            <input type="text" class="form-control" id="lastName" required>
+                            <label for="lastName" class="form-label">Email</label> 
+                            <input type="text" class="form-control" id="lastName" name="email" th:value="${account.email}" readonly>
                             <div class="form-text">Tên phải chứa 2-40 ký tự</div>
                         </div>
                     </div>
+                
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="phone" class="form-label">Số điện thoại*</label>
                             <div class="input-group">
                                 <span class="input-group-text">VN +84</span>
-                                <input type="text" class="form-control" id="phone" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="altPhone" class="form-label">Số điện thoại thay thế (Không bắt buộc)</label>
-                            <div class="input-group">
-                                <span class="input-group-text">VN +84</span>
-                                <input type="text" class="form-control" id="altPhone">
+                                <input type="text" class="form-control" id="phone" name="phoneNumber" th:field="*{phoneNumber}" required>
                             </div>
                         </div>
                     </div>
+                
                     <div class="mb-3">
                         <label for="streetAddress" class="form-label">Địa chỉ đường phố*</label>
-                        <input type="text" class="form-control" id="streetAddress"
-                            placeholder="Địa chỉ đường phố, căn hộ, Suite, Đơn vị, v.v." required>
+                        <input type="text" class="form-control" id="streetAddress" name="street" th:field="*{addresses[0].street}" required>
                     </div>
+                
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="province" class="form-label">Tỉnh*</label>
-                            <select id="province" class="form-select" required>
-                                <option value="">Vui lòng chọn tỉnh của bạn</option>
-                            </select>
+                            <label for="province" class="form-label">Phường*</label>
+                            <input type="text" class="form-control" id="province" name="ward" th:field="*{addresses[0].ward}" required>
                         </div>
+                
                         <div class="col-md-6 mb-3">
-                            <label for="city" class="form-label">Thành phố*</label>
-                            <select id="city" class="form-select" required>
-                                <option value="">Vui lòng chọn thành phố của bạn</option>
-                            </select>
+                            <label for="city" class="form-label">Quận*</label>
+                            <input type="text" class="form-control" id="city" name="district" th:field="*{addresses[0].district}" required>
                         </div>
                     </div>
+                
                     <div class="mb-3">
-                        <label for="postalCode" class="form-label">Mã bưu điện*</label>
-                        <input type="text" class="form-control" id="postalCode" required>
+                        <label for="postalCode" class="form-label">Thành Phố*</label>
+                        <input type="text" class="form-control" id="postalCode" name="city" th:field="*{addresses[0].city}" required>
                     </div>
+                
                     <div class="form-check mb-3">
-                        <input type="checkbox" class="form-check-input" id="defaultAddress">
+                        <input type="checkbox" class="form-check-input" id="defaultAddress" name="isDefault" th:field="*{addresses[0].isDefault}" />
                         <label class="form-check-label" for="defaultAddress">Đặt địa chỉ mặc định</label>
                     </div>
+                
                     <div class="py-3 text-center">
-                        <a class="" href="">
-                            <button class="btn-order-save">LƯU</button>
-                        </a>
+                        <button type="submit" class="btn-order-save">LƯU</button>
                     </div>
-                </form>
+                </form>                
+                
             </div>
+            
 
-            <div class="col-lg-4 border-start">
+            <div class="col-md-4 border-start">
                 <div class="order-summary bg-white">
                     <h3 class="mb-4">Tóm Tắt Đơn Hàng</h3>
-                    <div class="order-total">332.000₫</div>
+                    <!-- <div th:each="orderDetail : ${orderDetails}">
+                        <a href="">
+                            <img th:src="@{/uploads/} + ${orderDetail.productVariant.product.image}" alt="Image"
+                                width="100" style="object-fit: cover; max-height: 150px;" class="img-fluid" />
+                        </a> -->
+                    </div>
+                    <div class="order-total">
+                        <span class="float-end"
+                            th:text="${#numbers.formatDecimal(totalAmount, 1, 'COMMA', 3, 'POINT')+ ' Đ'}">
+                        </span>
+                    </div>
                     <div class="mb-3">
                         <label for="discountCode" class="form-label">Mã phiếu giảm giá</label>
                         <input type="text" class="form-control" id="discountCode">

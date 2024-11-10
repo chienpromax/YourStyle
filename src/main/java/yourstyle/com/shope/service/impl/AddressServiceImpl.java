@@ -51,4 +51,16 @@ public class AddressServiceImpl implements AddressService {
             }
         }
     }
+    
+    @Override
+    public void deleteAllByCustomer(Customer customer) {
+        addressRepository.deleteAllByCustomer(customer);
+    }
+
+    @Override
+    public boolean existsById(Integer addressId) {
+        return addressRepository.existsById(addressId);
+    }
+    
+
 }

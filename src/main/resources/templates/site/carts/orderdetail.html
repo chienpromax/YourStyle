@@ -3,6 +3,12 @@
     layout:decorate="~{site/index.html}">
 
 <head>
+    <!-- Thêm SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.min.css" rel="stylesheet">
+
+    <!-- Thêm SweetAlert2 JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.min.js"></script>
+
 </head>
 
 <body>
@@ -16,61 +22,163 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="firstName" class="form-label">Họ và tên</label> 
-                            <input type="text" class="form-control" id="firstName" name="fullname" th:field="*{fullname}" required>
+                            <label for="firstName" class="form-label">Họ và tên</label>
+                            <input type="text" class="form-control" id="firstName" name="fullname"
+                                th:field="*{fullname}" required>
                         </div>
-                
+
                         <div class="col-md-6 mb-3">
-                            <label for="lastName" class="form-label">Email</label> 
-                            <input type="text" class="form-control" id="lastName" name="email" th:value="${account.email}" readonly>
+                            <label for="lastName" class="form-label">Email</label>
+                            <input type="text" class="form-control" id="lastName" name="email"
+                                th:value="${account.email}" readonly>
                             <div class="form-text">Tên phải chứa 2-40 ký tự</div>
                         </div>
                     </div>
-                
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="phone" class="form-label">Số điện thoại*</label>
                             <div class="input-group">
                                 <span class="input-group-text">VN +84</span>
-                                <input type="text" class="form-control" id="phone" name="phoneNumber" th:field="*{phoneNumber}" required>
+                                <input type="text" class="form-control" id="phone" name="phoneNumber"
+                                    th:field="*{phoneNumber}" required>
                             </div>
                         </div>
                     </div>
-                
+
                     <div class="mb-3">
                         <label for="streetAddress" class="form-label">Địa chỉ đường phố*</label>
-                        <input type="text" class="form-control" id="streetAddress" name="street" th:field="*{addresses[0].street}" required>
+                        <input type="text" class="form-control" id="streetAddress" name="street"
+                            th:field="*{addresses[0].street}" required>
                     </div>
-                
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="province" class="form-label">Phường*</label>
-                            <input type="text" class="form-control" id="province" name="ward" th:field="*{addresses[0].ward}" required>
+                            <input type="text" class="form-control" id="province" name="ward"
+                                th:field="*{addresses[0].ward}" required>
                         </div>
-                
+
                         <div class="col-md-6 mb-3">
                             <label for="city" class="form-label">Quận*</label>
-                            <input type="text" class="form-control" id="city" name="district" th:field="*{addresses[0].district}" required>
+                            <input type="text" class="form-control" id="city" name="district"
+                                th:field="*{addresses[0].district}" required>
                         </div>
                     </div>
-                
+
                     <div class="mb-3">
                         <label for="postalCode" class="form-label">Thành Phố*</label>
-                        <input type="text" class="form-control" id="postalCode" name="city" th:field="*{addresses[0].city}" required>
+                        <input type="text" class="form-control" id="postalCode" name="city"
+                            th:field="*{addresses[0].city}" required>
                     </div>
-                
+
                     <div class="form-check mb-3">
-                        <input type="checkbox" class="form-check-input" id="defaultAddress" name="isDefault" th:field="*{addresses[0].isDefault}" />
+                        <input type="checkbox" class="form-check-input" id="defaultAddress" name="isDefault"
+                            th:field="*{addresses[0].isDefault}" />
                         <label class="form-check-label" for="defaultAddress">Đặt địa chỉ mặc định</label>
                     </div>
-                
+
                     <div class="py-3 text-center">
                         <button type="submit" class="btn-order-save">LƯU</button>
                     </div>
-                </form>                
-                
+                    <div class="py-3 text-center" th:if="${#lists.size(customer.addresses) > 0}">
+                        <button type="button" class="btn-order-save" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal">Thêm địa chỉ mới</button>
+                    </div>
+
+
+                </form>
             </div>
-            
+
+            <!-- Modal Thêm Địa chỉ -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Nhập Địa chỉ mới</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Form trong modal để thêm địa chỉ mới -->
+                            <form action="/yourstyle/carts/addAddress" method="POST" th:object="${customer}">
+                                <input type="hidden" name="account.accountId"
+                                    th:value="${customer.account.accountId}" />
+                                    <input type="hidden" th:value="${customer.customerId}" />
+
+                                <div class="mb-3">
+                                    <label for="streetAddress" class="form-label">Địa chỉ đường phố*</label>
+                                    <input type="text" class="form-control" id="streetAddress" name="newStreet"
+                                        required>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="province" class="form-label">Phường*</label>
+                                        <input type="text" class="form-control" id="province" name="newWard" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="city" class="form-label">Quận*</label>
+                                        <input type="text" class="form-control" id="city" name="newDistrict" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="postalCode" class="form-label">Thành Phố*</label>
+                                    <input type="text" class="form-control" id="postalCode" name="newCity" required>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input type="checkbox" class="form-check-input" id="defaultAddress"
+                                        name="newIsDefault" />
+                                    <label class="form-check-label" for="defaultAddress">Đặt địa chỉ mặc định</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Lưu</button>
+                            </form>
+
+                            <!-- Hiển thị danh sách địa chỉ hiện tại -->
+                            <h5>Danh sách địa chỉ:</h5>
+                            <table>
+                                <tr>
+                                    <th>Địa chỉ cụ thể</th>
+                                    <th>Tỉnh/Thành phố</th>
+                                    <th>Quận/Huyện</th>
+                                    <th>Xã/Phường</th>
+                                    <th>Mặc định</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                                <tr th:each="address, iterStat : ${customer.addresses}">
+                                    <td th:text="${address.street}">12345ád,12345ád123</td>
+                                    <td th:text="${address.city}">12345sad</td>
+                                    <td th:text="${address.district}">12345ád</td>
+                                    <td th:text="${address.ward}">12345ád</td>
+                                    <td th:text="${address.isDefault ? 'Có' : 'Không'}">Có</td>
+                                    <td class="text-center">
+                                        <!-- Liên kết xóa địa chỉ -->
+                                        <a style="cursor: pointer; font-size: 21px; color: red;"
+                                            th:attr="onclick=|confirmDelete(${address.addressId}, ${customerId});|">
+                                            <i class="bi bi-trash" title="Xóa"></i>
+                                        </a>
+
+
+                                        <!-- Đặt làm địa chỉ mặc định -->
+                                        <a style="cursor: pointer; font-size: 21px; color: rgb(0, 128, 255);"
+                                            th:href="@{/orderDetail/setDefaultAddress/{addressId}(addressId=${address.addressId}, customerId=${customerId})}"
+                                            th:if="${!address.isDefault}">
+                                            <i class="bi bi-star-fill" title="Đặt làm địa chỉ mặc định"></i>
+                                        </a>
+                                    </td>
+
+                                </tr>
+                            </table>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                            <!-- Nút lưu địa chỉ mới -->
+                            <button type="submit" class="btn btn-primary">Lưu</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <div class="col-md-4 border-start">
                 <div class="order-summary bg-white">
@@ -80,47 +188,64 @@
                             <img th:src="@{/uploads/} + ${orderDetail.productVariant.product.image}" alt="Image"
                                 width="100" style="object-fit: cover; max-height: 150px;" class="img-fluid" />
                         </a> -->
-                    </div>
-                    <div class="order-total">
-                        <span class="float-end"
-                            th:text="${#numbers.formatDecimal(totalAmount, 1, 'COMMA', 3, 'POINT')+ ' Đ'}">
-                        </span>
-                    </div>
-                    <div class="mb-3">
-                        <label for="discountCode" class="form-label">Mã phiếu giảm giá</label>
-                        <input type="text" class="form-control" id="discountCode">
-                        <div class="d-flex justify-content-center align-items-center">
-                            <button class="btn-order-save mt-2" disabled>Đã xong</button>
-                        </div>
-                    </div>
-                    <div class="payment py-4">
-                        <h5>Phương thức thanh toán</h5>
-                        <div class="payment-method-radio">
-                            <!-- Thanh toán khi nhận hàng -->
-                            <div class="payment-method-card">
-                                <input class="form-check-input me-2" type="radio" name="paymentMethod" id="cod"
-                                    value="cod">
-                                <img src="https://img.icons8.com/ios-filled/50/000000/cash-in-hand.png" alt="COD">
-                            </div>
-                            <!-- Thanh toán VNPay -->
-                            <div class="payment-method-card">
-                                <input class="form-check-input me-2" type="radio" name="paymentMethod" id="vnpay"
-                                    value="vnpay">
-                                <img src="/site/images/logo/vnpay.png" alt="VNPay">
-                            </div>
-                            <div class="payment-method-card">
-                                <input class="form-check-input me-2" type="radio" name="paymentMethod" id="vnpay"
-                                    value="vnpay">
-                                <img src="/site/images/logo/zalo.png" alt="VNPay">
-                            </div>
-                        </div>
-                    </div>
-                    <a class="py-5" href="/yourstyle/order">
-                        <button class="btn-cart-detail">ĐẶT HÀNG</button>
-                    </a>
                 </div>
+                <div class="order-total">
+                    <span class="float-end"
+                        th:text="${#numbers.formatDecimal(totalAmount, 1, 'COMMA', 3, 'POINT')+ ' Đ'}">
+                    </span>
+                </div>
+                <div class="mb-3">
+                    <label for="discountCode" class="form-label">Mã phiếu giảm giá</label>
+                    <input type="text" class="form-control" id="discountCode">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <button class="btn-order-save mt-2" disabled>Đã xong</button>
+                    </div>
+                </div>
+                <div class="payment py-4">
+                    <h5>Phương thức thanh toán</h5>
+                    <div class="payment-method-radio">
+                        <!-- Thanh toán khi nhận hàng -->
+                        <div class="payment-method-card">
+                            <input class="form-check-input me-2" type="radio" name="paymentMethod" id="cod" value="cod">
+                            <img src="https://img.icons8.com/ios-filled/50/000000/cash-in-hand.png" alt="COD">
+                        </div>
+                        <!-- Thanh toán VNPay -->
+                        <div class="payment-method-card">
+                            <input class="form-check-input me-2" type="radio" name="paymentMethod" id="vnpay"
+                                value="vnpay">
+                            <img src="/site/images/logo/vnpay.png" alt="VNPay">
+                        </div>
+                        <div class="payment-method-card">
+                            <input class="form-check-input me-2" type="radio" name="paymentMethod" id="vnpay"
+                                value="vnpay">
+                            <img src="/site/images/logo/zalo.png" alt="VNPay">
+                        </div>
+                    </div>
+                </div>
+                <a class="py-5" href="/yourstyle/order">
+                    <button class="btn-cart-detail">ĐẶT HÀNG</button>
+                </a>
             </div>
         </div>
+        <script type="text/javascript">
+            function confirmDelete(addressId, customerId) {
+                Swal.fire({
+                    title: 'Bạn có chắc chắn muốn xóa?',
+                    text: "Bạn sẽ không thể hoàn tác sau khi xóa!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Xóa nó!',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/yourstyle/carts/orderDetail/deleteAddress/' + addressId + '?customerId=' + customerId;
+                    }
+                });
+            }
+
+        </script>
     </section>
 </body>
 

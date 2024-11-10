@@ -31,14 +31,12 @@ public class OrderStatusHistory implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "orderId", referencedColumnName = "orderId", nullable = false)
-    private Order order; // Liên kết với đối tượng Order
-
-    // @Enumerated(EnumType.STRING) // Sử dụng EnumType.STRING để lưu giá trị trạng
-    // thái dưới dạng chuỗi
+    private Order order;
+    // Trạng thái của đơn hàng
     @Column(name = "status")
-    private String status; // Trạng thái của đơn hàng
-
+    private String status;
+    // Thời gian của trạng thái
     @Column(name = "statusTime")
-    private Timestamp statusTime; // Thời gian của trạng thái
+    private Timestamp statusTime;
 
 }

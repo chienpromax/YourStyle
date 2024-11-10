@@ -1,3 +1,5 @@
+import { format } from "https://cdn.skypack.dev/date-fns";
+
 window.addEventListener("DOMContentLoaded", () => {
     const orderElement = document.getElementById("orderId");
     const orderId = orderElement.textContent;
@@ -30,9 +32,9 @@ window.addEventListener("DOMContentLoaded", () => {
                 cancelButtonText: "Hủy",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    UpdateUI(nextStatus); // cập nhật giao diện
                     // gọi hàm cập nhật trạng thái
                     updateStatus(orderId, nextStatus);
+                    UpdateUI(nextStatus); // cập nhật giao diện
                 }
             });
         }
@@ -66,9 +68,36 @@ window.addEventListener("DOMContentLoaded", () => {
                 cancelButtonText: "Hủy",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    UpdateUI(previousStatus); // cập nhật giao diện
+                    // XỬ lý ẩn thời gian khi quay lại trạng thái trước
+                    let statusElementId;
+                    switch (currentStatus) {
+                        case 2:
+                            statusElementId = "packing";
+                            break;
+                        case 3:
+                            statusElementId = "shipped";
+                            break;
+                        case 4:
+                            statusElementId = "inTransit";
+                            break;
+                        case 5:
+                            statusElementId = "paid";
+                            break;
+                        case 6:
+                            statusElementId = "completed";
+                            break;
+                        default:
+                            break;
+                    }
+                    // lấy phẩn tử thời gian
+                    const statusTimeElement = document.getElementById(`${statusElementId}`);
+                    console.log(statusTimeElement);
+                    if (statusTimeElement) {
+                        statusTimeElement.classList.add("timeUpdatedStatus");
+                    }
                     // gọi hàm cập nhật trạng thái
                     updateStatus(orderId, previousStatus);
+                    UpdateUI(previousStatus); // cập nhật giao diện
                 }
             });
         }
@@ -101,7 +130,7 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     });
     function updateStatus(orderId, status) {
-        fetch("http://localhost:8080/api/admin/orders/update-status", {
+        fetch("/api/admin/orders/update-status", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -116,11 +145,46 @@ window.addEventListener("DOMContentLoaded", () => {
                 }
             })
             .then((data) => {
-                const { orderId } = data;
+                const { statusTime, statusText, statusDesciption } = data;
+                let newStatusElementId;
+                switch (statusText) {
+                    case "":
+                        console.log("Không có trạng thái");
+                        break;
+                    case "PACKING":
+                        newStatusElementId = "packing";
+                        break;
+                    case "SHIPPED":
+                        newStatusElementId = "shipped";
+                        break;
+                    case "IN_TRANSIT":
+                        newStatusElementId = "inTransit";
+                        break;
+                    case "PAID":
+                        newStatusElementId = "paid";
+                        break;
+                    case "COMPLETED":
+                        newStatusElementId = "completed";
+                        break;
+                    default:
+                        console.log("Status không xác định hoặc chưa xử lý!");
+                        break;
+                }
+                if (newStatusElementId) {
+                    const statusElement = document.querySelector(`#${newStatusElementId}`);
+                    if (statusElement) {
+                        statusElement.classList.remove("timeUpdatedStatus"); // xóa class để hiển thị thời gian
+                        statusElement.innerHTML = statusTime
+                            ? format(new Date(statusTime), "dd-MM-yyyy HH:mm:ss")
+                            : "dd-MM-yyyy HH:mm:ss";
+                    }
+                }
+                // hiển thị trạng thái đơn hàng
+                if (statusDesciption) {
+                    const statusDesciptionElement = document.getElementById("statusDesciption");
+                    statusDesciptionElement.textContent = statusDesciption;
+                }
                 createToast("success", "fa-solid fa-circle-check", "thành công", "Cập nhật trạng thái thành công");
-                setTimeout(() => {
-                    window.location.href = `/admin/orders/detail/${orderId}`;
-                }, 1000);
             })
             .catch((error) => {
                 console.log("Lỗi khi cập nhật trạng thái ", error);
@@ -147,28 +211,51 @@ window.addEventListener("DOMContentLoaded", () => {
         window.open(`/api/invoices/generate?orderId=${orderId}`, "_blank");
     };
     // hàm chọn địa chỉ buộc dữ liệu lên form
+    let addressIdInput; // biến lưu addressid mặc đinh và không mặc định
     window.selectAddress = function (button) {
-        // lấy tr chưa các td
-        let row = button.closest("tr");
+        // lấy tr chứa các td
+        let row = button.closest("tr"); // tìm phần tử cha gần nhất của nút
         let street = row.cells[3].textContent;
         let ward = row.cells[4].textContent;
         let district = row.cells[5].textContent;
         let city = row.cells[6].textContent;
-
-        document.getElementById("floatingstreet").value = street;
-        document.getElementById("floatingward").value = ward;
-        document.getElementById("floatingdistrict").value = district;
-        document.getElementById("floatingcity").value = city;
+        const addressIdElement = row.querySelector(".inputAddressId");
+        if (addressIdElement) {
+            addressIdInput = addressIdElement.value;
+        }
+        const floatingstreet = document.getElementById("floatingstreet");
+        const floatingward = document.getElementById("floatingward");
+        const floatingdistrict = document.getElementById("floatingdistrict");
+        const floatingcity = document.getElementById("floatingcity");
+        if (floatingstreet && floatingward && floatingdistrict && floatingcity) {
+            floatingstreet.value = street;
+            floatingward.value = ward;
+            floatingdistrict.value = district;
+            floatingcity.value = city;
+        } else {
+            document.getElementById("floatingstreetNotDefault").value = street;
+            document.getElementById("floatingcityNotDefault").value = city;
+            document.getElementById("floatingdistrictNotDefault").value = district;
+            document.getElementById("floatingwardNotDefault").value = ward;
+        }
     };
     // hàm lưu địa chỉ
     window.submitAddress = function () {
+        // const addressIdElement = document.querySelector(".inputAddressId");
+        // if (addressIdElement) {
+        //     addressIdInput = addressIdElement.value;
+        // }
         const addressData = {
-            addressId: document.getElementById("inputAddressId").value,
+            addressId: addressIdInput,
             customerId: document.getElementById("inputCustomerId").value,
+            customer: {
+                fullname: document.getElementById("floatinghovaten").value.trim(),
+                phoneNumber: document.getElementById("floatingsodienthoai").value.trim(),
+            },
         };
         Swal.fire({
-            title: "Bạn có chắc chắn muốn thay đổi Địa chỉ không?",
-            text: "Địa chỉ sẽ được cập nhật",
+            title: "Bạn có chắc chắn muốn thay đổi không?",
+            text: "Thông tin đơn hàng sẽ được cập nhật",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -195,7 +282,7 @@ window.addEventListener("DOMContentLoaded", () => {
                         createToast("success", "fa-solid fa-circle-check", "Thành công", message);
                         setTimeout(() => {
                             window.location.href = `/admin/orders/detail/${orderId}`;
-                        }, 3500);
+                        }, 1000);
                     })
                     .catch((err) => {
                         createToast("error", "fa-solid fa-circle-exclamation", "Lỗi", "Cập nhật địa chỉ thất bại!");
@@ -219,17 +306,25 @@ window.addEventListener("DOMContentLoaded", () => {
         const selectedOption = selectectElement.options[selectectElement.selectedIndex];
         selectedDistrict = selectedOption.textContent; // Lấy giá trị thành phố đã chọn
     });
+    // khi nào chọn phường thì mới cho thêm địa chỉ
+    const buttonNewAddress = document.getElementById("newAddresses");
     // Lắng nghe sự kiện change cho select city
     document.getElementById("ward").addEventListener("change", function () {
         const selectectElement = document.getElementById("ward"); // Lấy giá trị thành phố đã chọn
         const selectedOption = selectectElement.options[selectectElement.selectedIndex];
         selectedWard = selectedOption.textContent; // Lấy giá trị thành phố đã chọn
+        buttonNewAddress.removeAttribute("disabled");
     });
     // Hàm thêm mới địa chỉ trong modal
+    buttonNewAddress.setAttribute("disabled", true);
     window.addAddress = function () {
         let streetInput = document.getElementById("street");
         let inputCustomerId = document.getElementById("customerId");
-
+        if (streetInput && streetInput.value.trim() === "") {
+            createToast("warning", "fa-solid fa-triangle-exclamation", "Cảnh báo", "Vui lòng nhập địa chỉ cụ thể!");
+            streetInput.focus(); // trỏ chuột vào input
+            return;
+        }
         let addressData = {
             street: streetInput.value,
             city: selectedCity.trim(),
@@ -248,12 +343,17 @@ window.addEventListener("DOMContentLoaded", () => {
             })
                 .then((response) => {
                     if (!response.ok) {
-                        throw new Error("Network response was not ok");
+                        createToast(
+                            "error",
+                            "fa-solid fa-circle-exclamation",
+                            "Lỗi",
+                            "Khách hàng chỉ thêm được tối đa 3 địa chỉ!"
+                        );
+                        return;
                     }
                     return response.json();
                 })
                 .then((addresses) => {
-                    console.log(addresses);
                     const filteredData = addresses.map((address) => ({
                         // trả về đối tượng phải có (
                         addressId: address.addressId,
@@ -283,7 +383,9 @@ window.addEventListener("DOMContentLoaded", () => {
                                 <td>${address.district}</td>
                                 <td>${address.city}</td>
                                 <td>
-                                    <a href="javascript:void(0);" class="btn btn-outline-warning" onclick="selectAddress(this)" data-bs-dismiss="modal">Chọn</a>
+                                    <a href="javascript:void(0);" class="btn btn-outline-warning" onclick="selectAddress(this)" data-bs-toggle="modal"
+                                                            data-bs-target="#modalIdUpdateOrder"
+                                                            id="selectAddress">Chọn</a>
                                 </td>
                                  <input
                                                         type="hidden"
@@ -311,19 +413,148 @@ window.addEventListener("DOMContentLoaded", () => {
     };
     // hàm buộc dự liệu địa chỉ mặc định lên form
     window.setDefaultAddress = function () {
-        let addressText = document.getElementById("setDefaultAddress").textContent;
+        const defaultAddress = document.getElementById("setDefaultAddress");
+        if (defaultAddress) {
+            let addressText = defaultAddress.textContent;
+            if (addressText) {
+                const divaddressNotIsDefault = document.getElementById("addressNotIsDefault");
+                divaddressNotIsDefault.style.display = "none";
+            }
+            let addressSplitArray = addressText.split(",").map((arr) => arr.trim());
+            let street = addressSplitArray[0];
+            let ward = addressSplitArray[1];
+            let district = addressSplitArray[2];
+            let city = addressSplitArray[3];
 
-        let addressSplitArray = addressText.split(",").map((arr) => arr.trim());
-        let street = addressSplitArray[0];
-        let ward = addressSplitArray[1];
-        let district = addressSplitArray[2];
-        let city = addressSplitArray[3];
-
-        document.getElementById("floatingstreet").value = street;
-        document.getElementById("floatingward").value = ward;
-        document.getElementById("floatingdistrict").value = district;
-        document.getElementById("floatingcity").value = city;
+            document.getElementById("floatingstreet").value = street;
+            document.getElementById("floatingward").value = ward;
+            document.getElementById("floatingdistrict").value = district;
+            document.getElementById("floatingcity").value = city;
+        }
     };
+    // hàm lấy kiểu phương thức thanh toán
+    let transactionType;
+    function updateTransactionType() {
+        if (document.getElementById("bankTransfer").checked) {
+            transactionType = "BANK_TRANSFER";
+        } else if (document.getElementById("cash").checked) {
+            transactionType = "COD";
+        }
+    }
+    document.querySelectorAll("input[name='paymentMethod']").forEach((input) => {
+        input.addEventListener("change", function () {
+            updateTransactionType();
+        });
+    });
+    // gọi hàm lần đầu khi trang được load để lấy kiểu thanh toán
+    updateTransactionType();
+    // hàm thanh toán
+    window.handlePayment = function () {
+        const data = {
+            transactionType: transactionType,
+            orderId: orderId,
+        };
+        fetch("/api/admin/orders/payment", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Có lỗi xảy ra khi gửi dữ liệu.");
+                }
+                return response.json();
+            })
+            .then((order) => {
+                const data = {
+                    totalAmount: order.totalAmount, // chưa format
+                    transactionTime: order.transactionTime,
+                    transactionType: order.transactionType,
+                    paymentMethod: order.paymentMethod,
+                    transactionStatus: order.transactionStatus,
+                };
+                // format thời gian thanh toán
+                const formattedDate = format(new Date(data.transactionTime), "dd-MM-yyyy HH:mm:ss");
+                // format tổng tiền thanh toán
+                const formatedTotalAmount = `${data.totalAmount.toLocaleString("vi-VN")}.000 VND`;
+                const parentTablePayment = document.querySelector(".parentTablePayment");
+                const tablePayment = document.querySelector(".tablePayment");
+                const imageNoDataPayment = document.querySelector(".imageNoDataPayment");
+                const buttonOpenModalPayment = document.getElementById("buttonOpenModalPayment");
+                tablePayment.innerHTML = "";
+                let row = `<tr>
+                                                <td>${formatedTotalAmount}</td>
+                                                <td>${formattedDate}</td>
+                                                <td>${data.transactionType}</td>
+                                                <td>${data.paymentMethod}</td>
+                                                <td>${data.transactionStatus}</td>
+                            </tr>`;
+                tablePayment.innerHTML = row;
+                if (parentTablePayment && imageNoDataPayment && buttonOpenModalPayment) {
+                    parentTablePayment.style.display = "block"; // hiện table
+                    imageNoDataPayment.style.display = "none"; // ẩn hình ảnh
+                    buttonOpenModalPayment.style.display = "none"; // ẩn button thanh toán sau khi thanh toán xong
+                }
+                // câp nhật giao diện trạng thái
+                UpdateUI(5); // 5 là trạng thái thanh toán
+                // cập nhật trong server
+                updateStatus(orderId, 5);
+                // In ra thông báo từ server
+                createToast("success", "fa-solid fa-circle-check", "Thành công", "Thanh toán thành công");
+            })
+            .catch((err) => {
+                createToast("error", "fa-solid fa-circle-exclamation", "Lỗi", "Thanh toán thất bại!");
+                console.error("Lỗi:", err);
+            });
+    };
+    // vô hiệu hóa nút thanh toán
+    const buttonPayment = document.getElementById("confirmPayment");
+    window.openModalPayment = function () {
+        buttonPayment.setAttribute("disabled", true);
+    };
+    window.deleteTextInputCustomerGive = function () {
+        document.getElementById("customerGive").value = "";
+    };
+    // hàm tính toán tiền khách đưa
+    document.getElementById("customerGive").addEventListener("input", function () {
+        let voucherTotalSum = document.getElementById("voucherTotalSum").value.trim();
+
+        // Xóa VND nếu có và định dạng lại giá trị
+        let voucherTotalSumMoney = voucherTotalSum.replace("VND", "").replace(/\./g, "");
+        let voucherTotalSumMoneyFormat = parseInt(voucherTotalSumMoney, 10); // Chuyển đổi thành số nguyên
+
+        const customerGive = document.getElementById("customerGive").value.trim();
+        const tienthua = document.getElementById("tienthua");
+
+        // Xóa dấu chấm khi nhập vào và tính toán số tiền đã đưa
+        let customerGiveFormatted = customerGive.replace(/\./g, ""); // Loại bỏ dấu chấm
+        let customerGiveMoney = parseInt(customerGiveFormatted, 10); // Chuyển thành số
+
+        // Thêm dấu chấm vào số tiền đã nhập
+        let customerGiveWithComma = customerGiveFormatted.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+        // Cập nhật lại giá trị ô input tiền khách đưa
+        document.getElementById("customerGive").value = customerGiveWithComma;
+
+        // Tính số tiền thừa và thêm dấu .
+        let tienthuaValue = customerGiveMoney - voucherTotalSumMoneyFormat;
+        tienthua.value = tienthuaValue >= 0 ? tienthuaValue.toLocaleString() + " VND" : "0 VND";
+
+        if (customerGiveMoney >= voucherTotalSumMoneyFormat) {
+            buttonPayment.removeAttribute("disabled");
+        } else {
+            buttonPayment.setAttribute("disabled", true);
+        }
+    });
+    const transactionId = document.getElementById("transactionId");
+    document.getElementById("cash").addEventListener("click", function () {
+        transactionId.style.display = "none";
+    });
+    document.getElementById("bankTransfer").addEventListener("click", function () {
+        transactionId.style.display = "block";
+    });
     function createToast(type, icon, title, text) {
         const newToast = document.createElement("div");
         newToast.innerHTML = `<div class="toast ${type}">

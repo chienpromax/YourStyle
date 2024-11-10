@@ -46,7 +46,10 @@ public class Order implements Serializable {
     private TransactionType transactionType;
     private String paymentMethod;
     private String transactionStatus;
-
+    private Timestamp transactionTime = new Timestamp(System.currentTimeMillis());
+    @Enumerated(EnumType.STRING)
+    @Column(name = "orderChannel")
+    private OrderChannel orderChannel;
     @ManyToOne
     @JoinColumn(name = "customerId", referencedColumnName = "customerId", nullable = false)
     private Customer customer;
@@ -75,5 +78,9 @@ public class Order implements Serializable {
 
     public String getStatusDescription() {
         return OrderStatus.fromCode(this.status).getDescription();
+    }
+
+    public String getTransactionTypeValue() {
+        return transactionType != null ? transactionType.getValue() : null;
     }
 }

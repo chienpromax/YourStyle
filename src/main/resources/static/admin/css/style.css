@@ -1323,6 +1323,10 @@ h6 {
   font-size: 15px;
 }
 
+.timeStatus {
+  font-size: 16px;
+}
+
 /* trạng thái đơn hàng bị hủy */
 .order-status {
   font-size: 2rem;
@@ -1340,6 +1344,16 @@ h6 {
 .ordericon .icon i {
   font-size: 2rem;
   color    : #6520ff;
+}
+
+/* lịch sử thanh toán */
+.imageNoDataPayment {
+  padding-left: 200px;
+}
+
+.imageNoDataPayment img {
+  height: 300px;
+  width : 600px;
 }
 
 .card-body .step-text {

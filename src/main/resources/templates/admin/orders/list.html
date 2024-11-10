@@ -105,6 +105,7 @@
                                                 <th>Tổng SP</th>
                                                 <th>Tổng số tiền</th>
                                                 <th>Ngày tạo</th>
+                                                <th>Loại đơn</th>
                                                 <th>Trạng thái</th>
                                                 <th>Hành động</th>
                                             </tr>
@@ -119,6 +120,15 @@
                                                 </td>
                                                 <td>[[${totalAmounts[order.orderId]}]]</td>
                                                 <td>[[${#dates.format(order.orderDate,'dd-MM-yyyy HH:mm:ss')}]]</td>
+                                                <td th:if="${order.orderChannel.value == 'ONLINE'}">
+                                                    <span class="badge bg-success">[[${order.orderChannel.name}]]</span>
+                                                </td>
+                                                <td th:if="${order.orderChannel.value == 'DIRECT'}">
+                                                    <span class="badge bg-warning">[[${order.orderChannel.name}]]</span>
+                                                </td>
+                                                <td th:if="${order.orderChannel.value == 'IN_STORE'}">
+                                                    <span class="badge bg-primary">[[${order.orderChannel.name}]]</span>
+                                                </td>
                                                 <td>
                                                     <span class="badge bg-success">[[${order.statusDescription}]]</span>
                                                 </td>

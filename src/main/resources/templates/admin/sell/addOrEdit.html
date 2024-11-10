@@ -334,7 +334,11 @@
                                     <div class="d-flex justify-content-between align-items-center mt-3">
                                         <h3>Khách hàng</h3>
                                         <div>
-                                            <button class="btn btn-outline-warning">
+                                            <button
+                                                class="btn btn-outline-warning"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#openModalListCustomer"
+                                            >
                                                 <i class="fas fa-user"></i>
                                                 CHỌN KHÁCH HÀNG
                                             </button>
@@ -342,17 +346,108 @@
                                     </div>
                                     <hr />
                                     <!-- giao hàng  -->
-                                    <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <div class="d-flex justify-content-between align-items-center mt-2 mb-3">
                                         <h5>Tên khách hàng</h5>
                                         <h6 class="">[[${order.customer.fullname}]]</h6>
                                         <div class="form-check form-switch">
-                                            <label for="shipping" class="form-check-label">Giao hàng</label>
+                                            <label for="shipping" class="form-check-label fw-bold">Giao hàng</label>
                                             <input id="shipping" class="form-check-input" type="checkbox" />
                                         </div>
                                     </div>
                                     <!-- Tính tiền -->
                                     <div class="row">
-                                        <div class="col-md-7"></div>
+                                        <!-- khách hàng và địa chỉ -->
+                                        <div class="col-md-7">
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="form-floating">
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="floatinghovaten"
+                                                            placeholder="Họ và tên"
+                                                        />
+                                                        <label for="floatinghovaten">
+                                                            <span class="text-danger">*</span>
+                                                            Họ và tên
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="form-floating">
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="floatingsodienthoai"
+                                                            placeholder="Số điện thoại"
+                                                        />
+                                                        <label for="floatingsodienthoai">
+                                                            <span class="text-danger">*</span>
+                                                            Số điện thoại
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="form-floating">
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="floatingstreet"
+                                                            placeholder="Địa chị cụ thể"
+                                                        />
+                                                        <label for="floatingstreet">
+                                                            <span class="text-danger">*</span>
+                                                            Địa chị cụ thể
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="form-floating">
+                                                        <input
+                                                            class="form-control"
+                                                            id="floatingcity"
+                                                            placeholder="Tỉnh/thành phố"
+                                                        />
+                                                        <label for="floatingCity">
+                                                            <span class="text-danger">*</span>
+                                                            Tỉnh/thành phố
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="form-floating">
+                                                        <input
+                                                            name=""
+                                                            id="floatingdistrict"
+                                                            class="form-control"
+                                                            placeholder="Quận/huyện"
+                                                        />
+                                                        <label for="floatingdistrict">
+                                                            <span class="text-danger">*</span>
+                                                            Quận/huyện
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="form-floating">
+                                                        <input
+                                                            name=""
+                                                            id="floatingward"
+                                                            class="form-control"
+                                                            placeholder="Xã/phường/thị trấn"
+                                                        />
+
+                                                        <label for="floatingward">
+                                                            <span class="text-danger">*</span>
+                                                            Xã/phường/thị trấn
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- khách hàng và địa chỉ -->
                                         <div class="col-md-5">
                                             <div class="d-flex">
                                                 <div class="form-floating">
@@ -366,12 +461,12 @@
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center mt-3">
                                                 <p>Tiền hàng</p>
-                                                <p>2.300.000 VND</p>
+                                                <p>[[${totalSum}]]</p>
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center mt-1">
                                                 <p>Phí vận chuyển</p>
                                                 <div>
-                                                    <p>0 VND</p>
+                                                    <p>32.000 VND</p>
                                                     <hr />
                                                 </div>
                                             </div>
@@ -383,19 +478,21 @@
                                                 <p class="fw-bold">Tổng số tiền</p>
                                                 <p class="text-danger fw-bold">2.000.000 VND</p>
                                             </div>
-                                            <div class="d-flex justify-content-between mt-3">
-                                                <p class="fw-bold">Khách thanh toán:</p>
-                                                <!-- Icon Thanh toán Tiền Mặt -->
-                                                <button
-                                                    class="btn border border-dark px-4 py-2"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#paymentModal"
-                                                >
-                                                    <i class="fas fa-credit-card"></i>
-                                                </button>
+                                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                                <div class="d-flex p-2">
+                                                    <p class="fw-bold">Khách thanh toán:</p>
+                                                    <!-- Icon Thanh toán Tiền Mặt -->
+                                                    <button
+                                                        class="btn border border-dark px-4 py-2 ms-2"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#paymentModal"
+                                                    >
+                                                        <i class="fas fa-credit-card"></i>
+                                                    </button>
+                                                </div>
                                                 <p class="text-danger fw-bold">0 VND</p>
                                             </div>
-                                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                            <div class="d-flex justify-content-between align-items-center mt-3 mb-2">
                                                 <p class="fw-bold">Tiền thiếu</p>
                                                 <p class="text-danger fw-bold">2.000.000 VND</p>
                                             </div>
@@ -424,8 +521,8 @@
                 <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
                     <div class="modal-content">
                         <form action="" method="post">
-                            <div class="modal-header">
-                                <h3 class="modal-title text-center" id="modalTitleIdPayment">THANH TOÁN</h3>
+                            <div class="modal-header text-center">
+                                <h3 class="modal-title" id="modalTitleIdPayment">THANH TOÁN</h3>
                                 <button
                                     type="button"
                                     class="btn-close"
@@ -434,20 +531,27 @@
                                 ></button>
                             </div>
                             <div class="modal-body">
-                                <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex justify-content-between align-items-center px-5">
                                     <h5>Tổng tiền hàng</h5>
                                     <p class="text-danger fw-bold">2.000.000 VND</p>
                                 </div>
-                                <div class="d-flex">
-                                    <button class="btn px-5 py-1 bg-info rounded-5 text-white">CHUYỂN KHOẢN</button>
-                                    <button class="btn px-5 py-1 bg-success rounded-5 text-white">TIỀN MẶT</button>
+                                <div class="d-flex justify-content-center">
+                                    <button
+                                        class="btn px-5 py-1 bg-info rounded-bottom-5 text-white me-4"
+                                        id="BANK_TRANSFERPayment"
+                                    >
+                                        CHUYỂN KHOẢN
+                                    </button>
+                                    <button class="btn px-5 py-1 bg-success text-white" id="CODPayment">
+                                        TIỀN MẶT
+                                    </button>
                                 </div>
                                 <div class="form-floating mt-3">
                                     <input id="customerPay" type="text" class="form-control" />
                                     <label for="customerPay">Tiền khách đưa</label>
                                 </div>
                                 <div class="table-reponsive">
-                                    <table class="table table-striped text-center">
+                                    <table class="table table-group-divider text-center">
                                         <thead class="">
                                             <tr>
                                                 <th>STT</th>
@@ -746,3 +850,176 @@
         </section>
     </body>
 </html>
+<!-- Modal danh sách khách hàng -->
+<div
+    class="modal fade"
+    id="openModalListCustomer"
+    tabindex="-1"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    role="dialog"
+    aria-labelledby="modalTitleId"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitleId2">Tìm kiếm khách hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- search and create staff -->
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <!-- Start Search  -->
+                    <div class="position-relative w-50">
+                        <a class="position-absolute end-0 top-50 translate-middle-y pe-3" href="#">
+                            <i class="bi bi-search"></i>
+                        </a>
+                        <input class="form-control" placeholder="Nhập tên hoặc email hoặc sdt..." />
+                    </div>
+                    <!-- End Search  -->
+                    <!-- add customer -->
+                    <div>
+                        <a
+                            id="addCustomer"
+                            class="btn btn-warning py-lg-1 px-lg-3 rounded-pill text-white ms-3"
+                            data-bs-toggle="modal"
+                            data-bs-target="#openModalAddCustomer"
+                        >
+                            <i class="bi bi-plus-circle"></i>
+                            Thêm khách hàng
+                        </a>
+                    </div>
+                    <!-- add customer -->
+                </div>
+
+                <!-- start list table -->
+                <div class="table-responsive">
+                    <table class="table table-striped-columns">
+                        <thead>
+                            <tr>
+                                <th scope="col">STT</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Họ và tên</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">SĐT</th>
+                                <th scope="col">Ngày sinh</th>
+                                <th scope="col">Giới tính</th>
+                                <th scope="col">Trạng thái</th>
+                                <th scope="col">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="">
+                                <td>1</td>
+                                <td>KH1</td>
+                                <td>Nguyễn Văn A</td>
+                                <td>iloveyou@gmail.com</td>
+                                <td>0714129312</td>
+                                <td>10-08-2003</td>
+                                <td>Nam</td>
+                                <td>
+                                    <span class="badge text-white bg-success">Hoạt động</span>
+                                </td>
+                                <td class="text-center">
+                                    <a style="cursor: pointer; font-size: 21px"><i class="bi bi-eye"></i></a>
+                                </td>
+                            </tr>
+                            <tr class="">
+                                <td>2</td>
+                                <td>KH2</td>
+                                <td>Nguyễn Văn Hoàng</td>
+                                <td>hoangmafiainternet@gmail.com</td>
+                                <td>0714132112</td>
+                                <td>10-05-1999</td>
+                                <td>Nam</td>
+                                <td>
+                                    <span class="badge text-white bg-success">Hoạt động</span>
+                                </td>
+                                <td class="text-center">
+                                    <a style="cursor: pointer; font-size: 21px"><i class="bi bi-eye"></i></a>
+                                </td>
+                            </tr>
+                            <tr class="">
+                                <td>3</td>
+                                <td>KH3</td>
+                                <td>Lê Khánh Huyền</td>
+                                <td>huyenbaby@gmail.com</td>
+                                <td>0714122312</td>
+                                <td>01-02-2000</td>
+                                <td>Nữ</td>
+                                <td>
+                                    <span class="badge text-white bg-success">Hoạt động</span>
+                                </td>
+                                <td class="text-center">
+                                    <a style="cursor: pointer; font-size: 21px"><i class="bi bi-eye"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- End table-->
+                <!-- start pagination -->
+                <div class="text-muted d-flex justify-content-between">
+                    <form action="">
+                        <div class="form-inline">
+                            <label for="size">Xem:</label>
+                            <select class="px-lg-2 py-lg-1" name="size" id="size" onchange="this.form.submit()">
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                            </select>
+                            <label>Khách hàng</label>
+                        </div>
+                    </form>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a class="page-link">first</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">1</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">3</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">last</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <!-- end pagination -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- modal danh sách khách hàng -->
+<!-- Modal thêm khách hàng -->
+<div
+    class="modal fade"
+    id="openModalAddCustomer"
+    tabindex="-1"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    role="dialog"
+    aria-labelledby="modalTitleId"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitleId3">Thêm khách hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer text-center">
+                <button type="button" class="btn btn-primary">TẠO MỚI</button>
+            </div>
+        </div>
+    </div>
+</div>

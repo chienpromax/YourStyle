@@ -82,7 +82,7 @@
                                             <i class="bi bi-clipboard-check-fill"></i>
                                             <p class="step-text mt-2">Đặt hàng</p>
                                         </div>
-                                        <p th:if="${order.status.code >= 1}">
+                                        <p th:if="${order.status.code >= 1}" class="timeStatus">
                                             [[${#dates.format(order.orderDate,'dd-MM-yyyy HH:mm:ss')}]]
                                         </p>
                                         <p th:unless="${order.status.code >= 1}" class="timeUpdatedStatus">
@@ -95,14 +95,15 @@
                                             <i class="bi bi-box-seam-fill"></i>
                                             <p class="step-text mt-2">Đang đóng gói</p>
                                         </div>
-                                        <p th:if="${order.status.code >= 2}" id="packing">
-                                            <th:block th:each="history : ${order.orderStatusHistories}">
-                                                <span th:if="${history.status == 'PACKING'}">
-                                                    [[${#dates.format(history.statusTime, 'dd-MM-yyyy HH:mm:ss') }]]
-                                                </span>
-                                            </th:block>
+                                        <p th:if="${order.status.code >= 2}">
+                                            <span th:if="${packingTime != null}" class="timeStatus">
+                                                [[${#dates.format(packingTime.statusTime, 'dd-MM-yyyy HH:mm:ss') }]]
+                                            </span>
+                                            <span th:unless="${packingTime != null}" class="timeUpdatedStatus">
+                                                dd-MM-yyyy HH:mm:ss
+                                            </span>
                                         </p>
-                                        <p th:unless="${order.status.code >= 2}" class="timeUpdatedStatus">
+                                        <p th:unless="${order.status.code >= 2}" id="packing" class="timeUpdatedStatus">
                                             dd-MM-yyyy HH:mm:ss
                                         </p>
                                     </div>
@@ -111,14 +112,15 @@
                                             <i class="bi bi-truck-front-fill"></i>
                                             <p class="step-text mt-2">Đã giao cho vận chuyển</p>
                                         </div>
-                                        <p th:if="${order.status.code >= 3}" id="shipped">
-                                            <th:block th:each="history : ${order.orderStatusHistories}">
-                                                <span th:if="${history.status == 'SHIPPED'}">
-                                                    [[${#dates.format(history.statusTime, 'dd-MM-yyyy HH:mm:ss') }]]
-                                                </span>
-                                            </th:block>
+                                        <p th:if="${order.status.code >= 3}">
+                                            <span th:if="${shippedTime != null}" class="timeStatus">
+                                                [[${#dates.format(shippedTime.statusTime, 'dd-MM-yyyy HH:mm:ss') }]]
+                                            </span>
+                                            <span th:unless="${shippedTime != null}" class="timeUpdatedStatus">
+                                                dd-MM-yyyy HH:mm:ss
+                                            </span>
                                         </p>
-                                        <p th:unless="${order.status.code >= 3}" class="timeUpdatedStatus">
+                                        <p th:unless="${order.status.code >= 3}" id="shipped" class="timeUpdatedStatus">
                                             dd-MM-yyyy HH:mm:ss
                                         </p>
                                     </div>
@@ -127,14 +129,37 @@
                                             <i class="bi bi-rocket-takeoff-fill"></i>
                                             <p class="step-text mt-2">Đang giao hàng</p>
                                         </div>
-                                        <p th:if="${order.status.code >= 4}" id="inTransit">
-                                            <th:block th:each="history : ${order.orderStatusHistories}">
-                                                <span th:if="${history.status == 'IN_TRANSIT'}">
-                                                    [[${#dates.format(history.statusTime, 'dd-MM-yyyy HH:mm:ss') }]]
-                                                </span>
-                                            </th:block>
+                                        <p th:if="${order.status.code >= 4}">
+                                            <span th:if="${inTransitTime != null}" class="timeStatus">
+                                                [[${#dates.format(inTransitTime.statusTime, 'dd-MM-yyyy HH:mm:ss') }]]
+                                            </span>
+                                            <span th:unless="${inTransitTime != null}" class="timeUpdatedStatus">
+                                                dd-MM-yyyy HH:mm:ss
+                                            </span>
                                         </p>
-                                        <p th:unless="${order.status.code >= 4}" class="timeUpdatedStatus">
+                                        <p
+                                            th:unless="${order.status.code >= 4}"
+                                            id="inTransit"
+                                            class="timeUpdatedStatus"
+                                        >
+                                            dd-MM-yyyy HH:mm:ss
+                                        </p>
+                                    </div>
+                                    <div class="d-flex flex-column rounded-2 p-2">
+                                        <div class="icon text-center">
+                                            <!-- <i class="bi bi-arrow-repeat"></i> -->
+                                            <i class="fas fa-check-circle" aria-hidden="true"></i>
+                                            <p class="step-text mt-2">Đã thanh toán</p>
+                                        </div>
+                                        <p th:if="${order.status.code >= 5}">
+                                            <span th:if="${paidTime != null}" class="timeStatus">
+                                                [[${#dates.format(paidTime.statusTime, 'dd-MM-yyyy HH:mm:ss') }]]
+                                            </span>
+                                            <span th:unless="${paidTime != null}" class="timeUpdatedStatus">
+                                                dd-MM-yyyy HH:mm:ss
+                                            </span>
+                                        </p>
+                                        <p th:unless="${order.status.code >= 5}" id="paid" class="timeUpdatedStatus">
                                             dd-MM-yyyy HH:mm:ss
                                         </p>
                                     </div>
@@ -143,30 +168,19 @@
                                             <i class="bi bi-house-check-fill"></i>
                                             <p class="step-text mt-2">Hoàn thành</p>
                                         </div>
-                                        <p th:if="${order.status.code >= 5}" id="completed">
-                                            <th:block th:each="history : ${order.orderStatusHistories}">
-                                                <span th:if="${history.status == 'COMPLETED'}">
-                                                    [[${#dates.format(history.statusTime, 'dd-MM-yyyy HH:mm:ss') }]]
-                                                </span>
-                                            </th:block>
-                                        </p>
-                                        <p th:unless="${order.status.code >= 5}" class="timeUpdatedStatus">
-                                            dd-MM-yyyy HH:mm:ss
-                                        </p>
-                                    </div>
-                                    <div class="d-flex flex-column rounded-2 p-2">
-                                        <div class="icon text-center">
-                                            <i class="bi bi-arrow-repeat"></i>
-                                            <p class="step-text mt-2">Trả hàng</p>
-                                        </div>
                                         <p th:if="${order.status.code == 6}">
-                                            <th:block th:each="history : ${order.orderStatusHistories}">
-                                                <span th:if="${history.status == 'RETURNED'}">
-                                                    [[${#dates.format(history.statusTime, 'dd-MM-yyyy HH:mm:ss') }]]
-                                                </span>
-                                            </th:block>
+                                            <span th:if="${completedTime != null}" class="timeStatus">
+                                                [[${#dates.format(completedTime.statusTime, 'dd-MM-yyyy HH:mm:ss') }]]
+                                            </span>
+                                            <span th:unless="${completedTime != null}" class="timeUpdatedStatus">
+                                                dd-MM-yyyy HH:mm:ss
+                                            </span>
                                         </p>
-                                        <p th:unless="${order.status.code == 6}" class="timeUpdatedStatus">
+                                        <p
+                                            th:unless="${order.status.code == 6}"
+                                            id="completed"
+                                            class="timeUpdatedStatus"
+                                        >
                                             dd-MM-yyyy HH:mm:ss
                                         </p>
                                     </div>
@@ -207,7 +221,9 @@
                         <div class="card-body">
                             <div class="container mt-4">
                                 <div class="row">
-                                    <h5 class="col-md-10 d-flex align-items-center">Thông tin đơn hàng</h5>
+                                    <h6 class="col-md-10 d-flex align-items-center fw-bold">
+                                        Thông tin đơn hàng - Đơn [[${order.orderChannel.name}]]
+                                    </h6>
                                     <div class="col-md-2 mb-2 d-flex justify-content-end">
                                         <button
                                             class="btn btn-outline-primary"
@@ -224,7 +240,7 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <p>
-                                            <strong>Mã:</strong>
+                                            <strong>Mã HĐ:</strong>
                                             <span id="orderId">[[${order.orderId}]]</span>
                                         </p>
                                     </div>
@@ -237,7 +253,7 @@
                                     <div class="col-md-4">
                                         <p>
                                             <strong>Trạng thái:</strong>
-                                            <span class="badge bg-success text-light">
+                                            <span class="badge bg-success text-light" id="statusDesciption">
                                                 [[${order.statusDescription}]]
                                             </span>
                                         </p>
@@ -253,7 +269,7 @@
                                             <strong>Địa chỉ:</strong>
                                             <span th:if="${#lists.isEmpty(customer.addresses.?[isDefault])}">
                                                 <span class="text-danger">
-                                                    Không có địa chỉ mặc định!Vui lòng để địa chỉ mặc định!
+                                                    Không có địa chỉ mặc định!Vui lòng thêm địa chỉ mặc định!
                                                 </span>
                                             </span>
                                             <span th:each="address : ${customer.addresses}">
@@ -261,6 +277,13 @@
                                                     [[${address.street + ', '+ address.ward + ', ' + address.district +
                                                     ', ' + address.city}]]
                                                 </span>
+                                                <th:block th:if="${address.isDefault}">
+                                                    <input
+                                                        type="hidden"
+                                                        th:value="${address.addressId}"
+                                                        class="inputAddressId"
+                                                    />
+                                                </th:block>
                                             </span>
                                         </p>
                                     </div>
@@ -298,7 +321,7 @@
                                         <button
                                             class="btn btn-outline-warning"
                                             data-bs-toggle="modal"
-                                            data-bs-target="#modalIdAddAddress"
+                                            data-bs-target="#modalIdSelectAddress"
                                             id="btnSelectAddress"
                                         >
                                             Chọn địa chỉ
@@ -404,12 +427,80 @@
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                                     Hủy
                                                 </button>
-                                                <button
-                                                    type="button"
-                                                    class="btn btn-danger"
-                                                    onclick="submitAddress()"
-                                                    data-bs-dismiss="modal"
-                                                >
+                                                <button type="button" class="btn btn-danger" onclick="submitAddress()">
+                                                    Xác nhận
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <!-- nếu khách hàng không có địa chỉ mặc định  -->
+                                        <div
+                                            class="row"
+                                            th:each="address : *{addresses}"
+                                            th:unless="${address.isDefault}"
+                                            id="addressNotIsDefault"
+                                        >
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-floating">
+                                                    <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        id="floatingstreetNotDefault"
+                                                        placeholder="Địa chị cụ thể"
+                                                    />
+                                                    <label for="floatingstreet">
+                                                        <span class="text-danger">*</span>
+                                                        Địa chị cụ thể
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-floating">
+                                                    <input
+                                                        class="form-control"
+                                                        id="floatingcityNotDefault"
+                                                        placeholder="Tỉnh/thành phố"
+                                                    />
+                                                    <label for="floatingCity">
+                                                        <span class="text-danger">*</span>
+                                                        Tỉnh/thành phố
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-floating">
+                                                    <input
+                                                        name=""
+                                                        id="floatingdistrictNotDefault"
+                                                        class="form-control"
+                                                        placeholder="Quận/huyện"
+                                                    />
+                                                    <label for="floatingdistrict">
+                                                        <span class="text-danger">*</span>
+                                                        Quận/huyện
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-floating">
+                                                    <input
+                                                        name=""
+                                                        id="floatingwardNotDefault"
+                                                        class="form-control"
+                                                        placeholder="Xã/phường/thị trấn"
+                                                    />
+
+                                                    <label for="floatingward">
+                                                        <span class="text-danger">*</span>
+                                                        Xã/phường/thị trấn
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <hr />
+                                            <div class="col-md-12 text-end">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Hủy
+                                                </button>
+                                                <button type="button" class="btn btn-danger" onclick="submitAddress()">
                                                     Xác nhận
                                                 </button>
                                             </div>
@@ -441,7 +532,8 @@
                                     <button
                                         type="button"
                                         class="btn-close btn-lg"
-                                        data-bs-dismiss="modal"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalIdUpdateOrder"
                                         aria-label="Close"
                                     ></button>
                                 </div>
@@ -486,13 +578,13 @@
                                                     </td>
                                                     <input
                                                         type="hidden"
-                                                        th:value="${address.addressId}"
-                                                        id="inputAddressId"
+                                                        th:value="${customer.customerId}"
+                                                        id="inputCustomerId"
                                                     />
                                                     <input
                                                         type="hidden"
-                                                        th:value="${customer.customerId}"
-                                                        id="inputCustomerId"
+                                                        th:value="${address.addressId}"
+                                                        class="inputAddressId"
                                                     />
                                                 </tr>
                                             </tbody>
@@ -555,13 +647,13 @@
                                                     id="street"
                                                     placeholder="Địa chị cụ thể"
                                                     name="floatingstreet"
-                                                    required
                                                 />
                                                 <label for="floatingstreet">
                                                     <span class="text-danger">*</span>
                                                     Địa chị cụ thể
                                                 </label>
                                             </div>
+                                            <span id="validatedAddAddress" class="text-danger"></span>
                                         </div>
                                         <!-- City -->
                                         <div class="col-md-6 mb-3">
@@ -615,6 +707,7 @@
                                                 onclick="addAddress()"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#modalIdSelectAddress"
+                                                id="newAddresses"
                                             >
                                                 TẠO MỚI
                                             </button>
@@ -630,11 +723,22 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="container mt-4">
-                                <div class="row">
-                                    <h5 class="col-md-12">Lịch sử thanh toán</h5>
-                                    <hr />
+                                <div class="d-flex justify-content-between">
+                                    <h6 class="fw-bold">Lịch sử thanh toán</h6>
+                                    <button
+                                        class="btn btn-outline-warning"
+                                        th:if="${order.status.code == 4}"
+                                        th:unless="${order.transactionType != null}"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#confirmPaymentModal"
+                                        onclick="openModalPayment()"
+                                        id="buttonOpenModalPayment"
+                                    >
+                                        Xác nhận thanh toán
+                                    </button>
                                 </div>
-                                <div class="table-responsive">
+                                <hr />
+                                <div class="table-responsive" th:if="${order.transactionType != null}">
                                     <table class="table table-borderless text-center">
                                         <thead>
                                             <tr>
@@ -643,25 +747,149 @@
                                                 <th scope="col">Loại giao dịch</th>
                                                 <th scope="col">PTTT</th>
                                                 <th scope="col">Trạng thái</th>
-                                                <th scope="col">Ghi chú</th>
                                             </tr>
                                         </thead>
-                                        <tbody class="dssp">
+                                        <tbody class="tablePayment">
                                             <tr>
                                                 <td>[[${voucherTotalSum}]]</td>
-                                                <td>[[${#dates.format(order.orderDate, 'dd-MM-yyyy HH:mm:ss')}]]</td>
+                                                <td>
+                                                    [[${#dates.format(order.transactionTime, 'dd-MM-yyyy HH:mm:ss')}]]
+                                                </td>
                                                 <td>[[${order.transactionType}]]</td>
                                                 <td>[[${order.paymentMethod}]]</td>
                                                 <td>[[${order.transactionStatus}]]</td>
-                                                <td>[[${order.note}]]</td>
                                             </tr>
                                         </tbody>
                                     </table>
+                                </div>
+                                <div
+                                    class="table-responsive parentTablePayment"
+                                    th:unless="${order.transactionType != null}"
+                                    style="display: none"
+                                >
+                                    <table class="table table-borderless text-center">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Số tiền</th>
+                                                <th scope="col">Thời gian</th>
+                                                <th scope="col">Loại giao dịch</th>
+                                                <th scope="col">PTTT</th>
+                                                <th scope="col">Trạng thái</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="tablePayment">
+                                            <!-- hiển thị data tại đây -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div th:unless="${order.transactionType != null}" class="imageNoDataPayment">
+                                    <img src="/admin/img/no-data-icon.png" alt="" class="img-fluid object-cover" />
                                 </div>
                             </div>
                         </div>
                     </div>
                     <!-- Lịch sử thanh toán -->
+                    <!-- Modal xác nhân thanh toán -->
+                    <div
+                        class="modal fade"
+                        id="confirmPaymentModal"
+                        tabindex="-1"
+                        data-bs-backdrop="static"
+                        data-bs-keyboard="false"
+                        role="dialog"
+                        aria-labelledby="modalTitleId"
+                        aria-hidden="true"
+                    >
+                        <div
+                            class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg"
+                            role="document"
+                        >
+                            <div class="modal-content">
+                                <div class="modal-header text-center">
+                                    <h5 class="modal-title" id="modalTitleId">Xác nhận thanh toán</h5>
+                                    <button
+                                        type="button"
+                                        class="btn-close"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                        onclick="deleteTextInputCustomerGive()"
+                                    ></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-floating mb-2">
+                                        <input
+                                            id="voucherTotalSum"
+                                            type="text"
+                                            class="form-control"
+                                            th:value="${voucherTotalSum}"
+                                            disabled
+                                        />
+                                        <label for="voucherTotalSum" class="form-label fst-normal">Tổng tiền</label>
+                                    </div>
+                                    <div class="form-floating mb-2">
+                                        <input id="customerGive" type="text" class="form-control" />
+                                        <label for="customerGive" class="form-label fst-normal">Tiền khách đưa</label>
+                                    </div>
+                                    <div class="form-floating mb-2">
+                                        <input id="tienthua" type="text" class="form-control" value="0 VND" disabled />
+                                        <label for="tienthua" class="form-label fst-normal">Tiền thừa</label>
+                                    </div>
+                                    <p>Phương thức thanh toán</p>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="form-check">
+                                            <input
+                                                type="radio"
+                                                name="paymentMethod"
+                                                id="bankTransfer"
+                                                class="form-check-input"
+                                                checked
+                                            />
+                                            <label class="form-check-label" for="bankTransfer">Chuyển khoản</label>
+                                        </div>
+                                        <div class="form-check ms-3">
+                                            <input
+                                                type="radio"
+                                                name="paymentMethod"
+                                                id="cash"
+                                                class="form-check-input"
+                                            />
+                                            <label class="form-check-label" for="cash">Tiền mặt</label>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="transactionId"
+                                            placeholder="Mã giao dịch*"
+                                        />
+                                        <p class="text-danger" id="valdatedTransactionId"></p>
+                                    </div>
+                                </div>
+                                <div class="text-center mb-3">
+                                    <button
+                                        type="button"
+                                        class="btn btn-danger px-4 py-2"
+                                        data-bs-dismiss="modal"
+                                        onclick="deleteTextInputCustomerGive()"
+                                    >
+                                        Hủy
+                                    </button>
+                                    <button
+                                        type="button"
+                                        id="confirmPayment"
+                                        class="btn btn-primary px-4 py-2"
+                                        data-bs-dismiss="modal"
+                                        onclick="handlePayment()"
+                                    >
+                                        Thanh toán
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal xác nhân thanh toán -->
                     <div class="card">
                         <div class="card-body">
                             <div class="container mt-4">
@@ -747,8 +975,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Lịch sử thanh toán -->
-
+                    <!-- Phiếu giảm giá -->
                     <div class="card p-4 shadow-sm border-0 voucherOrder">
                         <div class="row mt-4">
                             <div class="col-md-3">
@@ -757,7 +984,12 @@
                                         <i class="bi bi-percent text-success" style="font-size: 1.5rem"></i>
                                     </div>
                                     <p class="text-center mb-1"><strong>Phiếu giảm giá</strong></p>
-                                    <p class="badge bg-success p-2">[[${order.voucher.voucherName}]]</p>
+                                    <th:block th:if="${order.voucher}">
+                                        <p class="badge bg-success p-2">[[${order.voucher.voucherName}]]</p>
+                                    </th:block>
+                                    <th:block th:unless="${order.voucher}">
+                                        <p class="badge bg-warning p-2">Không có</p>
+                                    </th:block>
                                 </div>
                             </div>
                             <div class="col-md-5"></div>
@@ -801,7 +1033,7 @@
             </main>
             <!-- End #main -->
             <script src="/admin/js/addressAPI.js"></script>
-            <script src="/admin/js/order.js"></script>
+            <script type="module" src="/admin/js/order.js"></script>
         </section>
     </body>
 </html>

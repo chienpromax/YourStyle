@@ -1,13 +1,14 @@
 package yourstyle.com.shope.model;
 
 public enum TransactionType {
-    ONLINE("Online"),
+    ONLINE("Trực tuyến"),
     BANK_TRANSFER("Chuyển khoản"),
     COD("Thanh toán khi nhận hàng"),
     E_WALLET("Ví điện tử"),
     CREDIT_CARD("Thẻ tín dụng"),
     PAYMENT_GATEWAY("Cổng thanh toán trực tuyến"),
-    IN_STORE("Thanh toán tại quầy");
+    PAY_IN_STORE("Thanh toán tại quầy"),
+    CASH("Tiền mặt");
 
     private final String value;
 
@@ -18,4 +19,5 @@ public enum TransactionType {
     public String getValue() {
         return value;
     }
+
 }

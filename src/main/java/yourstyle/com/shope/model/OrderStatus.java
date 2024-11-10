@@ -7,9 +7,9 @@ public enum OrderStatus {
     PACKING(2, "Đang đóng gói"),
     SHIPPED(3, "Đã giao cho vận chuyển"),
     IN_TRANSIT(4, "Đang giao hàng"),
-    COMPLETED(5, "Hoàn thành"),
-    RETURNED(6, "Trả hàng"),
-    PAID(8, "Đã thanh toán");
+    PAID(5, "Đã thanh toán"),
+    COMPLETED(6, "Hoàn thành"),
+    RETURNED(8, "Trả hàng");
 
     private final int code;
     private final String description;

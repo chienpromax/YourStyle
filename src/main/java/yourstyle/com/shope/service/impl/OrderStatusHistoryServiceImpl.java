@@ -44,4 +44,9 @@ public class OrderStatusHistoryServiceImpl implements OrderStatusHistoryService 
 		orderStatusHistoryRepository.deleteById(id);
 	}
 
+	@Override
+	public Optional<OrderStatusHistory> findByLatestStatus(Integer orderId, String status) {
+		return orderStatusHistoryRepository.findTopByOrderOrderIdAndStatusOrderByStatusTimeDesc(orderId, status);
+	}
+
 }

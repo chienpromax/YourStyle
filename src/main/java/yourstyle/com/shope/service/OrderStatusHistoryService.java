@@ -17,4 +17,5 @@ public interface OrderStatusHistoryService {
 
 	List<OrderStatusHistory> findByOrderOrderId(Integer orderId);
 
+	Optional<OrderStatusHistory> findByLatestStatus(Integer orderId, String status);
 }

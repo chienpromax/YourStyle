@@ -62,6 +62,19 @@ public class OrderController {
             List<OrderStatusHistory> orderStatusHistories = orderStatusHistoryService
                     .findByOrderOrderId(order.getOrderId());
             model.addAttribute("orderStatusHistories", orderStatusHistories);
+            // hiển thị thời gian mới nhất ở trạng thái đơn hàng
+            model.addAttribute("packingTime",
+                    orderStatusHistoryService.findByLatestStatus(order.getOrderId(), "PACKING").orElse(null));
+            model.addAttribute("shippedTime",
+                    orderStatusHistoryService.findByLatestStatus(order.getOrderId(), "SHIPPED").orElse(null));
+            model.addAttribute("inTransitTime",
+                    orderStatusHistoryService.findByLatestStatus(order.getOrderId(), "IN_TRANSIT").orElse(null));
+            model.addAttribute("completedTime",
+                    orderStatusHistoryService.findByLatestStatus(order.getOrderId(), "COMPLETED").orElse(null));
+            model.addAttribute("returnedTime",
+                    orderStatusHistoryService.findByLatestStatus(order.getOrderId(), "RETURNED").orElse(null));
+            model.addAttribute("paidTime",
+                    orderStatusHistoryService.findByLatestStatus(order.getOrderId(), "PAID").orElse(null));
             // thông tin địa chỉ giao hàng của khách hàng
             model.addAttribute("order", order);
             // thêm địa chỉ cho khách hàng bỏ vào object

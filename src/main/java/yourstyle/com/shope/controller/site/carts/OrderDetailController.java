@@ -66,9 +66,7 @@ public class OrderDetailController {
             @RequestParam("addresses[0].city") String city,
             @RequestParam(value = "isDefault", defaultValue = "true") boolean isDefault) {
 
-        // Kiểm tra và khởi tạo Account nếu cần
         if (customer.getAccount() == null || customer.getAccount().getAccountId() == null) {
-            // Xử lý khi `Account` chưa được thiết lập
             throw new IllegalStateException("Account information is missing.");
         }
 
@@ -83,12 +81,10 @@ public class OrderDetailController {
         existingCustomer.setPhoneNumber(customer.getPhoneNumber());
         customerService.save(existingCustomer);
 
-        // Kiểm tra nếu khách hàng đã có địa chỉ, nếu có thì cập nhật địa chỉ đầu tiên
         Address existingAddress = existingCustomer.getAddresses().isEmpty() ? null
                 : existingCustomer.getAddresses().get(0);
 
         if (existingAddress != null) {
-            // Cập nhật địa chỉ hiện tại
             existingAddress.setStreet(street);
             existingAddress.setWard(ward);
             existingAddress.setDistrict(district);
@@ -96,7 +92,6 @@ public class OrderDetailController {
             existingAddress.setIsDefault(isDefault);
             addressService.save(existingAddress);
         } else {
-            // Nếu không có địa chỉ, tạo mới địa chỉ
             Address newAddress = new Address();
             newAddress.setStreet(street);
             newAddress.setWard(ward);
@@ -118,12 +113,10 @@ public class OrderDetailController {
             @RequestParam("newCity") String city,
             @RequestParam(value = "newIsDefault", defaultValue = "false") boolean isDefault) {
 
-        // Kiểm tra và khởi tạo Account nếu cần
         if (customer.getAccount() == null || customer.getAccount().getAccountId() == null) {
             throw new IllegalStateException("Account information is missing.");
         }
 
-        // Lấy thông tin khách hàng từ cơ sở dữ liệu
         Customer existingCustomer = customerService.findByAccountId(customer.getAccount().getAccountId());
 
         if (existingCustomer == null) {
@@ -131,7 +124,6 @@ public class OrderDetailController {
             existingCustomer = customerService.save(customer);
         }
 
-        // Tạo mới địa chỉ và lưu vào cơ sở dữ liệu
         Address newAddress = new Address();
         newAddress.setStreet(street);
         newAddress.setWard(ward);
@@ -141,7 +133,6 @@ public class OrderDetailController {
         newAddress.setCustomer(existingCustomer);
         addressService.save(newAddress);
 
-        // Chuyển hướng lại trang để cập nhật danh sách địa chỉ
         return "redirect:/yourstyle/carts/orderdetail";
     }
 
@@ -149,12 +140,10 @@ public class OrderDetailController {
     public String deleteAddress(@PathVariable("addressId") Integer addressId,
             @RequestParam(value = "customerId", required = false) String customerIdStr,
             RedirectAttributes redirectAttributes) {
-    
-        Integer customerId = null;
-    
+
         if (addressId != null) {
             Optional<Address> address = addressService.findById(addressId);
-    
+
             if (address.isPresent()) {
                 addressService.deleteById(addressId);
                 redirectAttributes.addFlashAttribute("messageType", "success");
@@ -168,28 +157,36 @@ public class OrderDetailController {
             redirectAttributes.addFlashAttribute("messageContent", "Địa chỉ không hợp lệ");
         }
 
-    
         return "redirect:/yourstyle/carts/orderdetail";
     }
-    
+
     @GetMapping("/setDefaultAddress/{addressId}")
     public String setDefaultAddress(@PathVariable("addressId") Integer addressId,
-            @RequestParam("customerId") Integer customerId,
             RedirectAttributes redirectAttributes) {
-        // Bỏ dấu mặc định của địa chỉ hiện tại (nếu có)
-        addressService.removeDefaultAddress(customerId);
+        Optional<Address> selectedAddressOpt = addressService.findById(addressId);
 
-        // Đặt địa chỉ được chọn làm mặc định
-        Address address = addressService.findById(addressId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid address ID"));
-        address.setIsDefault(true);
-        addressService.save(address);
+        if (selectedAddressOpt.isPresent()) {
+            Address selectedAddress = selectedAddressOpt.get();
+            Customer customer = selectedAddress.getCustomer();
 
-        redirectAttributes.addFlashAttribute("messageType", "success");
-        redirectAttributes.addFlashAttribute("messageContent", "Đặt làm địa chỉ mặc định thành công");
+            customer.getAddresses().forEach(address -> {
+                if (address.getIsDefault()) {
+                    address.setIsDefault(false);
+                    addressService.save(address);
+                }
+            });
 
-        // Sau khi đặt làm mặc định, trả về danh sách địa chỉ mới
-        return "redirect:/orderDetail/addresses?customerId=" + customerId;
+            selectedAddress.setIsDefault(true);
+            addressService.save(selectedAddress);
+
+            redirectAttributes.addFlashAttribute("messageType", "success");
+            redirectAttributes.addFlashAttribute("messageContent", "Đã đặt địa chỉ mặc định thành công.");
+        } else {
+            redirectAttributes.addFlashAttribute("messageType", "error");
+            redirectAttributes.addFlashAttribute("messageContent", "Địa chỉ không tồn tại.");
+        }
+
+        return "redirect:/yourstyle/carts/orderdetail";
     }
 
 }

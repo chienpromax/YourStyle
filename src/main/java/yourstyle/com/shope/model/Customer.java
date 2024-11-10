@@ -97,4 +97,8 @@ public class Customer implements Serializable {
 	@OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
 	private List<Address> addresses;
 
+	public Address getDefaultAddress() {
+		return addresses.stream().filter(Address::getIsDefault).findFirst().orElse(null);
+	}
+	
 }

@@ -83,10 +83,8 @@
                     </div>
                     <div class="py-3 text-center" th:if="${#lists.size(customer.addresses) > 0}">
                         <button type="button" class="btn-order-save" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">Thêm địa chỉ mới</button>
+                            data-bs-target="#exampleModal">THÊM ĐỊA CHỈ</button>
                     </div>
-
-
                 </form>
             </div>
 
@@ -104,7 +102,7 @@
                             <form action="/yourstyle/carts/addAddress" method="POST" th:object="${customer}">
                                 <input type="hidden" name="account.accountId"
                                     th:value="${customer.account.accountId}" />
-                                    <input type="hidden" th:value="${customer.customerId}" />
+                                <input type="hidden" th:value="${customer.customerId}" />
 
                                 <div class="mb-3">
                                     <label for="streetAddress" class="form-label">Địa chỉ đường phố*</label>
@@ -145,10 +143,10 @@
                                     <th>Thao tác</th>
                                 </tr>
                                 <tr th:each="address, iterStat : ${customer.addresses}">
-                                    <td th:text="${address.street}">12345ád,12345ád123</td>
-                                    <td th:text="${address.city}">12345sad</td>
-                                    <td th:text="${address.district}">12345ád</td>
-                                    <td th:text="${address.ward}">12345ád</td>
+                                    <td th:text="${address.street}"></td>
+                                    <td th:text="${address.city}"></td>
+                                    <td th:text="${address.district}"></td>
+                                    <td th:text="${address.ward}"></td>
                                     <td th:text="${address.isDefault ? 'Có' : 'Không'}">Có</td>
                                     <td class="text-center">
                                         <!-- Liên kết xóa địa chỉ -->
@@ -160,8 +158,8 @@
 
                                         <!-- Đặt làm địa chỉ mặc định -->
                                         <a style="cursor: pointer; font-size: 21px; color: rgb(0, 128, 255);"
-                                            th:href="@{/orderDetail/setDefaultAddress/{addressId}(addressId=${address.addressId}, customerId=${customerId})}"
-                                            th:if="${!address.isDefault}">
+                                            th:if="${!address.isDefault}"
+                                            th:href="@{/yourstyle/carts/setDefaultAddress/{addressId}(addressId=${address.addressId})}">
                                             <i class="bi bi-star-fill" title="Đặt làm địa chỉ mặc định"></i>
                                         </a>
                                     </td>

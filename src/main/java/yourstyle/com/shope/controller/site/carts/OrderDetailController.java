@@ -55,15 +55,21 @@ public class OrderDetailController {
         model.addAttribute("customer", customer != null ? customer : new Customer());
         model.addAttribute("addresses", addresses.isEmpty() ? List.of(new Address()) : addresses);
 
+        Address defaultAddress = addresses.stream()
+                .filter(Address::getIsDefault)
+                .findFirst()
+                .orElse(null);
+        model.addAttribute("defaultAddress", defaultAddress);
+
         return "site/carts/orderdetail";
     }
 
     @PostMapping("/save")
     public String saveCustomerAndAddress(@ModelAttribute("customer") Customer customer,
-            @RequestParam("addresses[0].street") String street,
-            @RequestParam("addresses[0].ward") String ward,
-            @RequestParam("addresses[0].district") String district,
-            @RequestParam("addresses[0].city") String city,
+            @RequestParam("defaultAddress.street") String street,
+            @RequestParam("defaultAddress.ward") String ward,
+            @RequestParam("defaultAddress.district") String district,
+            @RequestParam("defaultAddress.city") String city,
             @RequestParam(value = "isDefault", defaultValue = "true") boolean isDefault) {
 
         if (customer.getAccount() == null || customer.getAccount().getAccountId() == null) {
@@ -71,7 +77,6 @@ public class OrderDetailController {
         }
 
         Customer existingCustomer = customerService.findByAccountId(customer.getAccount().getAccountId());
-
         if (existingCustomer == null) {
             customer.setAccount(customer.getAccount());
             existingCustomer = customerService.save(customer);
@@ -80,6 +85,16 @@ public class OrderDetailController {
         existingCustomer.setFullname(customer.getFullname());
         existingCustomer.setPhoneNumber(customer.getPhoneNumber());
         customerService.save(existingCustomer);
+
+        // Kiểm tra nếu danh sách địa chỉ không phải là null
+        if (existingCustomer.getAddresses() == null) {
+            existingCustomer.setAddresses(new ArrayList<>());
+        }
+
+        Address defaultAddress = customer.getDefaultAddress();
+        if (defaultAddress == null) {
+            throw new IllegalStateException("No default address found for the customer.");
+        }
 
         Address existingAddress = existingCustomer.getAddresses().isEmpty() ? null
                 : existingCustomer.getAddresses().get(0);
@@ -111,7 +126,8 @@ public class OrderDetailController {
             @RequestParam("newWard") String ward,
             @RequestParam("newDistrict") String district,
             @RequestParam("newCity") String city,
-            @RequestParam(value = "newIsDefault", defaultValue = "false") boolean isDefault) {
+            @RequestParam(value = "newIsDefault", defaultValue = "false") boolean isDefault,
+            RedirectAttributes redirectAttributes) {
 
         if (customer.getAccount() == null || customer.getAccount().getAccountId() == null) {
             throw new IllegalStateException("Account information is missing.");
@@ -124,6 +140,13 @@ public class OrderDetailController {
             existingCustomer = customerService.save(customer);
         }
 
+        // Kiểm tra nếu người dùng đã có 3 địa chỉ
+        if (existingCustomer.getAddresses().size() >= 3) {
+            redirectAttributes.addFlashAttribute("messageType", "error");
+            redirectAttributes.addFlashAttribute("messageContent", "Người dùng chỉ có thể có tối đa 3 địa chỉ.");
+            return "redirect:/yourstyle/carts/orderdetail";
+        }
+
         Address newAddress = new Address();
         newAddress.setStreet(street);
         newAddress.setWard(ward);
@@ -131,8 +154,15 @@ public class OrderDetailController {
         newAddress.setCity(city);
         newAddress.setIsDefault(isDefault);
         newAddress.setCustomer(existingCustomer);
+
+        if (isDefault) {
+            existingCustomer.getAddresses().forEach(address -> address.setIsDefault(false));
+        }
+
         addressService.save(newAddress);
 
+        redirectAttributes.addFlashAttribute("messageType", "success");
+        redirectAttributes.addFlashAttribute("messageContent", "Thêm địa chỉ thành công.");
         return "redirect:/yourstyle/carts/orderdetail";
     }
 

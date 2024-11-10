@@ -31,7 +31,6 @@
                             <label for="lastName" class="form-label">Email</label>
                             <input type="text" class="form-control" id="lastName" name="email"
                                 th:value="${account.email}" readonly>
-                            <div class="form-text">Tên phải chứa 2-40 ký tự</div>
                         </div>
                     </div>
 
@@ -46,46 +45,44 @@
                         </div>
                     </div>
 
+                    <!-- Hiển thị địa chỉ đường phố -->
+                    
                     <div class="mb-3">
                         <label for="streetAddress" class="form-label">Địa chỉ đường phố*</label>
-                        <input type="text" class="form-control" id="streetAddress" name="street"
-                            th:field="*{addresses[0].street}" required>
+                        <input type="text" class="form-control" id="streetAddress" name="addresses[0].street" th:field="*{defaultAddress.street}" required>
                     </div>
-
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="province" class="form-label">Phường*</label>
-                            <input type="text" class="form-control" id="province" name="ward"
-                                th:field="*{addresses[0].ward}" required>
+                            <input type="text" class="form-control" id="province" name="addresses[0].ward" th:field="*{defaultAddress.ward}" required>
+                            
                         </div>
-
                         <div class="col-md-6 mb-3">
                             <label for="city" class="form-label">Quận*</label>
-                            <input type="text" class="form-control" id="city" name="district"
-                                th:field="*{addresses[0].district}" required>
+                            <input type="text" class="form-control" id="city" name="addresses[0].district" th:field="*{defaultAddress.district}" required>
                         </div>
                     </div>
-
                     <div class="mb-3">
                         <label for="postalCode" class="form-label">Thành Phố*</label>
-                        <input type="text" class="form-control" id="postalCode" name="city"
-                            th:field="*{addresses[0].city}" required>
+                        <input type="text" class="form-control" id="postalCode" name="addresses[0].city" th:field="*{defaultAddress.city}" required>
                     </div>
-
                     <div class="form-check mb-3">
                         <input type="checkbox" class="form-check-input" id="defaultAddress" name="isDefault"
-                            th:field="*{addresses[0].isDefault}" />
+                            th:field="*{defaultAddress.isDefault}"
+                            th:checked="${defaultAddress != null && defaultAddress.isDefault}" />
                         <label class="form-check-label" for="defaultAddress">Đặt địa chỉ mặc định</label>
                     </div>
 
                     <div class="py-3 text-center">
                         <button type="submit" class="btn-order-save">LƯU</button>
                     </div>
+
                     <div class="py-3 text-center" th:if="${#lists.size(customer.addresses) > 0}">
                         <button type="button" class="btn-order-save" data-bs-toggle="modal"
                             data-bs-target="#exampleModal">THÊM ĐỊA CHỈ</button>
                     </div>
                 </form>
+
             </div>
 
             <!-- Modal Thêm Địa chỉ -->
@@ -128,50 +125,46 @@
                                         name="newIsDefault" />
                                     <label class="form-check-label" for="defaultAddress">Đặt địa chỉ mặc định</label>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Lưu</button>
+                                <div class="py-4 text-center">
+                                    <button type="submit" class="btn-order-save">LƯU</button>
+                                </div>
                             </form>
 
                             <!-- Hiển thị danh sách địa chỉ hiện tại -->
-                            <h5>Danh sách địa chỉ:</h5>
-                            <table>
-                                <tr>
-                                    <th>Địa chỉ cụ thể</th>
-                                    <th>Tỉnh/Thành phố</th>
-                                    <th>Quận/Huyện</th>
-                                    <th>Xã/Phường</th>
-                                    <th>Mặc định</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                                <tr th:each="address, iterStat : ${customer.addresses}">
-                                    <td th:text="${address.street}"></td>
-                                    <td th:text="${address.city}"></td>
-                                    <td th:text="${address.district}"></td>
-                                    <td th:text="${address.ward}"></td>
-                                    <td th:text="${address.isDefault ? 'Có' : 'Không'}">Có</td>
-                                    <td class="text-center">
-                                        <!-- Liên kết xóa địa chỉ -->
-                                        <a style="cursor: pointer; font-size: 21px; color: red;"
-                                            th:attr="onclick=|confirmDelete(${address.addressId}, ${customerId});|">
-                                            <i class="bi bi-trash" title="Xóa"></i>
-                                        </a>
+                            <h5 class="py-3">Chọn ngôi sao để đặt địa chỉ mặc định </h5>
+                            <div class="table-responsive mt25">
+                                <table class="table table-striped-columns">
+                                    <tr>
+                                        <th>Địa chỉ cụ thể</th>
+                                        <th>Tỉnh/Thành phố</th>
+                                        <th>Quận/Huyện</th>
+                                        <th>Xã/Phường</th>
+                                        <th>Mặc định</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                    <tr th:each="address, iterStat : ${customer.addresses}">
+                                        <td th:text="${address.street}"></td>
+                                        <td th:text="${address.city}"></td>
+                                        <td th:text="${address.district}"></td>
+                                        <td th:text="${address.ward}"></td>
+                                        <td th:text="${address.isDefault ? 'Có' : 'Không'}">Có</td>
+                                        <td class="text-center">
+                                            <!-- Liên kết xóa địa chỉ -->
+                                            <a style="cursor: pointer; font-size: 21px; color: red;"
+                                                th:attr="onclick=|confirmDelete(${address.addressId}, ${customerId});|">
+                                                <i class="bi bi-trash" title="Xóa"></i>
+                                            </a>
 
-
-                                        <!-- Đặt làm địa chỉ mặc định -->
-                                        <a style="cursor: pointer; font-size: 21px; color: rgb(0, 128, 255);"
-                                            th:if="${!address.isDefault}"
-                                            th:href="@{/yourstyle/carts/setDefaultAddress/{addressId}(addressId=${address.addressId})}">
-                                            <i class="bi bi-star-fill" title="Đặt làm địa chỉ mặc định"></i>
-                                        </a>
-                                    </td>
-
-                                </tr>
-                            </table>
-
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                            <!-- Nút lưu địa chỉ mới -->
-                            <button type="submit" class="btn btn-primary">Lưu</button>
+                                            <!-- Đặt làm địa chỉ mặc định -->
+                                            <a style="cursor: pointer; font-size: 21px; color: rgb(255, 196, 0);"
+                                                th:if="${!address.isDefault}"
+                                                th:href="@{/yourstyle/carts/setDefaultAddress/{addressId}(addressId=${address.addressId})}">
+                                                <i class="bi bi-star-fill" title="Đặt làm địa chỉ mặc định"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>

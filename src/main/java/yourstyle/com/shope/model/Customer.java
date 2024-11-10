@@ -98,7 +98,11 @@ public class Customer implements Serializable {
 	private List<Address> addresses;
 
 	public Address getDefaultAddress() {
-		return addresses.stream().filter(Address::getIsDefault).findFirst().orElse(null);
+		if (addresses == null || addresses.isEmpty()) {
+			return new Address();
+		}
+		return addresses.stream().filter(Address::getIsDefault).findFirst().orElse(new Address());
 	}
+	
 	
 }

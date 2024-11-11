@@ -185,10 +185,12 @@
                             </a>
                         </div>
                     </div>
-                    <div class="order-total">
-                        <span class="float-end"
-                            th:text="${#numbers.formatDecimal(totalAmount, 1, 'COMMA', 3, 'POINT')+ ' Đ'}">
-                        </span>
+                    <div class="pt-4 order-total row d-flex align-items-center justify-content-between">
+                        <p>TỔNG TIỀN:
+                            <span class="float-end"
+                                th:text="${#numbers.formatDecimal(totalAmount, 1, 'COMMA', 3, 'POINT')+ ' Đ'}">
+                            </span>
+                        </p>
                     </div>
                     <div class="mb-3">
                         <label for="discountCode" class="form-label">Mã phiếu giảm giá</label>
@@ -197,35 +199,66 @@
                             <button class="btn-order-save mt-2" onclick="applyDiscount()">Áp dụng</button>
                         </div>
                     </div>
-                    <div class="payment py-4">
-                        <h5>Phương thức thanh toán</h5>
-                        <div class="payment-method-radio">
-                            <!-- Thanh toán khi nhận hàng -->
-                            <div class="payment-method-card">
-                                <input class="form-check-input me-2" type="radio" name="paymentMethod" id="cod"
-                                    value="cod">
-                                <img src="https://img.icons8.com/ios-filled/50/000000/cash-in-hand.png" alt="COD">
-                            </div>
-                            <!-- Thanh toán VNPay -->
-                            <div class="payment-method-card">
-                                <input class="form-check-input me-2" type="radio" name="paymentMethod" id="vnpay"
-                                    value="vnpay">
-                                <img src="/site/images/logo/vnpay.png" alt="VNPay">
-                            </div>
-                            <div class="payment-method-card">
-                                <input class="form-check-input me-2" type="radio" name="paymentMethod" id="vnpay"
-                                    value="vnpay">
-                                <img src="/site/images/logo/zalo.png" alt="VNPay">
-                            </div>
+                    <div class="payment-method-radio pt-2">
+                        <div class="payment-method-card">
+                            <input class="form-check-input me-2" type="radio" name="TransactionType" id="CashOnDelivery"
+                                value="CashOnDelivery">
+                            <img src="https://img.icons8.com/ios-filled/50/000000/cash-in-hand.png"
+                                alt="CashOnDelivery">
+                        </div>
+                        <div class="payment-method-card">
+                            <input class="form-check-input me-2" type="radio" name="TransactionType" id="OnlinePayment"
+                                value="OnlinePayment">
+                            <img src="/site/images/logo/vnpay.png" alt="OnlinePayment">
+                        </div>
+                        <div class="payment-method-card">
+                            <input class="form-check-input me-2" type="radio" name="TransactionType" id="OnlinePayment"
+                                value="OnlinePayment">
+                            <img src="/site/images/logo/zalo.png" alt="OnlinePayment">
                         </div>
                     </div>
-                    <a class="py-5" href="/yourstyle/order">
-                        <button class="btn-cart-detail">ĐẶT HÀNG</button>
-                    </a>
+                    <button class="btn-cart-detail my-5" onclick="submitOrder()">ĐẶT HÀNG</button>
+                    <!-- <a class="py-5" href="/yourstyle/order/order"></a> -->
                 </div>
             </div>
 
             <script type="text/javascript">
+                
+                function submitOrder() {
+                    const selectedRadio = document.querySelector('input[name="TransactionType"]:checked');
+                    if (!selectedRadio) {
+                        alert("Vui lòng chọn phương thức thanh toán.");
+                        return;
+                    }
+
+                    const transactionType = selectedRadio.value;
+
+                    const orderData = {
+                        TransactionType: transactionType
+                    };
+
+                    console.log("Transaction Type to send:", transactionType); // Debugging
+
+                    fetch('/yourstyle/order/place-order', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(orderData),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert(data.message);  // Thông báo đặt hàng thành công
+                            } else {
+                                alert(data.message);  // Thông báo lỗi
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error placing order:', error);
+                        });
+                }
+
                 function confirmDelete(addressId, customerId) {
                     Swal.fire({
                         title: 'Bạn có chắc chắn muốn xóa?',

@@ -1,21 +1,26 @@
 package yourstyle.com.shope.model;
 
 public enum TransactionType {
-    ONLINE("Online"),
-    BANK_TRANSFER("Chuyển khoản"),
-    COD("Thanh toán khi nhận hàng"),
-    E_WALLET("Ví điện tử"),
-    CREDIT_CARD("Thẻ tín dụng"),
-    PAYMENT_GATEWAY("Cổng thanh toán trực tuyến"),
-    IN_STORE("Thanh toán tại quầy");
+    OnlinePayment("Thanh toán online"),
+    CashOnDelivery("Thanh toán khi nhận hàng"),
+    PayInStore("Thanh toán tại quầy");
 
-    private final String value;
+    private final String code;
 
-    TransactionType(String value) {
-        this.value = value;
+    TransactionType(String code) {
+        this.code = code;
     }
 
-    public String getValue() {
-        return value;
+    public String getCode() {
+        return code;
+    }
+
+    public static TransactionType fromString(String code) {
+        for (TransactionType transaction : TransactionType.values()) {
+            if (transaction.code.equalsIgnoreCase(code)) {
+                return transaction;
+            }
+        }
+        return null;
     }
 }

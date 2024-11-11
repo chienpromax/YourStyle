@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import yourstyle.com.shope.Exception.VoucherNotFoundException;
 import yourstyle.com.shope.model.Voucher;
 import yourstyle.com.shope.repository.VoucherRepository;
 import yourstyle.com.shope.service.VoucherService;

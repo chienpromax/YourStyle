@@ -37,5 +37,5 @@ public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
 
         @Query("SELECT v FROM Voucher v WHERE v.voucherCode = ?1")
         Optional<Voucher> findByVoucherCodeOrder(String voucherCode);
-                        
+
 }

@@ -21,6 +21,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 
 @SuppressWarnings("serial")
@@ -43,17 +45,18 @@ public class Order implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "transactionType")
     private TransactionType transactionType;
-    private String paymentMethod;
-    private String transactionStatus;
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private Timestamp statusUpdatedAt;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "customerId", referencedColumnName = "customerId", nullable = false)
     private Customer customer;
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "voucherId", referencedColumnName = "voucherId", nullable = true)
     private Voucher voucher;
+    @JsonIgnore
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
     private List<OrderDetail> orderDetails;
 

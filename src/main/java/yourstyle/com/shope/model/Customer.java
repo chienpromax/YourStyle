@@ -84,6 +84,7 @@ public class Customer implements Serializable {
 		return customerId != null ? customerId.hashCode() : 0;
 	}
 
+	@JsonIgnore
 	@Override
 	public String toString() {
 		return "Customer{" +

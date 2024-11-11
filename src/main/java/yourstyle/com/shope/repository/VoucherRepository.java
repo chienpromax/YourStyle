@@ -1,6 +1,7 @@
 package yourstyle.com.shope.repository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,4 +34,8 @@ public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
                         @Param("toDate") LocalDateTime toDate,
                         Pageable pageable);
 
+
+        @Query("SELECT v FROM Voucher v WHERE v.voucherCode LIKE ?1")
+        Optional<Voucher> findByVoucherCodeOrder(String voucherCode);
+                        
 }

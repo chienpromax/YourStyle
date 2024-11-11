@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import yourstyle.com.shope.model.Order;
 import yourstyle.com.shope.model.OrderDetail;
 
 @Repository
@@ -27,4 +28,5 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Intege
             @Param("colorId") Integer colorId,
             @Param("sizeId") Integer sizeId);
 
+    List<OrderDetail> findByOrder(Order order);
 }

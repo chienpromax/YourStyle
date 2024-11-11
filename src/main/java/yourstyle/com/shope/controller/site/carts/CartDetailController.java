@@ -24,10 +24,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import yourstyle.com.shope.model.CustomUserDetails;
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Discount;
+import yourstyle.com.shope.model.Order;
 import yourstyle.com.shope.model.OrderDetail;
 import yourstyle.com.shope.model.ProductVariant;
 import yourstyle.com.shope.repository.CustomerRepository;
 import yourstyle.com.shope.repository.OrderDetailRepository;
+import yourstyle.com.shope.repository.OrderRepository;
 import yourstyle.com.shope.repository.ProductVariantRepository;
 import yourstyle.com.shope.service.CustomerService;
 import yourstyle.com.shope.service.OrderService;
@@ -44,6 +46,8 @@ public class CartDetailController {
     private CustomerRepository customerRepository;
     @Autowired
     private ProductVariantRepository productVariantRepository;
+    @Autowired
+    private OrderRepository orderRepository;
 
     @GetMapping("cartdetail")
     public String add(Model model) {
@@ -58,22 +62,27 @@ public class CartDetailController {
         if (customerId != null) {
             List<OrderDetail> orderDetails = orderDetailRepository.findByOrder_Customer_CustomerId(customerId);
 
-            // Tính tổng tiền
             BigDecimal totalAmount = orderDetails.stream()
                     .map(orderDetail -> {
                         BigDecimal price = orderDetail.getProductVariant().getProduct().getPrice();
                         int quantity = orderDetail.getQuantity();
 
-                        // Kiểm tra nếu sản phẩm có chiết khấu
                         Discount discount = orderDetail.getProductVariant().getProduct().getDiscount();
                         if (discount != null) {
                             BigDecimal discountPercent = discount.getDiscountPercent().divide(BigDecimal.valueOf(100));
-                            price = price.subtract(price.multiply(discountPercent)); // Giá sau khi giảm
+                            price = price.subtract(price.multiply(discountPercent));
                         }
 
-                        return price.multiply(BigDecimal.valueOf(quantity)); // Tính tổng cho sản phẩm
+                        return price.multiply(BigDecimal.valueOf(quantity));
                     })
-                    .reduce(BigDecimal.ZERO, BigDecimal::add); // Cộng tổng cho tất cả sản phẩm
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            List<Order> orders = orderService.findByCustomerAndStatus(customer, 1);
+            if (!orders.isEmpty()) {
+                Order order = orders.get(0);
+                order.setTotalAmount(totalAmount);
+                orderRepository.save(order);
+            }
 
             model.addAttribute("orderDetails", orderDetails);
             model.addAttribute("totalAmount", totalAmount);

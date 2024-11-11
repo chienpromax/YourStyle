@@ -1,5 +1,6 @@
 package yourstyle.com.shope.service;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +12,7 @@ import org.springframework.data.domain.Sort;
 
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Order;
-import yourstyle.com.shope.model.OrderStatus;
+
 
 public interface OrderService {
 
@@ -49,7 +50,12 @@ public interface OrderService {
 
 	public List<Order> findByCustomerAndStatus(Customer customer, int status);
 
-	//thêm giỏ hàng
-	void addProductToCart(Integer customerid, Integer productVariantId, Integer colorId, Integer sizeId, Integer quantity);
+	// thêm giỏ hàng
+	void addProductToCart(Integer customerid, Integer productVariantId, Integer colorId, Integer sizeId,
+			Integer quantity);
 
+	BigDecimal applyVoucher(String voucherCode, BigDecimal totalAmount);
+	
+	BigDecimal getTotalAmount(Order order);
+	
 }

@@ -20,7 +20,6 @@ import yourstyle.com.shope.repository.CustomerRepository;
 import yourstyle.com.shope.repository.OrderDetailRepository;
 import yourstyle.com.shope.service.CategoryService;
 
-
 @ControllerAdvice
 public class NavController {
 
@@ -32,7 +31,6 @@ public class NavController {
 
     @Autowired
     private CustomerRepository customerRepository;
-
 
     @ModelAttribute("parentCategories")
     public List<Category> getParentCategories() {
@@ -53,7 +51,10 @@ public class NavController {
 
             if (customerId != null) {
                 List<OrderDetail> orderDetails = orderDetailRepository.findByOrder_Customer_CustomerId(customerId);
-                model.addAttribute("totalAmount", calculateTotalAmount(orderDetails));
+
+                BigDecimal totalAmount = calculateTotalAmount(orderDetails);
+
+                model.addAttribute("totalAmount", totalAmount);
 
                 long uniqueProductVariantCount = orderDetails.stream()
                         .map(orderDetail -> orderDetail.getProductVariant())
@@ -65,6 +66,7 @@ public class NavController {
                 return orderDetails;
             }
         }
+
         model.addAttribute("cartItemCount", 0);
         model.addAttribute("totalAmount", BigDecimal.ZERO); // Tổng tiền khi giỏ hàng trống
         return new ArrayList<>();
@@ -72,19 +74,19 @@ public class NavController {
 
     private BigDecimal calculateTotalAmount(List<OrderDetail> orderDetails) {
         return orderDetails.stream()
-            .map(orderDetail -> {
-                BigDecimal price = orderDetail.getProductVariant().getProduct().getPrice();
-                int quantity = orderDetail.getQuantity();
-                
-                Discount discount = orderDetail.getProductVariant().getProduct().getDiscount();
-                if (discount != null) {
-                    BigDecimal discountPercent = discount.getDiscountPercent().divide(BigDecimal.valueOf(100));
-                    price = price.subtract(price.multiply(discountPercent));
-                }
-                
-                return price.multiply(BigDecimal.valueOf(quantity));
-            })
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(orderDetail -> {
+                    BigDecimal price = orderDetail.getProductVariant().getProduct().getPrice();
+                    int quantity = orderDetail.getQuantity();
+
+                    Discount discount = orderDetail.getProductVariant().getProduct().getDiscount();
+                    if (discount != null) {
+                        BigDecimal discountPercent = discount.getDiscountPercent().divide(BigDecimal.valueOf(100));
+                        price = price.subtract(price.multiply(discountPercent));
+                    }
+
+                    return price.multiply(BigDecimal.valueOf(quantity));
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
 }

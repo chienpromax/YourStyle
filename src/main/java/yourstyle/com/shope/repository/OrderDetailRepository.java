@@ -16,6 +16,8 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Intege
 
     List<OrderDetail> findByOrder_Customer_CustomerId(Integer customerId);
 
+    List<OrderDetail> findByOrder_Customer_CustomerIdAndOrder_Status(Integer customerId, int status);
+
     // @Query("SELECT od FROM OrderDetail od WHERE od.order.orderId = :orderId AND
     // od.productVariant.productVariantId = :productVariantId")
     // Optional<OrderDetail> findOneByOrderAndProductVariant(@Param("orderId")

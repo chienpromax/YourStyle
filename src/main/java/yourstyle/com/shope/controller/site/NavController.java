@@ -50,14 +50,14 @@ public class NavController {
             Integer customerId = customer != null ? customer.getCustomerId() : null;
 
             if (customerId != null) {
-                List<OrderDetail> orderDetails = orderDetailRepository.findByOrder_Customer_CustomerId(customerId);
+                List<OrderDetail> orderDetails = orderDetailRepository.findByOrder_Customer_CustomerIdAndOrder_Status(customerId, 1);
 
                 BigDecimal totalAmount = calculateTotalAmount(orderDetails);
 
                 model.addAttribute("totalAmount", totalAmount);
 
                 long uniqueProductVariantCount = orderDetails.stream()
-                        .map(orderDetail -> orderDetail.getProductVariant())
+                        .map(OrderDetail::getProductVariant)
                         .distinct()
                         .count();
 

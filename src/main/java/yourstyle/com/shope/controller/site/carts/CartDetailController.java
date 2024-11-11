@@ -53,7 +53,7 @@ public class CartDetailController {
         Integer customerId = customer != null ? customer.getCustomerId() : null;
 
         if (customerId != null) {
-            List<OrderDetail> orderDetails = orderDetailRepository.findByOrder_Customer_CustomerId(customerId);
+            List<OrderDetail> orderDetails = orderDetailRepository.findByOrder_Customer_CustomerIdAndOrder_Status(customerId, 1);
 
             BigDecimal totalAmount = orderDetails.stream()
                     .map(orderDetail -> {

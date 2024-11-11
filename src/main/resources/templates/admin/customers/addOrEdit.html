@@ -44,27 +44,30 @@
                         <input required th:field="*{fullname}" type="text" class="form-control" id="floatinghovaten"
                           placeholder="Họ và tên" />
                         <label for="floatinghovaten"><span class="text-danger">*</span> Họ và tên</label>
-                        <div th:if="${#fields.hasErrors('fullname')}" class="text-danger" th:errors="*{fullname}">Tên không hợp lệ</div>
+                        <div th:if="${#fields.hasErrors('fullname')}" class="text-danger" th:errors="*{fullname}">Tên
+                          không hợp lệ</div>
                       </div>
 
                       <div class="form-floating mb-3">
-                        <input required th:field="*{phoneNumber}" type="text" class="form-control" id="floatingsodienthoai"
-                          placeholder="Số điện thoại" />
+                        <input required th:field="*{phoneNumber}" type="text" class="form-control"
+                          id="floatingsodienthoai" placeholder="Số điện thoại" />
                         <label for="floatingsodienthoai"><span class="text-danger">*</span> Số điện thoại</label>
-                        <div th:if="${#fields.hasErrors('phoneNumber')}" class="text-danger" th:errors="*{phoneNumber}">Số điện thoại không hợp lệ</div>
+                        <div th:if="${#fields.hasErrors('phoneNumber')}" class="text-danger" th:errors="*{phoneNumber}">
+                          Số điện thoại không hợp lệ</div>
                       </div>
 
                       <div class="form-floating mb-3">
                         <input th:field="*{birthday}" type="date" class="form-control" id="floatingngaysinh"
                           placeholder="Ngày sinh" />
                         <label for="floatingngaysinh"><span class="text-danger">*</span> Ngày sinh</label>
-                        <div th:if="${#fields.hasErrors('birthday')}" class="text-danger" th:errors="*{birthday}">Ngày sinh không hợp lệ</div>
+                        <div th:if="${#fields.hasErrors('birthday')}" class="text-danger" th:errors="*{birthday}">Ngày
+                          sinh không hợp lệ</div>
                       </div>
 
                       <div class="col-md-6">
                         <label for="" class="form-label fs-5">Chọn tài khoản</label>
                         <select th:field="*{account.accountId}" class="form-control" required>
-                          <option  th:each="account : ${accounts}" th:value="${account.accountId}"
+                          <option th:each="account : ${accounts}" th:value="${account.accountId}"
                             th:text="${account.email}"></option>
                         </select>
                       </div>
@@ -84,7 +87,8 @@
                             style="width: 250px; height: 250px; cursor: pointer; object-fit: cover;" />
                         </div>
                       </div>
-                      <div th:if="${#fields.hasErrors('imageFile')}" class="text-danger text-center py-2" th:errors="*{imageFile}">Chọn Ảnh</div>
+                      <div th:if="${#fields.hasErrors('imageFile')}" class="text-danger text-center py-2"
+                        th:errors="*{imageFile}">Chọn Ảnh</div>
                     </div>
 
                     <!-- cột bên phải -->
@@ -95,98 +99,68 @@
                     </legend>
                     <div class="col-12 col-md-12 d-flex align-items-center">
                       <div class="form-check me-3">
-                        <input required th:field="*{gender}" class="form-check-input" type="radio" id="radionam" value="1" />
+                        <input required th:field="*{gender}" class="form-check-input" type="radio" id="radionam"
+                          value="1" />
                         <label class="form-check-label" for="radionam">Nam</label>
                       </div>
                       <div class="form-check cursor-pointer">
-                        <input required th:field="*{gender}" class="form-check-input" type="radio" id="radionu" value="0" />
+                        <input required th:field="*{gender}" class="form-check-input" type="radio" id="radionu"
+                          value="0" />
                         <label class="form-check-label" for="radionu">Nữ</label>
                       </div>
                     </div>
                   </fieldset>
 
-
+                  <!-- Địa chỉ khách hàng -->
                   <div class="row">
-                    <div class="col-md-12">
-                      <h6>Địa chỉ 1</h6>
-                    </div>
                     <!-- Street -->
                     <div class="col-md-6 mb-3">
                       <div class="form-floating">
-                        <input type="text" class="form-control" id="floatingstreet" placeholder="Địa chị cụ thể" />
-                        <label for="floatingstreet"><span class="text-danger">*</span> Địa chị cụ
-                          thể</label>
+                        <input type="text" th:field="*{street}" class="form-control" id="floatingstreet"
+                          placeholder="Địa chỉ cụ thể" />
+                        <label for="floatingstreet"><span class="text-danger">*</span> Địa chỉ cụ thể</label>
+                        <div th:if="${#fields.hasErrors('street')}" class="text-danger" th:errors="*{street}">Địa chỉ cụ
+                          thể không hợp lệ</div>
                       </div>
                     </div>
-                    <!-- Street -->
-                    <!-- City -->
-                    <div class="col-md-6 mb-3">
-                      <div class="form-floating">
-                        <select class="form-select floatingcity" id="">
-                          <option selected>Chọn Tỉnh/thành phố</option>
-                        </select>
-                        <label for="floatingCity"><span class="text-danger">*</span> Chọn Tỉnh/thành
-                          phố</label>
-                      </div>
-                    </div>
-                    <!-- City -->
-                    <!-- District -->
-                    <div class="col-md-6 mb-3">
-                      <div class="form-floating">
-                        <select name="" id="" class="form-select floatingdistrict" disabled>
-                          <option selected>Chọn Quận/huyện</option>
-                        </select>
-                        <label for="floatingdistrict"><span class="text-danger">*</span>
-                          Quận/huyện</label>
-                      </div>
-                    </div>
-                    <!-- District -->
-                    <!-- Ward -->
-                    <div class="col-md-6 mb-3">
-                      <div class="form-floating">
-                        <select name="" id="" class="form-select floatingward" disabled>
-                          <option selected>Chọn Xã/phường/thị trấn</option>
-                        </select>
-                        <label for="floatingward"><span class="text-danger">*</span> Xã/phường/thị
-                          trấn</label>
-                      </div>
-                    </div>
-                    <!-- Ward -->
-                    <!-- Thêm, sửa, xóa, địa chỉ -->
-                    <div class="col-md-12">
-                      <div class="d-flex align-items-center justify-content-between mt-2">
-                        <!-- bên trái set mặc định địa chỉ -->
-                        <div>
-                          <a href="#" class="btnDefault"><i class="bi bi-star-fill"></i></a>
-                        </div>
-                        <!-- bên phải thao tác đia chị -->
-                        <div>
-                          <a href="#" class="btn btn-success">
-                            <i class="bi bi-plus-circle"></i>
-                          </a>
-                          <a href="#" class="btn btn-warning"><i class="bi bi-pencil-square"></i></a>
-                          <a href="#" class="btn btn-danger">
-                            <i class="bi bi-trash"></i></a>
-                        </div>
-                        <!-- bên phải thao tác đia chị -->
-                      </div>
-                      <hr />
-                    </div>
-                    <!-- Thêm, sửa, xóa, địa chỉ -->
-                  </div>
+                    <!-- End Street -->
 
-                  <!-- hiện thị địa chỉ mới -->
-                  <div id="displayAddress"></div>
-                  <!-- hiện thị địa chỉ mới -->
-                  <!--  Icon thêm địa chỉ-->
-                  <div class="row">
-                    <div class="col-md-12 mb-3">
-                      <button id="addAddress" class="btn btn-outline-success py-1 px-3 rounded-pill">
-                        <i class="bi bi-plus-circle"></i> Thêm địa chỉ
-                      </button>
+                    <!-- City (Tỉnh/Thành Phố) -->
+                    <div class="col-md-6 mb-3">
+                      <div class="form-floating">
+                        <input type="text" th:field="*{city}" class="form-control" id="floatingCity"
+                          placeholder="Nhập Tỉnh/Thành phố" />
+                        <label for="floatingCity"><span class="text-danger">*</span> Tỉnh/Thành Phố</label>
+                        <div th:if="${#fields.hasErrors('city')}" class="text-danger" th:errors="*{city}">Tỉnh/Thành Phố
+                          không hợp lệ</div>
+                      </div>
                     </div>
+                    <!-- End City -->
+
+                    <!-- District (Quận/Huyện) -->
+                    <div class="col-md-6 mb-3">
+                      <div class="form-floating">
+                        <input type="text" th:field="*{district}" class="form-control" id="floatingdistrict"
+                          placeholder="Nhập Quận/Huyện" />
+                        <label for="floatingdistrict"><span class="text-danger">*</span> Quận/Huyện</label>
+                        <div th:if="${#fields.hasErrors('district')}" class="text-danger" th:errors="*{district}">
+                          Quận/Huyện không hợp lệ</div>
+                      </div>
+                    </div>
+                    <!-- End District -->
+
+                    <!-- Ward (Xã/Phường/Thị Trấn) -->
+                    <div class="col-md-6 mb-3">
+                      <div class="form-floating">
+                        <input type="text" th:field="*{ward}" class="form-control" id="floatingward"
+                          placeholder="Nhập Xã/Phường/Thị Trấn" />
+                        <label for="floatingward"><span class="text-danger">*</span> Xã/Phường/Thị Trấn</label>
+                        <div th:if="${#fields.hasErrors('ward')}" class="text-danger" th:errors="*{ward}">Xã/Phường/Thị
+                          Trấn không hợp lệ</div>
+                      </div>
+                    </div>
+                    <!-- End Ward -->
                   </div>
-                  <!--  Icon thêm địa chỉ-->
                   <div class="text-center mt-3">
                     <button class="btn btn-primary rounded-pill py-2 px-4 me-3" th:if="*{isEdit}">
                       Cập nhật

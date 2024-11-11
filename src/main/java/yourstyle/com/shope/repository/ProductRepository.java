@@ -25,4 +25,5 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("SELECT p FROM Product p WHERE p.category.categoryId = ?1 AND p.productId != ?2")
     List<Product> findSimilarProducts(Integer categoryId, Integer productId);
+
 }

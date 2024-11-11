@@ -50,4 +50,19 @@ public class CustomerDto implements Serializable {
 
     @Transient // Để không lưu vào database
     private MultipartFile imageFile;
+
+    // Các thuộc tính địa chỉ với xác thực
+    @NotBlank(message = "[ Vui lòng nhập địa chỉ cụ thể ]")
+    @Size(max = 255, message = "[ Địa chỉ cụ thể không được quá 255 ký tự ]")
+    private String street;
+
+    @NotBlank(message = "[ Vui lòng nhập tỉnh/thành phố ]")
+    private String city;
+
+    @NotBlank(message = "[ Vui lòng nhập quận/huyện ]")
+    private String district;
+
+    @NotBlank(message = "[ Vui lòng nhập xã/phường/thị trấn ]")
+    private String ward;
+    private Boolean isDefault;
 }

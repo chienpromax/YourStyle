@@ -89,7 +89,7 @@
                 </div>
                 <hr>
                 <div th:if="${products != Null}">
-                    <h4 th:text="'Kết quả tìm kiếm cho: ' + ${searchTerm}"></h4>
+                    <h4 class="search" th:text="'Kết quả tìm kiếm cho: ' + ${searchTerm}"></h4>
                     <div class="row">
                         <div th:each="product : ${products}" class="col-md-3 pt-5" data-aos="fade-up">
                             <div class="card product-card">

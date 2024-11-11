@@ -218,26 +218,4 @@ public class OrderServiceImpl implements OrderService {
 		return totalAmount.subtract(discountAmount);
 	}
 
-	@Override
-    public BigDecimal getTotalAmount(Order order) {
-        List<OrderDetail> orderDetails = orderDetailRepository.findByOrder(order);
-
-        BigDecimal totalAmount = orderDetails.stream()
-                .map(orderDetail -> {
-                    BigDecimal price = orderDetail.getProductVariant().getProduct().getPrice();
-                    int quantity = orderDetail.getQuantity();
-
-                    Discount discount = orderDetail.getProductVariant().getProduct().getDiscount();
-                    if (discount != null) {
-                        BigDecimal discountPercent = discount.getDiscountPercent().divide(BigDecimal.valueOf(100));
-                        price = price.subtract(price.multiply(discountPercent));
-                    }
-
-                    return price.multiply(BigDecimal.valueOf(quantity));
-                })
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        return totalAmount;
-    }
-
 }

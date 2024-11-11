@@ -510,3 +510,10 @@
     text-overflow: ellipsis;
     display: block;
 }
+
+.discount-price {
+    color: red;
+    font-weight: bold;
+}
+
+

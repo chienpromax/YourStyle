@@ -29,7 +29,7 @@ public class SecurityConfig {
                         .requestMatchers("/product/detail/**").permitAll()
                         .requestMatchers("/yourstyle/productfavorites/").permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                        .requestMatchers("/yourstyle/carts/**", "/yourstyle/VNPays/**")
+                        .requestMatchers("/yourstyle/carts/**", "/yourstyle/VNPays/**", "/yourstyle/order/**")
                         .hasAnyAuthority("ROLE_ADMIN", "ROLE_USER", "ROLE_EMPLOYEE")
                         .anyRequest().authenticated())
                 .formLogin(login -> login

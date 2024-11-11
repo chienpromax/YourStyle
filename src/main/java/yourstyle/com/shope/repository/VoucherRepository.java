@@ -35,7 +35,7 @@ public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
                         Pageable pageable);
 
 
-        @Query("SELECT v FROM Voucher v WHERE v.voucherCode LIKE ?1")
+        @Query("SELECT v FROM Voucher v WHERE v.voucherCode = ?1")
         Optional<Voucher> findByVoucherCodeOrder(String voucherCode);
                         
 }

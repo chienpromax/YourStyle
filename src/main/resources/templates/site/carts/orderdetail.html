@@ -246,19 +246,25 @@
                 function applyDiscount() {
                     const discountCode = document.getElementById("discountCode").value;
 
-                    fetch('/apply-discount', {
+                    fetch('/yourstyle/order/apply-voucher', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ code: discountCode }),
+                        body: JSON.stringify({ vouchercode: discountCode }),
                     })
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                // Cập nhật tổng giá trị đơn hàng trên giao diện
-                                document.querySelector(".order-total span").textContent = `${data.newTotalAmount} Đ`;
-                                alert("Mã giảm giá đã được áp dụng thành công!");
+                                const formattedTotalAmount = new Intl.NumberFormat('vi-VN', {
+                                    minimumFractionDigits: 3,
+                                    maximumFractionDigits: 3
+                                }).format(data.newTotalAmount);
+
+                                const totalElement = document.querySelector(".order-total span");
+                                totalElement.textContent = `${formattedTotalAmount} Đ`;
+                                totalElement.style.color = "red";
+                                totalElement.style.fontWeight = "bold";
                             } else {
                                 alert("Mã giảm giá không hợp lệ hoặc đã hết hạn.");
                             }
@@ -266,8 +272,9 @@
                         .catch(error => {
                             console.error("Lỗi khi áp dụng mã giảm giá:", error);
                         });
-                }
 
+                    console.log("Discount Code: ", discountCode);
+                }
 
             </script>
     </section>

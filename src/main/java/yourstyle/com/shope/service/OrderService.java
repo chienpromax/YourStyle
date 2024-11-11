@@ -13,7 +13,6 @@ import org.springframework.data.domain.Sort;
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Order;
 
-
 public interface OrderService {
 
 	<S extends Order> List<S> findAll(Example<S> example, Sort sort);
@@ -55,7 +54,5 @@ public interface OrderService {
 			Integer quantity);
 
 	BigDecimal applyVoucher(String voucherCode, BigDecimal totalAmount);
-	
-	BigDecimal getTotalAmount(Order order);
-	
+
 }

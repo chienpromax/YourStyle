@@ -147,7 +147,7 @@ public class OrderServiceImpl implements OrderService {
 			order.setCustomer(customer);
 			order.setOrderDate(new Timestamp(System.currentTimeMillis()));
 			order.setTotalAmount(BigDecimal.ZERO);
-			order.setStatus(OrderStatus.fromCode(1));
+			order.setStatus(OrderStatus.fromCode(9));
 			orderRepository.save(order);
 		}
 

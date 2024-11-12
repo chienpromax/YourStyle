@@ -199,63 +199,54 @@
                             <button class="btn-order-save mt-2" onclick="applyDiscount()">Áp dụng</button>
                         </div>
                     </div>
-                    <div class="payment-method-radio pt-2">
-                        <div class="payment-method-card">
-                            <input class="form-check-input me-2" type="radio" name="TransactionType" id="CashOnDelivery"
-                                value="CashOnDelivery">
-                            <img src="https://img.icons8.com/ios-filled/50/000000/cash-in-hand.png"
-                                alt="CashOnDelivery">
-                        </div>
-                        <div class="payment-method-card">
-                            <input class="form-check-input me-2" type="radio" name="TransactionType" id="OnlinePayment"
-                                value="OnlinePayment">
-                            <img src="/site/images/logo/vnpay.png" alt="OnlinePayment">
-                        </div>
-                        <div class="payment-method-card">
-                            <input class="form-check-input me-2" type="radio" name="TransactionType" id="OnlinePayment"
-                                value="OnlinePayment">
-                            <img src="/site/images/logo/zalo.png" alt="OnlinePayment">
+                    <div class="payment py-4">
+                        <h5>Phương thức thanh toán</h5>
+                        <div class="payment-method-radio">
+                            <div class="payment-method-card">
+                                <input class="form-check-input me-2" type="radio" name="paymentMethod" id="cod"
+                                    value="cod">
+                                <img src="https://img.icons8.com/ios-filled/50/000000/cash-in-hand.png" alt="COD">
+                            </div>
+                            <div class="payment-method-card">
+                                <input class="form-check-input me-2" type="radio" name="paymentMethod" id="vnpay"
+                                    value="vnpay">
+                                <img src="/site/images/logo/vnpay.png" alt="VNPay">
+                            </div>
+                            <div class="payment-method-card">
+                                <input class="form-check-input me-2" type="radio" name="paymentMethod" id="ZaloPay"
+                                    value="ZaloPay">
+                                <img src="/site/images/logo/zalo.png" alt="ZaloPay">
+                            </div>
                         </div>
                     </div>
-                    <button class="btn-cart-detail my-5" onclick="submitOrder()">ĐẶT HÀNG</button>
+                    <button class="btn-cart-detail my-3" onclick="placeOrder()">ĐẶT HÀNG</button>
                     <!-- <a class="py-5" href="/yourstyle/order/order"></a> -->
                 </div>
             </div>
 
             <script type="text/javascript">
-                
-                function submitOrder() {
-                    const selectedRadio = document.querySelector('input[name="TransactionType"]:checked');
-                    if (!selectedRadio) {
-                        alert("Vui lòng chọn phương thức thanh toán.");
-                        return;
-                    }
 
-                    const transactionType = selectedRadio.value;
-
-                    const orderData = {
-                        TransactionType: transactionType
-                    };
-
-                    console.log("Transaction Type to send:", transactionType); // Debugging
+                function placeOrder() {
+                    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
 
                     fetch('/yourstyle/order/place-order', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify(orderData),
+                        body: JSON.stringify({ paymentMethod: paymentMethod }),
                     })
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                alert(data.message);  // Thông báo đặt hàng thành công
+                                alert("Đặt hàng thành công!");
+                                window.location.href = '/yourstyle/order/orderhistory'
                             } else {
-                                alert(data.message);  // Thông báo lỗi
+                                alert(data.message);
                             }
                         })
                         .catch(error => {
-                            console.error('Error placing order:', error);
+                            console.error('Lỗi khi đặt hàng:', error);
                         });
                 }
 

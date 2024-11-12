@@ -22,7 +22,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer>  {
 
     List<Order> findByCustomer_CustomerId(Integer customerId);
 
-    @Query("SELECT o FROM Order o WHERE o.customer.customerId = :customerId AND o.status = 1")
+    @Query("SELECT o FROM Order o WHERE o.customer.customerId = :customerId AND o.status = 9")
     Order findOrderByCustomerIdAndStatus(@Param("customerId") Integer customerId);
     
     

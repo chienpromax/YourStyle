@@ -53,7 +53,7 @@ public class CartDetailController {
         Integer customerId = customer != null ? customer.getCustomerId() : null;
 
         if (customerId != null) {
-            List<OrderDetail> orderDetails = orderDetailRepository.findByOrder_Customer_CustomerIdAndOrder_Status(customerId, 1);
+            List<OrderDetail> orderDetails = orderDetailRepository.findByOrder_Customer_CustomerIdAndOrder_Status(customerId, 9);
 
             BigDecimal totalAmount = orderDetails.stream()
                     .map(orderDetail -> {
@@ -70,7 +70,7 @@ public class CartDetailController {
                     })
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            List<Order> orders = orderService.findByCustomerAndStatus(customer, 1);
+            List<Order> orders = orderService.findByCustomerAndStatus(customer, 9);
             if (!orders.isEmpty()) {
                 Order order = orders.get(0);
                 order.setTotalAmount(totalAmount);
@@ -97,7 +97,6 @@ public class CartDetailController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Integer accountId = userDetails.getAccountId();
 
-        // Lấy customerId từ accountId
         Customer customer = customerRepository.findByAccount_AccountId(accountId);
         if (customer == null) {
             return "redirect:/site/accounts/login";
@@ -107,21 +106,16 @@ public class CartDetailController {
         if (orderDetailOptional.isPresent()) {
             OrderDetail orderDetail = orderDetailOptional.get();
 
-            // Tính sự thay đổi số lượng
             int previousQuantity = orderDetail.getQuantity();
             int quantityDifference = quantity - previousQuantity;
 
-            // Cập nhật số lượng trong OrderDetail
             orderDetail.setQuantity(quantity);
             orderDetailRepository.save(orderDetail);
 
-            // Cập nhật số lượng trong ProductVariant
             ProductVariant productVariant = orderDetail.getProductVariant();
 
-            // Trừ đi số lượng đã được thay đổi trong ProductVariant (nếu có)
             int newProductVariantQuantity = productVariant.getQuantity() - quantityDifference;
 
-            // Kiểm tra xem số lượng có hợp lệ không (ví dụ, không thể giảm dưới 0)
             if (newProductVariantQuantity >= 0) {
                 productVariant.setQuantity(newProductVariantQuantity);
                 productVariantRepository.save(productVariant);
@@ -143,7 +137,6 @@ public class CartDetailController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Integer accountId = userDetails.getAccountId();
 
-        // Lấy customerId từ accountId
         Customer customer = customerRepository.findByAccount_AccountId(accountId);
         if (customer == null) {
             return "redirect:/site/accounts/login";
@@ -153,12 +146,10 @@ public class CartDetailController {
         if (orderDetailOptional.isPresent()) {
             OrderDetail orderDetail = orderDetailOptional.get();
 
-            // Tìm biến thể sản phẩm và cập nhật lại số lượng
             ProductVariant productVariant = orderDetail.getProductVariant();
             productVariant.setQuantity(productVariant.getQuantity() + orderDetail.getQuantity());
             productVariantRepository.save(productVariant);
 
-            // Xóa OrderDetail khỏi giỏ hàng
             orderDetailRepository.delete(orderDetail);
         }
 

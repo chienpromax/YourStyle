@@ -3,6 +3,7 @@ package yourstyle.com.shope.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,16 +15,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @SuppressWarnings("serial")
 @Data
@@ -45,20 +44,29 @@ public class Order implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "transactionType")
     private TransactionType transactionType;
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
-    private Timestamp statusUpdatedAt;
-
-    @JsonIgnore
+    private String paymentMethod;
+    private String transactionStatus;
+    private Timestamp transactionTime = new Timestamp(System.currentTimeMillis());
+    @Enumerated(EnumType.STRING)
+    @Column(name = "orderChannel")
+    private OrderChannel orderChannel;
     @ManyToOne
     @JoinColumn(name = "customerId", referencedColumnName = "customerId", nullable = false)
     private Customer customer;
-    @JsonIgnore
+
     @ManyToOne
     @JoinColumn(name = "voucherId", referencedColumnName = "voucherId", nullable = true)
     private Voucher voucher;
-    @JsonIgnore
+
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<OrderDetail> orderDetails;
+
+    // @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    // private List<OrderStatusHistory> orderStatusHistories;
+
+    // @Transient
+    // private OrderStatusHistory orderStatusHistory;
 
     public OrderStatus getStatus() {
         return OrderStatus.fromCode(status);
@@ -72,8 +80,7 @@ public class Order implements Serializable {
         return OrderStatus.fromCode(this.status).getDescription();
     }
 
-    @PreUpdate
-    protected void onUpdate() {
-        statusUpdatedAt = new Timestamp(System.currentTimeMillis());
+    public String getTransactionTypeValue() {
+        return transactionType != null ? transactionType.getValue() : null;
     }
 }

@@ -84,7 +84,6 @@ public class Customer implements Serializable {
 		return customerId != null ? customerId.hashCode() : 0;
 	}
 
-	@JsonIgnore
 	@Override
 	public String toString() {
 		return "Customer{" +
@@ -94,7 +93,6 @@ public class Customer implements Serializable {
 				'}';
 	}
 
-	@JsonIgnore
 	@OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
 	private List<Address> addresses;
 

@@ -50,7 +50,7 @@ public class NavController {
             Integer customerId = customer != null ? customer.getCustomerId() : null;
 
             if (customerId != null) {
-                List<OrderDetail> orderDetails = orderDetailRepository.findByOrder_Customer_CustomerIdAndOrder_Status(customerId, 1);
+                List<OrderDetail> orderDetails = orderDetailRepository.findByOrder_Customer_CustomerIdAndOrder_Status(customerId, 9);
 
                 BigDecimal totalAmount = calculateTotalAmount(orderDetails);
 

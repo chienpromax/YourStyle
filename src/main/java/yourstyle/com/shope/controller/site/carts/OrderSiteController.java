@@ -2,6 +2,7 @@ package yourstyle.com.shope.controller.site.carts;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,8 @@ import yourstyle.com.shope.Exception.VoucherUsageException;
 import yourstyle.com.shope.model.CustomUserDetails;
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Order;
+import yourstyle.com.shope.model.OrderChannel;
+import yourstyle.com.shope.model.OrderDetail;
 import yourstyle.com.shope.model.OrderStatus;
 import yourstyle.com.shope.model.TransactionType;
 import yourstyle.com.shope.service.CustomerService;
@@ -32,43 +35,68 @@ public class OrderSiteController {
     @Autowired
     private CustomerService customerService;
 
-    // @PostMapping("/place-order")
-    // public ResponseEntity<Map<String, Object>> placeOrder(@RequestBody Map<String, String> payload) {
-    //     String transactionType = payload.get("TransactionType");
-    //     System.out.println("Received Transaction Type: " + transactionType);
-    //     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    //     CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-    //     Integer accountId = userDetails.getAccountId();
+    @PostMapping("/place-order")
+    public ResponseEntity<Map<String, Object>> placeOrder(@RequestBody Map<String, String> payload) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Integer accountId = userDetails.getAccountId();
 
-    //     Customer customer = customerService.findByAccountId(accountId);
-    //     if (customer == null) {
-    //         Map<String, Object> response = new HashMap<>();
-    //         response.put("success", false);
-    //         response.put("message", "Customer not found");
-    //         return ResponseEntity.badRequest().body(response);
-    //     }
+        Customer customer = customerService.findByAccountId(accountId);
+        if (customer == null || customer.getFullname() == null || customer.getPhoneNumber() == null) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Vui lòng cập nhật đầy đủ thông tin cá nhân.");
+            return ResponseEntity.badRequest().body(response);
+        }
 
-    //     Order order = orderService.findByCustomerAndStatus(customer, 1).get(0);
+        if (customer.getAddresses() == null) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Vui lòng cập nhật địa chỉ.");
+            return ResponseEntity.badRequest().body(response);
+        }
 
-    //     System.out.println("Order before update: " + order);
+        List<Order> orders = orderService.findByCustomerAndStatus(customer, 9);
+        if (orders.isEmpty()) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Không tìm thấy đơn hàng nào đang xử lý.");
+            return ResponseEntity.badRequest().body(response);
+        }
+        Order order = orders.get(0);
 
-    //     TransactionType selectedTransactionType = TransactionType.fromString(transactionType);
-    //     int statusCode = OrderStatus.PLACED.getCode();
-    //     if (selectedTransactionType != null) {
-    //         order.setTransactionType(selectedTransactionType);
-    //         order.setStatus(OrderStatus.fromCode(statusCode));
-    //         orderService.save(order);
-    //     }
+        List<OrderDetail> orderDetails = order.getOrderDetails();
+        if (orderDetails == null || orderDetails.isEmpty()) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Giỏ hàng của bạn không có sản phẩm. Vui lòng thêm sản phẩm.");
+            return ResponseEntity.badRequest().body(response);
+        }
 
-    //     System.out.println("Transaction Type: " + selectedTransactionType);
-    //     System.out.println("Order Status: " + order.getStatus());
-    //     System.out.println("Transaction Type saved: " + order.getTransactionType());
+        String paymentMethod = payload.get("paymentMethod");
+        if ("cod".equalsIgnoreCase(paymentMethod)) {
+            order.setTransactionType(TransactionType.COD);
+            order.setOrderChannel(OrderChannel.DIRECT);
+        } else if ("vnpay".equalsIgnoreCase(paymentMethod) || "ZaloPay".equalsIgnoreCase(paymentMethod)) {
+            order.setTransactionType(TransactionType.ONLINE);
+            order.setOrderChannel(OrderChannel.ONLINE);
+        } else {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Phương thức thanh toán không hợp lệ.");
+            return ResponseEntity.badRequest().body(response);
+        }
 
-    //     Map<String, Object> response = new HashMap<>();
-    //     response.put("success", true);
-    //     response.put("message", "Order placed successfully");
-    //     return ResponseEntity.ok(response);
-    // }
+        order.setTransactionStatus("ĐANG THANH TOÁN");
+        order.setStatus(OrderStatus.PLACED);
+
+        orderService.save(order);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "Đặt hàng thành công.");
+        return ResponseEntity.ok(response);
+    }
 
     @PostMapping("/apply-voucher")
     public ResponseEntity<Map<String, Object>> applyDiscount(@RequestBody Map<String, String> payload) {
@@ -87,7 +115,7 @@ public class OrderSiteController {
             return ResponseEntity.badRequest().body(response);
         }
 
-        Order order = orderService.findByCustomerAndStatus(customer, 1).get(0);
+        Order order = orderService.findByCustomerAndStatus(customer, 9).get(0);
 
         BigDecimal totalAmount = order.getTotalAmount();
 

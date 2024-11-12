@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 
 @org.springframework.stereotype.Controller
 
-@RequestMapping("/yourstyle/VNPays")
 public class VNPayController {
 
     @Autowired
@@ -121,10 +120,14 @@ public class VNPayController {
             order.setTransactionType(TransactionType.ONLINE);
             order.setOrderChannel(OrderChannel.ONLINE);
             order.setTransactionStatus("ĐÃ THANH TOÁN");
+            orderService.save(order);
             // Cập nhật các trường khác vào cơ sở dữ liệu
         } else if (orderId != null) {
             // Thanh toán thất bại
+            order.setTransactionType(TransactionType.ONLINE);
+            order.setOrderChannel(OrderChannel.ONLINE);
             order.setTransactionStatus("THẤT BẠI");
+            orderService.save(order);
         }
 
         model.addAttribute("orderId", orderInfo);

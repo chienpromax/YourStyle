@@ -23,7 +23,7 @@
                         <p><strong>Thông tin đơn hàng:</strong> <span th:text="${orderInfo}"></span></p>
                         <p><strong>Ngày đặt:</strong> <span th:text="${orderDate}"></span></p>
                         <p><strong>Mã trạng thái:</strong> <span th:text="${status}"></span></p>
-                        <form th:action="@{/yourstyle/VNPays/submitOrder}" method="post" class="text-center">
+                        <form th:action="@{/submitOrder}" method="post" class="text-center">
                             <input type="hidden" name="orderId" th:value="${orderId}" />
                             <input type="hidden" name="amount" th:value="${orderTotal}" />
                             <input type="hidden" name="orderInfo" th:value="${orderInfo}" />

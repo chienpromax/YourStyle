@@ -42,4 +42,6 @@ public interface ProductService {
 
     Page<Product> findByCategory_CategoryId(Integer categoryId, Pageable pageable);
     
+    List<Product> findByNameContainingIgnoreCase(String name);
+
 }

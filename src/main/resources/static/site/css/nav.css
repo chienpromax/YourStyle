@@ -1,0 +1,31 @@
+    /* CSS của dropdown lịch sử và gợi ý */
+    #searchHistoryDropdown li,
+    #suggestedProductsDropdown li {
+        padding: 8px 16px;
+        color: black;
+    }
+
+    #searchHistoryDropdown li:hover,
+    #suggestedProductsDropdown li:hover {
+        background-color: #F4F4F4;
+    }
+
+    #searchHistoryDropdown li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    #searchHistoryDropdown li span {
+        margin-left: 10px;
+        color: red;
+    }
+
+    .historymenu{
+        display: none; position: absolute; width: 90%;
+    }
+
+    #suggestedProductsDropdown{
+        display: none; position: absolute;
+    }
+    

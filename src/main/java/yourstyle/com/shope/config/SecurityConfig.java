@@ -24,6 +24,7 @@ public class SecurityConfig {
                         .requestMatchers("/*").permitAll()
                         .requestMatchers("/static/**", "/images/**", "/uploads/**", "/site/**").permitAll()
                         .requestMatchers("/yourstyle/home").permitAll()
+                        .requestMatchers("/product/detail/**").permitAll()
                         .requestMatchers("/yourstyle/accounts/**").permitAll()
                         .requestMatchers("/yourstyle/product/**").permitAll()
                         .requestMatchers("/product/detail/**").permitAll()

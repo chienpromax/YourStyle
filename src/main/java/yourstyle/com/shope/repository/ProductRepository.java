@@ -21,6 +21,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     // Phương thức để tìm sản phẩm theo danh mục với phân trang
     Page<Product> findByCategory_CategoryId(Integer categoryId, Pageable pageable);
 
+    List<Product> findByNameContainingIgnoreCase(String name);
+
     @Query("SELECT p FROM Product p WHERE p.category.categoryId = ?1 AND p.productId != ?2")
     List<Product> findSimilarProducts(Integer categoryId, Integer productId);
+
 }

@@ -77,9 +77,6 @@ public class OrderSiteController {
         if ("cod".equalsIgnoreCase(paymentMethod)) {
             order.setTransactionType(TransactionType.COD);
             order.setOrderChannel(OrderChannel.DIRECT);
-        } else if ("vnpay".equalsIgnoreCase(paymentMethod) || "ZaloPay".equalsIgnoreCase(paymentMethod)) {
-            order.setTransactionType(TransactionType.ONLINE);
-            order.setOrderChannel(OrderChannel.ONLINE);
         } else {
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
@@ -96,8 +93,9 @@ public class OrderSiteController {
         response.put("success", true);
         response.put("message", "Đặt hàng thành công.");
         return ResponseEntity.ok(response);
-    }
+    }  
 
+    
     @PostMapping("/apply-voucher")
     public ResponseEntity<Map<String, Object>> applyDiscount(@RequestBody Map<String, String> payload) {
         String vouchercode = payload.get("vouchercode");

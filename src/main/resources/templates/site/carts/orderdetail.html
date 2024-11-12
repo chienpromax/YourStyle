@@ -200,27 +200,38 @@
                         </div>
                     </div>
                     <div class="payment py-4">
-                        <h5>Phương thức thanh toán</h5>
+                        <h5>THANH TOÁN KHI NHẬN HÀNG</h5>
                         <div class="payment-method-radio">
                             <div class="payment-method-card">
-                                <input class="form-check-input me-2" type="radio" name="paymentMethod" id="cod"
-                                    value="cod">
-                                <img src="https://img.icons8.com/ios-filled/50/000000/cash-in-hand.png" alt="COD">
+                                <input hidden class="form-check-input me-2" type="radio" name="paymentMethod" id="cod"
+                                    value="cod" checked>
+                                <img class="mx-5" src="https://img.icons8.com/ios-filled/50/000000/cash-in-hand.png" alt="COD">
                             </div>
+                            <button class="btn-cart-detail my-3" onclick="placeOrder()">ĐẶT HÀNG</button>
+                        </div>
+                    </div>
+                    <div class="payment py-4">
+                        <h5>THANH TOÁN NGAY</h5>
+                        <div class="payment-method-radio">
+                            <form th:action="@{/yourstyle/VNPays/vnPayMain}" method="get">
+                                <div class="payment-method-card">
+                                    <button type="submit" class="btn">
+                                        <img src="/site/images/logo/vnpay.png" alt="VNPay">
+                                    </button>
+                                </div>
+                            </form>
+                            
                             <div class="payment-method-card">
-                                <input class="form-check-input me-2" type="radio" name="paymentMethod" id="vnpay"
-                                    value="vnpay">
-                                <img src="/site/images/logo/vnpay.png" alt="VNPay">
-                            </div>
-                            <div class="payment-method-card">
-                                <input class="form-check-input me-2" type="radio" name="paymentMethod" id="ZaloPay"
-                                    value="ZaloPay">
-                                <img src="/site/images/logo/zalo.png" alt="ZaloPay">
+                                <form th:action="@{/yourstyle/VNPays/vnPayMain}" method="get">
+                                    <div class="payment-method-card">
+                                        <button type="submit" class="btn">
+                                            <img src="/site/images/logo/zalo.png" alt="ZaloPay">
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
-                    <button class="btn-cart-detail my-3" onclick="placeOrder()">ĐẶT HÀNG</button>
-                    <!-- <a class="py-5" href="/yourstyle/order/order"></a> -->
                 </div>
             </div>
 
@@ -240,7 +251,7 @@
                         .then(data => {
                             if (data.success) {
                                 alert("Đặt hàng thành công!");
-                                window.location.href = '/yourstyle/order/orderhistory'
+                                window.location.href = '/yourstyle/order/orderhistory';
                             } else {
                                 alert(data.message);
                             }

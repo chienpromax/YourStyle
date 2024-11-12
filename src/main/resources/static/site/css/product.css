@@ -1,5 +1,5 @@
 .product-card {
-    height: 95%;
+    height: 100%;
     /* Đặt chiều cao cho thẻ sản phẩm */
     display: flex;
     flex-direction: column;
@@ -20,8 +20,4 @@
 .d-flex {
     margin-top: auto;
     /* Đẩy giá và biểu tượng xuống dưới */
-}
-
-.search{
-    color: gray;
 }

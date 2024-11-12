@@ -20,11 +20,6 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	ProductRepository productRepository;
 
-	@Override
-	public List<Product> findByNameContainingIgnoreCase(String name) {
-		return productRepository.findByNameContainingIgnoreCase(name);
-	}
-
 	public ProductServiceImpl(ProductRepository productRepository) {
 		this.productRepository = productRepository;
 	}
@@ -35,10 +30,9 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public Page<Product> findByCategory_CategoryId(Integer categoryId, Pageable pageable) {
-		return productRepository.findByCategory_CategoryId(categoryId, pageable);
-	}
-
+    public Page<Product> findByCategory_CategoryId(Integer categoryId, Pageable pageable) {
+        return productRepository.findByCategory_CategoryId(categoryId, pageable);
+    }
 	@Override
 	public Product update(Product product) {
 		return productRepository.save(product);

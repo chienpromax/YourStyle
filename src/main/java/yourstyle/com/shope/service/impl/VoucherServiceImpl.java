@@ -55,4 +55,9 @@ public class VoucherServiceImpl implements VoucherService {
         return voucherRepository.findAll();
     }
 
+    @Override
+    public Optional<Voucher> findByVoucherCode(String voucherCode) {
+        return voucherRepository.findByVoucherCodeOrder(voucherCode);
+    }
+
 }

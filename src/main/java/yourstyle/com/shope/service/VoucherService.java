@@ -26,5 +26,7 @@ public interface VoucherService {
             LocalDateTime toDate, Pageable pageable);
 
     List<Voucher> findAll();
+    
+    Optional<Voucher> findByVoucherCode(String voucherCode);
 
 }

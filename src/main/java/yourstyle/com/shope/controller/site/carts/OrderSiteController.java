@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,12 @@ import yourstyle.com.shope.model.OrderChannel;
 import yourstyle.com.shope.model.OrderDetail;
 import yourstyle.com.shope.model.OrderStatus;
 import yourstyle.com.shope.model.TransactionType;
+import yourstyle.com.shope.model.Voucher;
+import yourstyle.com.shope.repository.OrderRepository;
 import yourstyle.com.shope.service.CustomerService;
 import yourstyle.com.shope.service.OrderService;
+import yourstyle.com.shope.service.VoucherService;
+import yourstyle.com.shope.service.impl.VoucherServiceImpl;
 
 @RestController
 @RequestMapping("/yourstyle/order")
@@ -34,6 +39,10 @@ public class OrderSiteController {
     private OrderService orderService;
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    VoucherService voucherService;
+    @Autowired
+    OrderRepository orderRepository;
 
     @PostMapping("/place-order")
     public ResponseEntity<Map<String, Object>> placeOrder(@RequestBody Map<String, String> payload) {
@@ -93,46 +102,56 @@ public class OrderSiteController {
         response.put("success", true);
         response.put("message", "Đặt hàng thành công.");
         return ResponseEntity.ok(response);
-    }  
+    }
 
-    
     @PostMapping("/apply-voucher")
     public ResponseEntity<Map<String, Object>> applyDiscount(@RequestBody Map<String, String> payload) {
         String vouchercode = payload.get("vouchercode");
-
+    
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Integer accountId = userDetails.getAccountId();
-
+    
         Customer customer = customerService.findByAccountId(accountId);
-
+    
         if (customer == null) {
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("message", "Customer not found");
             return ResponseEntity.badRequest().body(response);
         }
-
+    
         Order order = orderService.findByCustomerAndStatus(customer, 9).get(0);
-
         BigDecimal totalAmount = order.getTotalAmount();
-
         BigDecimal newTotalAmount;
+    
         try {
-            newTotalAmount = orderService.applyVoucher(vouchercode, totalAmount);
-
+            Optional<Voucher> voucherOpt = voucherService.findByVoucherCode(vouchercode); // Tìm mã voucher
+            if (voucherOpt.isEmpty()) throw new VoucherNotFoundException("Voucher không tồn tại");
+    
+            Voucher voucher = voucherOpt.get();
+    
+            // Áp dụng voucher và tính tổng tiền mới
+            newTotalAmount = orderService.calculateDiscountedTotal(totalAmount, voucher.getDiscountAmount());
+    
+            // Cập nhật thông tin đơn hàng với voucher mới
+            order.setVoucher(voucher);
+            order.setTotalAmount(newTotalAmount);
+            orderRepository.save(order);
+    
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("newTotalAmount", newTotalAmount);
+            response.put("voucherId", voucher.getVoucherId());
             return ResponseEntity.ok(response);
-
+    
         } catch (VoucherNotFoundException | VoucherUsageException e) {
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("message", e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
-
     }
+    
 
 }

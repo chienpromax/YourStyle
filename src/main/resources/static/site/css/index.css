@@ -516,6 +516,68 @@
     font-weight: bold;
 }
 
+/* ========== .custom-btn-main ========= */
+.custom-btn-main {
+    position: relative;
+    padding: 10px 20px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 0;
+    overflow: hidden;
+    transition: all 0.5s ease;
+    z-index: 1;
+}
+
+.custom-btn-main::before,
+.custom-btn-main::after {
+    content: '';
+    position: absolute;
+    background-color: white;
+    transition: all 1s ease;
+}
+
+.custom-btn-main::before {
+    width: 2px;
+    height: 100%;
+    right: 0;
+    top: 0;
+    transform: rotate(45deg);
+}
+
+.custom-btn-main::after {
+    width: 220%;
+    height: 2px;
+    right: 0;
+    bottom: 0;
+    transform: rotate(-45deg);
+}
+
+.custom-btn-main::after {
+    width: 220%;
+    height: 2px;
+    right: 0;
+    bottom: 0;
+    transform: rotate(-45deg);
+}
+
+.custom-btn-main:hover {
+    background-color: white;
+    color: black;
+    border: #000000 solid 2px;
+}
+
+.custom-btn-main:hover::before {
+    height: 0;
+}
+
+.custom-btn-main:hover::after {
+    width: 0;
+}
+
+
+
+
 
 /* img,span,p { */
 /* img,span,p,input,label,h1,h2,h3,h4,h5,p,ul,li,i,a,tr,td {

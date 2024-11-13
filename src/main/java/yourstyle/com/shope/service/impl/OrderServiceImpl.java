@@ -219,4 +219,9 @@ public class OrderServiceImpl implements OrderService {
 		return totalAmount.subtract(discountAmount);
 	}
 
+	@Override
+	public BigDecimal calculateDiscountedTotal(BigDecimal totalAmount, BigDecimal discountAmount) {
+        return totalAmount.subtract(discountAmount).max(BigDecimal.ZERO);
+    }
+
 }

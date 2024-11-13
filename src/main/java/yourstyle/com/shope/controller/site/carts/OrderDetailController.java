@@ -21,10 +21,12 @@ import yourstyle.com.shope.model.Account;
 import yourstyle.com.shope.model.Address;
 import yourstyle.com.shope.model.CustomUserDetails;
 import yourstyle.com.shope.model.Customer;
+import yourstyle.com.shope.model.Order;
 import yourstyle.com.shope.repository.CustomerRepository;
 import yourstyle.com.shope.service.AccountService;
 import yourstyle.com.shope.service.AddressService;
 import yourstyle.com.shope.service.CustomerService;
+import yourstyle.com.shope.service.OrderService;
 
 @Controller
 @RequestMapping("/yourstyle/carts")
@@ -34,6 +36,8 @@ public class OrderDetailController {
     private AccountService accountService;
     @Autowired
     private AddressService addressService;
+    @Autowired
+    OrderService orderService;
     @Autowired
     private CustomerService customerService;
     @Autowired
@@ -60,6 +64,16 @@ public class OrderDetailController {
                 .findFirst()
                 .orElse(null);
         model.addAttribute("defaultAddress", defaultAddress);
+
+        List<Order> orders = orderService.findByCustomerAndStatus(customer, 9);
+        if (orders.isEmpty()) {
+            model.addAttribute("errorMessage", "Không có hóa đơn nào đang xử lý.");
+            return "errorPage";
+        }
+
+        Order currentOrder = orders.get(0);
+        model.addAttribute("orderTotal", currentOrder.getTotalAmount());
+        model.addAttribute("orderDate", currentOrder.getOrderDate());
 
         return "site/carts/orderdetail";
     }

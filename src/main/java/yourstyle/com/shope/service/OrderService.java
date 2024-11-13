@@ -55,4 +55,5 @@ public interface OrderService {
 
 	BigDecimal applyVoucher(String voucherCode, BigDecimal totalAmount);
 
+	BigDecimal calculateDiscountedTotal(BigDecimal totalAmount, BigDecimal discountAmount);
 }

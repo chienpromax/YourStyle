@@ -46,46 +46,62 @@ public class CartDetailController {
     public String add(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-
+    
         Integer accountId = userDetails.getAccountId();
-
         Customer customer = customerRepository.findByAccount_AccountId(accountId);
         Integer customerId = customer != null ? customer.getCustomerId() : null;
-
+    
         if (customerId != null) {
-            List<OrderDetail> orderDetails = orderDetailRepository.findByOrder_Customer_CustomerIdAndOrder_Status(customerId, 9);
-
-            BigDecimal totalAmount = orderDetails.stream()
-                    .map(orderDetail -> {
-                        BigDecimal price = orderDetail.getProductVariant().getProduct().getPrice();
-                        int quantity = orderDetail.getQuantity();
-
-                        Discount discount = orderDetail.getProductVariant().getProduct().getDiscount();
-                        if (discount != null) {
-                            BigDecimal discountPercent = discount.getDiscountPercent().divide(BigDecimal.valueOf(100));
-                            price = price.subtract(price.multiply(discountPercent));
-                        }
-
-                        return price.multiply(BigDecimal.valueOf(quantity));
-                    })
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-
+            List<OrderDetail> orderDetails = orderDetailRepository
+                    .findByOrder_Customer_CustomerIdAndOrder_Status(customerId, 9);
+    
             List<Order> orders = orderService.findByCustomerAndStatus(customer, 9);
             if (!orders.isEmpty()) {
-                Order order = orders.get(0);
+                Order order = orders.get(0); // Lấy Order đang xử lý (status = 9)
+    
+                // Tính tổng số tiền có áp dụng mã giảm giá
+                BigDecimal totalAmount = calculateTotalAmountWithOrderDiscount(order, orderDetails);
                 order.setTotalAmount(totalAmount);
                 orderRepository.save(order);
+    
+                model.addAttribute("orderDetails", orderDetails);
+                model.addAttribute("totalAmount", totalAmount);
+            } else {
+                model.addAttribute("orderDetails", new ArrayList<>());
+                model.addAttribute("totalAmount", BigDecimal.ZERO);
             }
-
-            model.addAttribute("orderDetails", orderDetails);
-            model.addAttribute("totalAmount", totalAmount);
         } else {
             model.addAttribute("orderDetails", new ArrayList<>());
             model.addAttribute("totalAmount", BigDecimal.ZERO);
         }
+    
         return "site/carts/cartdetail";
     }
 
+    private BigDecimal calculateTotalAmountWithOrderDiscount(Order order, List<OrderDetail> orderDetails) {
+        BigDecimal totalAmount = orderDetails.stream()
+                .map(orderDetail -> {
+                    BigDecimal price = orderDetail.getProductVariant().getProduct().getPrice();
+                    int quantity = orderDetail.getQuantity();
+    
+                    Discount discount = orderDetail.getProductVariant().getProduct().getDiscount();
+                    if (discount != null) {
+                        BigDecimal discountPercent = discount.getDiscountPercent().divide(BigDecimal.valueOf(100));
+                        price = price.subtract(price.multiply(discountPercent));
+                    }
+    
+                    return price.multiply(BigDecimal.valueOf(quantity));
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    
+        if (order.getVoucher() != null) {
+            BigDecimal orderDiscountPercent = order.getVoucher().getDiscountAmount().divide(BigDecimal.valueOf(100));
+            totalAmount = totalAmount.subtract(totalAmount.multiply(orderDiscountPercent));
+        }
+    
+        return totalAmount;
+    }
+    
     @PostMapping("/updateQuantity")
     public String updateQuantity(@RequestParam("orderDetailId") Integer orderDetailId,
             @RequestParam("quantity") Integer quantity,

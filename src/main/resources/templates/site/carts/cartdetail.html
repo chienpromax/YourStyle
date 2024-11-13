@@ -12,7 +12,7 @@
         </div>
         <div class="row py-5">
             <div class="col-md-8">
-                <h3 class="bg-light">Tất cả mặt hàng SL: <span th:text="${cartItemCount}"> </span></h3>
+                <h3 class="bg-light"><strong>TẤT CẢ MẶT HÀNG: <span th:text="${cartItemCount}"> </span></strong></h3>
                 <div class="table-responsive bg-light">
                     <table class="table bg-light">
                         <tbody th:each="orderDetail : ${orderDetails}">
@@ -113,9 +113,12 @@
                         <h5 class="card-title pb-3">Giá ước tính: <strong><span class="float-end"
                                     th:text="${#numbers.formatDecimal(totalAmount, 1, 'COMMA', 3, 'POINT')+ ' Đ'}"></span></strong>
                         </h5>
-                        <a class="py-5" th:href="@{/yourstyle/carts/orderdetail}">
-                            <button class="btn-cart-detail">CHUẨN BỊ ĐẶT HÀNG</button>
-                        </a>
+
+                        <div class="text-center">
+                            <a class="py-5" th:href="@{/yourstyle/carts/orderdetail}">
+                                <button  class="custom-btn-main ">CHUẨN BỊ ĐẶT HÀNG</button>
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div class="row pt-4 d-flex align-items-center justify-content-center">

@@ -78,11 +78,11 @@
                     </div>
 
                     <div class="py-3 text-center">
-                        <button type="submit" class="btn-order-save">LƯU</button>
+                        <button type="submit" class="btn-order-save custom-btn-main">LƯU</button>
                     </div>
 
                     <div class="py-3 text-center" th:if="${#lists.size(customer.addresses) > 0}">
-                        <button type="button" class="btn-order-save" data-bs-toggle="modal"
+                        <button type="button" class="btn-order-save custom-btn-main" data-bs-toggle="modal"
                             data-bs-target="#exampleModal">THÊM ĐỊA CHỈ</button>
                     </div>
                 </form>
@@ -130,7 +130,7 @@
                                     <label class="form-check-label" for="defaultAddress">Đặt địa chỉ mặc định</label>
                                 </div>
                                 <div class="py-4 text-center">
-                                    <button type="submit" class="btn-order-save">LƯU</button>
+                                    <button type="submit" class="btn-order-save custom-btn-main">LƯU</button>
                                 </div>
                             </form>
 
@@ -196,21 +196,24 @@
                         <label for="discountCode" class="form-label">Mã phiếu giảm giá</label>
                         <input type="text" class="form-control" id="discountCode">
                         <div class="d-flex justify-content-center align-items-center">
-                            <button class="btn-order-save mt-2" onclick="applyDiscount()">Áp dụng</button>
+                            <button class="btn-order-save mt-2 custom-btn-main" onclick="applyDiscount()">Áp
+                                dụng</button>
                         </div>
                     </div>
-                    <div class="payment py-4">
+                    <div class="payment py-3">
                         <h5>THANH TOÁN KHI NHẬN HÀNG</h5>
-                        <div class="payment-method-radio">
+                        <div class="payment-method-radio d-flex align-items-center justify-content-center">
                             <div class="payment-method-card">
                                 <input hidden class="form-check-input me-2" type="radio" name="paymentMethod" id="cod"
                                     value="cod" checked>
-                                <img class="mx-5" src="https://img.icons8.com/ios-filled/50/000000/cash-in-hand.png" alt="COD">
+                                <img class="mx-5" src="https://img.icons8.com/ios-filled/50/000000/cash-in-hand.png"
+                                    alt="COD">
                             </div>
-                            <button class="btn-cart-detail my-3" onclick="placeOrder()">ĐẶT HÀNG</button>
+                            <button class="btn-cart-detail my-2 custom-btn-main" onclick="placeOrder()">ĐẶT HÀNG
+                                NGAY</button>
                         </div>
                     </div>
-                    <div class="payment py-4">
+                    <div class="payment">
                         <h5>THANH TOÁN NGAY</h5>
                         <div class="payment-method-radio">
                             <form th:action="@{/vnPayMain}" method="get">
@@ -220,8 +223,8 @@
                                     </button>
                                 </div>
                             </form>
-                            
-                            <div class="payment-method-card">
+
+                            <!-- <div class="payment-method-card">
                                 <form th:action="@{/yourstyle/VNPays/vnPayMain}" method="get">
                                     <div class="payment-method-card">
                                         <button type="submit" class="btn">
@@ -229,7 +232,7 @@
                                         </button>
                                     </div>
                                 </form>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -300,6 +303,9 @@
                                 totalElement.textContent = `${formattedTotalAmount} Đ`;
                                 totalElement.style.color = "red";
                                 totalElement.style.fontWeight = "bold";
+
+                                // Lưu lại voucherId (nếu cần dùng sau)
+                                console.log("Applied Voucher ID: ", data.voucherId);
                             } else {
                                 alert("Mã giảm giá không hợp lệ hoặc đã hết hạn.");
                             }
@@ -307,9 +313,8 @@
                         .catch(error => {
                             console.error("Lỗi khi áp dụng mã giảm giá:", error);
                         });
-
-                    console.log("Discount Code: ", discountCode);
                 }
+
 
             </script>
     </section>

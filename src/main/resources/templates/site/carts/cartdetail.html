@@ -18,7 +18,7 @@
                         <tbody th:each="orderDetail : ${orderDetails}">
                             <tr class="align-items-stretch">
                                 <td class="text-center" scope="row">
-                                    <a href="">
+                                    <a th:href="@{/product/detail/{id}(id=${orderDetail.productVariant.product.productId})}">
                                         <img th:src="@{/uploads/} + ${orderDetail.productVariant.product.image}"
                                             alt="Image" width="100" style="object-fit: cover; max-height: 120px;"
                                             class="img-fluid" />
@@ -116,7 +116,7 @@
 
                         <div class="text-center">
                             <a class="py-5" th:href="@{/yourstyle/carts/orderdetail}">
-                                <button  class="custom-btn-main ">CHUẨN BỊ ĐẶT HÀNG</button>
+                                <button  class="custom-btn-main">CHUẨN BỊ ĐẶT HÀNG</button>
                             </a>
                         </div>
                     </div>

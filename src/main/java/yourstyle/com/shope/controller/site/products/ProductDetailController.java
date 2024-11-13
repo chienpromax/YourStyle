@@ -1,8 +1,10 @@
 package yourstyle.com.shope.controller.site.products;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -11,12 +13,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import yourstyle.com.shope.model.Color;
@@ -57,34 +63,40 @@ public class ProductDetailController {
     private CustomerRepository customerRepository;
 
     @PostMapping("/yourstyle/carts/addtocart")
-    public String addToCart(@RequestParam("productVariantId") Integer productVariantId,
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> addToCart(@RequestParam("productVariantId") Integer productVariantId,
             @RequestParam("colorId") Integer colorId,
             @RequestParam("sizeId") Integer sizeId,
             @RequestParam("quantity") Integer quantity,
-            Authentication authentication,
-            RedirectAttributes redirectAttributes) {
+            Authentication authentication) {
+
+        Map<String, Object> response = new HashMap<>();
 
         if (authentication == null || !authentication.isAuthenticated()) {
-            return "redirect:/site/accounts/login";
+            response.put("success", false);
+            response.put("errorMessage", "Bạn cần đăng nhập để thực hiện hành động này.");
+            return ResponseEntity.badRequest().body(response);
         }
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Integer accountId = userDetails.getAccountId();
         Customer customer = customerRepository.findByAccount_AccountId(accountId);
         if (customer == null) {
-            return "redirect:/site/accounts/login";
+            response.put("success", false);
+            response.put("errorMessage", "Không tìm thấy khách hàng.");
+            return ResponseEntity.badRequest().body(response);
         }
 
         try {
             orderService.addProductToCart(customer.getCustomerId(), productVariantId, colorId, sizeId, quantity);
+            response.put("success", true);
         } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            return "redirect:/yourstyle/carts/cartdetail";
+            response.put("success", false);
+            response.put("errorMessage", e.getMessage());
         }
 
-        return "redirect:/yourstyle/carts/cartdetail";
+        return ResponseEntity.ok(response);
     }
-
 
     @GetMapping("/product/detail/{productId}")
     public String productDetail(@PathVariable("productId") Integer productId,

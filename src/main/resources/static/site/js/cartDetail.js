@@ -41,3 +41,26 @@ document.addEventListener("DOMContentLoaded", function () {
     option.addEventListener("change", updateVariantId)
   );
 });
+
+function addToCart(event) {
+  event.preventDefault();
+
+  var formData = new FormData(document.getElementById('addToCartForm'));
+
+  // Gửi yêu cầu AJAX
+  fetch('/yourstyle/carts/addtocart', {
+      method: 'POST',
+      body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+      if (data.success) {
+          location.reload();
+      } else {
+          alert(data.errorMessage);
+      }
+  })
+  .catch(error => {
+    console.log(error.message);
+});
+}

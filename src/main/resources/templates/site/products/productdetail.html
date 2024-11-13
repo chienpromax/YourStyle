@@ -173,63 +173,59 @@
                 </div>
 
                 <hr>
-                <form th:action="@{/yourstyle/carts/addtocart}" method="post">
-
+                <form id="addToCartForm" th:action="@{/yourstyle/carts/addtocart}" method="post" onsubmit="return addToCart(event)">
                     <div class="mt-3">
                         <h5>Màu sắc: </h5>
                         <div class="product-color">
                             <th:block th:each="color : ${uniqueColors}">
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input color-option" type="radio" name="colorOptions"
-                                           th:id="'color-' + ${color.colorId}"
-                                           th:data-color="${color.colorId}"
-                                           th:data-color-name="${color.colorName}"
-                                           th:checked="${color.colorId == selectedColorId}">
+                                        th:id="'color-' + ${color.colorId}" th:data-color="${color.colorId}"
+                                        th:data-color-name="${color.colorName}"
+                                        th:checked="${color.colorId == selectedColorId}">
                                     <label class="form-check-label" th:for="'color-' + ${color.colorId}"
-                                           th:text="${color.colorName}"></label>
+                                        th:text="${color.colorName}"></label>
                                 </div>
                             </th:block>
                         </div>
                     </div>
-                    
+
                     <div class="mt-3">
                         <h5>Kích thước: </h5>
                         <div class="product-size">
                             <th:block th:each="size : ${uniqueSizes}">
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input size-option" type="radio" name="sizeOptions"
-                                           th:id="'size-' + ${size.sizeId}"
-                                           th:data-size="${size.sizeId}"
-                                           th:data-size-name="${size.sizeName}"
-                                           th:checked="${size.sizeId == selectedSizeId}">
+                                        th:id="'size-' + ${size.sizeId}" th:data-size="${size.sizeId}"
+                                        th:data-size-name="${size.sizeName}"
+                                        th:checked="${size.sizeId == selectedSizeId}">
                                     <label class="form-check-label" th:for="'size-' + ${size.sizeId}"
-                                           th:text="${size.sizeName}"></label>
+                                        th:text="${size.sizeName}"></label>
                                 </div>
                             </th:block>
                         </div>
-                    </div>                    
-                    
+                    </div>
+
                     <div class="col-md-12 mt-3">
                         <div class="form-floating">
-                            <input type="number" id="quantityInput" name="quantity" min="1" max="5" class="form-control" placeholder="Số Lượng" required>
+                            <input type="number" id="quantityInput" name="quantity" min="1" max="5" class="form-control"
+                                placeholder="Số Lượng" required>
                             <label for="quantityInput">Số Lượng</label>
                         </div>
                     </div>
-                    
+
                     <ul style="display: none;">
                         <th:block th:each="variant : ${productVariants}">
-                            <li class="variant-option"
-                                th:data-variant-id="${variant.productVariantId}"
-                                th:data-color-id="${variant.color.colorId}"
-                                th:data-size-id="${variant.size.sizeId}">
+                            <li class="variant-option" th:data-variant-id="${variant.productVariantId}"
+                                th:data-color-id="${variant.color.colorId}" th:data-size-id="${variant.size.sizeId}">
                                 Variant ID: <span th:text="${variant.productVariantId}"></span>
                             </li>
                         </th:block>
                     </ul>
-                    
+
                     <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
                         <span th:text="${errorMessage}"></span>
-                    </div>                    
+                    </div>
 
                     <div class="mt-4 p-3 d-flex justify-content-between align-items-center text-center border">
 
@@ -237,13 +233,12 @@
                         <input type="hidden" id="selectedVariantId" name="productVariantId" value="">
                         <input type="hidden" id="selectedColorId" name="colorId" value="">
                         <input type="hidden" id="selectedSizeId" name="sizeId" value="">
-                        <button class="add-to-cart-btn" type="submit">THÊM VÀO GIỎ HÀNG</button>
-                        
+                        <button class="custom-btn-main" style="width: 90%;" type="submit">THÊM VÀO GIỎ HÀNG</button>
+
                         <a href="/productfavorites">
                             <i class="fa-regular fa-heart fs-3 fs-dark"></i>
                         </a>
                     </div>
-                    
                 </form>
 
                 <div class="py-4 text-center">

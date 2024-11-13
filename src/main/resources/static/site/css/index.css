@@ -525,8 +525,10 @@
     border: none;
     border-radius: 0;
     overflow: hidden;
-    transition: all 0.5s ease;
+    transition: all 0.7s ease;
     z-index: 1;
+    border: #000000 solid 2px;
+
 }
 
 .custom-btn-main::before,
@@ -534,27 +536,20 @@
     content: '';
     position: absolute;
     background-color: white;
-    transition: all 1s ease;
+    transition: all 1.5s ease;
 }
 
 .custom-btn-main::before {
     width: 2px;
     height: 100%;
-    right: 0;
+    right: 10px;
     top: 0;
     transform: rotate(45deg);
 }
 
-.custom-btn-main::after {
-    width: 220%;
-    height: 2px;
-    right: 0;
-    bottom: 0;
-    transform: rotate(-45deg);
-}
 
 .custom-btn-main::after {
-    width: 220%;
+    width: 215%;
     height: 2px;
     right: 0;
     bottom: 0;
@@ -564,7 +559,6 @@
 .custom-btn-main:hover {
     background-color: white;
     color: black;
-    border: #000000 solid 2px;
 }
 
 .custom-btn-main:hover::before {
@@ -574,8 +568,6 @@
 .custom-btn-main:hover::after {
     width: 0;
 }
-
-
 
 
 

@@ -19,12 +19,14 @@ import yourstyle.com.shope.Exception.VoucherNotFoundException;
 import yourstyle.com.shope.Exception.VoucherUsageException;
 import yourstyle.com.shope.model.CustomUserDetails;
 import yourstyle.com.shope.model.Customer;
+import yourstyle.com.shope.model.Discount;
 import yourstyle.com.shope.model.Order;
 import yourstyle.com.shope.model.OrderChannel;
 import yourstyle.com.shope.model.OrderDetail;
 import yourstyle.com.shope.model.OrderStatus;
 import yourstyle.com.shope.model.TransactionType;
 import yourstyle.com.shope.model.Voucher;
+import yourstyle.com.shope.repository.OrderDetailRepository;
 import yourstyle.com.shope.repository.OrderRepository;
 import yourstyle.com.shope.service.CustomerService;
 import yourstyle.com.shope.service.OrderService;
@@ -43,6 +45,8 @@ public class OrderSiteController {
     VoucherService voucherService;
     @Autowired
     OrderRepository orderRepository;
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
 
     @PostMapping("/place-order")
     public ResponseEntity<Map<String, Object>> placeOrder(@RequestBody Map<String, String> payload) {
@@ -104,47 +108,82 @@ public class OrderSiteController {
         return ResponseEntity.ok(response);
     }
 
+    // Hàm tính tổng tiền với các mức giảm giá theo thứ tự
+    private BigDecimal calculateTotalAmountWithOrderDiscount(Order order, List<OrderDetail> orderDetails) {
+        // Tính tổng tiền ban đầu của đơn hàng
+        BigDecimal totalAmount = orderDetails.stream()
+                .map(orderDetail -> {
+                    BigDecimal price = orderDetail.getProductVariant().getProduct().getPrice();
+                    int quantity = orderDetail.getQuantity();
+
+                    Discount discount = orderDetail.getProductVariant().getProduct().getDiscount();
+                    if (discount != null) {
+                        BigDecimal discountPercent = discount.getDiscountPercent().divide(BigDecimal.valueOf(100));
+                        price = price.subtract(price.multiply(discountPercent));
+                    }
+                    return price.multiply(BigDecimal.valueOf(quantity));
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // Áp dụng giảm giá mã voucher
+        if (order.getVoucher() != null) {
+            BigDecimal orderDiscountPercent = order.getVoucher().getDiscountAmount().divide(BigDecimal.valueOf(100));
+            totalAmount = totalAmount.subtract(totalAmount.multiply(orderDiscountPercent));
+        }
+
+        return totalAmount;
+    }
+
     @PostMapping("/apply-voucher")
     public ResponseEntity<Map<String, Object>> applyDiscount(@RequestBody Map<String, String> payload) {
         String vouchercode = payload.get("vouchercode");
-    
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Integer accountId = userDetails.getAccountId();
-    
+
         Customer customer = customerService.findByAccountId(accountId);
-    
         if (customer == null) {
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("message", "Customer not found");
             return ResponseEntity.badRequest().body(response);
         }
-    
+
         Order order = orderService.findByCustomerAndStatus(customer, 9).get(0);
-        BigDecimal totalAmount = order.getTotalAmount();
-        BigDecimal newTotalAmount;
-    
+        List<OrderDetail> orderDetails = orderDetailRepository
+                .findByOrder_Customer_CustomerIdAndOrder_Status(customer.getCustomerId(), 9);
+
         try {
-            Optional<Voucher> voucherOpt = voucherService.findByVoucherCode(vouchercode); // Tìm mã voucher
-            if (voucherOpt.isEmpty()) throw new VoucherNotFoundException("Voucher không tồn tại");
-    
+            // Kiểm tra nếu voucher đã được áp dụng
+            if (order.getVoucher() != null && order.getVoucher().getVoucherCode().equals(vouchercode)) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Voucher đã được áp dụng trước đó");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            Optional<Voucher> voucherOpt = voucherService.findByVoucherCode(vouchercode);
+            if (voucherOpt.isEmpty()) {
+                throw new VoucherNotFoundException("Voucher không tồn tại");
+            }
+
             Voucher voucher = voucherOpt.get();
-    
-            // Áp dụng voucher và tính tổng tiền mới
-            newTotalAmount = orderService.calculateDiscountedTotal(totalAmount, voucher.getDiscountAmount());
-    
-            // Cập nhật thông tin đơn hàng với voucher mới
             order.setVoucher(voucher);
+
+            // Tính lại tổng số tiền dựa trên orderDetails và áp dụng voucher
+            BigDecimal newTotalAmount = calculateTotalAmountWithOrderDiscount(order, orderDetails);
+
+            // Cập nhật thông tin đơn hàng với tổng số tiền đã giảm
             order.setTotalAmount(newTotalAmount);
             orderRepository.save(order);
-    
+
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("newTotalAmount", newTotalAmount);
             response.put("voucherId", voucher.getVoucherId());
             return ResponseEntity.ok(response);
-    
+
         } catch (VoucherNotFoundException | VoucherUsageException e) {
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
@@ -152,6 +191,5 @@ public class OrderSiteController {
             return ResponseEntity.badRequest().body(response);
         }
     }
-    
 
 }

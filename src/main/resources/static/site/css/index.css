@@ -571,8 +571,8 @@
 
 
 
-/* img,span,p { */
-/* img,span,p,input,label,h1,h2,h3,h4,h5,p,ul,li,i,a,tr,td {
+/* img,span,p {
+img,span,p,input,label,h1,h2,h3,h4,h5,p,ul,li,i,a,tr,td {
     animation: rotate 5s linear infinite;
 }
 

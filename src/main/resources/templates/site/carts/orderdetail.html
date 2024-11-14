@@ -264,22 +264,6 @@
                         });
                 }
 
-                function confirmDelete(addressId, customerId) {
-                    Swal.fire({
-                        title: 'Bạn có chắc chắn muốn xóa?',
-                        text: "Bạn sẽ không thể hoàn tác sau khi xóa!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Xóa nó!',
-                        cancelButtonText: 'Hủy'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = '/yourstyle/carts/orderDetail/deleteAddress/' + addressId + '?customerId=' + customerId;
-                        }
-                    });
-                }
 
                 function applyDiscount() {
                     const discountCode = document.getElementById("discountCode").value;
@@ -307,7 +291,7 @@
                                 // Lưu lại voucherId (nếu cần dùng sau)
                                 console.log("Applied Voucher ID: ", data.voucherId);
                             } else {
-                                alert("Mã giảm giá không hợp lệ hoặc đã hết hạn.");
+                                alert("Mã giảm giá không hợp lệ hoặc đã hết hạn hoạc đã được sử dụng.");
                             }
                         })
                         .catch(error => {
@@ -315,6 +299,23 @@
                         });
                 }
 
+
+                function confirmDelete(addressId, customerId) {
+                    Swal.fire({
+                        title: 'Bạn có chắc chắn muốn xóa?',
+                        text: "Bạn sẽ không thể hoàn tác sau khi xóa!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Xóa nó!',
+                        cancelButtonText: 'Hủy'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/yourstyle/carts/orderDetail/deleteAddress/' + addressId + '?customerId=' + customerId;
+                        }
+                    });
+                }
 
             </script>
     </section>

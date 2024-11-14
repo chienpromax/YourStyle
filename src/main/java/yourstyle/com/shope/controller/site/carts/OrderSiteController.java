@@ -108,7 +108,6 @@ public class OrderSiteController {
         return ResponseEntity.ok(response);
     }
 
-    // Hàm tính tổng tiền với các mức giảm giá theo thứ tự
     private BigDecimal calculateTotalAmountWithOrderDiscount(Order order, List<OrderDetail> orderDetails) {
         // Tính tổng tiền ban đầu của đơn hàng
         BigDecimal totalAmount = orderDetails.stream()

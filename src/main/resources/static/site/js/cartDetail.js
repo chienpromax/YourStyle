@@ -45,22 +45,29 @@ document.addEventListener("DOMContentLoaded", function () {
 function addToCart(event) {
   event.preventDefault();
 
-  var formData = new FormData(document.getElementById('addToCartForm'));
+  const formData = new FormData(document.getElementById("addToCartForm"));
 
   // Gửi yêu cầu AJAX
-  fetch('/yourstyle/carts/addtocart', {
-      method: 'POST',
-      body: formData
+  fetch("/yourstyle/carts/addtocart", {
+    method: "POST",
+    body: formData,
   })
-  .then(response => response.json())
-  .then(data => {
-      if (data.success) {
-          location.reload();
-      } else {
-          alert(data.errorMessage);
+    .then((response) => {
+      const contentType = response.headers.get("Content-Type");
+      if (contentType && contentType.includes("text/html")) {
+        window.location.href = "/yourstyle/accounts/login";
+        return;
       }
-  })
-  .catch(error => {
-    console.log(error.message);
-});
+      return response.json();
+    })
+    .then((data) => {
+      if (data && data.success) {
+        location.reload();
+      } else if (data) {
+        alert(data.errorMessage);
+      }
+    })
+    .catch((error) => {
+      console.error("Lỗi:", error.message);
+    });
 }

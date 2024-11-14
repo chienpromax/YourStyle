@@ -69,13 +69,14 @@ public class ProductDetailController {
             @RequestParam("sizeId") Integer sizeId,
             @RequestParam("quantity") Integer quantity,
             Authentication authentication) {
-
+    
         Map<String, Object> response = new HashMap<>();
-
+    
         if (authentication == null || !authentication.isAuthenticated()) {
             response.put("success", false);
             response.put("errorMessage", "Bạn cần đăng nhập để thực hiện hành động này.");
-            return ResponseEntity.badRequest().body(response);
+            response.put("redirectUrl", "/yourstyle/accounts/login");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();

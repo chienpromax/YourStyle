@@ -3,14 +3,53 @@
     layout:decorate="~{site/index.html}">
 
 <head>
+    <title>Lịch sử đơn hàng</title>
 </head>
 
 <body>
     <!--===== main =======-->
     <section class="py-5 container bg-light-subtle" layout:fragment="main">
         <h5>Lịch sử đơn hàng</h5>
-        <div class="order-status">
-            <!-- Chờ xác nhận -->
+        
+        <!-- Kiểm tra có lỗi không (nếu không có khách hàng) -->
+        <div th:if="${error}">
+            <p th:text="${error}"></p>
+        </div>
+        
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">Mã Đơn Hàng</th>
+                    <th scope="col">Ngày Đặt</th>
+                    <th scope="col">Tổng Tiền</th>
+                    <th scope="col">Trạng Thái</th>
+                    <th scope="col">Phương Thức Thanh Toán</th>
+                    <th scope="col">Ghi Chú</th>
+                    <th scope="col">Chi Tiết</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Lặp qua danh sách các đơn hàng -->
+                <tr th:each="order : ${orders}">
+                    <td th:text="${order.orderId}"></td>
+                    <td th:text="${#dates.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td th:text="${order.totalAmount}"></td>
+                    <td th:text="${order.statusDescription}"></td>
+                    <td th:text="${order.transactionType}"></td>
+                    <td th:text="${order.transactionStatus}"></td>
+                    <td>
+                        <a th:href="@{/yourstyle/order/{orderId}(orderId=${order.orderId})}" class="btn btn-info">Xem Chi Tiết</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+</body>
+
+</html>
+
+
+        <!-- <div class="order-status">
             <div class="status-item completed">
                 <div class="icon" style="border-color: rgb(39, 207, 39);">
                     <img src="/site/images/orderStatus/loading.gif" style="width: 30px;">
@@ -18,7 +57,6 @@
                 <div>Chờ xác nhận</div>
             </div>
 
-            <!-- Chờ giao hàng -->
             <div class="status-item in-progress">
                 <div class="icon" style="border-color: yellow;">
                     <img src="https://img.icons8.com/ios-filled/50/000000/task.png" alt="Chờ giao hàng"
@@ -27,7 +65,6 @@
                 <div>Chờ giao hàng</div>
             </div>
 
-            <!-- Đang vận chuyển -->
             <div class="status-item">
                 <div class="icon" style="border-color: orange;">
                     <img src="https://img.icons8.com/ios-filled/50/000000/delivery.png" alt="Đang vận chuyển"
@@ -36,7 +73,6 @@
                 <div>Đang vận chuyển</div>
             </div>
 
-            <!-- Đã giao hàng -->
             <div class="status-item">
                 <div class="icon" style="border-color: #ff9933;">
                     <img src="/site/images/orderStatus/nhanhang.png"
@@ -45,7 +81,6 @@
                 <div>Đã giao hàng</div>
             </div>
 
-            <!-- Hoàn thành -->
             <div class="status-item">
                 <div class="icon" style="border-color: green;">
                     <img src="/site/images/orderStatus/hoanthanh.png"
@@ -53,8 +88,4 @@
                 </div>
                 <div>Hoàn thành</div>
             </div>
-        </div>
-    </section>
-</body>
-
-</html>
+        </div> -->

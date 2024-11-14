@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import yourstyle.com.shope.model.Account;
-import yourstyle.com.shope.model.Customer;
-import yourstyle.com.shope.model.Role;
 import yourstyle.com.shope.repository.CustomerRepository;
 import yourstyle.com.shope.service.AccountService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

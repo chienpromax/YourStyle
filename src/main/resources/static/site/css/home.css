@@ -1,0 +1,37 @@
+
+.price-original del {
+    font-size: 0.85rem;
+    /* Kích thước nhỏ hơn cho giá gốc */
+    color: #6c757d;
+}
+
+.price-info {
+    display: flex;
+    align-items: center;
+}
+
+.price-discount-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.price-discount {
+    font-size: 1rem;
+    /* Giá giảm nổi bật hơn */
+    color: #dc3545;
+}
+
+.price-original {
+    font-size: 0.85rem;
+    /* Giá gốc nhỏ hơn và mờ hơn */
+    color: #6c757d;
+}
+
+.discount-badge {
+    font-size: 0.75rem;
+    /* Thu nhỏ badge */
+    margin-left: 5px;
+    padding: 3px 5px;
+    background-color: #dc3545;
+    color: white;
+}

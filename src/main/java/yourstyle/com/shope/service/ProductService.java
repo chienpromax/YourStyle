@@ -41,7 +41,15 @@ public interface ProductService {
     List<Product> findByCategory_CategoryId(Integer categoryId); // Phương thức tìm theo categoryId
 
     Page<Product> findByCategory_CategoryId(Integer categoryId, Pageable pageable);
-    
+
     List<Product> findByNameContainingIgnoreCase(String name);
+
+    List<Product> getBestSellingProducts();
+
+    List<Product> getDiscountedProducts();
+
+    List<Product> getProductsByDiscountId(Integer discountId);
+
+    
 
 }

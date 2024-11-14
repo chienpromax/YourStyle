@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import yourstyle.com.shope.model.Category;
 import yourstyle.com.shope.model.Product;
@@ -20,20 +21,31 @@ public class HomeSiteController {
     @Autowired
     private ProductService productService;
 
-    @RequestMapping("/home")
-
-    public String showHomePage(Model model, Authentication authentication) {
+    @RequestMapping({"/home", "/discount/{discountId}"})
+    public String showHomePage(Model model, Authentication authentication, 
+                               @PathVariable(value = "discountId", required = false) Integer discountId) {
         List<Category> parentCategories = categoryService.findParentCategories();
-
         model.addAttribute("parentCategories", parentCategories);
-
+    
+        // Lấy tên người dùng nếu đã đăng nhập
         String userName = (authentication != null && authentication.isAuthenticated()) ? authentication.getName() : null;
         model.addAttribute("userName", userName);
-
+    
+        // Lấy tất cả sản phẩm
         List<Product> products = productService.getAllProducts();
-
         model.addAttribute("products", products);
-        return "site/pages/home"; 
+    
+        // Lấy sản phẩm bán chạy
+        List<Product> bestSellers = productService.getBestSellingProducts();
+        model.addAttribute("bestSellers", bestSellers);
+     
+        // Lấy sản phẩm giảm giá theo discountId nếu có
+        List<Product> discountedProducts = (discountId != null) ? 
+                                            productService.getProductsByDiscountId(discountId) : 
+                                            productService.getDiscountedProducts();
+        model.addAttribute("discountedProducts", discountedProducts);
+    
+        return "site/pages/home";
     }
+    
 }
-

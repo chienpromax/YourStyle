@@ -104,155 +104,91 @@
 				<div class="header py-3" style="display: flex; justify-content: space-between;">
 					<img src="/site/images/ao/slide/sieu-giao-dich.webp" alt="">
 					<button class="bg-transparent border border-0">
-						<a href="" class="text-danger-emphasis">XEM THÊM <i class="fa-solid fa-chevron-right"></i></a>
+						<a th:href="@{/allproduct(sort='best-sellers')}" class="text-danger-emphasis">XEM THÊM <i class="fa-solid fa-chevron-right"></i></a>
 					</button>
 				</div>
 				<div class="best-seller">
 					<div class="row">
-						<div class="col-md-2">
-							<div class="card ">
-								<a href=""> <img src="/site/images/product/product-1.webp" class="img-fluid">
-								</a>
-								<div class="">
-									<p class="card-text text-center text-danger fw-bolder fs-5">114.800
-										Đ</p>
+						<th:block th:each="product, iterStat : ${bestSellers}">
+							<div class="col-md-2">
+								<div class="card" th:if="${iterStat.index < 6}">
+									<a th:href="@{/product/detail/{productId}(productId=${product.productId})}">
+										<img th:src="@{'/uploads/' + ${product.image}}" class="img-fluid" alt="Product Image">
+									</a>
+									<div class="card-body">
+										<h5 th:text="${product.name}"></h5>
+										<p class="card-text text-center text-danger fw-bolder fs-5" th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')} + ' Đ'"></p>
+										<p class="card-text position-absolute bottom-0 end-0 text-muted m-2 small">
+											Đã bán: <span th:text="${product.totalQuantity}">0</span> sản phẩm</p>
+									</div>
 								</div>
 							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="card">
-								<a href=""> <img src="/site/images/product/product-1.webp" class="img-fluid">
-								</a>
-								<div class="">
-									<p class="card-text text-center text-danger fw-bolder fs-5">114.800
-										Đ</p>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="card">
-								<a href=""> <img src="/site/images/product/product-1.webp" class="img-fluid">
-								</a>
-								<div class="">
-									<p class="card-text text-center text-danger fw-bolder fs-5">114.800
-										Đ</p>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="card">
-								<a href=""> <img src="/site/images/product/product-1.webp" class="img-fluid">
-								</a>
-								<div class="">
-									<p class="card-text text-center text-danger fw-bolder fs-5">114.800
-										Đ</p>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="card">
-								<a href=""> <img src="/site/images/product/product-1.webp" class="img-fluid">
-								</a>
-								<div class="">
-									<p class="card-text text-center text-danger fw-bolder fs-5">114.800
-										Đ</p>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="card">
-								<a href=""> <img src="/site/images/ao/tải xuống.jfif" class="img-fluid">
-								</a>
-								<div class="">
-									<p class="card-text text-center text-danger fw-bolder fs-5">114.800
-										Đ</p>
-								</div>
-							</div>
-						</div>
+						</th:block>
 					</div>
 				</div>
 			</div>
 		</section>
+		
 
 		<section class="py-5">
 			<div class="row">
+				<!-- Header với tên mã giảm giá -->
 				<div class="header py-3 my-2"
 					style="display: flex; justify-content: space-between; background: linear-gradient(0, rgb(254, 175, 175), rgb(254, 210, 183));">
 					<div class="menu__main mx-auto text-center">
-						<a class="text-dark fw-bolder pe-2" href="">YOURSTYLE LƯU NIỆM
-							|</a> <a class="text-dark fw-bolder pe-2" href="">GIÁ CHỈ TỪ 9K |</a>
-						<a class="text-dark fw-bolder pe-2" href="">MUA 2 TẶNG 1 |</a> <a
-							class="text-dark fw-bolder pe-2" href="">DEAl HẾT GIÁ DƯỚI
-							299K |</a>
+						<!-- Kiểm tra nếu có discountId thì hiển thị tùy chọn "Xem các mã giảm giá khác" -->
+						<div class="col-12 text-center my-2" th:if="${discountId != null}">
+							<a href="/yourstyle/home" class="text-primary fw-bold">Xem các mã giảm giá khác</a>
+						</div>
+
+						<span th:each="product : ${discountedProducts}">
+							<a class="text-dark fw-bolder pe-2"
+								th:href="@{/yourstyle/discount/{discountId}(discountId=${product.discount.discountId})}"
+								th:text="${product.discount.discountName}">Tên Giảm Giá</a> |
+						</span>
 					</div>
+
+					<button class="bg-transparent border border-0">
+						<a th:href="@{/allproduct(sort='discount')}" class="text-danger-emphasis">XEM THÊM <i
+								class="fa-solid fa-chevron-right"></i></a>
+					</button>
 				</div>
-				<div class="best-seller">
+
+				<!-- Best-seller section hiển thị các sản phẩm giảm giá -->
+				<div class="discount">
 					<div class="row">
-						<div class="col-md-2">
-							<div class="card">
-								<a href=""> <img src="/site/images/product/product-1.webp" class="img-fluid">
+						<div class="col-md-2" th:each="product,iterStat : ${discountedProducts}">
+							<div class="card"  th:if="${iterStat.index < 6}">
+								<a th:href="@{/product/detail/{productId}(productId=${product.productId})}">
+									<img th:src="'/uploads/' + ${product.image}" class="img-fluid">
 								</a>
-								<div class="d-flex align-items-center">
-									<p class="card-text text-danger fw-bolder fs-5">
-										114.800 Đ <span class="mx-3 border border-danger">- 10%</span>
-									</p>
+								<div class="card-body">
+									<h5 class="card-title" th:text="${product.name}">Tên Sản Phẩm</h5>
+									<div class="price-info d-flex align-items-center">
+										<!-- Giá đã giảm -->
+										<div class="price-discount-container d-flex flex-column me-2">
+											<span class="price-discount text-danger fw-bold"
+												th:if="${product.discount != null}"
+												th:text="${#numbers.formatDecimal(product.price - product.price * product.discount.discountPercent / 100, 1, 'COMMA', 0, 'POINT') + ' Đ'}">
+											</span>
+											<span class="price-original text-muted" th:if="${product.discount != null}">
+												<del
+													th:text="${#numbers.formatDecimal(product.price, 0, 0) + ' VNĐ'}"></del>
+											</span>
+										</div>
+										<!-- Phần trăm giảm giá -->
+										<span class="badge discount-badge bg-danger" th:if="${product.discount != null}"
+											th:text="'-' + ${#numbers.formatDecimal(product.discount.discountPercent, 0, 0)} + '%'">
+										</span>
+										<!-- Giá gốc khi không có giảm giá -->
+										<span class="price text-danger fw-bold" th:if="${product.discount == null}"
+											th:text="${#numbers.formatDecimal(product.price, 0, 0) + ' VNĐ'}">
+										</span>
+									</div>
+
 								</div>
 							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="card">
-								<a href=""> <img src="/site/images/product/product-1.webp" class="img-fluid">
-								</a>
-								<div class="d-flex align-items-center">
-									<p class="card-text text-danger fw-bolder fs-5">
-										114.800 Đ <span class="mx-3 border border-danger">- 10%</span>
-									</p>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="card">
-								<a href=""> <img src="/site/images/product/product-1.webp" class="img-fluid">
-								</a>
-								<div class="d-flex align-items-center">
-									<p class="card-text text-danger fw-bolder fs-5">
-										114.800 Đ <span class="mx-3 border border-danger">- 10%</span>
-									</p>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="card">
-								<a href=""> <img src="/site/images/product/product-1.webp" class="img-fluid">
-								</a>
-								<div class="d-flex align-items-center">
-									<p class="card-text text-danger fw-bolder fs-5">
-										114.800 Đ <span class="mx-3 border border-danger">- 10%</span>
-									</p>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="card">
-								<a href=""> <img src="/site/images/product/product-1.webp" class="img-fluid">
-								</a>
-								<div class="d-flex align-items-center">
-									<p class="card-text text-danger fw-bolder fs-5">
-										114.800 Đ <span class="mx-3 border border-danger">- 10%</span>
-									</p>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="card">
-								<a href=""> <img src="/site/images/product/product-1.webp" class="img-fluid">
-								</a>
-								<div class="d-flex align-items-center">
-									<p class="card-text text-danger fw-bolder fs-5">
-										114.800 Đ <span class="mx-3 border border-danger">- 10%</span>
-									</p>
-								</div>
-							</div>
+
 						</div>
 					</div>
 				</div>
@@ -328,39 +264,7 @@
 				</div>
 			</div>
 		</section>
-		<script>//src="https://code.jquery.com/jquery-3.6.0.min.js"
-			function fetchProductSuggestions(query) {
-				const historyDropdown = document.getElementById('searchHistoryDropdown');
-				const suggestionsDropdown = document.getElementById('suggestedProductsDropdown');
-
-				if (query.length > 0) {
-					historyDropdown.style.display = 'none';
-					suggestionsDropdown.style.display = 'block';
-
-					// Gửi yêu cầu tìm kiếm gợi ý sản phẩm qua AJAX
-					fetch(`/productSuggestions?name=${encodeURIComponent(query)}`)
-						.then(response => {
-							if (!response.ok) {
-								throw new Error('Network response was not ok');
-							}
-							return response.json();
-						})
-						.then(data => {
-							console.log(data);
-							suggestionsDropdown.innerHTML = data.map(item => `
-                    <li><a href="/search?name=${encodeURIComponent(item.name)}">${item.name}</a></li>
-                `).join('');
-						})
-						.catch(error => {
-							console.error('Fetch error:', error);
-						});
-				} else {
-					historyDropdown.style.display = 'block';
-					suggestionsDropdown.style.display = 'none';
-				}
-			}
-
-		</script>
+		<script src="/site/js/home.js"></script>
 	</section>
 </body>
 

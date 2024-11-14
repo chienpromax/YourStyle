@@ -1,123 +1,88 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Xử lý sự kiện xóa đánh giá đơn
-    const deleteLinks = document.querySelectorAll('.delete-review');
-
-    deleteLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            const reviewId = this.getAttribute('data-id');
-
-            Swal.fire({
-                title: 'Bạn có chắc chắn muốn xóa đánh giá này?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Xóa',
-                cancelButtonText: 'Hủy'
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    try {
-                        const response = await fetch(`/admin/reviews/${reviewId}`, {
-                            method: 'DELETE',
-                        });
-
-                        if (response.ok) {
-                            Swal.fire('Đã xóa!', 'Đánh giá đã được xóa thành công.', 'success').then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            Swal.fire('Lỗi', 'Không thể xóa đánh giá này.', 'error');
-                        }
-                    } catch (error) {
-                        Swal.fire('Lỗi', 'Không thể xóa đánh giá này.', 'error');
-                    }
-                }
-            });
-        });
+function toggleSelectAll(source) {
+    var checkboxes = document.querySelectorAll('.review-checkbox');
+    checkboxes.forEach(function(checkbox) {
+        checkbox.checked = source.checked;
     });
+}
+		//lấy reviewId
+function getSelectedReviewIds() {
+    const selectedCheckboxes = document.querySelectorAll('.review-checkbox:checked');
+    const selectedReviewIds = Array.from(selectedCheckboxes).map(checkbox => {
+        // Trích xuất reviewId từ thuộc tính name, giả sử nó có dạng 'reviewIds[<reviewId>]'
+        const match = checkbox.name.match(/reviewIds\[(\d+)\]/);
+        return match ? match[1] : null;
+    }).filter(id => id !== null);
+    return selectedReviewIds;
+}
 
-    // Xóa nhiều đánh giá
-    function confirmDeleteMultiple() {
-        const selectedReviews = Array.from(document.querySelectorAll('.review-checkbox:checked'))
-            .map(checkbox => checkbox.value);
-
-        if (selectedReviews.length > 0) {
-            Swal.fire({
-                title: 'Bạn có chắc chắn muốn xóa các đánh giá đã chọn?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Xóa',
-                cancelButtonText: 'Hủy'
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    try {
-                        const response = await fetch('/admin/reviews/delete-multiple', {
-                            method: 'DELETE',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ reviewIds: selectedReviews }),
-                        });
-
-                        if (response.ok) {
-                            Swal.fire('Đã xóa!', 'Các đánh giá đã được xóa thành công.', 'success').then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            Swal.fire('Lỗi', 'Không thể xóa các đánh giá này.', 'error');
-                        }
-                    } catch (error) {
-                        Swal.fire('Lỗi', 'Không thể xóa các đánh giá này.', 'error');
-                    }
+            // Xóa nhiều đánh giá
+            function confirmDeleteMultiple() {
+            	const selectedReviews = Array.from(document.querySelectorAll('.review-checkbox:checked')).map(checkbox => {
+            	    const reviewId = checkbox.closest('tr').querySelector('.review-id').textContent.trim();
+            	    return reviewId;
+            	});
+                if (selectedReviews.length === 0) {
+                    ('Vui lòng chọn ít nhất một đánh giá để xóa.');
+                    return;
                 }
-            });
-        } else {
-            Swal.fire('Chưa chọn', 'Vui lòng chọn ít nhất một đánh giá.', 'warning');
-        }
-    }
 
-    // Hiển thị phần trả lời khi nhấn vào nút "Trả lời"
-    function showReplyInput(reviewId) {
-        const replySection = document.getElementById('replySection-' + reviewId);
-        replySection.style.display = (replySection.style.display === 'none' || replySection.style.display === '') ? 'block' : 'none';
-    }
-
-    // Gửi phản hồi sau khi nhập
-    function submitReply(reviewId) {
-        const replyContent = document.getElementById('replyContent-' + reviewId).value;
-
-        if (replyContent.trim() === '') {
-            alert('Vui lòng nhập phản hồi!');
-            return;
-        }
-
-        // Gửi phản hồi qua AJAX hoặc gửi form (ở đây dùng fetch để gửi AJAX)
-        fetch('/admin/reviews/reply/' + reviewId, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ content: replyContent })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Phản hồi đã được gửi thành công!');
-                document.getElementById('replySection-' + reviewId).style.display = 'none';
-            } else {
-                alert('Có lỗi xảy ra, vui lòng thử lại!');
+                Swal.fire({
+                    title: 'Bạn có chắc chắn?',
+                    text: 'Bạn sẽ không thể phục hồi đánh giá đã xóa!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Có, xóa!',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Gửi yêu cầu xóa tới server
+                        fetch('/admin/reviews/deleteMultiple', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: new URLSearchParams({
+                                'reviewIds': selectedReviews.join(',')
+                            })
+                        })
+                        .then(response => response.json())  // Đảm bảo phản hồi được phân tích dưới dạng JSON
+                        .then(data => {
+                            if (data.message) {
+                                Swal.fire('Thành công!', data.message, 'success');
+                                location.reload(); 
+                            } else {
+                                Swal.fire('Lỗi!', data.message || 'Có lỗi xảy ra khi xóa các đánh giá.', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire('Lỗi!', 'Không thể kết nối tới server.', 'error');
+                        });
+                    }
+                });
             }
-        })
-        .catch(error => {
-            alert('Có lỗi xảy ra: ' + error);
-        });
-    }
 
-    // Tạo sự kiện cho nút xóa nhiều đánh giá
-    const deleteButton = document.getElementById('deleteReviews');
-    if (deleteButton) {
-        deleteButton.addEventListener('click', confirmDeleteMultiple);
-    }
-});
+            // Xóa một đánh giá
+            function deleteReview(reviewId) {
+                Swal.fire({
+                    title: 'Bạn có chắc chắn?',
+                    text: 'Bạn sẽ không thể phục hồi đánh giá đã xóa!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Có, xóa!',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/admin/reviews/delete/${reviewId}`, {
+                            method: 'GET'
+                        })
+                        .then(response => response.text())
+                        .then(result => {
+                            Swal.fire('Thành công!', 'Đã xóa đánh giá.', 'success');
+                            location.reload(); // Tải lại trang sau khi xóa
+                        })
+                        .catch(error => {
+                            Swal.fire('Lỗi!', 'Có lỗi xảy ra khi xóa đánh giá.', 'error');
+                        });
+                    }
+                });
+            }

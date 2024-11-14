@@ -65,7 +65,7 @@ public class ReviewServiceImpl implements ReviewService {
 
 		// Gọi phương thức xóa từ repository
 		reviewRepository.deleteByReviewIdIn(reviewIds);
-		System.out.println("Đã xóa các đánh giá có ID: " + reviewIds);
+		System.out.println("Đã xóa các đánh giá có ID: " + String.join(" ", reviewIds.toString()));
 	}
 	
 	public boolean deleteMultipleReviews(List<Integer> reviewIds) {

@@ -20,7 +20,9 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     @Query("SELECT r FROM Review r WHERE r.product.productId = ?1")
     Page<Review> findByProductId(Integer productId, Pageable pageable);
 
-    void deleteByReviewIdIn(List<Integer> reviewIds);    
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Review r WHERE r.reviewId IN :reviewIds")
+    void deleteByReviewIdIn(@Param("reviewIds") List<Integer> reviewIds);
    
-
 }

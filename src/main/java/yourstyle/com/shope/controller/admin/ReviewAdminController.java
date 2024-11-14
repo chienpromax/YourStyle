@@ -42,52 +42,56 @@ public class ReviewAdminController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy review.");
 		}
 	}
+	
+	 // Xóa nhiều đánh giá
+    @PostMapping("/deleteMultiple")
+    public ResponseEntity<Map<String, String>> deleteMultipleReviews(@RequestParam("reviewIds") String reviewIdListStr) {
+        Map<String, String> response = new HashMap<>();
+        
+        System.out.println("Received reviewIds: " + reviewIdListStr);  // Debug: In ra dữ liệu nhận được từ client
+        
+        try {
+            if (reviewIdListStr == null || reviewIdListStr.trim().isEmpty()) {
+                response.put("message", "Danh sách reviewId không hợp lệ.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
 
-	@PostMapping("/deleteMultiple")
-	public ResponseEntity<Map<String, String>> deleteMultipleReviews(@RequestParam("reviewIds") String reviewIdListStr) {
-	    System.out.println("Received reviewIds: " + reviewIdListStr);
-	    Map<String, String> response = new HashMap<>();
-	    try {
-	   
-	        if (reviewIdListStr == null || reviewIdListStr.trim().isEmpty()) {
-	            response.put("message", "Danh sách reviewId không hợp lệ.");
-	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-	        }
+            // Chuyển chuỗi reviewIds thành danh sách reviewId
+            List<String> reviewIdsString = Arrays.asList(reviewIdListStr.split(","));
+            System.out.println("Parsed reviewIds: " + String.join(",", reviewIdsString));  // Debug: In ra các reviewId đã tách ra
+            
+            // Kiểm tra từng reviewId có hợp lệ không
+            for (String reviewId : reviewIdsString) {
+                try {
+                    Integer.parseInt(reviewId);  
+                    System.out.println("Valid ReviewId: " + reviewId);  // Debug: Kiểm tra reviewId hợp lệ
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid ReviewId: " + reviewId);  // Debug: In ra reviewId không hợp lệ
+                    response.put("message", "Định dạng reviewId không hợp lệ.");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response); 
+                }
+            }
 
-	        // Chuyển chuỗi reviewIds thành danh sách reviewId
-	        List<String> reviewIdsString = Arrays.asList(reviewIdListStr.split(","));
-	        System.out.println("Parsed reviewIds: " + String.join(",", reviewIdsString));
-	        for (String reviewId : reviewIdsString) {
-	            try {
-	                Integer.parseInt(reviewId);  
-	                System.out.println("Valid ReviewId: " + reviewId);
-	            } catch (NumberFormatException e) {
-	            	System.out.println("hello");
-	                System.out.println("Invalid ReviewId: " + reviewId);  
-	                response.put("message", "Định dạng reviewId không hợp lệ.");
-	                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response); 
-	            }
-	        }
+            
+            List<Integer> reviewIds = reviewIdsString.stream()
+                                                     .map(Integer::parseInt)  
+                                                     .collect(Collectors.toList());
+            System.out.println("ReviewIds to delete: " + reviewIds);  
 
-	        List<Integer> reviewIds = reviewIdsString.stream()
-	                                                 .map(Integer::parseInt)  
-	                                                 .collect(Collectors.toList());
-
-	       
-	        boolean result = reviewService.deleteMultipleReviews(reviewIds);
-
-	        if (result) {
-	            response.put("message", "Xóa thành công.");
-	            return ResponseEntity.ok(response); 
-	        } else {
-	            response.put("message", "Xóa không thành công.");
-	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response); 
-	        }
-	    } catch (Exception e) {
-	        response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response); 
-	    }
-	}
-
+            // Xóa các review
+            boolean result = reviewService.deleteMultipleReviews(reviewIds);
+            if (result) {
+                response.put("message", "Xóa thành công.");
+                return ResponseEntity.ok(response); 
+            } else {
+                response.put("message", "Xóa không thành công.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response); 
+            }
+        } catch (Exception e) {
+            e.printStackTrace();  // In ra chi tiết lỗi
+            response.put("message", "Đã xảy ra lỗi: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response); 
+        }
+    }
 
 }

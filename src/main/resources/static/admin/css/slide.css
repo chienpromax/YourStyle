@@ -1,0 +1,129 @@
+/* CSS cho giao diện quản lý slide */
+body {
+	font-family: Arial, sans-serif;
+	background-color: #f0f9f5;
+	margin: 0;
+	padding: 0;
+}
+
+.pagetitle h1 {
+	color: #2c3e50;
+	margin-top: 20px;
+}
+
+.container {
+	max-width: 800px;
+	background-color: #ffffff;
+	border-radius: 10px;
+	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+	padding: 20px;
+	margin: 30px auto;
+}
+
+.text-center {
+	color: #2c3e50;
+	margin-bottom: 20px;
+	font-size: 24px;
+	border-bottom: 2px solid #4caf50;
+	display: inline-block;
+	padding-bottom: 8px;
+}
+
+.image-placeholder {
+	position: relative;
+	width: 150px;
+	height: 200px;
+	border: 2px solid #4caf50;
+	border-radius: 8px;
+	margin: 5px auto;
+	overflow: hidden;
+}
+
+.image-placeholder img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.image-placeholder button {
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	background-color: rgba(76, 175, 80, 0.8);
+	color: white;
+	border: none;
+	padding: 5px 10px;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+/* CSS cho ảnh bổ sung */
+.additional-image-container {
+	position: relative;
+	display: inline-block;
+	width: 150px;
+	height: 150px;
+	margin: 5px;
+	border: 2px solid #4caf50;
+	border-radius: 8px;
+	overflow: hidden;
+	box-sizing: border-box;
+	/* Đảm bảo kích thước không bị ảnh hưởng bởi padding */
+}
+
+.additional-image-container img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	/* Đảm bảo ảnh hiển thị đúng tỷ lệ và không bị kéo dãn */
+}
+.img-container {
+    position: relative;
+    display: inline-block;
+    width: 100px;  /* Điều chỉnh kích thước của khung chứa ảnh */
+    height: 100px;
+    margin: 5px;
+    border: 2px solid #4caf50;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.img-container img {
+    width: 100%;      /* Đảm bảo ảnh sẽ chiếm hết chiều rộng của khung */
+    height: 100%;     /* Đảm bảo ảnh sẽ chiếm hết chiều cao của khung */
+    object-fit: contain; /* Đảm bảo ảnh không bị cắt, nhưng có thể để lại khoảng trống nếu tỷ lệ ảnh không khớp */
+}
+
+.delete-button {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	font-size: 20px; /* Điều chỉnh kích thước dấu X */
+	color: red;
+	cursor: pointer;
+	font-weight: bold;
+}
+
+.delete-button:hover {
+	color: red; /* Thay đổi màu khi di chuột qua dấu X */
+}
+
+/* Nút thoát và lưu */
+.exit-container {
+	text-align: center;
+	margin-top: 20px;
+}
+
+.btn-save {
+	margin-left: 10px;
+}
+
+/* CSS cho phần hiển thị ảnh bổ sung */
+#additionalImagesPreview {
+	display: flex;
+	flex-wrap: wrap; /* Đảm bảo ảnh bổ sung có thể nằm trên nhiều dòng */
+	justify-content: center;
+	max-height: 300px; /* Giới hạn chiều cao của container */
+	overflow-y: auto; /* Cuộn dọc nếu quá nhiều ảnh */
+	margin-top: 10px;
+}

@@ -34,7 +34,7 @@
 	<link rel="stylesheet" href="/site/css/productfavorites.css">
 </head>
 
-<body>
+<body ng-app="siteApp">
 
 	<div th:replace="~{site/fragments/header :: header}"></div>
 	<div th:replace="~{site/fragments/nav :: nav}"></div>
@@ -66,6 +66,8 @@
 			</a>
 		</div>
 	</div>
+
+
 	<!-- <script type="text/javascript" src="js/mdb.umd.min.js"></script> -->
 	<script type="text/javascript" src="/site/js/mdb.umd.min.js"></script>
 	<!-- Custom scripts -->
@@ -77,6 +79,12 @@
 	<script type="text/javascript" src="/site/js/allproducts.js"></script>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+	<!-- AngularJS -->
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
+
+	<script src="/site/js/site-app.js"></script>
+	<script src="/site/js/comment-ctrl.js"></script>
 
 </body>
 

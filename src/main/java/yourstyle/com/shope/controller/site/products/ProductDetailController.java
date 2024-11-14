@@ -9,14 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Product;
 import yourstyle.com.shope.model.ProductImage;
 import yourstyle.com.shope.model.ProductVariant;
@@ -27,7 +25,6 @@ import yourstyle.com.shope.service.ProductImageService;
 import yourstyle.com.shope.service.ProductService;
 import yourstyle.com.shope.service.ProductVariantService;
 import yourstyle.com.shope.service.ReviewService;
-import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class ProductDetailController {
@@ -43,13 +40,7 @@ public class ProductDetailController {
     @Autowired
     private ReviewService reviewService;
 
-    @Autowired
-    private AccountService accountService;
-
-    @Autowired
-    private CustomerService customerService;
-
-    @GetMapping("/product/detail/{productId}")
+    @GetMapping("yourstyle/product/detail/{productId}")
     public String productDetail(@PathVariable("productId") Integer productId,
             @RequestParam("page") Optional<Integer> page, Model model) {
         Optional<Product> productOptional = productService.findById(productId);
@@ -95,26 +86,8 @@ public class ProductDetailController {
 
             return "site/products/productdetail";
         } else {
-            // Xử lý khi sản phẩm không tồn tại (có thể chuyển hướng về trang khác hoặc
-            // thông báo lỗi)
             model.addAttribute("error", "Sản phẩm không tồn tại");
             return "redirect:/yourstyle/home";
         }
     }
-
-    @PostMapping("/product/review")
-    public String reviewProduct(@RequestParam String comment, Authentication authentication,
-            @RequestParam Integer productId) {
-        Review review = new Review();
-        review.setComment(comment);
-
-        Optional<Customer> customer = customerService.findById(13);
-        Optional<Product> product = productService.findById(productId);
-
-        review.setProduct(product.get());
-        review.setCustomer(customer.get()); // Đảm bảo rằng bạn đã có id của sản phẩm
-        reviewService.save(review); // Giả định rằng bạn đã có phương thức save trong ReviewService
-        return "redirect:/product/detail/" + productId; // Chuyển hướng về trang chi tiết sản phẩm
-    }
-
 }

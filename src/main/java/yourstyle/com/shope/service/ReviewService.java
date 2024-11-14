@@ -22,8 +22,10 @@ public interface ReviewService {
     // Xóa đánh giá
     boolean deleteReview(Integer id);
 
-    // Trả lời đánh giá
-    boolean replyToReview(Integer id, String reply);
-
+    // Thêm phương thức xóa nhiều đánh giá
+    void deleteReviewsByIds(List<Integer> reviewIds);
+    
     Review findById(Integer reviewId);
+    //pthuc new
+    boolean deleteMultipleReviews(List<Integer> reviewIds);
 }

@@ -3,123 +3,178 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{admin/index.html}">
 <head>
-    <title>Danh sách đánh giá</title>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
-    <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+<title>Danh sách đánh giá</title>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 </head>
 <body>
-    <section layout:fragment="main">
-        <div class="displayNotifications"></div>
-        <main id="main" class="main">
-            <div class="pagetitle">
-                <h1>Danh sách đánh giá</h1>
-                <nav>
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Trang chủ</a></li>
-                        <li class="breadcrumb-item active"><a th:href="@{/admin/reviews}">Đánh giá</a></li>
-                    </ol>
-                </nav>
-            </div>
+	<section layout:fragment="main">
+		<div class="displayNotifications"></div>
+		<main id="main" class="main">
+			<div class="pagetitle">
+				<h1>Danh sách đánh giá</h1>
+				<nav>
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="index.html">Trang
+								chủ</a></li>
+						<li class="breadcrumb-item active"><a
+							th:href="@{/admin/reviews}">Đánh giá</a></li>
+					</ol>
+				</nav>
+			</div>
 
-            <section class="section bg-white p-4">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="d-flex align-items-center justify-content-between mb-3">
-                            <div class="position-relative w-50">
-                                <form th:action="@{/admin/reviews/search}" method="get">
-                                    <input type="hidden" name="size" th:value="${size}"> 
-                                    <input type="hidden" name="page" th:value="${currentPage}">
-                                    <button class="position-absolute end-0 top-50 translate-middle-y pe-3 border-0 me-1" style="background-color: white">
-                                        <i class="bi bi-search"></i>
-                                    </button>
-                                    <input class="form-control" placeholder="Nhập tên sản phẩm hoặc người dùng..." name="value"/>
-                                </form>
-                            </div>
-                            <div>
-                                <button id="deleteReviews" class="btn btn-danger py-lg-1 px-lg-3 rounded-pill text-white ms-3" onclick="confirmDeleteMultiple()">
-                                    <i class="bi bi-trash"></i> Xóa tất cả
-                                </button>
-                            </div>
-                        </div>
+			<section class="section bg-white p-4">
+				<div class="row">
+					<div class="col-lg-12">
+						<div
+							class="d-flex align-items-center justify-content-between mb-3">
+							<div>
+								<button id="deleteReviews"
+									class="btn btn-danger py-lg-1 px-lg-3 rounded-pill text-white ms-3"
+									onclick="confirmDeleteMultiple()">
+									<i class="bi bi-trash"></i> Xóa tất cả
+								</button>
+							</div>
+						</div>
 
-                        <div class="table-responsive">
-                            <table class="table table-striped-columns">
-                                <thead>
-                                    <tr>
-                                        <th scope="col"><input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)" /></th>
-                                        <th scope="col">STT</th>
-                                        <th scope="col">ID</th>
-                                        <th scope="col">Sản phẩm</th>
-                                        <th scope="col">Người dùng</th>
-                                        <th scope="col">Đánh giá</th>
-                                        <th scope="col">Nhận xét</th>
-                                        <th scope="col">Ngày tạo</th>
-                                        <th scope="col">Thao tác</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:each="review, stat : ${reviews}">
-                                        <td><input type="checkbox" class="review-checkbox" value="${review.reviewId}" /></td>
-                                        <td th:text="${stat.count}"></td>
-                                        <td th:text="${review.reviewId}" class="review-id"></td>
-                                        <td th:text="${review.product.name}">Tên sản phẩm</td>
-                                        <td th:text="${review.customer.fullname}">Tên người dùng</td>
-                                        <td th:text="${review.rating}">0</td>
-                                        <td th:text="${review.comment != null ? review.comment : 'Không có nhận xét'}"></td>
-                                        <td th:text="${#dates.format(review.createAt, 'dd/MM/yyyy HH:mm')}"></td>
-                                        <td class="text-center">
-                                            <a style="cursor: pointer; font-size: 21px; color: green;" th:href="@{/admin/reviews/edit/{id}(id=${review.reviewId})}">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                            <a th:href="@{/admin/reviews/delete/{id}(id=${review.reviewId})}">
-                                                <i class="bi bi-trash" id="trash-${review.reviewId}"></i>
-                                            </a> 
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+						<div class="table-responsive">
+							<table class="table table-striped-columns">
+								<thead>
+									<tr>
+										<th scope="col"><input type="checkbox" id="selectAll"
+											onclick="toggleSelectAll(this)"value="${review.reviewId}" name="reviewIds" /></th>
+										<th scope="col">STT</th>
+										<th scope="col">ID</th>
+										<th scope="col">Sản phẩm</th>
+										<th scope="col">Người dùng</th>
+										<th scope="col">Đánh giá</th>
+										<th scope="col">Nhận xét</th>
+										<th scope="col">Ngày tạo</th>
+										<th scope="col">Thao tác</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="review, stat : ${reviews}"
+										th:if="${not #lists.isEmpty(reviews)}">
+										<td><input type="checkbox" class="review-checkbox"
+											value="${review.reviewId}" name="reviewIds" /></td>
+										<td th:text="${stat.count}"></td>
+										<td th:text="${review.reviewId}" class="review-id"></td>
+										<td th:text="${review.product.name}">Tên sản phẩm</td>
+										<td th:text="${review.customer.fullname}">Tên người dùng</td>
+										<td th:text="${review.rating}">0</td>
+										<td
+											th:text="${review.comment != null ? review.comment : 'Không có nhận xét'}"></td>
+										<td
+											th:text="${#dates.format(review.createAt, 'dd/MM/yyyy HH:mm')}"></td>
+										<td class="text-center"><a
+											style="cursor: pointer; font-size: 21px; color: red;"
+											th:onclick="|deleteReview(${review.reviewId})|"> <i
+												class="bi bi-trash"></i> Xóa
+										</a></td>
+									</tr>
 
-                        <div class="text-muted d-flex justify-content-between">
-                            <form action="">
-                                <div class="form-inline">
-                                    <label for="size">Page Size:</label> 
-                                    <select class="px-lg-2 py-lg-1" name="size" id="size" onchange="this.form.submit()">
-                                        <option value="5">5</option>
-                                        <option value="10">10</option>
-                                        <option value="20">20</option>
-                                        <option value="30">30</option>
-                                    </select>
-                                </div>
-                            </form>
-                            <nav aria-label="Page navigation">
-                                <ul class="pagination">
-                                    <li class="page-item">
-                                        <a class="page-link" th:href="${#strings.isEmpty(value)} ? @{'?page=' + (${currentPage - 1 >= 0 ? currentPage - 1 : 0}) + '&size=' + ${size}} : @{'/admin/products/search?page=' + (${currentPage - 1 >= 0 ? currentPage - 1 : 0}) + '&size=' + ${size} + '&value=' + ${value}}">
-                                            Trước
-                                        </a>
-                                    </li>
-                                    <li th:each="pageNum : ${pageNumbers}" class="page-item" th:classappend="${currentPage == pageNum - 1} ? 'active'">
-                                        <a class="page-link" th:href="${#strings.isEmpty(value)} ? @{'?page=' + (${pageNum - 1}) + '&size=' + ${size}} : @{'/admin/products/search?page=' + (${pageNum - 1}) + '&size=' + ${size} + '&value=' + ${value}}">
-                                            [[${pageNum}]]
-                                        </a>
-                                    </li>
-                                    <li class="page-item" th:if="${totalPages > 1}">
-                                        <a class="page-link" th:href="${#strings.isEmpty(value)} ? @{'?page=' + (${currentPage + 1 < totalPages ? currentPage + 1 : currentPage}) + '&size=' + ${size}} : @{'/admin/products/search?page=' + (${currentPage + 1 < totalPages ? currentPage + 1 : currentPage}) + '&size=' + ${size} + '&value=' + ${value}}">
-                                            Sau
-                                        </a>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-        <script src="/admin/js/reviewList.js"></script>
-    </section>
+									<tr th:if="${#lists.isEmpty(reviews)}">
+										<td colspan="9" class="text-center">Không có đánh giá
+											nào.</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</section>
+		</main>
+
+		<script>
+		// Chức năng chọn tất cả checkbox
+		function toggleSelectAll(source) {
+		    // Lấy tất cả các checkbox review
+		    var checkboxes = document.querySelectorAll('.review-checkbox');
+		    
+		    // Lặp qua tất cả các checkbox và thay đổi trạng thái (checked) theo trạng thái của checkbox 'Chọn tất cả'
+		    checkboxes.forEach(checkbox => {
+		        checkbox.checked = source.checked;
+		    });
+
+		    // Nếu bạn muốn kiểm tra các giá trị ID đã được chọn, bạn có thể cập nhật lại mảng selectedReviews
+		    const selectedReviews = Array.from(document.querySelectorAll('.review-checkbox:checked')).map(cb => cb.value);
+		    console.log(selectedReviews);  // Kiểm tra các giá trị ID đã được chọn
+		}
+
+
+            // Xóa nhiều đánh giá
+            function confirmDeleteMultiple() {
+                const selectedReviews = Array.from(document.querySelectorAll('.review-checkbox:checked')).map(cb => cb.value);
+                if (selectedReviews.length === 0) {
+                    alert('Vui lòng chọn ít nhất một đánh giá để xóa.');
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Bạn có chắc chắn?',
+                    text: 'Bạn sẽ không thể phục hồi đánh giá đã xóa!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Có, xóa!',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Gửi yêu cầu xóa tới server
+                        fetch('/admin/reviews/deleteMultiple', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: new URLSearchParams({
+                                'reviewIds': selectedReviews.join(',')
+                            })
+                        })
+                        .then(response => response.json())  // Đảm bảo phản hồi được phân tích dưới dạng JSON
+                        .then(data => {
+                            if (data.message) {
+                                Swal.fire('Thành công!', data.message, 'success');
+                                
+                            } else {
+                                Swal.fire('Lỗi!', data.message || 'Có lỗi xảy ra khi xóa các đánh giá.', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire('Lỗi!', 'Không thể kết nối tới server.', 'error');
+                        });
+                    }
+                });
+            }
+
+            // Xóa một đánh giá
+            function deleteReview(reviewId) {
+                Swal.fire({
+                    title: 'Bạn có chắc chắn?',
+                    text: 'Bạn sẽ không thể phục hồi đánh giá đã xóa!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Có, xóa!',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/admin/reviews/delete/${reviewId}`, {
+                            method: 'GET'
+                        })
+                        .then(response => response.text())
+                        .then(result => {
+                            Swal.fire('Thành công!', 'Đã xóa đánh giá.', 'success');
+                            location.reload(); // Tải lại trang sau khi xóa
+                        })
+                        .catch(error => {
+                            Swal.fire('Lỗi!', 'Có lỗi xảy ra khi xóa đánh giá.', 'error');
+                        });
+                    }
+                });
+            }
+        </script>
+	</section>
 </body>
 </html>

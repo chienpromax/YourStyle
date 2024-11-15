@@ -2,6 +2,7 @@ package yourstyle.com.shope.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -73,5 +74,21 @@ public class Product implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "product")
     private List<ProductVariant> productVariants;
+
+    public BigDecimal getDiscountedPrice() {
+    if (discount != null 
+        && discount.getDiscountPercent() != null 
+        && discount.getStartDate() != null 
+        && discount.getEndDate() != null) {
+
+        LocalDateTime now = LocalDateTime.now();
+
+        if (now.isAfter(discount.getStartDate()) && now.isBefore(discount.getEndDate())) {
+            BigDecimal discountAmount = price.multiply(discount.getDiscountPercent()).divide(new BigDecimal("100"));
+            return price.subtract(discountAmount);
+        }
+    }
+    return price;
+}
 
 }

@@ -21,12 +21,10 @@ import yourstyle.com.shope.service.OrderService;
 @RequestMapping("/yourstyle/order")
 public class OrderHistory {
 
-
     @Autowired
     private OrderService orderService;
     @Autowired
     private CustomerService customerService;
-
 
     @GetMapping("/orderhistory")
     public String showOrderHistory(Model model) {

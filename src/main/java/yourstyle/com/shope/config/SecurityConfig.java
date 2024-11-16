@@ -55,9 +55,13 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/yourstyle/accounts/login")
                         .clearAuthentication(true)
                         .deleteCookies("JSESSIONID", "loggedInUser")
-                        .invalidateHttpSession(true));
-
+                        .invalidateHttpSession(true))
+                .rememberMe(rememberMe -> rememberMe
+                        .key("uniqueAndSecret") // Khoá mã hóa token remember-me
+                        .tokenValiditySeconds(86400) // Thời gian tồn tại của cookie là 1 ngày
+                        .rememberMeParameter("remember-me") // Tên của checkbox trong form
+                        .useSecureCookie(true) // Chỉ dùng cookie bảo mật khi chạy trên HTTPS
+                        .alwaysRemember(true));
         return http.build();
     }
 }
-

@@ -570,6 +570,73 @@
 }
 
 
+/* lịch sử đơn hàng */
+/* .sidebar {
+    width: 250px;
+    padding-top: 20px;
+}
+
+.sidebar a {
+    font-weight: 500;
+    margin-bottom: 10px;
+    display: block;
+    color: #333;
+} */
+
+.order-tab {
+    font-weight: bold;
+    color: #ff5722;
+    border-bottom: 2px solid #ff5722;
+}
+
+.order-card {
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    padding: 15px;
+}
+
+.order-card img {
+    width: 100px;
+    height: auto;
+}
+
+.btn-orange {
+    background-color: #ff5722;
+    color: #fff;
+}
+
+
+.timeline {
+    border-left: 3px solid #ddd;
+    padding-left: 20px;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -23px;
+    top: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #ddd;
+}
+
+.timeline-item.active::before {
+    background-color: #28a745;
+}
+
+.order-status {
+    color: #28a745;
+    font-weight: bold;
+}
+
+
 
 /* img,span,p {
 img,span,p,input,label,h1,h2,h3,h4,h5,p,ul,li,i,a,tr,td {

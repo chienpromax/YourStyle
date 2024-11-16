@@ -85,6 +85,9 @@
                                 </li>
                                 <!-- Nút Đăng xuất chỉ hiển thị khi đã đăng nhập -->
                                 <li sec:authorize="isAuthenticated()">
+                                    <a class="dropdown-item" th:href="@{/yourstyle/order/orderhistory}">LỊCH SỬ</a>
+                                </li>
+                                <li sec:authorize="isAuthenticated()">
                                     <a class="dropdown-item" th:href="@{/yourstyle/accounts/logout}">ĐĂNG XUẤT</a>
                                 </li>
                             </ul>

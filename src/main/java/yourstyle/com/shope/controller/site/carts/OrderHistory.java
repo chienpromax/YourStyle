@@ -35,6 +35,7 @@ public class OrderHistory {
         Customer customer = customerService.findByAccountId(accountId);
         
         List<Order> orders = orderService.findByCustomer(customer);
+        orders.sort((o1, o2) -> o2.getOrderDate().compareTo(o1.getOrderDate()));
 
         model.addAttribute("orders", orders);
 

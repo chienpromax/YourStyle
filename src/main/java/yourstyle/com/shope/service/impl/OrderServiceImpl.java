@@ -225,4 +225,8 @@ public class OrderServiceImpl implements OrderService {
         return totalAmount.subtract(discountAmount).max(BigDecimal.ZERO);
     }
 
+	@Override
+    public List<Order> findByCustomerOrderByOrderDateDesc(Customer customer) {
+        return orderRepository.findByCustomerOrderByOrderDateDesc(customer);
+    }
 }

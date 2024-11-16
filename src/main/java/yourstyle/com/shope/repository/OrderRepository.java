@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Order;
-import yourstyle.com.shope.model.OrderDetail;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Integer>  {

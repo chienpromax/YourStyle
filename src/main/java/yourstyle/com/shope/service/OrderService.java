@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Order;
+import yourstyle.com.shope.model.OrderStatus;
 
 public interface OrderService {
 
@@ -58,5 +59,5 @@ public interface OrderService {
 	BigDecimal calculateDiscountedTotal(BigDecimal totalAmount, BigDecimal discountAmount);
 
 	List<Order> findByCustomerOrderByOrderDateDesc(Customer customer);
-	
+
 }

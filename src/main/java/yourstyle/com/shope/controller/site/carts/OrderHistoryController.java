@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletRequest;
 import yourstyle.com.shope.model.CustomUserDetails;
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Order;
@@ -32,7 +33,8 @@ public class OrderHistoryController {
     private CustomerService customerService;
 
     @GetMapping("/orderhistory")
-    public String showOrderHistory(Model model, @RequestParam(required = false) Integer selectedStatus) {
+    public String showOrderHistory(Model model, @RequestParam(required = false) Integer selectedStatus,
+            HttpServletRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Integer accountId = userDetails.getAccountId();
@@ -55,6 +57,10 @@ public class OrderHistoryController {
         model.addAttribute("orderStatuses", orderStatuses);
         model.addAttribute("statusDescriptions", statusDescriptions);
         model.addAttribute("selectedStatus", selectedStatus);
+
+        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+            return "site/carts/orderhistory :: #order-content";
+        }
 
         return "site/carts/orderhistory";
     }

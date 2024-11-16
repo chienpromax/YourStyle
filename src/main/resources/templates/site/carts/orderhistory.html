@@ -8,7 +8,7 @@
 
 <body>
     <!--===== main =======-->
-    <section class="py-5 container bg-light" layout:fragment="main">
+    <section class="py-5 container bg-light" id="order-content" layout:fragment="main">
         <div class="container-fluid">
             <h3 class="py-3">Lịch sử đơn hàng</h3>
             <div class="row">
@@ -17,51 +17,71 @@
                     <ul class="nav nav-tabs mb-3" id="order-status-tabs" role="tablist">
                         <li class="nav-item" role="presentation" th:each="status : ${orderStatuses}">
                             <a class="nav-link" th:classappend="${status.code == selectedStatus ? 'active' : ''}"
-                               th:href="@{/yourstyle/order/orderhistory(selectedStatus=${status.code})}" 
-                               th:text="${statusDescriptions[status.code]}">Trạng thái</a> <!-- Hiển thị mô tả trạng thái -->
+                                href="javascript:void(0);" th:onclick="'filterOrdersByStatus(' + ${status.code} + ')'"
+                                th:text="${statusDescriptions[status.code]}">Trạng thái</a>
                         </li>
                     </ul>
-                    
-                    
-                    <div class="tab-content" id="ex1-content">
-                        <div class="tab-pane fade show active" id="ex1-tabs-1" role="tabpanel" aria-labelledby="ex1-tab-1">
-                            <div th:each="order : ${orders}">
-                                <div class="order-card">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span th:text="${order.transactionType ?: 'Đang xử lý'} + ' - ' + ${order.transactionStatus ?: ''}"></span>
+
+                    <div class="tab-content" id="order-content">
+                        <!-- Nội dung các đơn hàng sẽ được tải lại bằng AJAX -->
+                        <div th:each="order : ${orders}">
+                            <div class="order-card">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span
+                                        th:text="${order.transactionType ?: 'Đang xử lý'} + ' - ' + ${order.transactionStatus ?: ''}"></span>
+                                    <div>
+                                        <span class="badge"
+                                            th:classappend="${order.status == 9 ? 'bg-warning' : 'bg-success'}"
+                                            th:text="${order.getStatusDescription()}">Status</span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div th:each="orderDetail : ${order.orderDetails}">
+                                    <div class="d-flex py-2">
+                                        <img th:src="@{'/uploads/' + ${orderDetail.productVariant.product.image}}"
+                                            alt="Product Image" class="me-3" />
                                         <div>
-                                            <span class="badge" th:classappend="${order.status == 9 ? 'bg-warning' : 'bg-success'}" 
-                                                  th:text="${order.getStatusDescription()}">Status</span>
+                                            <h6 th:text="${orderDetail.productVariant.product.name}">Tên sản phẩm</h6>
+                                            <p th:text="'số lượng x ' + ${orderDetail.quantity}">Quantity</p>
+                                            <p>
+                                                <span
+                                                    th:text="${#numbers.formatDecimal(orderDetail.price, 1, 'COMMA', 3, 'POINT') + ' Đ'}"
+                                                    class="text-muted"></span>
+                                            </p>
+                                            <a class="btn"
+                                                th:href="@{/product/detail/{id}(id=${orderDetail.productVariant.product.productId})}">
+                                                Mua Lại
+                                            </a>
                                         </div>
                                     </div>
-                                    <hr>
-                                    <div th:each="orderDetail : ${order.orderDetails}">
-                                        <div class="d-flex py-2">
-                                            <img th:src="@{'/uploads/' + ${orderDetail.productVariant.product.image}}" alt="Product Image" class="me-3" />
-                                            <div>
-                                                <h6 th:text="${orderDetail.productVariant.product.name}">Tên sản phẩm</h6>
-                                                <p th:text="'số lượng x ' + ${orderDetail.quantity}">Quantity</p>
-                                                <p>
-                                                    <span th:text="${#numbers.formatDecimal(orderDetail.price, 1, 'COMMA', 3, 'POINT')+ ' Đ'}" class="text-muted"></span>
-                                                </p>
-                                                <a class="btn" th:href="@{/product/detail/{id}(id=${orderDetail.productVariant.product.productId})}">
-                                                    Mua Lại
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <p class="text-end">Thành tiền: <span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 'COMMA', 3, 'POINT')+ ' Đ'}" class="text-danger"></span></p>
-                                    <div class="text-end">
-                                        <button class="btn btn-outline-secondary">Xem Chi Đơn</button>
-                                    </div>
+                                </div>
+                                <p class="text-end">Thành tiền: <span
+                                        th:text="${#numbers.formatDecimal(order.totalAmount, 1, 'COMMA', 3, 'POINT') + ' Đ'}"
+                                        class="text-danger"></span></p>
+                                <div class="text-end">
+                                    <button class="btn btn-outline-secondary">Xem Chi Đơn</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
                 </div>
             </div>
         </div>
+        <script>
+            function filterOrdersByStatus(status) {
+                fetch(`/yourstyle/order/orderhistory?selectedStatus=${status}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest' // Xác định yêu cầu là AJAX
+                    }
+                })
+                    .then(response => response.text())
+                    .then(html => {
+                        document.querySelector('#order-content').innerHTML = html;
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        </script>
     </section>
 
 </body>

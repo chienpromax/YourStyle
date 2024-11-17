@@ -25,11 +25,38 @@
             font-size: 1.5em;
             color: #dc3545;
         }
+
+        /* Rating stars */
+        .rating {
+            font-size: 24px;
+            color: #ddd;
+            cursor: pointer;
+        }
+
+        .star {
+            transition: color 0.3s ease;
+        }
+
+        .star.filled {
+            color: #ffcc00;
+        }
+
+        .stars {
+            font-size: 18px;
+        }
+
+        .stars .star {
+            color: #ddd;
+        }
+
+        .stars .star.filled {
+            color: #ffcc00;
+        }
     </style>
 </head>
 
 <body>
-    <section class="py-5 container" layout:fragment="main">
+    <section class="py-5 container" layout:fragment="main" ng-controller="comment-ctrl">
         <div class="row">
             <!-- Phần ảnh sản phẩm -->
             <div class="col-md-1 border-end border-top">
@@ -62,21 +89,32 @@
                     <hr>
                     <h3>Đánh giá sản phẩm</h3>
                     <div class="py-5">
-                        <form th:action="@{/product/review}" method="post">
-                            <div class="comment-box d-flex align-items-center p-2">
-                                <a href="">
-                                    <img src="/site/images/logo/github.png" alt="Logo" class="comment-logo">
-                                </a>
+                        <form ng-submit="submitComment()">
+                            <div class="comment-box d-flex align-items-center">
                                 <div class="form-outline" data-mdb-input-init>
-                                    <input type="text" id="form12" name="comment" class="form-control" required />
+                                    <input type="text" id="form12" name="comment" class="form-control"
+                                        ng-model="newComment" required />
                                     <label class="form-label" for="form12">ĐÁNH GIÁ</label>
                                 </div>
-                                <input type="hidden" name="productId" th:value="${product.productId}" />
                                 <button type="button" class="btn btn-outline-danger mx-2" data-mdb-ripple-init
-                                    data-mdb-ripple-color="dark">Hủy</button>
+                                    data-mdb-ripple-color="dark" ng-click="resetForm()">Hủy</button>
                                 <button type="submit" class="btn btn-outline-info" data-mdb-ripple-init
                                     data-mdb-ripple-color="dark">Đăng</button>
                             </div>
+                            <!-- Rating: sao -->
+                            <div class="rating">
+                                <span class="star" ng-click="setRating(1)"
+                                    ng-class="{'filled': rating >= 1}">&#9733;</span>
+                                <span class="star" ng-click="setRating(2)"
+                                    ng-class="{'filled': rating >= 2}">&#9733;</span>
+                                <span class="star" ng-click="setRating(3)"
+                                    ng-class="{'filled': rating >= 3}">&#9733;</span>
+                                <span class="star" ng-click="setRating(4)"
+                                    ng-class="{'filled': rating >= 4}">&#9733;</span>
+                                <span class="star" ng-click="setRating(5)"
+                                    ng-class="{'filled': rating >= 5}">&#9733;</span>
+                            </div>
+
                         </form>
                     </div>
 
@@ -88,50 +126,50 @@
                     </ul>
                     <div class="tab-content pt-4" id="ex1-content">
                         <div class="tab-pane fade show active" id="ex1-tabs-1" role="tabpanel"
-                            aria-labelledby="ex1-tab-1">
-                            <div class="comment" th:each="review : ${reviewsPage.content}">
-                                <hr>
-                                <div class="comment-header d-flex align-items-center">
-                                    <img src="/site/images/logo/github.png" alt="Logo" class="comment-logo">
-                                    <span class="comment-name">CHIẾN ĐẸP TRAI</span>
-                                    <span class="comment-date ms-auto"
-                                        th:text="${#dates.format(review.createAt, 'dd/MM/yyyy')}">01/10/2024</span>
+                            aria-labelledby="ex1-tab-1" ng-repeat="review in reviews">
+                            <hr>
+                            <div class="comment-header d-flex align-items-center">
+                                <img ng-src="/uploads/{{review.customer.avatar || 'default-avatar.png'}}" alt="Logo"
+                                    class="comment-logo">
+                                <span class="comment-name">{{review.customer.fullname }}</span>
+                                <span class="comment-date ms-auto">{{ review.createAt | date:'dd/MM/yyyy' }}</span>
+                            </div>
+                            <div class="comment-body">
+                                <h5>{{review.comment }}</h5>
+                                <div class="rating">
+                                    <span class="star" ng-class="{'filled': review.rating >= 1}">&#9733;</span>
+                                    <span class="star" ng-class="{'filled': review.rating >= 2}">&#9733;</span>
+                                    <span class="star" ng-class="{'filled': review.rating >= 3}">&#9733;</span>
+                                    <span class="star" ng-class="{'filled': review.rating >= 4}">&#9733;</span>
+                                    <span class="star" ng-class="{'filled': review.rating >= 5}">&#9733;</span>
                                 </div>
-                                <div class="comment-body">
-                                    <h5 th:text="${review.comment}">Review Content</h5>
-                                    <img src="/site/images/product/product-3.webp" class="comment-image" alt="">
-                                </div>
+                                <img ng-src="/site/images/product/product-3.webp" class="comment-image" alt="">
                             </div>
                         </div>
                         <div class="d-flex justify-content-center align-items-center py-3">
-                            <nav aria-label="Page navigation" th:if="${!reviewsPage.empty}">
+                            <nav aria-label="Page navigation">
                                 <ul class="pagination">
-                                    <li class="page-item" th:class="${!reviewsPage.hasPrevious()} ? 'disabled'">
-                                        <a class="page-link"
-                                            th:href="@{/product/detail/{productId}(productId=${product.productId}, page=${reviewsPage.number - 1})}"
+                                    <!-- Previous page button -->
+                                    <li class="page-item" ng-class="{'disabled': currentPage === 0}">
+                                        <a class="page-link" ng-click="loadReviews(currentPage - 1)"
                                             aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
+                                            <span aria-hidden="true">Trước</span>
                                         </a>
                                     </li>
-                                    <li class="page-item"
-                                        th:each="i : ${#numbers.sequence(0, reviewsPage.totalPages - 1)}"
-                                        th:class="${i == reviewsPage.number} ? 'active'">
-                                        <a class="page-link"
-                                            th:href="@{/product/detail/{productId}(productId=${product.productId}, page=${i})}"
-                                            th:text="${i + 1}">1</a>
+
+                                    <!-- Page number buttons -->
+                                    <li class="page-item" ng-repeat="i in pageNumbers">
+                                        <a class="page-link" ng-click="loadReviews(i)">{{ i + 1 }}</a>
                                     </li>
-                                    <li class="page-item" th:class="${!reviewsPage.hasNext()} ? 'disabled'">
-                                        <a class="page-link"
-                                            th:href="@{/product/detail/{productId}(productId=${product.productId}, page=${reviewsPage.number + 1})}"
-                                            aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
+
+                                    <!-- Next page button -->
+                                    <li class="page-item" ng-class="{'disabled': currentPage === totalPages - 1}">
+                                        <a class="page-link" ng-click="loadReviews(currentPage + 1)" aria-label="Next">
+                                            <span aria-hidden="true">Sau</span>
                                         </a>
                                     </li>
                                 </ul>
                             </nav>
-                            <div th:if="${reviewsPage.empty}" class="alert alert-info text-center">
-                                Không có đánh giá nào cho sản phẩm này.
-                            </div>
                         </div>
                     </div>
                 </div>

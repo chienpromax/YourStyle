@@ -22,7 +22,7 @@ public class Category implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "categoryId")
     private Integer categoryId;
-    
+
     @Column(name = "name", nullable = false, length = 100, unique = true)
     private String name;
 
@@ -39,11 +39,9 @@ public class Category implements Serializable {
 
     @Transient // Để không lưu vào database
     private MultipartFile imageFile;
-    
+
+    @Transient
     @OneToMany(mappedBy = "parentCategory", fetch = FetchType.EAGER)
     private List<Category> childCategories;
-
-
-
 
 }

@@ -36,4 +36,6 @@ public interface CustomerService {
 
 	boolean existsByPhoneNumber(String phoneNumber);
 
+	Customer findByAccountId(Integer accountId);
+
 }

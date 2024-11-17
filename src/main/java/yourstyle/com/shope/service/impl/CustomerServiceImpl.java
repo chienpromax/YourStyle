@@ -25,9 +25,9 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-    public Customer update(Customer customer) {
-        return customerRepository.save(customer);
-    }
+	public Customer update(Customer customer) {
+		return customerRepository.save(customer);
+	}
 
 	@Override
 	public <S extends Customer> S save(S entity) {
@@ -40,9 +40,9 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-    public Page<Customer> findAll(Pageable pageable) {
-        return customerRepository.findAll(pageable);
-    }
+	public Page<Customer> findAll(Pageable pageable) {
+		return customerRepository.findAll(pageable);
+	}
 
 	@Override
 	public List<Customer> findAll(Sort sort) {
@@ -50,9 +50,9 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-    public Page<Customer> searchByNameOrPhone(String value, Pageable pageable) {
-        return customerRepository.findByFullnameContainingOrPhoneNumberContaining(value, value, pageable);
-    }
+	public Page<Customer> searchByNameOrPhone(String value, Pageable pageable) {
+		return customerRepository.findByFullnameContainingOrPhoneNumberContaining(value, value, pageable);
+	}
 
 	@Override
 	public List<Customer> findAll() {
@@ -75,13 +75,18 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-    public List<Customer> searchByNameOrPhone(String value) {
-        return customerRepository.findByFullnameContainingOrPhoneNumberContaining(value, value);
-    }
+	public List<Customer> searchByNameOrPhone(String value) {
+		return customerRepository.findByFullnameContainingOrPhoneNumberContaining(value, value);
+	}
 
 	@Override
-    public boolean existsByPhoneNumber(String phoneNumber) {
-        return customerRepository.existsByPhoneNumber(phoneNumber);
-    }
+	public boolean existsByPhoneNumber(String phoneNumber) {
+		return customerRepository.existsByPhoneNumber(phoneNumber);
+	}
+
+	@Override
+	public Customer findByAccountId(Integer accountId) {
+		return customerRepository.findByAccountId(accountId);
+	}
 
 }

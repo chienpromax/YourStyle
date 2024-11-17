@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{site/index.html}">
+
+<head>
+    <title>Lịch sử đơn hàng</title>
+    <style>
+        .timeline {
+            border-left: 3px solid #ddd;
+            padding-left: 20px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding-left: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -25px;
+            top: 5px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #ddd;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .timeline-item.active::before {
+            background-color: #28a745;
+            transform: scale(1.2);
+        }
+
+        .order-status-timeline {
+            position: relative;
+            height: 10px;
+            width: 100%;
+            background: linear-gradient(to right, #28a745, #4CAF50, #8BC34A);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .fill-bar {
+            height: 100%;
+            width: 0;
+            background-color: rgb(238, 255, 0);
+            animation: fillAnimation 5s forwards;
+            border-radius: 5px;
+        }
+
+        @keyframes fillAnimation {
+            0% {
+                width: 0;
+            }
+
+            /* 
+            100% {
+                width: 100%;
+            } */
+        }
+
+        .icon-container {
+            display: inline-block;
+            transition: transform 0.5s;
+        }
+
+        .icon-container:hover {
+            transform: scale(1.2);
+        }
+
+        .order-status i {
+            font-size: 1.5em;
+            color: #28a745;
+        }
+
+    </style>
+</head>
+
+<body>
+    <!--===== main =======-->
+    <section class="py-5 container bg-light" layout:fragment="main">
+        <div class="container my-5">
+            <a th:href="@{/yourstyle/order/orderhistory}" class="btn btn-link">← Trở Lại</a>
+            <section class="py-1 container bg-light">
+                <div class="container">
+                    <div class="order-status row">
+                        <div class="order-status-timeline">
+                            <div class="fill-bar"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <div class="order-status row">
+                <!-- Trạng thái đơn hàng -->
+                <div class="d-flex justify-content-between mb-4 position-relative">
+                    <div class="text-center icon-container">
+                        <i class="bi bi-box-seam text-success"></i><br>
+                        Đơn Hàng Đã Đặt <br><small th:text="${order.orderDate}"></small>
+                    </div>
+                    <div class="text-center icon-container">
+                        <i class="bi bi-currency-dollar text-success"></i><br>
+                        ĐANG ĐÓNG GÓI <br>
+                    </div>
+                    <div class="text-center icon-container">
+                        <i class="bi bi-box-arrow-up text-success"></i><br>
+                        GIAO VẬN CHUYỂN <br>
+                    </div>
+                    <div class="text-center icon-container">
+                        <i class="bi bi-house-door text-success"></i><br>
+                        ĐANG GIAO HÀNG <br>
+                    </div>
+                    <div class="text-center icon-container">
+                        <i class="bi bi-truck text-success"></i><br>
+                        ĐÃ THANH TOÁN <br>
+                    </div>
+                    <div class="text-center icon-container">
+                        <i class="bi bi-check-circle text-success"></i><br>
+                        Đã Nhận Hàng <br>
+                    </div>
+                    <div class="text-center icon-container">
+                        <i class="bi bi-star text-success"></i><br>
+                        Hoàn Thành <br>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Hiển thị địa chỉ giao hàng -->
+                <div class="row d-flex py-5">
+                    <div class="text-start col-md-6">
+                        <h4><strong>Địa chỉ nhận hàng</strong></h4>
+                        <p th:if="${defaultAddress != null}">
+                            <span th:text="${customer.fullname}"></span><br>
+                            <span th:text="'(+84 )' + ' ' + ${customer.phoneNumber}"></span><br>
+                            <span th:text="${defaultAddress.street} + ', ' + ${defaultAddress.district} + ', ' + ${defaultAddress.city} + ', ' + ${defaultAddress.ward}"></span>
+                        </p>
+                        <p th:if="${defaultAddress == null}">
+                            <span>Bạn chưa có địa chỉ.</span>
+                        </p>
+                    </div>
+                    <div class="text-end col-md-6">
+                        <p>Áp dụng: <span th:text="${order.voucher != null ? order.voucher.voucherName : 'Không có voucher'}"></span></p>
+                        <p>Thành tiền: <span class="text-danger" th:text="${#numbers.formatDecimal(order.totalAmount, 1, 'COMMA', 3, 'POINT') + ' Đ'}"></span></p>
+                    </div>
+                </div>
+                
+                <div th:each="detail : ${orderDetails}">
+                    <div class="d-flex py-2">
+                        <img th:src="@{'/uploads/' + ${detail.productVariant.product.image}}" alt="Product Image"
+                            width="140" class="me-3 img-fluid" />
+                        <div>
+                            <h6 th:text="${detail.productVariant.product.name}">Tên sản phẩm</h6>
+                            <p>Số lượng: <span th:text="${detail.quantity}"></span></p>
+                            <p>Giá: <span
+                                    th:text="${#numbers.formatDecimal(detail.price, 1, 'COMMA', 3, 'POINT') + ' Đ'}"></span>
+                            </p>
+                            <a th:href="@{/product/detail/{id}(id=${detail.productVariant.product.productId})}"
+                                class="btn">Mua Lại</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const orderStatus = 2; // Đặt theo trạng thái thực tế, ví dụ "ĐANG GIAO HÀNG"
+                const maxStatus = 7;   // Tổng số trạng thái
+                const progressWidth = (orderStatus / maxStatus) * 100;
+                const fillBar = document.querySelector(".fill-bar");
+
+                fillBar.style.width = progressWidth + "%";
+                fillBar.style.animation = "fillAnimation 5s forwards";
+            });
+
+        </script>
+
+    </section>
+</body>
+
+</html>

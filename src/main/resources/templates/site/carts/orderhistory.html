@@ -23,6 +23,10 @@
                     </ul>
 
                     <div class="tab-content" id="order-content">
+                        <div th:if="${#lists.isEmpty(orders)}">
+                            <h3 class="text-center">Không có đơn hàng nào cho trạng thái này.</h3>
+                        </div>
+
                         <!-- Nội dung các đơn hàng sẽ được tải lại bằng AJAX -->
                         <div th:each="order : ${orders}">
                             <div class="order-card">
@@ -48,18 +52,28 @@
                                                     th:text="${#numbers.formatDecimal(orderDetail.price, 1, 'COMMA', 3, 'POINT') + ' Đ'}"
                                                     class="text-muted"></span>
                                             </p>
-                                            <a class="btn"
+                                            <a
                                                 th:href="@{/product/detail/{id}(id=${orderDetail.productVariant.product.productId})}">
                                                 Mua Lại
                                             </a>
                                         </div>
                                     </div>
                                 </div>
-                                <p class="text-end">Thành tiền: <span
+                                <p class="text-end">
+                                    Thành tiền:
+                                    <span
                                         th:text="${#numbers.formatDecimal(order.totalAmount, 1, 'COMMA', 3, 'POINT') + ' Đ'}"
-                                        class="text-danger"></span></p>
+                                        class="text-danger">
+                                    </span>
+                                    <br>
+                                    <span th:text="${order.voucher != null ? order.voucher.voucherName : ''}"></span>
+                                </p>
                                 <div class="text-end">
-                                    <button class="btn btn-outline-secondary">Xem Chi Đơn</button>
+                                    <button class="btn btn-outline-secondary">
+                                        <a th:href="@{/yourstyle/order/orderhistorydetail/{id}(id=${order.orderId})}">
+                                            Xem Chi tiết
+                                        </a>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -72,15 +86,19 @@
                 fetch(`/yourstyle/order/orderhistory?selectedStatus=${status}`, {
                     method: 'GET',
                     headers: {
-                        'X-Requested-With': 'XMLHttpRequest' // Xác định yêu cầu là AJAX
+                        'X-Requested-With': 'XMLHttpRequest'
                     }
                 })
-                    .then(response => response.text())
+                    .then(response => {
+                        if (!response.ok) throw new Error("Network response was not ok");
+                        return response.text();
+                    })
                     .then(html => {
                         document.querySelector('#order-content').innerHTML = html;
                     })
-                    .catch(error => console.error('Error:', error));
+                    .catch(error => console.error('Error loading orders:', error));
             }
+
         </script>
     </section>
 

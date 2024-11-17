@@ -1,3 +1,490 @@
+window.addEventListener("DOMContentLoaded", function () {
+    const orderId = document.getElementById("orderId").value;
+    const printInvoice = document.getElementById("printInvoice");
+    if (printInvoice) {
+        printInvoice.addEventListener("click", function () {
+            Swal.fire({
+                title: `Bạn muốn In hóa đơn?`,
+                text: "",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Xác nhận",
+                cancelButtonText: "Hủy",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const printWindow = window.open(`/api/invoices/generate-instore?orderId=${orderId}`);
+                    // Mở hộp thoại in trên cửa sổ mới
+                    printWindow.onload = function () {
+                        printWindow.print();
+                    };
+                }
+            });
+        });
+    }
+    // Lắng nghe sự kiện click vào nút giảm số lượng
+    document.querySelectorAll(".decreaseQuantity").forEach(function (button) {
+        button.addEventListener("click", function () {
+            let index = this.getAttribute("data-index");
+            if (index) {
+                // Tìm ô input tương ứng với data-index
+                let quantityInput = document.querySelector(`.quantityInput[data-index="${index}"]`);
+
+                if (quantityInput) {
+                    // Kiểm tra nếu phần tử tồn tại
+                    let currentValue = parseInt(quantityInput.value);
+                    if (currentValue > 1) {
+                        quantityInput.value = currentValue - 1; // cập nhật ô input
+                        const rows = this.closest("tr");
+                        const productVariantId = rows.cells[1].querySelector('input[name="productVariantId"]').value;
+                        const colorId = rows.cells[2].querySelector('input[name="colorId"]').value;
+                        const sizeId = rows.cells[3].querySelector('input[name="sizeId"]').value;
+                        const orderDetailData = {
+                            orderId: orderId,
+                            productVariantId: productVariantId,
+                            colorId: colorId,
+                            sizeId: sizeId,
+                        };
+                        fetch("/api/admin/sell/decreaseQuantity", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(orderDetailData),
+                        })
+                            .then((reponse) => {
+                                if (!reponse.ok) {
+                                    throw new Error("Lỗi server không trả dữ liệu về!");
+                                }
+                                return reponse.json();
+                            })
+                            .then((data) => {
+                                console.log(data);
+                                updateOrderDetailTable(data);
+                                createToast(
+                                    "success",
+                                    "fa-solid fa-circle-check",
+                                    "Thành công",
+                                    "Giảm số lượng sản phẩm trong đơn thành công"
+                                );
+                            })
+                            .catch((err) => {
+                                console.error("Lỗi: " + err);
+                                createToast(
+                                    "error",
+                                    "fa-solid fa-circle-exclamation",
+                                    "Lỗi",
+                                    "Giảm số lượng sản phẩm trong đơn thất bại!"
+                                );
+                            });
+                    }
+                } else {
+                    console.error(`Không tìm thấy ô input với data-index="${index}"`);
+                }
+            }
+        });
+    });
+
+    // Lắng nghe sự kiện click vào nút tăng số lượng
+    document.querySelectorAll(".increaseQuantity").forEach(function (button) {
+        button.addEventListener("click", function () {
+            let index = this.getAttribute("data-index");
+            if (index) {
+                // Tìm ô input tương ứng với data-index
+                let quantityInput = document.querySelector(`.quantityInput[data-index="${index}"]`);
+
+                if (quantityInput) {
+                    // Kiểm tra nếu phần tử tồn tại
+                    let currentValue = parseInt(quantityInput.value);
+                    quantityInput.value = currentValue + 1;
+
+                    const rows = this.closest("tr");
+                    const productVariantId = rows.cells[1].querySelector('input[name="productVariantId"]').value;
+                    const colorId = rows.cells[2].querySelector('input[name="colorId"]').value;
+                    const sizeId = rows.cells[3].querySelector('input[name="sizeId"]').value;
+                    const orderDetailData = {
+                        orderId: orderId,
+                        productVariantId: productVariantId,
+                        colorId: colorId,
+                        sizeId: sizeId,
+                    };
+                    fetch("/api/admin/sell/increaseQuantity", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(orderDetailData),
+                    })
+                        .then((reponse) => {
+                            if (!reponse.ok) {
+                                throw new Error("Lỗi server không trả dữ liệu về!");
+                            }
+                            return reponse.json();
+                        })
+                        .then((data) => {
+                            console.log(data);
+                            updateOrderDetailTable(data);
+                            createToast(
+                                "success",
+                                "fa-solid fa-circle-check",
+                                "Thành công",
+                                "Tăng số lượng sản phẩm vào đơn thành công"
+                            );
+                        })
+                        .catch((err) => {
+                            console.error("Lỗi: " + err);
+                            createToast(
+                                "error",
+                                "fa-solid fa-circle-exclamation",
+                                "Lỗi",
+                                "Tăng số lượng sản phẩm vào đơn thất bại!"
+                            );
+                        });
+                } else {
+                    console.error(`Không tìm thấy ô input với data-index="${index}"`);
+                }
+            }
+        });
+    });
+
+    window.deleteProduct = function (orderDetailId) {
+        console.log("orderDetailId: " + orderDetailId);
+        Swal.fire({
+            title: "Bạn có chắc chắn muốn xóa sản phẩm này không?",
+            text: "sản phẩm này sẽ được xóa ra khỏi đơn",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Xác nhận",
+            cancelButtonText: "Hủy",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/api/admin/sell/deleteProduct/${orderDetailId}/${orderId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then((response) => {
+                        if (!response.ok) {
+                            if (response.status === 404) {
+                                throw new Error("Sản phẩm không tồn tại hoặc đã bị xóa");
+                            } else {
+                                throw new Error("Lỗi server không trả dữ liệu về");
+                            }
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        console.log(data);
+                        updateOrderDetailTable(data);
+                        createToast(
+                            "success",
+                            "fa-solid fa-circle-check",
+                            "Thành công",
+                            "Xóa sản phẩm trong đơn thành công"
+                        );
+                    })
+                    .catch((error) => {
+                        createToast(
+                            "error",
+                            "fa-solid fa-circle-exclamation",
+                            "Lỗi",
+                            "Xóa sản phẩm trong đơn thất bại!"
+                        );
+                        console.log("có lỗi xảy ra: " + error);
+                    });
+            }
+        });
+    };
+    // Nút chọn
+    let colorId;
+    let sizeId;
+    let productVariantId;
+    let price;
+    window.openChildModal = function (button) {
+        const rows = button.closest("tr"); // Nút chọn được nhấn
+        colorId = rows.querySelector(".colorId").value;
+        sizeId = rows.querySelector(".sizeId").value;
+        productVariantId = rows.querySelector(".productVariantId").value;
+
+        const productName = rows.cells[2].textContent;
+        const categoryName = rows.cells[3].textContent;
+        const color = rows.cells[4].textContent;
+        const size = rows.cells[5].textContent;
+        const quantity = rows.cells[7].textContent;
+        // Lấy các phần tử span theo điều kiện có hoặc không có discount
+        const oldPriceElement = rows.querySelector("span:not([class])"); // span không có class, dùng cho oldPrice
+        const discountedPriceElement = rows.querySelector("span.text-danger.fw-bold"); // span dùng cho discountedPrice
+        const lineThroughElement = rows.querySelector("span.text-decoration-line-through.d-block"); // span dùng cho oldPrice khi có discount
+        let oldPrice = lineThroughElement ? lineThroughElement.textContent.trim() : "N/A";
+        let discountedPrice = discountedPriceElement ? discountedPriceElement.textContent.trim() : "N/A";
+        let oldPriceNotDiscount = oldPriceElement ? oldPriceElement.textContent.trim() : "N/A";
+        // Xác định giá nào sẽ hiển thị
+        let modalTitleContent = `<h5>${productName} "${color}"</h5>`;
+        let modalBodyContent;
+        if (discountedPriceElement) {
+            // Nếu có giảm giá
+            price = parseFloat(discountedPrice.replace(" VND", "").replace(",", ""));
+            price = price.toFixed(2); // dùng để thêm sản phẩm
+            modalBodyContent = `
+                    <p><strong>Danh mục:</strong> ${categoryName}</p>
+                    <p>
+                        <strong>Giá:</strong> <span class="text-decoration-line-through">${oldPrice}   </span>
+                        <span class="text-danger fw-bold"> ${discountedPrice}</span>
+                    </p>
+                    <p><strong>Size:</strong> ${size}</p>
+                    <p><strong class="text-danger">Số lượng: ${quantity}</strong>
+                    <input class="" type="number" value="1" min="0" name="inputQuantity" id="inputQuantity"></p>`;
+        } else {
+            // Nếu không có giảm giá
+            price = parseFloat(oldPriceNotDiscount.replace(" VND", "").replace(",", ""));
+            price = price.toFixed(2); // dùng để thêm sản phẩm
+
+            modalBodyContent = `
+                    <p><strong>Danh mục:</strong> ${categoryName}</p>
+                    <p>
+                        <strong>Giá:</strong> <span class="text-danger fw-bold">${oldPriceNotDiscount}</span>
+                    </p>
+                    <p><strong>Size:</strong> ${size}</p>
+                    <p><strong class="text-danger">Số lượng: ${quantity}</strong>
+                    <input type="number" value="1" min="0" name="inputQuantity" id="inputQuantity"></p>`;
+        }
+        selectProductModal.querySelector(".modal-title").innerHTML = modalTitleContent;
+        selectProductModal.querySelector(".modal-body").innerHTML = modalBodyContent;
+    };
+    // Id của modal
+    // thêm sản phẩm
+    const selectProductModal = document.getElementById("selectProductModal");
+    window.confirmInsertProduct = function () {
+        const quantity = document.getElementById("inputQuantity").value;
+        console.log("productVariantId " + productVariantId);
+        console.log("orderId " + orderId);
+        console.log("sizeId " + sizeId);
+        console.log("colorId " + colorId);
+        console.log("quantity " + quantity);
+        console.log("price " + price);
+        const orderDetailData = {
+            orderId: orderId,
+            productVariantId: productVariantId,
+            discountPrice: price,
+            quantity: quantity,
+            sizeId: sizeId,
+            colorId: colorId,
+        };
+        fetch("/api/admin/sell/addProduct", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(orderDetailData),
+        })
+            .then((reponse) => {
+                if (!reponse.ok) {
+                    throw new Error("Lỗi server không trả dữ liệu về!");
+                }
+                return reponse.json();
+            })
+            .then((data) => {
+                updateOrderDetailTable(data);
+                createToast("success", "fa-solid fa-circle-check", "Thành công", "Thêm sản phẩm vào đơn thành công");
+            })
+            .catch((err) => {
+                console.error("Lỗi: " + err);
+                createToast("error", "fa-solid fa-circle-exclamation", "Lỗi", "Thêm sản phẩm vào đơn thất bại!");
+            });
+    };
+    const confirmButton = document.getElementById("confirmInsertProduct");
+    if (confirmButton) {
+        confirmButton.addEventListener("click", confirmInsertProduct);
+    }
+    function updateOrderDetailTable(data) {
+        const totalElement = document.getElementById("totalSum"); // lấy element tổng tiền
+        const goodMoneyElement = document.getElementById("goodMoney"); // tiền hàng
+        const voucherCodeElement = document.querySelector(".voucherCode");
+        const percentVoucherElement = document.querySelector(".percentVoucher"); // phần trăm
+        const discountVoucherElement = document.querySelector(".discountVoucher"); // vnd
+        const tbody = document.querySelector(".dsOrderDetail"); // Chọn tbody
+        tbody.innerHTML = ""; // Xóa nội dung cũ
+        let rows = "";
+        let formattedTotal;
+        const { orderDetailDtos, voucherDto } = data;
+        const { voucherCode, discountType, formattedDiscount } = voucherDto; // VOUCHER
+        if (voucherCodeElement) {
+            voucherCodeElement.value = voucherCode;
+        }
+        if (discountType == 2) {
+            // giảm phần trăm
+            if (percentVoucherElement) {
+                percentVoucherElement.value = formattedDiscount;
+            }
+        } else if (discountType == 1 || discountType == 3) {
+            if (discountVoucherElement) {
+                discountVoucherElement.textContent = formattedDiscount;
+            }
+        }
+        orderDetailDtos.forEach((dto, index) => {
+            const {
+                productVariantId,
+                colorId,
+                sizeId,
+                image,
+                name,
+                colorName,
+                sizeName,
+                oldPrice,
+                newPrice,
+                quantity,
+                totalSum,
+                formattedTotalAmount,
+                discount,
+                orderDetailId,
+                discountPercent,
+            } = dto;
+            formattedTotal = formattedTotalAmount; // gán cho tổng tiền
+            let discountBadge = "";
+            let priceHTML = "";
+            if (discount) {
+                discountBadge = `<span class="badge bg-success badge-custom position-absolute top-0 right-0">${discountPercent}</span>`;
+                priceHTML = `<span class="text-decoration-line-through d-block">${oldPrice}</span>
+                             <span class="text-danger fw-bold">${newPrice}</span>`;
+            } else {
+                priceHTML = `<span>${oldPrice}</span>`;
+            }
+            rows += `
+        <tr class="align-middle">
+        <td scope="row" class="position-relative">
+            <img src="/admin/img/${image}" alt="" class="img-fluid rounded-circle object-cover" style="width: 60px" />
+            ${discountBadge}
+        </td>
+        <td>
+            <input
+                class="productVariantIdOrderDetail"
+                type="hidden"
+                name="productVariantId"
+                value="${productVariantId}"
+            />
+            ${name}
+        </td>
+        <td>
+            <input
+            type="hidden"
+            name="colorId"
+            value="${colorId}"
+            />
+            ${colorName}
+        </td>
+        <td>
+            <input
+            type="hidden"
+            name="sizeId"
+            value="${sizeId}"
+            />
+            ${sizeName}
+        </td>
+        <td>${priceHTML}</td>
+        <td>
+                                                        <div class="input-group">
+                                                            <button
+                                                                class="btn btn-outline-secondary decreaseQuantity"
+                                                                type="button"
+                                                                id="decreaseQuantity"
+                                                                data-index="${index}"
+                                                            >
+                                                                -
+                                                            </button>
+                                                            <input
+                                                                type="number"
+                                                                value="${quantity}"
+                                                                min="1"
+                                                                id="quantityInput"
+                                                                class="quantityInput form-control form-control-sm text-center bg-transparent"
+                                                                data-index="${index}"
+                                                            />
+                                                            <button
+                                                                class="btn btn-outline-secondary increaseQuantity"
+                                                                type="button"
+                                                                id="increaseQuantity"
+                                                                data-index="${index}"
+                                                            >
+                                                                +
+                                                            </button>
+                                                        </div>
+        </td>
+        <td class="text-danger fw-bold">${totalSum}</td>
+        <td class="text-end">
+            <button class="btn btn-outline-danger btn-sm"
+            onclick="deleteProduct(${orderDetailId})"
+            >Xóa</button>
+        </td>
+    </tr>
+`;
+        });
+        tbody.innerHTML = rows; // Thêm dòng mới vào tbody
+        totalElement.textContent = formattedTotal;
+        goodMoneyElement.textContent = formattedTotal;
+    }
+    const buttonPayment = this.document.getElementById("confirmPayment");
+    // vô hiệu hóa nút thanh toán
+    window.openModalPayment = function () {
+        buttonPayment.setAttribute("disabled", true);
+    };
+    // xóa text input tiền khách đưa
+    window.deleteTextInputCustomerGive = function () {
+        document.getElementById("customerGive").value = "";
+    };
+    // hàm tính toán tiền khách đưa
+    document.getElementById("customerGive").addEventListener("input", function () {
+        let TotalAmount = document.getElementById("TotalAmount").textContent.trim();
+
+        let normalizedTotalAmount = TotalAmount.replace("VND", "") // Loại bỏ đơn vị VND
+            .replace(/\./g, "") // Loại bỏ dấu chấm phân cách hàng nghìn
+            .replace(",", ""); // Đổi dấu phẩy thành dấu chấm (nếu có)
+
+        // Chuyển đổi thành số
+        let voucherTotalSumMoneyFormat = parseInt(normalizedTotalAmount, 10);
+
+        const customerGive = document.getElementById("customerGive").value.trim();
+        const tienthieu = document.getElementById("tienthieu");
+
+        // Xóa dấu chấm khi nhập vào và tính toán số tiền đã đưa
+        let customerGiveFormatted = customerGive.replace(/\./g, ""); // Loại bỏ dấu chấm
+        let customerGiveMoney = parseInt(customerGiveFormatted, 10); // Chuyển thành số
+
+        // Thêm dấu chấm vào số tiền đã nhập
+        let customerGiveWithComma = customerGiveFormatted.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+        // Cập nhật lại giá trị ô input tiền khách đưa
+        document.getElementById("customerGive").value = customerGiveWithComma;
+
+        // Tính tiền thiếu
+        let tienthieuValue = voucherTotalSumMoneyFormat - customerGiveMoney;
+
+        // Hiển thị kết quả nếu tiền thiếu lớn hơn 0
+        if (tienthieuValue > 0) {
+            tienthieu.textContent = `${tienthieuValue.toLocaleString()} VND`;
+        } else {
+            tienthieu.textContent = "0 VNĐ"; // Không hiển thị nếu không thiếu
+        }
+        if (customerGiveMoney >= voucherTotalSumMoneyFormat) {
+            buttonPayment.removeAttribute("disabled");
+        }
+    });
+    // click vào giao hàng
+    const shipping = document.getElementById("shipping");
+    const infoCustomer = document.getElementById("infoCustomer");
+    infoCustomer.style.display = "none";
+    shipping.addEventListener("change", function () {
+        if (this.checked) {
+            infoCustomer.style.display = "block";
+        } else {
+            infoCustomer.style.display = "none";
+        }
+    });
+});
+// tìm kiếm sản  phẩm
 document.querySelector("#searchForm").addEventListener("submit", (e) => {
     e.preventDefault();
 

@@ -29,6 +29,5 @@ public class Size implements Serializable {
     @Column(nullable = false, length = 5, unique = true)
     private String sizeName;
     @OneToMany(mappedBy = "size")
-    @JsonManagedReference
     private List<ProductVariant> productVariants;
 }

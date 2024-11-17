@@ -6,11 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Order;
-import yourstyle.com.shope.validation.admin.OrderDto;
-
+import yourstyle.com.shope.model.OrderChannel;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -31,6 +29,18 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     @Query("SELECT o FROM Order o WHERE o.status = ?1 AND o.orderDate BETWEEN ?2 AND ?3")
     Page<Order> findByFromDateAndToDate(Integer status, Timestamp fromDate, Timestamp toDate, Pageable pageable);
 
+    // lọc kênh mua hàng trong danh sách
+    Page<Order> findByOrderChannel(OrderChannel orderChannel, Pageable pageable);
+
     // TÌM kiếm đơn hàng theo khách hàng
     List<Order> findByCustomer(Customer customer);
+
+    // đếm số lượng sử dụng voucher của khách hàng
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.voucher.voucherId = :voucherId AND o.customer.customerId = :customerId")
+    Integer countVoucherUsedByCustomer(@Param("voucherId") Integer voucherId,
+            @Param("customerId") Integer customerId);
+
+    // đếm số lượng voucher đã được sử dụng trong order
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.voucher.voucherId = :voucherId")
+    Integer countVoucherUsed(@Param("voucherId") Integer voucherId);
 }

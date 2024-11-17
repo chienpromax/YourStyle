@@ -20,4 +20,8 @@ public enum OrderChannel {
     public String getName() {
         return name;
     }
+
+    public static OrderChannel[] getAllOrderChanel() {
+        return OrderChannel.values();
+    }
 }

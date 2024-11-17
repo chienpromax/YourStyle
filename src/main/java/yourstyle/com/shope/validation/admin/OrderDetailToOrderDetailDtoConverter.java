@@ -14,7 +14,7 @@ public class OrderDetailToOrderDetailDtoConverter implements Converter<OrderDeta
         orderDetailDto.setOrderDetailId(source.getOrderDetailId());
         orderDetailDto.setOrderId(source.getOrder().getOrderId());
         orderDetailDto.setProductVariantId(source.getProductVariant().getProductVariantId());
-        orderDetailDto.setPrice(source.getPrice());
+        orderDetailDto.setDiscountPrice(source.getPrice());
         orderDetailDto.setQuantity(source.getQuantity());
         return orderDetailDto;
     }

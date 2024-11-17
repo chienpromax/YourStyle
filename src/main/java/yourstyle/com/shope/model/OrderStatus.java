@@ -9,7 +9,8 @@ public enum OrderStatus {
     IN_TRANSIT(4, "Đang giao hàng"),
     PAID(5, "Đã thanh toán"),
     COMPLETED(6, "Hoàn thành"),
-    RETURNED(8, "Trả hàng");
+    RETURNED(8, "Trả hàng"),
+    BUYING(9, "Đang đặt");
 
     private final int code;
     private final String description;
@@ -38,5 +39,14 @@ public enum OrderStatus {
 
     public static OrderStatus[] getALLOrderStatus() {
         return OrderStatus.values();
+    }
+
+    public static String getDesciptionFromOrderStatus(String status) {
+        for (OrderStatus orderStatus : OrderStatus.values()) {
+            if (orderStatus.name().equalsIgnoreCase(status)) {
+                return orderStatus.getDescription();
+            }
+        }
+        throw new IllegalArgumentException("Không tìm thấy trạng thái tương ứng: " + status);
     }
 }

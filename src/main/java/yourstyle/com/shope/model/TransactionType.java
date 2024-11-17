@@ -7,7 +7,7 @@ public enum TransactionType {
     E_WALLET("Ví điện tử"),
     CREDIT_CARD("Thẻ tín dụng"),
     PAYMENT_GATEWAY("Cổng thanh toán trực tuyến"),
-    PAY_IN_STORE("Thanh toán tại quầy"),
+    // PAY_IN_STORE("Thanh toán tại quầy"),
     CASH("Tiền mặt");
 
     private final String value;

@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Order;
+import yourstyle.com.shope.model.OrderChannel;
 import yourstyle.com.shope.model.OrderStatus;
 import yourstyle.com.shope.validation.admin.OrderDto;
 
@@ -55,5 +56,11 @@ public interface OrderService {
 
 	Page<Order> findByFromDateAndToDate(Timestamp fromDate, Timestamp toDate, Pageable pageable);
 
+	Page<Order> findByOrderChannel(OrderChannel orderChannel, Pageable pageable);
+
 	List<Order> findByCustomer(Customer customer);
+
+	Integer countVoucherUsedByCustomer(Integer voucherId, Integer customerId);
+
+	Integer countVoucherUsed(@Param("voucherId") Integer voucherId);
 }

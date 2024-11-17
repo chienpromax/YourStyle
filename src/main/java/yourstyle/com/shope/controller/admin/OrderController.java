@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.stream.*;
 import yourstyle.com.shope.model.Order;
+import yourstyle.com.shope.model.OrderChannel;
 import yourstyle.com.shope.model.OrderDetail;
 import yourstyle.com.shope.model.OrderStatus;
 import yourstyle.com.shope.model.OrderStatusHistory;
@@ -52,6 +54,7 @@ public class OrderController {
     @Autowired
     OrderStatusHistoryService orderStatusHistoryService;
     OrderStatus[] orderStatus = OrderStatus.getALLOrderStatus();
+    OrderChannel[] orderChannels = OrderChannel.getAllOrderChanel();
 
     @GetMapping("detail/{orderId}")
     public String orderDetail(@PathVariable("orderId") Integer orderId, Model model) {
@@ -60,21 +63,12 @@ public class OrderController {
             Order order = orderOption.get();
             // lịch sử trạng thái đơn hàng
             List<OrderStatusHistory> orderStatusHistories = orderStatusHistoryService
-                    .findByOrderOrderId(order.getOrderId());
+                    .findByOrderOrderId(orderId);
             model.addAttribute("orderStatusHistories", orderStatusHistories);
             // hiển thị thời gian mới nhất ở trạng thái đơn hàng
-            model.addAttribute("packingTime",
-                    orderStatusHistoryService.findByLatestStatus(order.getOrderId(), "PACKING").orElse(null));
-            model.addAttribute("shippedTime",
-                    orderStatusHistoryService.findByLatestStatus(order.getOrderId(), "SHIPPED").orElse(null));
-            model.addAttribute("inTransitTime",
-                    orderStatusHistoryService.findByLatestStatus(order.getOrderId(), "IN_TRANSIT").orElse(null));
-            model.addAttribute("completedTime",
-                    orderStatusHistoryService.findByLatestStatus(order.getOrderId(), "COMPLETED").orElse(null));
-            model.addAttribute("returnedTime",
-                    orderStatusHistoryService.findByLatestStatus(order.getOrderId(), "RETURNED").orElse(null));
-            model.addAttribute("paidTime",
-                    orderStatusHistoryService.findByLatestStatus(order.getOrderId(), "PAID").orElse(null));
+            Map<String, Timestamp> latestStatusTime = orderStatusHistoryService.getLatestStatusTime(orderId);
+            model.addAttribute("latestStatusTime", latestStatusTime);
+
             // thông tin địa chỉ giao hàng của khách hàng
             model.addAttribute("order", order);
             // thêm địa chỉ cho khách hàng bỏ vào object
@@ -102,7 +96,7 @@ public class OrderController {
             for (OrderDetail orderDetail : order.getOrderDetails()) {
                 Map<String, String> priceMap = new HashMap<>();
                 // Giá gốc
-                BigDecimal oldPrice = orderDetail.getPrice();
+                BigDecimal oldPrice = orderDetail.getProductVariant().getProduct().getPrice();
                 // đưa vào map để hiển thị giá cũ
                 priceMap.put("oldPrice",
                         formatter.format(oldPrice.setScale(0, RoundingMode.FLOOR)) + ".000 VND");
@@ -113,6 +107,8 @@ public class OrderController {
                     // lấy giá cũ * phần trăm giảm giá -> giá mới
                     BigDecimal discountedPrice = oldPrice
                             .multiply(BigDecimal.ONE.subtract(discountPercent.divide(BigDecimal.valueOf(100))));
+                    orderDetail.setPrice(discountedPrice.setScale(0, RoundingMode.FLOOR)); // cập nhật giá giảm
+                    orderDetailService.save(orderDetail);
                     // tính cột thành tiền (giá mới đã giảm * số lượng)
                     // Làm tròn xuống bỏ phần thập phân
                     BigDecimal discountIntoMoney = discountedPrice.setScale(0, RoundingMode.FLOOR)
@@ -126,6 +122,9 @@ public class OrderController {
                     // cộng dồn thành tiền đã giảm (hiển thị tổng tiền)
                     totalSum = totalSum.add(discountIntoMoney);
                 } else {
+                    // cập nhật giá cũ nếu ko có giảm giá
+                    orderDetail.setPrice(oldPrice.setScale(0, RoundingMode.FLOOR));
+                    orderDetailService.save(orderDetail);
                     // Tính thành tiền không giảm giá (số lượng * giá cũ)
                     BigDecimal intoMoney = oldPrice.setScale(0, RoundingMode.FLOOR) // Làm tròn xuống bỏ phần thập phân
                             .multiply(BigDecimal.valueOf(orderDetail.getQuantity()));
@@ -140,7 +139,7 @@ public class OrderController {
             // tổng tiền
             model.addAttribute("totalSum",
                     formatter.format(totalSum.setScale(0, RoundingMode.FLOOR)) + ".000 VND");
-            // tính phiếu vouchernếu có
+            // tính phiếu voucher nếu có
             if (order.getVoucher() != null) {
                 // định dạng voucher giảm giá 50.000 VND
                 BigDecimal discountVoucher = order.getVoucher().getDiscountAmount().setScale(0,
@@ -202,7 +201,7 @@ public class OrderController {
     Map<Integer, Integer> totalQuantities = new HashMap<>();
     Map<Integer, String> totalAmounts = new HashMap<>();
 
-    public void totalQuantities(Page<Order> list, Model model) {
+    public void totalQuantitiesAndTotalAmounts(Page<Order> list, Model model) {
         // xử lý thông tin đơn hàng và format tổng tiền
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
         symbols.setGroupingSeparator('.'); // Dùng dấu '.' cho hàng nghìn
@@ -252,9 +251,10 @@ public class OrderController {
             @RequestParam(name = "size", required = false) Optional<Integer> size,
             @RequestParam(name = "status", required = false) Optional<Integer> status,
             @RequestParam(name = "from_date", required = false) Optional<String> fromDate,
-            @RequestParam(name = "to_date", required = false) Optional<String> toDate) {
+            @RequestParam(name = "to_date", required = false) Optional<String> toDate,
+            @RequestParam(name = "orderChannel", required = false) Optional<OrderChannel> orderChannel) {
         int currentPage = page.orElse(0);
-        int pageSize = size.orElse(10);
+        int pageSize = size.orElse(30);
         Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by(Sort.Direction.DESC, "orderDate"));
         Page<Order> list = null;
         if (status.isPresent()) {
@@ -266,13 +266,6 @@ public class OrderController {
             }
         } else {
             list = orderService.findAll(pageable);
-        }
-        for (Order order : list) {
-            for (OrderDetail orderDetail : order.getOrderDetails()) {
-                if (orderDetail.getProductVariant() == null) {
-                    throw new NullPointerException("productVariant is null");
-                }
-            }
         }
         if (fromDate.isPresent() && toDate.isPresent()) {
             try {
@@ -289,9 +282,13 @@ public class OrderController {
                 System.err.println("Date format is invalid: " + e.getMessage());
             }
         }
+        if (orderChannel.isPresent()) {
+            list = orderService.findByOrderChannel(orderChannel.get(), pageable);
+        }
         paginationOrders(list, currentPage, model);
-        totalQuantities(list, model);
+        totalQuantitiesAndTotalAmounts(list, model);
         model.addAttribute("orderStatus", orderStatus);
+        model.addAttribute("orderChannels", orderChannels);
         model.addAttribute("orders", list);
         return "admin/orders/list";
     }
@@ -314,7 +311,7 @@ public class OrderController {
             list = orderService.findAll(pageable);
         }
         paginationOrders(list, currentPage, model);
-        totalQuantities(list, model);
+        totalQuantitiesAndTotalAmounts(list, model);
         model.addAttribute("orderStatus", orderStatus);
         model.addAttribute("orders", list);
         return "admin/orders/list";
@@ -337,20 +334,24 @@ public class OrderController {
         headerRow.createCell(2).setCellValue("Tổng sản phẩm");
         headerRow.createCell(3).setCellValue("Tổng số tiền");
         headerRow.createCell(4).setCellValue("Ngày tạo");
-        headerRow.createCell(5).setCellValue("Trạng thái");
-        headerRow.createCell(6).setCellValue("Ghi chú");
+        headerRow.createCell(5).setCellValue("Loại đơn");
+        headerRow.createCell(6).setCellValue("Trạng thái");
+        headerRow.createCell(7).setCellValue("Ghi chú");
         List<Order> orders = orderService.findAll();
         int rowNum = 1;
         for (Order order : orders) {
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            String formattedOrderDate = formatter.format(order.getOrderDate());
             Integer orderId = order.getOrderId();
             Row row = sheet.createRow(rowNum++);
             row.createCell(0).setCellValue(order.getOrderId());
             row.createCell(1).setCellValue(order.getCustomer().getFullname());
             row.createCell(2).setCellValue(!totalQuantities.isEmpty() ? totalQuantities.get(orderId) : 0);
-            row.createCell(3).setCellValue(order.getTotalAmount() != null ? order.getTotalAmount().doubleValue() : 0);
-            row.createCell(4).setCellValue(order.getOrderDate() != null ? order.getOrderDate().toString() : "");
-            row.createCell(5).setCellValue(order.getStatusDescription());
-            row.createCell(6).setCellValue(order.getNote());
+            row.createCell(3).setCellValue(!totalAmounts.isEmpty() ? totalAmounts.get(orderId) : "0 VND");
+            row.createCell(4).setCellValue(order.getOrderDate() != null ? formattedOrderDate : "");
+            row.createCell(5).setCellValue(order.getOrderChannel() != null ? order.getOrderChannel().getName() : "");
+            row.createCell(6).setCellValue(order.getStatusDescription());
+            row.createCell(7).setCellValue(order.getNote());
         }
         // xuất ra byte ByteArrayOutputStream
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -359,7 +360,7 @@ public class OrderController {
         byte[] bytes = outputStream.toByteArray();
         // Đặt tiêu đề
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=Oders.xlsx");
+        headers.add("Content-Disposition", "attachment; filename=danhsachdonhang.xlsx");
         return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
     }
 

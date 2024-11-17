@@ -3,23 +3,29 @@ package yourstyle.com.shope.validation.admin;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import yourstyle.com.shope.model.Order;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDto implements Serializable {
-
-    private Integer orderId;
     private BigDecimal totalAmount;
     private String transactionType;
     private Timestamp transactionTime;
     private String paymentMethod;
     private String transactionStatus;
+    // đơn tại quầy
+    private Integer orderId;
+    private String fullname;// khách hàng lẻ
+    private Timestamp orderDate;
+    private String status; // trạng thái đơn
+    // chi tiết bán hàng
+    private List<OrderDetailDto> orderDetailDtos;
+    private VoucherDto voucherDto;
 
     public OrderDto(BigDecimal totalAmount, String transactionType, Timestamp transactionTime, String paymentMethod,
             String transactionStatus) {
@@ -28,5 +34,17 @@ public class OrderDto implements Serializable {
         this.transactionTime = transactionTime;
         this.paymentMethod = paymentMethod;
         this.transactionStatus = transactionStatus;
+    }
+
+    public OrderDto(Integer orderId, String fullname, Timestamp orderDate, String status) {
+        this.orderId = orderId;
+        this.fullname = fullname;
+        this.orderDate = orderDate;
+        this.status = status;
+    }
+
+    public OrderDto(List<OrderDetailDto> orderDetailDtos, VoucherDto voucherDto) {
+        this.orderDetailDtos = orderDetailDtos;
+        this.voucherDto = voucherDto;
     }
 }

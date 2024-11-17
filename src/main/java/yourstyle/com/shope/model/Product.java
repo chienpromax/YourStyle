@@ -42,10 +42,8 @@ public class Product implements Serializable {
     @Column(name = "image")
     private String image;
     @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
-    @JsonManagedReference
-    private List<ProductVariant> productVariants; // đang lỗi đoạn này
+    private List<ProductVariant> productVariants;
     @OneToOne(mappedBy = "product")
-    @JsonBackReference
     private Discount discount;
     @ManyToOne
     @JoinColumn(name = "categoryId", referencedColumnName = "categoryId")

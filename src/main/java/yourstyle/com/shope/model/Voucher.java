@@ -5,8 +5,11 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,6 +40,8 @@ public class Voucher implements Serializable {
     private BigDecimal discountAmount;
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal minTotalAmount;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal maxTotalAmount;
     @Column(nullable = false)
     private Integer maxUses;
     @Column(nullable = false)
@@ -55,4 +60,8 @@ public class Voucher implements Serializable {
     private Customer customer;
     @OneToMany(mappedBy = "voucher")
     private List<Order> orders;
+    @JsonIgnore
+    @OneToMany(mappedBy = "voucher", fetch = FetchType.EAGER)
+    List<VoucherCustomer> voucherCustomers;
+
 }

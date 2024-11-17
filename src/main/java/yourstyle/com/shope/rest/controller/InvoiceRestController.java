@@ -47,4 +47,22 @@ public class InvoiceRestController {
 
         return new ResponseEntity<>(pdfStream.toByteArray(), headers, HttpStatus.OK);
     }
+
+    @GetMapping("/generate-instore")
+    public ResponseEntity<byte[]> generateInvoice_InStore(@RequestParam(name = "orderId") Integer orderId) {
+        Order order = orderService.findById(orderId).orElse(null);
+        if (order == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<OrderDetail> orderDetails = orderDetailService.findByOrder(order);
+        ByteArrayOutputStream pdfStream = invoiceService.createInvoice_InStore(orderDetails, order);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.add("Content-Disposition", "inline; filename=invoice_instore.pdf");
+
+        return new ResponseEntity<>(pdfStream.toByteArray(), headers, HttpStatus.OK);
+    }
+
 }

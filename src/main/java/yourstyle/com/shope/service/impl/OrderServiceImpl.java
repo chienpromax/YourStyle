@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Order;
+import yourstyle.com.shope.model.OrderChannel;
 import yourstyle.com.shope.repository.OrderRepository;
 import yourstyle.com.shope.service.OrderService;
 import yourstyle.com.shope.validation.admin.OrderDto;
@@ -124,6 +125,21 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public List<Order> findByCustomer(Customer customer) {
 		return orderRepository.findByCustomer(customer);
+	}
+
+	@Override
+	public Integer countVoucherUsedByCustomer(Integer voucherId, Integer customerId) {
+		return orderRepository.countVoucherUsedByCustomer(voucherId, customerId);
+	}
+
+	@Override
+	public Integer countVoucherUsed(Integer voucherId) {
+		return orderRepository.countVoucherUsed(voucherId);
+	}
+
+	@Override
+	public Page<Order> findByOrderChannel(OrderChannel orderChannel, Pageable pageable) {
+		return orderRepository.findByOrderChannel(orderChannel, pageable);
 	}
 
 }

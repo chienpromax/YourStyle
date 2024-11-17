@@ -5,25 +5,139 @@ window.addEventListener("DOMContentLoaded", () => {
     const orderId = orderElement.textContent;
     const steps = document.querySelectorAll("#progressbar-2 li");
     let currentStatus = 1;
+    let nextStatus = 5; // mặc định 5 để không lỗi
     const statuses = [
         { id: 1, text: "Xác nhận đang đóng gói" },
         { id: 2, text: "Xác nhận đã giao cho vận chuyển" },
         { id: 3, text: "Xác nhận đang giao hàng" },
-        { id: 4, text: "Xác nhận hoàn thành" },
-        { id: 5, text: "Xác nhận trả hàng" },
+        { id: 4, text: "Xác nhận đã thanh toán" },
+        { id: 5, text: "Xác nhận hoàn thành" },
     ];
-    document.getElementById("btnConfirm").addEventListener("click", function (e) {
-        e.preventDefault();
-        steps.forEach((step) => {
-            if (step.classList.contains("active")) {
-                currentStatus = parseInt(step.getAttribute("data-status"));
+    const btnConfirm = document.getElementById("btnConfirm");
+    const btnPreviousStatus = document.getElementById("btnPreviousStatus");
+    const buttonPayment = document.getElementById("confirmPayment");
+    if (btnConfirm) {
+        btnConfirm.addEventListener("click", function (e) {
+            e.preventDefault();
+            steps.forEach((step) => {
+                if (step.classList.contains("active")) {
+                    currentStatus = parseInt(step.getAttribute("data-status"));
+                }
+            });
+            if (currentStatus < steps.length) {
+                nextStatus = currentStatus + 1;
+                if (currentStatus === 4) {
+                    openModalPayment();
+                    const modal = new bootstrap.Modal(document.getElementById("confirmPaymentModal"));
+                    modal.show();
+                } else {
+                    Swal.fire({
+                        title: "Bạn có chắc chắn muốn thay đổi trạng thái?",
+                        text: "Trạng thái sẽ được cập nhật",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Xác nhận",
+                        cancelButtonText: "Hủy",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // gọi hàm cập nhật trạng thái
+                            updateStatus(orderId, nextStatus);
+                            UpdateUI(nextStatus); // cập nhật giao diện
+                            // thay đổi text button
+                            if (nextStatus < statuses.length + 1) {
+                                btnConfirm.textContent = statuses[nextStatus - 1].text + " ";
+                                const icon = document.createElement("i");
+                                icon.className = "fas fa-arrow-right";
+                                btnConfirm.appendChild(icon);
+                            } else {
+                                btnConfirm.textContent = "Hoàn thành";
+                            }
+                        }
+                    });
+                }
             }
         });
-        if (currentStatus < steps.length) {
-            const nextStatus = currentStatus + 1;
+    }
+
+    if (btnPreviousStatus) {
+        btnPreviousStatus.addEventListener("click", () => {
+            let currentStatus = 1;
+            steps.forEach((step) => {
+                if (step.classList.contains("active")) {
+                    currentStatus = parseInt(step.getAttribute("data-status"));
+                }
+            });
+            if (currentStatus == 5) {
+                btnPreviousStatus.setAttribute("disabled", "true");
+            }
+            if (currentStatus > 1) {
+                const previousStatus = currentStatus - 1;
+                Swal.fire({
+                    title: "Bạn có chắc chắn muốn thay đổi trạng thái?",
+                    text: "Trạng thái sẽ được cập nhật",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Xác nhận",
+                    cancelButtonText: "Hủy",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // XỬ lý ẩn thời gian khi quay lại trạng thái trước
+                        let statusElementClass;
+                        switch (currentStatus) {
+                            case 2:
+                                statusElementClass = "packing";
+                                break;
+                            case 3:
+                                statusElementClass = "shipped";
+                                break;
+                            case 4:
+                                statusElementClass = "inTransit";
+                                break;
+                            case 5:
+                                statusElementClass = "paid";
+                                break;
+                            case 6:
+                                statusElementClass = "completed";
+                                break;
+                            default:
+                                break;
+                        }
+                        // lấy phẩn tử thời gian
+                        const statusTimeElement = document.querySelector(`.${statusElementClass}`);
+                        if (statusTimeElement) {
+                            statusTimeElement.classList.add("timeUpdatedStatus");
+                            statusTimeElement.textContent = "dd-MM-yyyy HH:mm:ss";
+                        }
+                        // gọi hàm cập nhật trạng thái
+                        updateStatus(orderId, previousStatus);
+                        UpdateUI(previousStatus); // cập nhật giao diện
+                        if (previousStatus < statuses.length) {
+                            btnConfirm.textContent = statuses[previousStatus - 1].text + " ";
+                            const icon = document.createElement("i");
+                            icon.className = "fas fa-arrow-right";
+                            btnConfirm.appendChild(icon);
+                        } else {
+                            btnConfirm.textContent = statuses[statuses.length - 1].text + " ";
+                            const icon = document.createElement("i");
+                            icon.className = "fas fa-arrow-right";
+                            btnConfirm.appendChild(icon);
+                        }
+                    }
+                });
+            }
+        });
+    }
+    const btnCancel = document.getElementById("btnCancel");
+    if (btnCancel) {
+        btnCancel.addEventListener("click", () => {
+            const cancelStatus = 0;
             Swal.fire({
-                title: "Bạn có chắc chắn muốn thay đổi trạng thái?",
-                text: "Trạng thái sẽ được cập nhật",
+                title: `Bạn có chắc chắn muốn hủy đơn hàng ${orderId}?`,
+                text: `Trạng thái đơn hàng ${orderId} sẽ được cập nhật`,
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
@@ -32,103 +146,23 @@ window.addEventListener("DOMContentLoaded", () => {
                 cancelButtonText: "Hủy",
             }).then((result) => {
                 if (result.isConfirmed) {
+                    // cập nhật hình ảnh
+                    const cardStatusElement = document.getElementById("cardStatus");
+                    cardStatusElement.innerHTML = "";
+                    const newStatusElement = document.createElement("div");
+                    newStatusElement.innerHTML = `<div class="order-status text-danger text-center">
+              <i class="bi bi-x-circle-fill"></i>
+              <p >Đơn hàng ${orderId} đã bị hủy</p>
+              <p class="canceled"></p>
+              </div>`;
+                    cardStatusElement.appendChild(newStatusElement);
                     // gọi hàm cập nhật trạng thái
-                    updateStatus(orderId, nextStatus);
-                    UpdateUI(nextStatus); // cập nhật giao diện
+                    updateStatus(orderId, cancelStatus);
                 }
             });
-        }
-        // this sẽ tham chiếu đến nút xác nhận nếu mình click vào
-        if (currentStatus < statuses.length) {
-            this.textContent = statuses[currentStatus - 1].text + " ";
-            const icon = document.createElement("i");
-            icon.className = "fas fa-arrow-right";
-            this.appendChild(icon);
-        } else {
-            this.textContent = statuses[statuses.length - 1].text + " ";
-        }
-    });
-    document.getElementById("btnPreviousStatus").addEventListener("click", () => {
-        let currentStatus = 1;
-        steps.forEach((step) => {
-            if (step.classList.contains("active")) {
-                currentStatus = parseInt(step.getAttribute("data-status"));
-            }
         });
-        if (currentStatus > 1) {
-            const previousStatus = currentStatus - 1;
-            Swal.fire({
-                title: "Bạn có chắc chắn muốn thay đổi trạng thái?",
-                text: "Trạng thái sẽ được cập nhật",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Xác nhận",
-                cancelButtonText: "Hủy",
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // XỬ lý ẩn thời gian khi quay lại trạng thái trước
-                    let statusElementId;
-                    switch (currentStatus) {
-                        case 2:
-                            statusElementId = "packing";
-                            break;
-                        case 3:
-                            statusElementId = "shipped";
-                            break;
-                        case 4:
-                            statusElementId = "inTransit";
-                            break;
-                        case 5:
-                            statusElementId = "paid";
-                            break;
-                        case 6:
-                            statusElementId = "completed";
-                            break;
-                        default:
-                            break;
-                    }
-                    // lấy phẩn tử thời gian
-                    const statusTimeElement = document.getElementById(`${statusElementId}`);
-                    console.log(statusTimeElement);
-                    if (statusTimeElement) {
-                        statusTimeElement.classList.add("timeUpdatedStatus");
-                    }
-                    // gọi hàm cập nhật trạng thái
-                    updateStatus(orderId, previousStatus);
-                    UpdateUI(previousStatus); // cập nhật giao diện
-                }
-            });
-        }
-    });
-    document.getElementById("btnCancel").addEventListener("click", () => {
-        const cancelStatus = 0;
-        Swal.fire({
-            title: `Bạn có chắc chắn muốn hủy đơn hàng ${orderId}?`,
-            text: `Trạng thái đơn hàng ${orderId} sẽ được cập nhật`,
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Xác nhận",
-            cancelButtonText: "Hủy",
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // gọi hàm cập nhật trạng thái
-                updateStatus(orderId, cancelStatus);
-                // cập nhật hình ảnh
-                const cardStatusElement = document.getElementById("cardStatus");
-                cardStatusElement.innerHTML = "";
-                const newStatusElement = document.createElement("div");
-                newStatusElement.innerHTML = `<div class="order-status text-danger text-center">
-        <i class="bi bi-x-circle-fill"></i>
-        <p >Đơn hàng ${orderId} đã bị hủy</p>
-        </div>`;
-                cardStatusElement.appendChild(newStatusElement);
-            }
-        });
-    });
+    }
+
     function updateStatus(orderId, status) {
         fetch("/api/admin/orders/update-status", {
             method: "PUT",
@@ -166,12 +200,15 @@ window.addEventListener("DOMContentLoaded", () => {
                     case "COMPLETED":
                         newStatusElementId = "completed";
                         break;
+                    case "CANCELED":
+                        newStatusElementId = "canceled";
+                        break;
                     default:
                         console.log("Status không xác định hoặc chưa xử lý!");
                         break;
                 }
                 if (newStatusElementId) {
-                    const statusElement = document.querySelector(`#${newStatusElementId}`);
+                    const statusElement = document.querySelector(`.${newStatusElementId}`);
                     if (statusElement) {
                         statusElement.classList.remove("timeUpdatedStatus"); // xóa class để hiển thị thời gian
                         statusElement.innerHTML = statusTime
@@ -208,7 +245,23 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     }
     window.downloadInvoice = function (orderId) {
-        window.open(`/api/invoices/generate?orderId=${orderId}`, "_blank");
+        Swal.fire({
+            title: `Bạn muốn In hóa đơn?`,
+            text: "",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Xác nhận",
+            cancelButtonText: "Hủy",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let printWindow = window.open(`/api/invoices/generate?orderId=${orderId}`, "_blank");
+                printWindow.onload = function () {
+                    printWindow.print();
+                };
+            }
+        });
     };
     // hàm chọn địa chỉ buộc dữ liệu lên form
     let addressIdInput; // biến lưu addressid mặc đinh và không mặc định
@@ -233,7 +286,7 @@ window.addEventListener("DOMContentLoaded", () => {
             floatingdistrict.value = district;
             floatingcity.value = city;
         } else {
-            document.getElementById("floatingstreetNotDefault").value = street;
+            document.getElementById("floatingstreetNotDefault").value = street; // đang lỗi
             document.getElementById("floatingcityNotDefault").value = city;
             document.getElementById("floatingdistrictNotDefault").value = district;
             document.getElementById("floatingwardNotDefault").value = ward;
@@ -241,10 +294,6 @@ window.addEventListener("DOMContentLoaded", () => {
     };
     // hàm lưu địa chỉ
     window.submitAddress = function () {
-        // const addressIdElement = document.querySelector(".inputAddressId");
-        // if (addressIdElement) {
-        //     addressIdInput = addressIdElement.value;
-        // }
         const addressData = {
             addressId: addressIdInput,
             customerId: document.getElementById("inputCustomerId").value,
@@ -450,6 +499,18 @@ window.addEventListener("DOMContentLoaded", () => {
     updateTransactionType();
     // hàm thanh toán
     window.handlePayment = function () {
+        if (nextStatus === 5) {
+            btnPreviousStatus.setAttribute("disabled", true);
+        }
+        // thay đổi text button
+        if (nextStatus < statuses.length + 1) {
+            btnConfirm.textContent = statuses[nextStatus - 1].text + " ";
+            const icon = document.createElement("i");
+            icon.className = "fas fa-arrow-right";
+            btnConfirm.appendChild(icon);
+        } else {
+            btnConfirm.textContent = "Hoàn thành";
+        }
         const data = {
             transactionType: transactionType,
             orderId: orderId,
@@ -492,15 +553,17 @@ window.addEventListener("DOMContentLoaded", () => {
                                                 <td>${data.transactionStatus}</td>
                             </tr>`;
                 tablePayment.innerHTML = row;
-                if (parentTablePayment && imageNoDataPayment && buttonOpenModalPayment) {
+                if (parentTablePayment && imageNoDataPayment) {
                     parentTablePayment.style.display = "block"; // hiện table
                     imageNoDataPayment.style.display = "none"; // ẩn hình ảnh
-                    buttonOpenModalPayment.style.display = "none"; // ẩn button thanh toán sau khi thanh toán xong
                 }
-                // câp nhật giao diện trạng thái
-                UpdateUI(5); // 5 là trạng thái thanh toán
+                if (buttonOpenModalPayment) {
+                    buttonOpenModalPayment.style.display = "none"; // ẩn button thanh toán
+                }
                 // cập nhật trong server
                 updateStatus(orderId, 5);
+                // câp nhật giao diện trạng thái
+                UpdateUI(5); // 5 là trạng thái thanh toán
                 // In ra thông báo từ server
                 createToast("success", "fa-solid fa-circle-check", "Thành công", "Thanh toán thành công");
             })
@@ -510,12 +573,12 @@ window.addEventListener("DOMContentLoaded", () => {
             });
     };
     // vô hiệu hóa nút thanh toán
-    const buttonPayment = document.getElementById("confirmPayment");
     window.openModalPayment = function () {
         buttonPayment.setAttribute("disabled", true);
     };
     window.deleteTextInputCustomerGive = function () {
         document.getElementById("customerGive").value = "";
+        document.getElementById("tienthua").value = "0 VND";
     };
     // hàm tính toán tiền khách đưa
     document.getElementById("customerGive").addEventListener("input", function () {
@@ -547,13 +610,6 @@ window.addEventListener("DOMContentLoaded", () => {
         } else {
             buttonPayment.setAttribute("disabled", true);
         }
-    });
-    const transactionId = document.getElementById("transactionId");
-    document.getElementById("cash").addEventListener("click", function () {
-        transactionId.style.display = "none";
-    });
-    document.getElementById("bankTransfer").addEventListener("click", function () {
-        transactionId.style.display = "block";
     });
     function createToast(type, icon, title, text) {
         const newToast = document.createElement("div");

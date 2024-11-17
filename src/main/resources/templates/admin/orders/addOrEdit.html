@@ -25,11 +25,12 @@
                 <section class="section dashboard">
                     <div class="col-lg-12 col-md-12">
                         <div class="card card-stepper">
+                            <div><h5 class="fw-bold ps-2 pt-1">Lịch sử đơn hàng</h5></div>
                             <div th:if="${order.status.code == 0}">
                                 <div class="order-status text-danger text-center">
                                     <i class="bi bi-x-circle-fill"></i>
                                     <p>Đơn hàng [[${order.orderId}]] đã bị hủy</p>
-                                    <p>[[${#dates.format(order.canceledAt, 'dd-MM-yyyy HH:mm:ss')}]]</p>
+                                    <p>[[${#dates.format(latestStatusTime['CANCELED'], 'dd-MM-yyyy HH:mm:ss')}]]</p>
                                 </div>
                             </div>
                             <div class="card-body p-5" id="cardStatus" th:unless="${order.status.code == 0}">
@@ -96,14 +97,15 @@
                                             <p class="step-text mt-2">Đang đóng gói</p>
                                         </div>
                                         <p th:if="${order.status.code >= 2}">
-                                            <span th:if="${packingTime != null}" class="timeStatus">
-                                                [[${#dates.format(packingTime.statusTime, 'dd-MM-yyyy HH:mm:ss') }]]
+                                            <span th:if="${latestStatusTime != null}" class="timeStatus packing" id="">
+                                                [[${#dates.format(latestStatusTime['PACKING'], 'dd-MM-yyyy HH:mm:ss')
+                                                }]]
                                             </span>
-                                            <span th:unless="${packingTime != null}" class="timeUpdatedStatus">
+                                            <span th:unless="${latestStatusTime != null}" class="timeUpdatedStatus">
                                                 dd-MM-yyyy HH:mm:ss
                                             </span>
                                         </p>
-                                        <p th:unless="${order.status.code >= 2}" id="packing" class="timeUpdatedStatus">
+                                        <p th:unless="${order.status.code >= 2}" class="timeUpdatedStatus packing">
                                             dd-MM-yyyy HH:mm:ss
                                         </p>
                                     </div>
@@ -113,14 +115,15 @@
                                             <p class="step-text mt-2">Đã giao cho vận chuyển</p>
                                         </div>
                                         <p th:if="${order.status.code >= 3}">
-                                            <span th:if="${shippedTime != null}" class="timeStatus">
-                                                [[${#dates.format(shippedTime.statusTime, 'dd-MM-yyyy HH:mm:ss') }]]
+                                            <span th:if="${latestStatusTime != null}" class="timeStatus shipped" id="">
+                                                [[${#dates.format(latestStatusTime['SHIPPED'], 'dd-MM-yyyy HH:mm:ss')
+                                                }]]
                                             </span>
-                                            <span th:unless="${shippedTime != null}" class="timeUpdatedStatus">
+                                            <span th:unless="${latestStatusTime != null}" class="timeUpdatedStatus">
                                                 dd-MM-yyyy HH:mm:ss
                                             </span>
                                         </p>
-                                        <p th:unless="${order.status.code >= 3}" id="shipped" class="timeUpdatedStatus">
+                                        <p th:unless="${order.status.code >= 3}" class="timeUpdatedStatus shipped">
                                             dd-MM-yyyy HH:mm:ss
                                         </p>
                                     </div>
@@ -130,18 +133,19 @@
                                             <p class="step-text mt-2">Đang giao hàng</p>
                                         </div>
                                         <p th:if="${order.status.code >= 4}">
-                                            <span th:if="${inTransitTime != null}" class="timeStatus">
-                                                [[${#dates.format(inTransitTime.statusTime, 'dd-MM-yyyy HH:mm:ss') }]]
+                                            <span
+                                                th:if="${latestStatusTime != null}"
+                                                class="timeStatus inTransit"
+                                                id=""
+                                            >
+                                                [[${#dates.format(latestStatusTime['IN_TRANSIT'], 'dd-MM-yyyy HH:mm:ss')
+                                                }]]
                                             </span>
-                                            <span th:unless="${inTransitTime != null}" class="timeUpdatedStatus">
+                                            <span th:unless="${latestStatusTime != null}" class="timeUpdatedStatus">
                                                 dd-MM-yyyy HH:mm:ss
                                             </span>
                                         </p>
-                                        <p
-                                            th:unless="${order.status.code >= 4}"
-                                            id="inTransit"
-                                            class="timeUpdatedStatus"
-                                        >
+                                        <p th:unless="${order.status.code >= 4}" class="timeUpdatedStatus inTransit">
                                             dd-MM-yyyy HH:mm:ss
                                         </p>
                                     </div>
@@ -149,17 +153,17 @@
                                         <div class="icon text-center">
                                             <!-- <i class="bi bi-arrow-repeat"></i> -->
                                             <i class="fas fa-check-circle" aria-hidden="true"></i>
-                                            <p class="step-text mt-2">Đã thanh toán</p>
+                                            <p class="step-text mt-4">Đã thanh toán</p>
                                         </div>
                                         <p th:if="${order.status.code >= 5}">
-                                            <span th:if="${paidTime != null}" class="timeStatus">
-                                                [[${#dates.format(paidTime.statusTime, 'dd-MM-yyyy HH:mm:ss') }]]
+                                            <span th:if="${latestStatusTime != null}" class="timeStatus paid" id="">
+                                                [[${#dates.format(latestStatusTime['PAID'], 'dd-MM-yyyy HH:mm:ss') }]]
                                             </span>
-                                            <span th:unless="${paidTime != null}" class="timeUpdatedStatus">
+                                            <span th:unless="${latestStatusTime != null}" class="timeUpdatedStatus">
                                                 dd-MM-yyyy HH:mm:ss
                                             </span>
                                         </p>
-                                        <p th:unless="${order.status.code >= 5}" id="paid" class="timeUpdatedStatus">
+                                        <p th:unless="${order.status.code >= 5}" class="timeUpdatedStatus paid">
                                             dd-MM-yyyy HH:mm:ss
                                         </p>
                                     </div>
@@ -169,23 +173,37 @@
                                             <p class="step-text mt-2">Hoàn thành</p>
                                         </div>
                                         <p th:if="${order.status.code == 6}">
-                                            <span th:if="${completedTime != null}" class="timeStatus">
-                                                [[${#dates.format(completedTime.statusTime, 'dd-MM-yyyy HH:mm:ss') }]]
+                                            <span
+                                                th:if="${latestStatusTime != null}"
+                                                class="timeStatus completed"
+                                                id=""
+                                            >
+                                                [[${#dates.format(latestStatusTime['COMPLETED'], 'dd-MM-yyyy HH:mm:ss')
+                                                }]]
                                             </span>
-                                            <span th:unless="${completedTime != null}" class="timeUpdatedStatus">
+                                            <span th:unless="${latestStatusTime != null}" class="timeUpdatedStatus">
                                                 dd-MM-yyyy HH:mm:ss
                                             </span>
                                         </p>
-                                        <p
-                                            th:unless="${order.status.code == 6}"
-                                            id="completed"
-                                            class="timeUpdatedStatus"
-                                        >
+                                        <p th:unless="${order.status.code == 6}" class="timeUpdatedStatus completed">
                                             dd-MM-yyyy HH:mm:ss
                                         </p>
                                     </div>
                                 </div>
                             </div>
+                            <!-- chi tiết lịch sử hóa đơn -->
+                            <div class="text-end pe-3 pb-3">
+                                <button
+                                    class="btn btn-outline-warning"
+                                    id=""
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#openModalHistoryDetail"
+                                >
+                                    Chi tiết
+                                </button>
+                            </div>
+
+                            <!-- chi tiết lịch sử hóa đơn -->
                         </div>
                     </div>
                     <div class="card" th:unless="${order.status.code == 0}">
@@ -193,7 +211,24 @@
                             <div class="mt-3 d-flex align-items-center justify-content-between">
                                 <div class="mb-3 mb-lg-0">
                                     <button class="btn btn-outline-primary" id="btnConfirm">
-                                        Cập nhật đơn hàng
+                                        <th:block th:if="${order.status.code == 1}">
+                                            <span>Xác nhận đang đóng gói</span>
+                                        </th:block>
+                                        <th:block th:if="${order.status.code == 2}">
+                                            <span>Xác nhận đã giao cho vận chuyển</span>
+                                        </th:block>
+                                        <th:block th:if="${order.status.code == 3}">
+                                            <span>Xác nhận đang giao hàng</span>
+                                        </th:block>
+                                        <th:block th:if="${order.status.code == 4}">
+                                            <span>Xác nhận đã thanh toán</span>
+                                        </th:block>
+                                        <th:block th:if="${order.status.code == 5}">
+                                            <span>Xác nhận hoàn thành</span>
+                                        </th:block>
+                                        <th:block th:if="${order.status.code == 6}">
+                                            <span>Hoàn thành</span>
+                                        </th:block>
                                         <i class="fas fa-arrow-right"></i>
                                     </button>
                                     <button class="btn btn-outline-danger ms-4" id="btnCancel">
@@ -205,11 +240,15 @@
                                     <button
                                         class="btn btn-outline-info me-3"
                                         id="exportInvoice"
-                                        th:onclick="'downloadInvoice('+ ${order.orderId} + ');'"
+                                        th:onclick="'downloadInvoice('+ ${order.orderId} + ')'"
                                     >
-                                        Xuất hóa đơn
+                                        In hóa đơn
                                     </button>
-                                    <button class="btn btn-outline-primary" id="btnPreviousStatus">
+                                    <button
+                                        class="btn btn-outline-primary"
+                                        id="btnPreviousStatus"
+                                        th:disabled="${order.status.code == 5}"
+                                    >
                                         <i class="fas fa-arrow-left"></i>
                                         Quay lại trạng thái trước
                                     </button>
@@ -433,7 +472,7 @@
                                             </div>
                                         </div>
                                         <!-- nếu khách hàng không có địa chỉ mặc định  -->
-                                        <div
+                                        <!-- <div
                                             class="row"
                                             th:each="address : *{addresses}"
                                             th:unless="${address.isDefault}"
@@ -504,7 +543,7 @@
                                                     Xác nhận
                                                 </button>
                                             </div>
-                                        </div>
+                                        </div> -->
                                     </form>
                                 </div>
                             </div>
@@ -856,16 +895,6 @@
                                             <label class="form-check-label" for="cash">Tiền mặt</label>
                                         </div>
                                     </div>
-
-                                    <div>
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            id="transactionId"
-                                            placeholder="Mã giao dịch*"
-                                        />
-                                        <p class="text-danger" id="valdatedTransactionId"></p>
-                                    </div>
                                 </div>
                                 <div class="text-center mb-3">
                                     <button
@@ -988,7 +1017,7 @@
                                         <p class="badge bg-success p-2">[[${order.voucher.voucherName}]]</p>
                                     </th:block>
                                     <th:block th:unless="${order.voucher}">
-                                        <p class="badge bg-warning p-2">Không có</p>
+                                        <p class="badge bg-warning p-2">Không</p>
                                     </th:block>
                                 </div>
                             </div>
@@ -1037,3 +1066,45 @@
         </section>
     </body>
 </html>
+
+<!-- Modal chi tiết lịch sử hóa đơn -->
+<div
+    class="modal fade"
+    id="openModalHistoryDetail"
+    tabindex="-1"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    role="dialog"
+    aria-labelledby="modalTitleId"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h5 class="modal-title" id="modalTitleId6">Lịch sử đơn hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-group-divider text-center">
+                        <thead>
+                            <tr>
+                                <th scope="col">Người chỉnh sửa</th>
+                                <th scope="col">Thời gian</th>
+                                <th scope="col">Trạng thái đơn hàng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="history : ${orderStatusHistories}">
+                                <td></td>
+                                <td>[[${#dates.format(history.statusTime,'dd-MM-yyyy HH:mm:ss')}]]</td>
+                                <td>[[${history.statusDescription}]]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal chi tiết lịch sử hóa đơn -->

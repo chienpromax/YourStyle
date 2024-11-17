@@ -17,6 +17,7 @@ import java.math.*;
 import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.sql.*;
 
@@ -39,6 +40,5 @@ public class Discount implements Serializable {
     private Timestamp endDate;
     @OneToOne
     @JoinColumn(name = "productId", referencedColumnName = "productId")
-    @JsonBackReference
     private Product product;
 }

@@ -59,7 +59,6 @@ public class Order implements Serializable {
     private Voucher voucher;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
-    @JsonManagedReference
     private List<OrderDetail> orderDetails;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

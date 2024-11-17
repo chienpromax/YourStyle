@@ -1,6 +1,9 @@
 package yourstyle.com.shope.service.impl;
 
+import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +50,20 @@ public class OrderStatusHistoryServiceImpl implements OrderStatusHistoryService 
 	@Override
 	public Optional<OrderStatusHistory> findByLatestStatus(Integer orderId, String status) {
 		return orderStatusHistoryRepository.findTopByOrderOrderIdAndStatusOrderByStatusTimeDesc(orderId, status);
+	}
+
+	@Override
+	public Map<String, Timestamp> getLatestStatusTime(Integer orderId) {
+		List<OrderStatusHistory> orderStatusHistories = orderStatusHistoryRepository
+				.findAllByOrderIdOrderByStatusTimeDesc(orderId);
+		Map<String, Timestamp> latestStatusTime = new HashMap<>();
+		for (OrderStatusHistory orderStatusHistory : orderStatusHistories) {
+			// chưa tồn tại key trong map thì put vào map
+			if (!latestStatusTime.containsKey(orderStatusHistory.getStatus())) {
+				latestStatusTime.put(orderStatusHistory.getStatus(), orderStatusHistory.getStatusTime());
+			}
+		}
+		return latestStatusTime;
 	}
 
 }

@@ -53,7 +53,6 @@ public class OrderRestController {
             ModelMap model) {
         Integer orderId = data.get("orderId");
         Integer newStatus = data.get("status");
-        Map<String, Object> response = new HashMap<>();
         if (orderId != null && newStatus != null) {
             Optional<Order> orderOptional = orderService.findById(orderId);
             if (orderOptional.isPresent()) {
@@ -87,6 +86,9 @@ public class OrderRestController {
                         break;
                     case 8:
                         orderStatusHistory.setStatus(String.valueOf(orderStatus.RETURNED));
+                        break;
+                    case 9:
+                        orderStatusHistory.setStatus(String.valueOf(orderStatus.BUYING));
                         break;
                     default:
                         break;

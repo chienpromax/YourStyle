@@ -5,32 +5,38 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Order;
+import yourstyle.com.shope.model.OrderChannel;
 import yourstyle.com.shope.model.OrderDetail;
+import yourstyle.com.shope.model.OrderStatus;
 import yourstyle.com.shope.model.ProductVariant;
+import yourstyle.com.shope.model.Voucher;
 import yourstyle.com.shope.service.ColorService;
+import yourstyle.com.shope.service.CustomerService;
 import yourstyle.com.shope.service.OrderDetailService;
 import yourstyle.com.shope.service.OrderService;
 import yourstyle.com.shope.service.ProductVariantService;
 import yourstyle.com.shope.service.SizeService;
+import yourstyle.com.shope.service.VoucherService;
 import yourstyle.com.shope.validation.admin.OrderDetailDto;
-import yourstyle.com.shope.validation.admin.OrderDetailResponseDto;
+import yourstyle.com.shope.validation.admin.OrderDto;
+import yourstyle.com.shope.validation.admin.VoucherDto;
 
 @CrossOrigin("*")
 @RestController
@@ -46,28 +52,237 @@ public class SellRestController {
         SizeService sizeService;
         @Autowired
         ColorService colorService;
+        @Autowired
+        CustomerService customerService;
+        @Autowired
+        VoucherService voucherService;
 
-        @DeleteMapping("deleteProduct/{orderDetailId}")
-        public ResponseEntity<String> deleteProductVariant(
-                        @PathVariable(name = "orderDetailId", required = false) Integer orderDetailId) {
-                Optional<OrderDetail> orderDetail = orderDetailService.findById(orderDetailId);
-                if (orderDetail.isPresent()) {
-                        orderDetailService.deleteById(orderDetailId);
-                        return ResponseEntity.ok("Xóa sản phẩm thành công");
+        @GetMapping("saveOrUpdate")
+        public ResponseEntity<List<OrderDto>> createOrderSellInStore() {
+                // khách hàng lẻ
+                Customer customer = customerService.findById(4).get();
+                // tạo một đơn hàng
+                Order order = new Order();
+                order.setTotalAmount(BigDecimal.valueOf(0)); // tổng tiền 0
+                order.setStatus(OrderStatus.PLACED);
+                order.setNote("");
+                order.setTransactionType(null);
+                order.setPaymentMethod(null);
+                order.setTransactionStatus(null);
+                order.setOrderChannel(OrderChannel.IN_STORE); // tại cửa hàng
+                order.setTransactionTime(null);
+                order.setCustomer(customer); // khách lẻ
+                order.setVoucher(null);
+                orderService.save(order);
+                // tìm kiếm danh sách đơn hàng theo khách hàng lẻ
+                List<Order> orders = orderService.findByCustomer(customer);
+                List<OrderDto> orderDtos = new ArrayList<>();
+                for (Order orderList : orders) {
+                        OrderDto orderDtosReponse = new OrderDto(
+                                        orderList.getOrderId(),
+                                        orderList.getCustomer().getFullname(), orderList.getOrderDate(),
+                                        orderList.getStatus().getDescription());
+                        orderDtos.add(orderDtosReponse);
+                }
+                return ResponseEntity.ok(orderDtos);
+        }
+
+        public Voucher getBestVoucherForOrder(List<Voucher> voucherList, BigDecimal orderTotal, Integer customerId) {
+                // customerId = 4 là khách hàng lẻ
+                boolean isGuestCustomer = (customerId == 4);
+
+                return voucherList.stream()
+                                .filter(voucher ->
+                                // Kiểm tra điều kiện giá trị đơn hàng tối thiểu và tối đa
+                                orderTotal.compareTo(voucher.getMinTotalAmount()) >= 0 &&
+                                                (voucher.getMaxTotalAmount() == null || orderTotal
+                                                                .compareTo(voucher.getMaxTotalAmount()) <= 0)
+                                                &&
+
+                                                // Kiểm tra thời gian hiệu lực
+                                                voucher.getStartDate().before(new Date()) &&
+                                                voucher.getEndDate().after(new Date()) &&
+
+                                                // Kiểm tra số lần sử dụng của voucher maxuse
+                                                Math.max(0, voucher.getMaxUses() - orderService
+                                                                .countVoucherUsed(voucher.getVoucherId())) > 0
+                                                &&
+                                                // Nếu là khách lẻ thì bỏ qua kiểm tra maxUsesUser
+                                                (isGuestCustomer || orderService.countVoucherUsedByCustomer(
+                                                                voucher.getVoucherId(),
+                                                                customerId) < voucher.getMaxUsesUser())
+                                                &&
+
+                                                // Kiểm tra quyền riêng tư
+                                                (voucher.getIsPublic()
+                                                                || voucher.getCustomer().getCustomerId() == customerId))
+                                // Sắp xếp voucher theo giá trị giảm giá giảm dần
+                                .sorted((v1, v2) -> v2.getDiscountAmount().compareTo(v1.getDiscountAmount()))
+                                // Lấy voucher đầu tiên trong danh sách hợp lệ
+                                .findFirst()
+                                .orElse(null); // Nếu không có voucher nào phù hợp
+        }
+
+        public OrderDto listOrderDetailDto(Order order) {
+                DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
+                symbols.setGroupingSeparator('.'); // Dùng dấu '.' cho hàng nghìn
+                symbols.setDecimalSeparator(','); // Dùng dấu ',' cho phần thập phân
+                DecimalFormat formatter = new DecimalFormat("#,##0", symbols); // định dạng tiền
+                List<OrderDetailDto> orderDetailDtos = new ArrayList<>();
+                List<OrderDetail> orderDetails = orderDetailService.findByOrder(order);
+                BigDecimal total = BigDecimal.ZERO; // biến cộng dồn
+                for (OrderDetail orderDetail : orderDetails) {
+                        BigDecimal quantity = BigDecimal.valueOf(orderDetail.getQuantity());
+                        BigDecimal price = orderDetail.getPrice().setScale(0, RoundingMode.DOWN);
+                        String oldPrice = formatter
+                                        .format(orderDetail.getProductVariant().getProduct().getPrice()
+                                                        .setScale(0, RoundingMode.FLOOR))
+                                        + ".000 VND";
+                        String newPrice = formatter.format(
+                                        orderDetail.getPrice().setScale(0, RoundingMode.FLOOR)) + ".000 VND";
+                        String totalSum = formatter.format(quantity.multiply(price)) + ".000 VND";
+                        BigDecimal totalAmount = quantity.multiply(price);
+                        // Cộng dồn vào tổng
+                        total = total.add(totalAmount);
+                        String formattedTotalAmount = formatter
+                                        .format(total) + ".000 VND";
+                        boolean discount = false;
+                        if (orderDetail.getProductVariant().getProduct().getDiscount() != null) {
+                                discount = true;
+                        } else {
+                                discount = false;
+                        }
+                        String discountPercent = formatter
+                                        .format(orderDetail.getProductVariant().getProduct().getDiscount()
+                                                        .getDiscountPercent().setScale(0, RoundingMode.DOWN))
+                                        + " %";
+                        OrderDetailDto orderDetailDtoReponse = new OrderDetailDto(
+                                        orderDetail.getProductVariant().getProductVariantId(),
+                                        orderDetail.getProductVariant().getColor().getColorId(),
+                                        orderDetail.getProductVariant().getSize().getSizeId(),
+                                        orderDetail.getProductVariant().getProduct().getImage(),
+                                        orderDetail.getProductVariant().getProduct().getName(),
+                                        orderDetail.getProductVariant().getColor().getColorName(),
+                                        orderDetail.getProductVariant().getSize().getSizeName(),
+                                        oldPrice,
+                                        newPrice,
+                                        orderDetail.getQuantity(),
+                                        totalSum,
+                                        formattedTotalAmount,
+                                        discount,
+                                        orderDetail.getOrderDetailId(),
+                                        discountPercent);
+
+                        orderDetailDtos.add(orderDetailDtoReponse);
+                }
+                order.setTotalAmount(total);
+                orderService.save(order); // lưu tổng tiền
+
+                List<Voucher> vouchers = voucherService.findAll();
+                Voucher voucher = getBestVoucherForOrder(vouchers, order.getTotalAmount(), 4);
+                order.setVoucher(voucher); // gán voucher cho đơn
+                VoucherDto voucherDto = null;
+                if (order.getVoucher() != null) {
+                        Short type = order.getVoucher().getType();
+                        BigDecimal discountAmount = order.getVoucher().getDiscountAmount();
+                        String formattedDiscount = "";
+                        System.out.println("Kiểu giảm giá só: " + type);
+                        switch (type) {
+                                case 1: // giảm giá trực tiếp
+                                        order.setTotalAmount(order.getTotalAmount().subtract(discountAmount));
+                                        formattedDiscount = formatter.format(discountAmount) + ".000 VND";
+                                        orderService.save(order); // Lưu lại sau khi trừ giảm giá
+                                        break;
+                                case 2: // giảm giá theo phần trăm
+                                        BigDecimal percentageDiscount = order.getTotalAmount()
+                                                        .multiply(discountAmount.divide(BigDecimal.valueOf(100)));
+                                        // Giới hạn mức giảm ở maxTotalAmount nếu vượt quá
+                                        if (order.getVoucher().getMaxTotalAmount() != null
+                                                        && percentageDiscount.compareTo(
+                                                                        order.getVoucher().getMaxTotalAmount()) > 0) {
+                                                percentageDiscount = order.getVoucher().getMaxTotalAmount();
+                                        }
+                                        // Trừ mức giảm từ tổng tiền đơn hàng
+                                        order.setTotalAmount(order.getTotalAmount().subtract(percentageDiscount)); // VND
+                                        formattedDiscount = formatter.format(discountAmount) + "%";
+                                        orderService.save(order);
+                                        break;
+                                case 3: // giảm giá vận chuyển
+                                        order.setTotalAmount(order.getTotalAmount().subtract(discountAmount));
+                                        formattedDiscount = formatter.format(discountAmount) + ".000 VND";
+                                        orderService.save(order);
+                                        break;
+                                // case 4: // giảm giá 100%
+                                // order.setTotalAmount(BigDecimal.ZERO);
+                                // formattedDiscount = "100%";
+                                // break;
+                                default:
+                                        break;
+                        }
+                        voucherDto = new VoucherDto(
+                                        order.getVoucher().getVoucherCode(),
+                                        type,
+                                        formattedDiscount);
                 } else {
-                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy sản phẩm");
+                        // Xử lý khi không có voucher
+                        voucherDto = new VoucherDto(
+                                        "",
+                                        null,
+                                        "0 VND");
+                }
+                return new OrderDto(orderDetailDtos, voucherDto); // trả về danh sách
+        }
+
+        @DeleteMapping("deleteProduct/{orderDetailId}/{orderId}")
+        public ResponseEntity<OrderDto> deleteProductVariant(
+                        @PathVariable(name = "orderDetailId") Integer orderDetailId,
+                        @PathVariable(name = "orderId") Integer orderId) {
+                Optional<OrderDetail> orderDetailOptional = orderDetailService.findById(orderDetailId);
+
+                if (orderDetailOptional.isPresent()) {
+                        OrderDetail orderDetail = orderDetailOptional.get();
+
+                        ProductVariant productVariant = orderDetail.getProductVariant();
+                        productVariant.setQuantity(productVariant.getQuantity() + orderDetail.getQuantity());
+                        // cập nhật lại số lượng sau khi xóa khỏi đơn hàng
+                        productVariantService.save(productVariant);
+
+                        orderDetailService.deleteById(orderDetail.getOrderDetailId());// xóa
+
+                        OrderDto orderDto = new OrderDto();
+                        Optional<Order> orderOptional = orderService.findById(orderId);
+                        if (orderOptional.isPresent()) {
+                                Order order = orderOptional.get();
+                                List<OrderDetail> orderDetails = order.getOrderDetails();
+                                BigDecimal total = BigDecimal.ZERO; // khởi tạo 0
+                                for (OrderDetail orderDetailUpdate : orderDetails) {
+                                        BigDecimal quantiy = BigDecimal.valueOf(orderDetailUpdate.getQuantity());
+                                        BigDecimal price = orderDetailUpdate.getPrice().setScale(0, RoundingMode.DOWN);
+                                        BigDecimal totalAmount = quantiy.multiply(price);
+                                        total = total.add(totalAmount);
+                                }
+                                order.setTotalAmount(total);
+                                orderService.save(order);
+                                // hiển thị lại sản phẩm trong đơn
+                                orderDto = listOrderDetailDto(order);
+                        }
+                        return ResponseEntity.ok(orderDto);
+                } else {
+                        // Trả về 404 nếu không tìm thấy OrderDetail
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
                 }
         }
 
-        @PostMapping("addProduct")
-        public ResponseEntity<String> insertProductVariant(
-                        @RequestBody OrderDetailDto orderDetailDto,
-                        Model model) {
-                Optional<Order> order = orderService.findById(orderDetailDto.getOrderId());
-                Optional<ProductVariant> productVariant = productVariantService
+        @RequestMapping(value = "/addProduct", method = RequestMethod.POST)
+        public ResponseEntity<OrderDto> insertProductVariant(
+                        @RequestBody OrderDetailDto orderDetailDto) {
+                Optional<Order> orderOptional = orderService.findById(orderDetailDto.getOrderId());
+                Optional<ProductVariant> productVariantOptional = productVariantService
                                 .findById(orderDetailDto.getProductVariantId());
                 if (orderDetailDto.getOrderId() != null & orderDetailDto.getProductVariantId() != null
                                 && orderDetailDto.getColorId() != null && orderDetailDto.getSizeId() != null) {
+                        Order order = orderOptional.get();
+                        ProductVariant productVariantUpdate = productVariantOptional.get();
                         Optional<OrderDetail> existingOrderDetailOptional = orderDetailService
                                         .findOrderDetailByOrderAndProductVariant(
                                                         orderDetailDto.getOrderId(),
@@ -79,86 +294,100 @@ public class SellRestController {
                                 OrderDetail existingOrderDetail = existingOrderDetailOptional.get();
                                 existingOrderDetail.setQuantity(
                                                 existingOrderDetail.getQuantity() + orderDetailDto.getQuantity());
-                                existingOrderDetail.setPrice(orderDetailDto.getPrice());
+                                existingOrderDetail.setPrice(orderDetailDto.getDiscountPrice());
                                 orderDetailService.save(existingOrderDetail);
-
+                                // cập nhật số lượng
+                                productVariantUpdate.setQuantity(
+                                                productVariantUpdate.getQuantity() - existingOrderDetail.getQuantity());
                         } else {
                                 // không trùng tạo mới orderDetail
                                 OrderDetail orderDetail = new OrderDetail();
-                                orderDetail.setOrder(order.get());
-                                orderDetail.setProductVariant(productVariant.get());
-                                orderDetail.setPrice(orderDetailDto.getPrice());
+                                orderDetail.setOrder(order);
+                                orderDetail.setProductVariant(productVariantOptional.get());
+                                orderDetail.setPrice(orderDetailDto.getDiscountPrice());
                                 orderDetail.setQuantity(orderDetailDto.getQuantity());
                                 orderDetailService.save(orderDetail);
+                                // cập nhật số lượng
+                                productVariantUpdate.setQuantity(
+                                                productVariantUpdate.getQuantity() - orderDetail.getQuantity());
                         }
-
-                        // List<OrderDetail> orderDetails = orderDetailService.findByOrder(order.get());
-                        // List<OrderDetailResponseDto> orderDetailResponseDtos = new ArrayList<>();
+                        productVariantService.save(productVariantUpdate); // cập nhật số lượng
                         // xử lý thông tin đơn hàng và format tổng tiền
-                        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
-                        symbols.setGroupingSeparator('.'); // Dùng dấu '.' cho hàng nghìn
-                        symbols.setDecimalSeparator(','); // Dùng dấu ',' cho phần thập phân
-                        DecimalFormat formatter = new DecimalFormat("#,##0", symbols); // định dạng tiền
-                        // biến tổng tiền dùng để cộng dồn
-                        // BigDecimal totalSum = BigDecimal.ZERO;
-                        // biến tổng tiền sau khi áp dụng voucher giảm giá
-                        // BigDecimal voucherTotalSum = BigDecimal.ZERO;
-                        // biến định dạng voucher
-                        // String formattedVoucher = "";
-                        // for (OrderDetail orderDetail : orderDetails) {
-                        // Map<String, String> priceMap = new HashMap<>();
-                        // // Giá gốc
-                        // BigDecimal oldPrice = orderDetail.getPrice();
-                        // // đưa vào map để hiển thị giá cũ
-                        // priceMap.put("oldPrice",
-                        // formatter.format(oldPrice.setScale(0, RoundingMode.FLOOR))
-                        // + ".000 VND");
-                        // if (orderDetail.getProductVariant().getProduct().getDiscount() != null) {
-                        // // lấy phần trăm giảm giá
-                        // BigDecimal discountPercent = orderDetail.getProductVariant().getProduct()
-                        // .getDiscount()
-                        // .getDiscountPercent();
-                        // // lấy giá cũ * phần trăm giảm giá -> giá mới
-                        // BigDecimal discountedPrice = oldPrice
-                        // .multiply(BigDecimal.ONE.subtract(discountPercent
-                        // .divide(BigDecimal.valueOf(100))));
-                        // // tính cột thành tiền (giá mới đã giảm * số lượng)
-                        // // Làm tròn xuống bỏ phần thập phân
-                        // BigDecimal discountIntoMoney = discountedPrice.setScale(0,
-                        // RoundingMode.FLOOR)
-                        // .multiply(BigDecimal.valueOf(orderDetail.getQuantity()));
-                        // // đưa giá sau giảm vào map
-                        // priceMap.put("discountedPrice",
-                        // formatter.format(
-                        // discountedPrice.setScale(0, RoundingMode.FLOOR))
-                        // + ".000 VND");
-                        // // đưa vào map để hiển thị thành tiền
-                        // priceMap.put("discountIntoMoney",
-                        // formatter.format(discountIntoMoney) + ".000 VND");
-                        // // cộng dồn thành tiền đã giảm (hiển thị tổng tiền)
-                        // totalSum = totalSum.add(discountIntoMoney);
-                        // } else {
-                        // // Tính thành tiền không giảm giá (số lượng * giá cũ)
-                        // BigDecimal intoMoney = oldPrice.setScale(0, RoundingMode.FLOOR) // Làm tròn
-                        // // xuống bỏ phần
-                        // // thập phân
-                        // .multiply(BigDecimal.valueOf(orderDetail.getQuantity()));
-                        // priceMap.put("intoMoney", formatter.format(intoMoney) + ".000 VND");
-                        // // cộng dồn thành tiền không giảm (hiển thị tổng tiền)
-                        // totalSum = totalSum.add(intoMoney);
-                        // }
-                        // OrderDetailResponseDto dto = new OrderDetailResponseDto();
-                        // dto.setOrderDetail(orderDetail);
-                        // dto.setFormatedPrices(priceMap);
-                        // dto.setProduct(orderDetail.getProductVariant().getProduct());
-                        // dto.setDiscount(orderDetail.getProductVariant().getProduct().getDiscount());
-                        // dto.setColor(orderDetail.getProductVariant().getColor());
-                        // dto.setSize(orderDetail.getProductVariant().getSize());
-                        // orderDetailResponseDtos.add(dto);
-                        // }
-
-                        return ResponseEntity.ok().body("Thêm sản phẩm thành công");
+                        OrderDto orderDto = listOrderDetailDto(order); // danh sách chi tiết và voucher
+                        return ResponseEntity.ok(orderDto);
                 }
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi xử lý phía server");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+
+        @RequestMapping(value = "/decreaseQuantity", method = RequestMethod.POST)
+        public ResponseEntity<OrderDto> decreaseQuantity(
+                        @RequestBody OrderDetailDto orderDetailDto) {
+                Optional<Order> orderOptional = orderService.findById(orderDetailDto.getOrderId());
+                Optional<ProductVariant> productVariantOptional = productVariantService
+                                .findById(orderDetailDto.getProductVariantId());
+                if (orderDetailDto.getOrderId() != null & orderDetailDto.getProductVariantId() != null
+                                && orderDetailDto.getColorId() != null && orderDetailDto.getSizeId() != null) {
+                        Order order = orderOptional.get();
+                        ProductVariant productVariantUpdate = productVariantOptional.get();
+                        // tìm đơn chi tiết
+                        Optional<OrderDetail> existingOrderDetailOptional = orderDetailService
+                                        .findOrderDetailByOrderAndProductVariant(
+                                                        orderDetailDto.getOrderId(),
+                                                        orderDetailDto.getProductVariantId(),
+                                                        orderDetailDto.getColorId(), orderDetailDto.getSizeId());
+                        if (existingOrderDetailOptional.isPresent()) {
+                                // Nếu OrderDetail đã tồn tại với cùng size và color, tăng số lượng
+                                OrderDetail existingOrderDetail = existingOrderDetailOptional.get();
+                                if (existingOrderDetail.getQuantity() > 1) {
+                                        existingOrderDetail.setQuantity(existingOrderDetail.getQuantity() - 1);
+                                        orderDetailService.save(existingOrderDetail);
+                                        // cập nhật số lượng
+                                        productVariantUpdate.setQuantity(
+                                                        productVariantUpdate.getQuantity() + 1);
+                                        productVariantService.save(productVariantUpdate); // cập nhật số lượng
+                                } else {
+                                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+                                }
+                        }
+                        // xử lý thông tin đơn hàng và format tổng tiền
+                        OrderDto orderDto = listOrderDetailDto(order);
+                        return ResponseEntity.ok(orderDto);
+                }
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+
+        @RequestMapping(value = "/increaseQuantity", method = RequestMethod.POST)
+        public ResponseEntity<OrderDto> increaseQuantity(
+                        @RequestBody OrderDetailDto orderDetailDto) {
+                Optional<Order> orderOptional = orderService.findById(orderDetailDto.getOrderId());
+                Optional<ProductVariant> productVariantOptional = productVariantService
+                                .findById(orderDetailDto.getProductVariantId());
+                if (orderDetailDto.getOrderId() != null & orderDetailDto.getProductVariantId() != null
+                                && orderDetailDto.getColorId() != null && orderDetailDto.getSizeId() != null) {
+                        Order order = orderOptional.get();
+                        ProductVariant productVariantUpdate = productVariantOptional.get();
+                        // tìm đơn chi tiết
+                        Optional<OrderDetail> existingOrderDetailOptional = orderDetailService
+                                        .findOrderDetailByOrderAndProductVariant(
+                                                        orderDetailDto.getOrderId(),
+                                                        orderDetailDto.getProductVariantId(),
+                                                        orderDetailDto.getColorId(), orderDetailDto.getSizeId());
+                        if (existingOrderDetailOptional.isPresent()) {
+                                // Nếu OrderDetail đã tồn tại với cùng size và color, tăng số lượng
+                                OrderDetail existingOrderDetail = existingOrderDetailOptional.get();
+
+                                existingOrderDetail.setQuantity(existingOrderDetail.getQuantity() + 1);
+                                orderDetailService.save(existingOrderDetail);
+                                // cập nhật số lượng
+                                productVariantUpdate.setQuantity(
+                                                productVariantUpdate.getQuantity() - 1);
+                                productVariantService.save(productVariantUpdate); // cập nhật số lượng
+
+                        }
+                        // xử lý thông tin đơn hàng và format tổng tiền
+                        OrderDto orderDto = listOrderDetailDto(order);
+                        return ResponseEntity.ok(orderDto);
+                }
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
 }

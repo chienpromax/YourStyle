@@ -29,6 +29,5 @@ public class Color implements Serializable {
     @Column(nullable = false, length = 30, unique = true)
     private String colorName;
     @OneToMany(mappedBy = "color")
-    @JsonManagedReference
     private List<ProductVariant> productVariants;
 }

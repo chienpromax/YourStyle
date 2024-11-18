@@ -106,7 +106,7 @@
     <section class="py-5 container bg-light" layout:fragment="main">
         <div class="container my-5">
             <a th:href="@{/yourstyle/order/orderhistory}" class="btn btn-link">← Trở Lại</a>
-
+            <h1 class="text-center text-danger" th:text="${order.transactionStatus ?: ''}"></h1>
             <div class="order-status row">
                 <section class="py-1 bg-light">
                     <div class="order-status row">

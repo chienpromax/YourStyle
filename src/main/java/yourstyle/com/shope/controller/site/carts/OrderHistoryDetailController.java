@@ -15,8 +15,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpServletRequest;
 import yourstyle.com.shope.model.Account;
@@ -33,42 +35,54 @@ import yourstyle.com.shope.service.OrderService;
 @RequestMapping("/yourstyle/order")
 public class OrderHistoryDetailController {
 
-    @Autowired
-    private OrderService orderService;
-    @Autowired
-    private CustomerRepository customerRepository;
-    @Autowired
-    private AccountService accountService;
+        @Autowired
+        private OrderService orderService;
+        @Autowired
+        private CustomerRepository customerRepository;
+        @Autowired
+        private AccountService accountService;
 
-    @GetMapping("/orderhistorydetail/{id}")
-    public String showOrderHistoryDetail(@PathVariable("id") Integer orderId, Model model) {
-        // Sử dụng findById và xử lý Optional<Order>
-        Order order = orderService.findById(orderId)
-                .orElseThrow(() -> new NoSuchElementException("Order not found with ID: " + orderId));
+        @PostMapping("/cancel/{id}")
+        public String cancelOrder(@PathVariable("id") Integer orderId, RedirectAttributes redirectAttributes) {
+                Order order = orderService.findById(orderId)
+                                .orElseThrow(() -> new NoSuchElementException("Order not found with ID: " + orderId));
 
-        model.addAttribute("order", order);
-        model.addAttribute("orderDetails", order.getOrderDetails());
+                order.setStatus(OrderStatus.CANCELED);
+                order.setTransactionStatus("ĐÃ HỦY ĐƠN");
+                orderService.save(order);
 
-        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal();
-        Integer accountId = customUserDetails.getAccountId();
-        Optional<Account> optionalAccount = accountService.findById(accountId);
-        Account account = optionalAccount.get();
-        Customer customer = customerRepository.findCustomerWithAddresses(account.getCustomer().getCustomerId())
-                .orElse(null);
-        List<Address> addresses = customer != null ? customer.getAddresses() : new ArrayList<>();
+                redirectAttributes.addFlashAttribute("message", "Đơn hàng đã được hủy thành công.");
+                return "redirect:/yourstyle/order/orderhistorydetail/" + orderId;
+        }
 
-        model.addAttribute("customer", customer);
-        model.addAttribute("addresses", addresses);
+        @GetMapping("/orderhistorydetail/{id}")
+        public String showOrderHistoryDetail(@PathVariable("id") Integer orderId, Model model) {
+                // Sử dụng findById và xử lý Optional<Order>
+                Order order = orderService.findById(orderId)
+                                .orElseThrow(() -> new NoSuchElementException("Order not found with ID: " + orderId));
 
-        Address defaultAddress = addresses.stream()
-                .filter(Address::getIsDefault)
-                .findFirst()
-                .orElse(null);
-        model.addAttribute("defaultAddress", defaultAddress);
+                model.addAttribute("order", order);
+                model.addAttribute("orderDetails", order.getOrderDetails());
 
-        return "site/carts/orderhistorydetail";
-    }
+                CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext()
+                                .getAuthentication()
+                                .getPrincipal();
+                Integer accountId = customUserDetails.getAccountId();
+                Optional<Account> optionalAccount = accountService.findById(accountId);
+                Account account = optionalAccount.get();
+                Customer customer = customerRepository.findCustomerWithAddresses(account.getCustomer().getCustomerId())
+                                .orElse(null);
+                List<Address> addresses = customer != null ? customer.getAddresses() : new ArrayList<>();
+
+                model.addAttribute("customer", customer);
+                model.addAttribute("addresses", addresses);
+
+                Address defaultAddress = addresses.stream()
+                                .filter(Address::getIsDefault)
+                                .findFirst()
+                                .orElse(null);
+                model.addAttribute("defaultAddress", defaultAddress);
+
+                return "site/carts/orderhistorydetail";
+        }
 }
-
-

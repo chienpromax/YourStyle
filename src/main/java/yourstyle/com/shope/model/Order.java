@@ -79,6 +79,9 @@ public class Order implements Serializable {
     public String getStatusDescription() {
         return OrderStatus.fromCode(this.status).getDescription();
     }
+    public Integer getStatusCode() {
+        return OrderStatus.fromCode(this.status).getCode();
+    }
 
     public String getTransactionTypeValue() {
         return transactionType != null ? transactionType.getValue() : null;

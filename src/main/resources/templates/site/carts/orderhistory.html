@@ -31,8 +31,7 @@
                         <div th:each="order : ${orders}">
                             <div class="order-card">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span
-                                        th:text="${order.transactionType ?: 'Đang xử lý'} + ' - ' + ${order.transactionStatus ?: ''}"></span>
+                                    <span th:text="${order.transactionType ?: 'Đang xử lý'} + ' - ' + ${order.transactionStatus ?: ''}"></span>
                                     <div>
                                         <span class="badge"
                                             th:classappend="${order.status == 9 ? 'bg-warning' : 'bg-success'}"

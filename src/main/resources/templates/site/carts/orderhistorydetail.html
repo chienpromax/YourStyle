@@ -17,45 +17,67 @@
 
         .order-status-timeline {
             position: relative;
-            height: 10px;
+            height: 30px;
             width: 100%;
-            background: linear-gradient(to right, #28a745, #4CAF50, #8BC34A);
+            /* background: linear-gradient(to right, #fcff32, #f2fa68, #fff97f); */
+            border-radius: 5px;
+            overflow: hidden;
+            border: 1px solid #1E90FF;
+        }
+
+        .fill-bar {
+            position: relative;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(to right, #1ac6ff, #1E90FF);
+            animation: fillAnimation 5s forwards;
             border-radius: 5px;
             overflow: hidden;
         }
 
-        .fill-bar {
+        .fill-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             height: 100%;
-            width: 0;
-            background-color: rgb(238, 255, 0);
-            animation: fillAnimation 5s forwards;
-            border-radius: 5px;
+            width: 200%;
+            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.5) 20%, transparent 20%),
+                radial-gradient(circle, rgba(255, 255, 255, 0.5) 20%, transparent 20%);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            animation: waveAnimation 4s linear infinite;
         }
 
-        .icon-container {
-            display: inline-block;
-            transition: transform 0.5s;
+        /* @keyframes fillAnimation {
+            to {
+                width: 100%;
+            }
+        } */
+
+        @keyframes waveAnimation {
+            from {
+                background-position: -60px 0, -45px 15px;
+            }
+            to {
+                background-position: 0 0, 15px 15px;
+                /* background-position: -60px 0, -45px 15px; */
+            }
         }
 
-        .icon-container:hover {
-            transform: scale(1.2);
-        }
 
         .order-status i {
             font-size: 1.5em;
             color: #28a745;
         }
 
-        .icon-wrapper .bi-app-indicator {
-            color: red;
+        .icon-wrapper {
+            margin-top: -100px;
+            margin-bottom: 30px;
         }
 
         .icon-wrapper .bi-check2-square {
-            color: red;
-        }
-
-        .icon-wrapper.active .bi-app-indicator {
-            color: green;
+            color: transparent;
         }
 
         .icon-wrapper.active .bi-check2-square {
@@ -71,16 +93,11 @@
             color: red;
         }
 
-        .icon-wrapper.active i.bi-app-indicator {
-            display: none;
-        }
-
         .icon-wrapper.active i.bi-check2-square {
             display: inline-block;
             color: green;
         }
-
-
+        
     </style>
 </head>
 
@@ -89,16 +106,17 @@
     <section class="py-5 container bg-light" layout:fragment="main">
         <div class="container my-5">
             <a th:href="@{/yourstyle/order/orderhistory}" class="btn btn-link">← Trở Lại</a>
-            <section class="py-1 bg-light">
-                <div class="order-status row">
-                    <div class="order-status-timeline">
-                        <div class="fill-bar"></div>
-                    </div>
-                </div>
-            </section>
+
             <div class="order-status row">
+                <section class="py-1 bg-light">
+                    <div class="order-status row">
+                        <div class="order-status-timeline">
+                            <div class="fill-bar"></div>
+                        </div>
+                    </div>
+                </section>
                 <!-- Trạng thái đơn hàng -->
-                <div class="d-flex justify-content-between mb-4 position-relative">
+                <div class="d-flex justify-content-between mb-4 position-relative order-status-time">
                     <div class="text-center icon-container">
                         <div class="icon-wrapper">
                             <i class="bi bi-check2-square"></i><br>
@@ -207,7 +225,7 @@
                 console.log("Progress Width: ", progressWidth);
 
                 const fillBar = document.querySelector(".fill-bar");
-                fillBar.style.transition = "width 2s ease";
+                fillBar.style.transition = "width 4s ease";
                 fillBar.style.width = progressWidth + "%";
 
                 const timelineItems = document.querySelectorAll(".icon-wrapper");

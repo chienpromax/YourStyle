@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 
@@ -25,41 +26,35 @@ public class HomeSiteController {
 
 	@Autowired
 	private ProductService productService;
-	// new
+
 	@Autowired
 	private SlideService slideService;
 
-	@RequestMapping("/home")
+    @RequestMapping({"/home", "/discount/{discountId}"})
+    public String showHomePage(Model model, Authentication authentication, 
+                               @PathVariable(value = "discountId", required = false) Integer discountId) {
+        List<Category> parentCategories = categoryService.findParentCategories();
+        model.addAttribute("parentCategories", parentCategories);
+    
+        // Lấy tên người dùng nếu đã đăng nhập
+        String userName = (authentication != null && authentication.isAuthenticated()) ? authentication.getName() : null;
+        model.addAttribute("userName", userName);
+    
+        // Lấy tất cả sản phẩm
+        List<Product> products = productService.getAllProducts();
+        model.addAttribute("products", products);
+    
+        // Lấy sản phẩm bán chạy
+        List<Product> bestSellers = productService.getBestSellingProducts();
+        model.addAttribute("bestSellers", bestSellers);
+     
+        // Lấy sản phẩm giảm giá theo discountId nếu có
+        List<Product> discountedProducts = (discountId != null) ? 
+                                            productService.getProductsByDiscountId(discountId) : 
+                                            productService.getDiscountedProducts();
+        model.addAttribute("discountedProducts", discountedProducts);
+    
+        return "site/pages/home";
+    }
 
-	public String showHomePage(Model model, Authentication authentication) {
-		List<Category> parentCategories = categoryService.findParentCategories();
-
-		model.addAttribute("parentCategories", parentCategories);
-
-		String userName = (authentication != null && authentication.isAuthenticated()) ? authentication.getName()
-				: null;
-		model.addAttribute("userName", userName);
-
-		List<Product> products = productService.getAllProducts();
-
-		model.addAttribute("products", products);
-
-		// Lấy danh sách các slide và xử lý imagePaths
-		List<Slide> slides = slideService.getAllSlides();
-		System.out.println("slides : " + slides.toString());
-		for (Slide slide : slides) {
-			String imagePaths = slide.getImagePaths();
-			if (imagePaths != null) {
-				// Tách các đường dẫn ảnh và lưu vào mảng
-				String[] imagePathsArray = imagePaths.split(",");
-				slide.setImagePathsArray(imagePathsArray);
-			} else {
-				// Nếu imagePaths là null, gán mảng trống
-				slide.setImagePathsArray(new String[0]);
-			}
-		}
-		model.addAttribute("slides", slides);
-
-		return "site/pages/home";
-	}
 }

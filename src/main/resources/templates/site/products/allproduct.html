@@ -3,6 +3,14 @@
     layout:decorate="~{site/index.html}">
 
 <head>
+    <style>
+        .price-discount {
+            font-size: 1.5em;
+            /* Tăng kích thước cho giá đã giảm */
+            color: #dc3545;
+            /* Màu đỏ */
+        }
+    </style>
 </head>
 
 <body>
@@ -100,16 +108,32 @@
                                 <div class="p-2">
                                     <h5 th:text="${product.name}"></h5>
                                     <div class="d-flex align-items-center justify-content-between">
-                                        <p class="card-text text-danger fw-bolder fs-5 mb-0"
-                                            th:text="${product.price + ' VNĐ'}"></p>
+                                        <!-- Kiểm tra nếu có discount thì hiển thị giá giảm và giá gốc -->
+                                        <span class="price-discount text-danger fw-bold"
+                                            th:if="${product.discount != null}"
+                                            th:text="${#numbers.formatDecimal(product.price - product.price * product.discount.discountPercent / 100, 1, 'COMMA', 0, 'POINT') + ' Đ'}">
+                                        </span>
+                                        <span class="price-original ms-2 text-muted"
+                                            th:if="${product.discount != null}">
+                                            <del th:text="${#numbers.formatDecimal(product.price, 0, 0)}"></del>
+                                        </span>
+                                        <span class="badge bg-danger ms-2" th:if="${product.discount != null}"
+                                            th:text="'-' + ${#numbers.formatDecimal(product.discount.discountPercent, 0, 0)} + '%'">
+                                        </span>
+                                        <!-- Hiển thị giá gốc nếu không có discount -->
+                                        <span class="card-text text-danger fw-bolder fs-5 mb-0"
+                                            th:if="${product.discount == null}"
+                                            th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')} + ' Đ'">
+                                        </span>
+                                        
                                         <a th:href="@{/yourstyle/productfavorites/add(productId=${product.productId})}">
                                             <i class="fa-regular fa-heart"></i>
                                         </a>
-
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                         <div th:if="${totalPages > 1}" class="pt-5 d-flex align-items-center justify-content-center">
                             <nav aria-label="Page navigation">
                                 <ul class="pagination">

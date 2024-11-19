@@ -27,21 +27,37 @@ public class ProductController {
             @RequestParam(required = false) Integer categoryId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String sort,
             Model model) {
+        
         Pageable pageable = PageRequest.of(page, size);
-        Page<Product> productPage;
-
-        if (categoryId != null) {
-            productPage = productService.findByCategory_CategoryId(categoryId, pageable);
+        List<Product> products;
+    
+        if ("best-sellers".equals(sort)) {
+            // Lấy danh sách sản phẩm bán chạy nhất
+            products = productService.getBestSellingProducts();
+        } else if ("discount".equals(sort)) {
+            // Lấy danh sách sản phẩm có giảm giá
+            products = productService.getDiscountedProducts();
+        } else if (categoryId != null) {
+            // Lọc theo danh mục nếu categoryId không null
+            Page<Product> productPage = productService.findByCategory_CategoryId(categoryId, pageable);
+            products = productPage.getContent();
         } else {
-            productPage = productService.findAll(pageable);
+            // Lấy tất cả sản phẩm nếu không có điều kiện sắp xếp
+            Page<Product> productPage = productService.findAll(pageable);
+            products = productPage.getContent();
         }
-
-        model.addAttribute("products", productPage.getContent());
+    
+        model.addAttribute("products", products);
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", productPage.getTotalPages());
-
+        model.addAttribute("totalPages", (products.size() + size - 1) / size);
+        model.addAttribute("sort", sort);
+    
         return "/site/products/allproduct";
     }
+    
+    
+
 }
 

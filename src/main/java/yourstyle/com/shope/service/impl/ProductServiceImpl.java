@@ -1,7 +1,9 @@
 package yourstyle.com.shope.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -19,6 +21,34 @@ public class ProductServiceImpl implements ProductService {
 
 	@Autowired
 	ProductRepository productRepository;
+
+	@Override
+	public List<Product> getProductsByDiscountId(Integer discountId) {
+		return productRepository.findByDiscount_discountId(discountId); 
+	}
+	
+	
+	
+
+	@Override
+	public List<Product> getDiscountedProducts() {
+		return productRepository.findDiscountedProducts(); // Sử dụng repository để tìm sản phẩm có giảm giá
+	}
+
+	// Sp bán chạy nhất
+	@Override
+	public List<Product> getBestSellingProducts() {
+		List<Object[]> results = productRepository.findBestSellingProducts();
+		return results.stream().map(result -> {
+			Product product = new Product();
+			product.setProductId((Integer) result[0]);
+			product.setName((String) result[1]);
+			product.setPrice((BigDecimal) result[2]);
+			product.setImage((String) result[3]);
+			product.setTotalQuantity(((Number) result[4]).intValue()); // Ánh xạ totalQuantity
+			return product;
+		}).collect(Collectors.toList());
+	}
 
 	@Override
 	public List<Product> findByNameContainingIgnoreCase(String name) {

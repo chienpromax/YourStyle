@@ -64,6 +64,9 @@ public class Product implements Serializable {
     @Transient // Để không lưu vào database
     private MultipartFile imageFile;
 
+    @Transient
+    private Integer totalQuantity; // Số lượng sản phẩm đã bán, chỉ dùng tạm thời
+
     @JsonIgnore
     @OneToOne(mappedBy = "product")
     private Discount discount;

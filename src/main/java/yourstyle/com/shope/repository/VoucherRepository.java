@@ -1,6 +1,8 @@
 package yourstyle.com.shope.repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -34,8 +36,10 @@ public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
                         @Param("toDate") LocalDateTime toDate,
                         Pageable pageable);
 
-
         @Query("SELECT v FROM Voucher v WHERE v.voucherCode = ?1")
         Optional<Voucher> findByVoucherCodeOrder(String voucherCode);
+
+        @Query("SELECT v FROM Voucher v WHERE :totalAmount >= v.minTotalAmount AND (:totalAmount <= v.maxTotalAmount OR v.maxTotalAmount IS NULL)")
+        List<Voucher> findVouchersByTotalAmount(@Param("totalAmount") BigDecimal totalAmount);
 
 }

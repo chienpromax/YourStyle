@@ -57,10 +57,10 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID", "loggedInUser")
                         .invalidateHttpSession(true))
                 .rememberMe(rememberMe -> rememberMe
-                        .key("uniqueAndSecret") // Khoá mã hóa token remember-me
-                        .tokenValiditySeconds(86400) // Thời gian tồn tại của cookie là 1 ngày
-                        .rememberMeParameter("remember-me") // Tên của checkbox trong form
-                        .useSecureCookie(true) // Chỉ dùng cookie bảo mật khi chạy trên HTTPS
+                        .key("uniqueAndSecret")
+                        .tokenValiditySeconds(86400)
+                        .rememberMeParameter("remember-me")
+                        .useSecureCookie(true)
                         .alwaysRemember(true));
         return http.build();
     }

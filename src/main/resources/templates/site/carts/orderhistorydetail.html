@@ -29,7 +29,7 @@
             position: relative;
             height: 100%;
             width: 0;
-            background: linear-gradient(to right, #1ac6ff, #1E90FF);
+            background: linear-gradient(to right, #9ae6ff, #1E90FF);
             animation: fillAnimation 5s forwards;
             border-radius: 5px;
             overflow: hidden;
@@ -59,6 +59,7 @@
             from {
                 background-position: -60px 0, -45px 15px;
             }
+
             to {
                 background-position: 0 0, 15px 15px;
                 /* background-position: -60px 0, -45px 15px; */
@@ -97,7 +98,6 @@
             display: inline-block;
             color: green;
         }
-        
     </style>
 </head>
 
@@ -105,8 +105,15 @@
     <!--===== main =======-->
     <section class="py-5 container bg-light" layout:fragment="main">
         <div class="container my-5">
-            <a th:href="@{/yourstyle/order/orderhistory}" class="btn btn-link">← Trở Lại</a>
-            <h1 class="text-center text-danger" th:text="${order.transactionStatus ?: ''}"></h1>
+            <a th:href="@{/yourstyle/order/orderhistory}" class="btn btn-link mb-3">← Trở Lại</a>
+
+            <button th:if="${order.getStatusCode() == 6}" type="button" class="btn btn-link float-end mb-3 text-danger" data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop">
+                <i class="bi bi-exclamation-triangle"></i> TRẢ HÀNG
+            </button>
+
+            <h1 th:if="${order.getStatusCode() == 0}" class="text-center text-danger"
+                th:text="${order.transactionStatus ?: ''}"></h1>
             <div class="order-status row">
                 <section class="py-1 bg-light">
                     <div class="order-status row">
@@ -205,6 +212,40 @@
                             </p>
                             <a th:href="@{/product/detail/{id}(id=${detail.productVariant.product.productId})}"
                                 class="btn">Mua Lại</a>
+                        </div>
+                    </div>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+                        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="staticBackdropLabel">Lưu ý Về việc trả hàng</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Khi bạn muốn trả hàng vui lòng liên hệ nhân viên hoạc nhắn tin trực tiếp, bạn
+                                        phải cung cấp được lý do trả hàng và Mã hóa đơn, khi có xác nhận từ nhân viên
+                                        bạn có thể trả lại hàng và sẽ được hoàn lại tiền trong thời gian cụ thể</p><br>
+                                    <h4>MÃ HÓA ĐƠN CỦA BẠN LÀ: 
+                                    <strong class="text-danger">HD <span th:text="${order.orderId}"></span></strong></h4><br>
+                                    <h5>Bạn có thể liên hệ qua SDT: 0359690062</h5>
+                                    <h5>Hoạc liên hệ qua dịch vụ tin nhắn có trên trang web</h5>
+                                    <h5>Hoạc click vào đây
+                                        <a
+                                            href="https://www.messenger.com/t/468726266327729/?messaging_source=source%3Apages%3Amessage_shortlink&source_id=1441792&recurring_notification=0">messeger</a>
+                                        ,<a href="https://zalo.me/0899871800">Zalo</a>
+                                    </h5>
+                                    <h5>Xin chân thành cảm ơn!</h5>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ĐÃ
+                                        RÕ</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

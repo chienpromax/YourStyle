@@ -194,6 +194,53 @@
                     </div>
                     <div class="mb-3">
                         <label for="discountCode" class="form-label">Mã phiếu giảm giá</label>
+                        <label for="discountCode" class="form-label float-end btn" data-bs-toggle="modal"
+                            data-bs-target="#staticBackdrop">Xem Mã Giảm</label>
+                        <!-- Modal -->
+                        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+                            tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="staticBackdropLabel">Danh sách mã giảm giá</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-12 pt-3" th:each="voucher : ${vouchers}"
+                                                data-aos="fade-up">
+                                                <div class="card">
+                                                    <div class="p-2"
+                                                        style="background-image: url(/site/images/logo/background.png); background-repeat: no-repeat; background-size: cover; min-height: 280px;">
+
+                                                        <div class="product-info text-center pt-3">
+                                                            <div class="clearfix" style="margin-right: 30px;">
+                                                                <button onclick="copyVoucherCode()"
+                                                                    class="btn btn-warning float-end mb-3">Copy
+                                                                    Mã</button>
+                                                            </div>
+                                                            <h5>
+                                                                Vé Giảm Giá: <span
+                                                                    th:text="${voucher.voucherName}"></span>
+                                                                <br><br>
+                                                                MÃ: <span id="voucherCode"
+                                                                    th:text="${voucher.voucherCode}"></span>
+                                                            </h5>
+                                                            <h5>Bắt đầu: <span th:text="${voucher.startDate}"></span>
+                                                            </h5>
+                                                            <h5>Kết Thúc: <span th:text="${voucher.endDate}"></span>
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <input type="text" class="form-control" id="discountCode">
                         <div class="d-flex justify-content-center align-items-center">
                             <button class="btn-order-save mt-2 custom-btn-main" onclick="applyDiscount()">Áp
@@ -234,10 +281,18 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <script type="text/javascript">
+
+                function copyVoucherCode() {
+                    const voucherCode = document.getElementById('voucherCode').textContent;
+
+                    navigator.clipboard.writeText(voucherCode).catch(err => {
+                        console.error('Lỗi sao chép:', err);
+                    });
+                }
+
 
                 function placeOrder() {
                     const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;

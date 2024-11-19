@@ -18,7 +18,8 @@
                         <tbody th:each="orderDetail : ${orderDetails}">
                             <tr class="align-items-stretch">
                                 <td class="text-center" scope="row">
-                                    <a th:href="@{/product/detail/{id}(id=${orderDetail.productVariant.product.productId})}">
+                                    <a
+                                        th:href="@{/product/detail/{id}(id=${orderDetail.productVariant.product.productId})}">
                                         <img th:src="@{/uploads/} + ${orderDetail.productVariant.product.image}"
                                             alt="Image" width="100" style="object-fit: cover; max-height: 120px;"
                                             class="img-fluid" />
@@ -66,8 +67,10 @@
                                             <option th:selected="${orderDetail.quantity == 3}" value="3">SL: 3</option>
                                             <option th:selected="${orderDetail.quantity == 4}" value="4">SL: 4</option>
                                             <option th:selected="${orderDetail.quantity == 5}" value="5">SL: 5</option>
-                                            <option th:selected="${orderDetail.quantity == 10}" value="5">SL: 10</option>
-                                            <option th:selected="${orderDetail.quantity == 15}" value="5">SL: 15</option>
+                                            <option th:selected="${orderDetail.quantity == 10}" value="5">SL: 10
+                                            </option>
+                                            <option th:selected="${orderDetail.quantity == 15}" value="5">SL: 15
+                                            </option>
                                         </select>
                                     </form>
 
@@ -78,10 +81,41 @@
                                             <form action="" method="post">
                                                 <input type="hidden" name="orderDetailId"
                                                     th:value="${orderDetail.orderDetailId}" />
-                                                <button type="submit" class="icon-cartDetail-button">
+                                                <button type="button" class="icon-cartDetail-button"
+                                                    data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                                                     <i class="bi bi-search icon-cartDetail-button px-1"></i>
                                                 </button>
                                             </form>
+
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static"
+                                                data-bs-keyboard="false" tabindex="-1"
+                                                aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="staticBackdropLabel">Xem sản phẩm khác</h5>
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="row">
+                                                                <div class="col-md-3 pt-3"
+                                                                    th:each="product : ${products}" data-aos="fade-up">
+                                                                    <div class="card product-card">
+                                                                        <a th:href="@{/product/detail/{id}(id=${product.productId})}">
+                                                                            <img th:src="@{/uploads/} + ${product.image}"
+                                                                                class="img-fluid"
+                                                                                alt="Hình ảnh sản phẩm">
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <form action="" method="post">
                                                 <input type="hidden" name="orderDetailId"
                                                     th:value="${orderDetail.orderDetailId}" />
@@ -114,7 +148,7 @@
 
                         <div class="text-center">
                             <a class="py-5" th:href="@{/yourstyle/carts/orderdetail}">
-                                <button  class="custom-btn-main">CHUẨN BỊ ĐẶT HÀNG</button>
+                                <button class="custom-btn-main">CHUẨN BỊ ĐẶT HÀNG</button>
                             </a>
                         </div>
                     </div>

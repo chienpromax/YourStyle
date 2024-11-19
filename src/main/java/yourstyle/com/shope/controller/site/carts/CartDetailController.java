@@ -25,13 +25,14 @@ import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Discount;
 import yourstyle.com.shope.model.Order;
 import yourstyle.com.shope.model.OrderDetail;
+import yourstyle.com.shope.model.Product;
 import yourstyle.com.shope.model.ProductVariant;
 import yourstyle.com.shope.repository.CustomerRepository;
 import yourstyle.com.shope.repository.OrderDetailRepository;
 import yourstyle.com.shope.repository.OrderRepository;
 import yourstyle.com.shope.repository.ProductVariantRepository;
 import yourstyle.com.shope.service.OrderService;
-
+import yourstyle.com.shope.service.ProductService;
 
 @Controller
 @RequestMapping("/yourstyle/carts")
@@ -39,6 +40,8 @@ public class CartDetailController {
 
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private ProductService productService;
     @Autowired
     private OrderDetailRepository orderDetailRepository;
     @Autowired
@@ -52,24 +55,24 @@ public class CartDetailController {
     public String add(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-    
+
         Integer accountId = userDetails.getAccountId();
         Customer customer = customerRepository.findByAccount_AccountId(accountId);
         Integer customerId = customer != null ? customer.getCustomerId() : null;
-    
+
         if (customerId != null) {
             List<OrderDetail> orderDetails = orderDetailRepository
                     .findByOrder_Customer_CustomerIdAndOrder_Status(customerId, 9);
-    
+
             List<Order> orders = orderService.findByCustomerAndStatus(customer, 9);
             if (!orders.isEmpty()) {
                 Order order = orders.get(0); // Lấy Order đang xử lý (status = 9)
-    
+
                 // Tính tổng số tiền có áp dụng mã giảm giá
                 BigDecimal totalAmount = calculateTotalAmountWithOrderDiscount(order, orderDetails);
                 order.setTotalAmount(totalAmount);
                 orderRepository.save(order);
-    
+
                 model.addAttribute("orderDetails", orderDetails);
                 model.addAttribute("totalAmount", totalAmount);
             } else {
@@ -80,7 +83,10 @@ public class CartDetailController {
             model.addAttribute("orderDetails", new ArrayList<>());
             model.addAttribute("totalAmount", BigDecimal.ZERO);
         }
-    
+        List<Product> products = productService.getAllProducts();
+
+        model.addAttribute("products", products);
+
         return "site/carts/cartdetail";
     }
 
@@ -89,25 +95,25 @@ public class CartDetailController {
                 .map(orderDetail -> {
                     BigDecimal price = orderDetail.getProductVariant().getProduct().getPrice();
                     int quantity = orderDetail.getQuantity();
-    
+
                     Discount discount = orderDetail.getProductVariant().getProduct().getDiscount();
                     if (discount != null) {
                         BigDecimal discountPercent = discount.getDiscountPercent().divide(BigDecimal.valueOf(100));
                         price = price.subtract(price.multiply(discountPercent));
                     }
-    
+
                     return price.multiply(BigDecimal.valueOf(quantity));
                 })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-    
+
         if (order.getVoucher() != null) {
             BigDecimal orderDiscountPercent = order.getVoucher().getDiscountAmount().divide(BigDecimal.valueOf(100));
             totalAmount = totalAmount.subtract(totalAmount.multiply(orderDiscountPercent));
         }
-    
+
         return totalAmount;
     }
-    
+
     @PostMapping("/updateQuantity")
     public String updateQuantity(@RequestParam("orderDetailId") Integer orderDetailId,
             @RequestParam("quantity") Integer quantity,

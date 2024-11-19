@@ -1,5 +1,6 @@
 package yourstyle.com.shope.controller.site.carts;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,11 +23,15 @@ import yourstyle.com.shope.model.Address;
 import yourstyle.com.shope.model.CustomUserDetails;
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Order;
+import yourstyle.com.shope.model.Product;
+import yourstyle.com.shope.model.Voucher;
 import yourstyle.com.shope.repository.CustomerRepository;
 import yourstyle.com.shope.service.AccountService;
 import yourstyle.com.shope.service.AddressService;
 import yourstyle.com.shope.service.CustomerService;
 import yourstyle.com.shope.service.OrderService;
+import yourstyle.com.shope.service.VoucherService;
+import yourstyle.com.shope.service.impl.VoucherServiceImpl;
 
 @Controller
 @RequestMapping("/yourstyle/carts")
@@ -39,44 +44,55 @@ public class OrderDetailController {
     @Autowired
     OrderService orderService;
     @Autowired
+    private VoucherService voucherService;
+    @Autowired
+    private VoucherServiceImpl voucherServiceImpl;
+    @Autowired
     private CustomerService customerService;
     @Autowired
     private CustomerRepository customerRepository;
 
-    @GetMapping("/orderdetail")
-    public String showCartDetail(Model model) {
-        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal();
-        Integer accountId = customUserDetails.getAccountId();
+@GetMapping("/orderdetail")
+public String showCartDetail(Model model) {
+    CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+            .getPrincipal();
+    Integer accountId = customUserDetails.getAccountId();
 
-        Optional<Account> optionalAccount = accountService.findById(accountId);
-        Account account = optionalAccount.get();
-        Customer customer = customerRepository.findCustomerWithAddresses(account.getCustomer().getCustomerId())
-                .orElse(null);
-        List<Address> addresses = customer != null ? customer.getAddresses() : new ArrayList<>();
+    Optional<Account> optionalAccount = accountService.findById(accountId);
+    Account account = optionalAccount.get();
+    Customer customer = customerRepository.findCustomerWithAddresses(account.getCustomer().getCustomerId())
+            .orElse(null);
+    List<Address> addresses = customer != null ? customer.getAddresses() : new ArrayList<>();
 
-        model.addAttribute("account", account);
-        model.addAttribute("customer", customer != null ? customer : new Customer());
-        model.addAttribute("addresses", addresses.isEmpty() ? List.of(new Address()) : addresses);
+    model.addAttribute("account", account);
+    model.addAttribute("customer", customer != null ? customer : new Customer());
+    model.addAttribute("addresses", addresses.isEmpty() ? List.of(new Address()) : addresses);
 
-        Address defaultAddress = addresses.stream()
-                .filter(Address::getIsDefault)
-                .findFirst()
-                .orElse(null);
-        model.addAttribute("defaultAddress", defaultAddress);
+    Address defaultAddress = addresses.stream()
+            .filter(Address::getIsDefault)
+            .findFirst()
+            .orElse(null);
+    model.addAttribute("defaultAddress", defaultAddress);
 
-        List<Order> orders = orderService.findByCustomerAndStatus(customer, 9);
-        if (orders.isEmpty()) {
-            model.addAttribute("errorMessage", "Không có hóa đơn nào đang xử lý.");
-            return "errorPage";
-        }
-
-        Order currentOrder = orders.get(0);
-        model.addAttribute("orderTotal", currentOrder.getTotalAmount());
-        model.addAttribute("orderDate", currentOrder.getOrderDate());
-
-        return "site/carts/orderdetail";
+    List<Order> orders = orderService.findByCustomerAndStatus(customer, 9);
+    if (orders.isEmpty()) {
+        model.addAttribute("errorMessage", "Không có hóa đơn nào đang xử lý.");
+        return "errorPage";
     }
+
+    Order currentOrder = orders.get(0);
+    BigDecimal totalAmount = currentOrder.getTotalAmount();
+    model.addAttribute("orderTotal", totalAmount);
+    model.addAttribute("orderDate", currentOrder.getOrderDate());
+
+    // Lọc voucher dựa trên tổng tiền
+    List<Voucher> vouchers = voucherService.findVouchersByTotalAmount(totalAmount);
+
+    model.addAttribute("vouchers", vouchers);
+
+    return "site/carts/orderdetail";
+}
+
 
     @PostMapping("/save")
     public String saveCustomerAndAddress(@ModelAttribute("customer") Customer customer,

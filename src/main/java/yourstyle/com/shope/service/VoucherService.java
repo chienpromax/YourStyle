@@ -1,5 +1,6 @@
 package yourstyle.com.shope.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -28,5 +29,7 @@ public interface VoucherService {
     List<Voucher> findAll();
     
     Optional<Voucher> findByVoucherCode(String voucherCode);
+
+    List<Voucher> findVouchersByTotalAmount(BigDecimal totalAmount);
 
 }

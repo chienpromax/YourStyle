@@ -1,8 +1,10 @@
 package yourstyle.com.shope.service.impl;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -59,5 +61,11 @@ public class VoucherServiceImpl implements VoucherService {
     public Optional<Voucher> findByVoucherCode(String voucherCode) {
         return voucherRepository.findByVoucherCodeOrder(voucherCode);
     }
+
+    @Override
+    public List<Voucher> findVouchersByTotalAmount(BigDecimal totalAmount) {
+        return voucherRepository.findVouchersByTotalAmount(totalAmount);
+    }
+    
 
 }

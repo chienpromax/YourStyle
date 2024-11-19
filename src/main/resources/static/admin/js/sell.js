@@ -1,3 +1,4 @@
+import { format } from "https://cdn.skypack.dev/date-fns";
 window.addEventListener("DOMContentLoaded", function () {
     const orderId = document.getElementById("orderId").value;
     const printInvoice = document.getElementById("printInvoice");
@@ -260,12 +261,12 @@ window.addEventListener("DOMContentLoaded", function () {
     const selectProductModal = document.getElementById("selectProductModal");
     window.confirmInsertProduct = function () {
         const quantity = document.getElementById("inputQuantity").value;
-        console.log("productVariantId " + productVariantId);
-        console.log("orderId " + orderId);
-        console.log("sizeId " + sizeId);
-        console.log("colorId " + colorId);
-        console.log("quantity " + quantity);
-        console.log("price " + price);
+        // console.log("productVariantId " + productVariantId);
+        // console.log("orderId " + orderId);
+        // console.log("sizeId " + sizeId);
+        // console.log("colorId " + colorId);
+        // console.log("quantity " + quantity);
+        // console.log("price " + price);
         const orderDetailData = {
             orderId: orderId,
             productVariantId: productVariantId,
@@ -426,129 +427,406 @@ window.addEventListener("DOMContentLoaded", function () {
         totalElement.textContent = formattedTotal;
         goodMoneyElement.textContent = formattedTotal;
     }
-    const buttonPayment = this.document.getElementById("confirmPayment");
-    // vô hiệu hóa nút thanh toán
-    window.openModalPayment = function () {
-        buttonPayment.setAttribute("disabled", true);
-    };
-    // xóa text input tiền khách đưa
-    window.deleteTextInputCustomerGive = function () {
-        document.getElementById("customerGive").value = "";
-    };
-    // hàm tính toán tiền khách đưa
-    document.getElementById("customerGive").addEventListener("input", function () {
-        let TotalAmount = document.getElementById("TotalAmount").textContent.trim();
-
-        let normalizedTotalAmount = TotalAmount.replace("VND", "") // Loại bỏ đơn vị VND
-            .replace(/\./g, "") // Loại bỏ dấu chấm phân cách hàng nghìn
-            .replace(",", ""); // Đổi dấu phẩy thành dấu chấm (nếu có)
-
-        // Chuyển đổi thành số
-        let voucherTotalSumMoneyFormat = parseInt(normalizedTotalAmount, 10);
-
-        const customerGive = document.getElementById("customerGive").value.trim();
-        const tienthieu = document.getElementById("tienthieu");
-
-        // Xóa dấu chấm khi nhập vào và tính toán số tiền đã đưa
-        let customerGiveFormatted = customerGive.replace(/\./g, ""); // Loại bỏ dấu chấm
-        let customerGiveMoney = parseInt(customerGiveFormatted, 10); // Chuyển thành số
-
-        // Thêm dấu chấm vào số tiền đã nhập
-        let customerGiveWithComma = customerGiveFormatted.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
-        // Cập nhật lại giá trị ô input tiền khách đưa
-        document.getElementById("customerGive").value = customerGiveWithComma;
-
-        // Tính tiền thiếu
-        let tienthieuValue = voucherTotalSumMoneyFormat - customerGiveMoney;
-
-        // Hiển thị kết quả nếu tiền thiếu lớn hơn 0
-        if (tienthieuValue > 0) {
-            tienthieu.textContent = `${tienthieuValue.toLocaleString()} VND`;
-        } else {
-            tienthieu.textContent = "0 VNĐ"; // Không hiển thị nếu không thiếu
+    // ẩn nút cập nhật địa chỉ
+    const updateAddressButton = document.getElementById("updateAddress");
+    if (updateAddressButton) {
+        updateAddressButton.style.visibility = "hidden";
+    }
+    // hàm lấy kiểu phương thức thanh toán
+    let transactionType;
+    function updateTransactionType() {
+        if (document.getElementById("bankTransfer").checked) {
+            transactionType = "BANK_TRANSFER";
+        } else if (document.getElementById("cash").checked) {
+            transactionType = "COD";
         }
-        if (customerGiveMoney >= voucherTotalSumMoneyFormat) {
-            buttonPayment.removeAttribute("disabled");
-        }
+    }
+    document.querySelectorAll("input[name='paymentMethod']").forEach((input) => {
+        input.addEventListener("change", function () {
+            updateTransactionType();
+        });
     });
+    // gọi hàm lần đầu khi trang được load để lấy kiểu thanh toán
+    updateTransactionType();
+    // hàm thanh toán
+    window.handlePaymentInStore = function () {
+        const data = {
+            transactionType: transactionType,
+            orderId: orderId,
+        };
+        fetch("/api/admin/orders/payment", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Có lỗi xảy ra khi gửi dữ liệu.");
+                }
+                return response.json();
+            })
+            .then((order) => {
+                const data = {
+                    totalAmount: order.totalAmount, // chưa format
+                    transactionTime: order.transactionTime,
+                    transactionType: order.transactionType,
+                    paymentMethod: order.paymentMethod,
+                    transactionStatus: order.transactionStatus,
+                };
+                // format thời gian thanh toán
+                const formattedDate = format(new Date(data.transactionTime), "dd-MM-yyyy HH:mm:ss");
+                // format tổng tiền thanh toán
+                const formatedTotalAmount = `${data.totalAmount.toLocaleString("vi-VN")}.000 VND`;
+                const tbtody = document.querySelector(".tablePayment");
+                const customerPay = document.getElementById("customerPay");
+                const tienThieu = document.getElementById("tienThieu");
+                const confirmPayment = document.getElementById("confirmPayment");
+                let row = ` 
+                            <tr>
+                                            <td>1</td>
+                                            <td>${formatedTotalAmount}</td>
+                                            <td>${data.paymentMethod}</td>
+                                            <td>${formattedDate}</td>
+                                            <td>${data.transactionStatus}</td>
+                            </tr>
+                `;
+                tbtody.innerHTML = row;
+                if (confirmPayment) {
+                    confirmPayment.style.display = "none"; // ẨN Nút thanh toán
+                }
+                if (customerPay) {
+                    customerPay.textContent = formatedTotalAmount;
+                }
+                if (tienThieu) {
+                    tienThieu.textContent = "0 VND";
+                }
+                createToast("success", "fa-solid fa-circle-check", "Thành công", "Thanh toán thành công");
+            })
+            .catch((err) => {
+                createToast("error", "fa-solid fa-circle-exclamation", "Lỗi", "Thanh toán thất bại!");
+                console.error("Lỗi:", err);
+            });
+    };
+
     // click vào giao hàng
     const shipping = document.getElementById("shipping");
     const infoCustomer = document.getElementById("infoCustomer");
+    const feeShipping = this.document.getElementById("feeShipping");
     infoCustomer.style.display = "none";
     shipping.addEventListener("change", function () {
         if (this.checked) {
             infoCustomer.style.display = "block";
+            feeShipping.textContent = "32.000 VND";
         } else {
             infoCustomer.style.display = "none";
+            feeShipping.textContent = "0 VND";
         }
     });
-});
-// tìm kiếm sản  phẩm
-document.querySelector("#searchForm").addEventListener("submit", (e) => {
-    e.preventDefault();
+    // hàm xác nhận đặt hàng
+    window.confirmOrderInStore = function () {
+        if (shipping.checked) {
+            Swal.fire({
+                title: `Xác nhận đơn tại quầy với hình thức giao hàng?`,
+                text: "",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Xác nhận",
+                cancelButtonText: "Hủy",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/api/admin/sell/updateOrder/${orderId}/1`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    })
+                        .then((reponse) => {
+                            if (!reponse.ok) {
+                                throw new Error("Lỗi server không trả dữ liệu về!");
+                            }
+                            return reponse.text();
+                        })
+                        .then((message) => {
+                            console.log(message);
+                            window.location.href = "/admin/sell?page=0&size=10";
+                        })
+                        .catch((err) => {
+                            console.error("Lỗi: " + err);
+                        });
+                }
+            });
+        } else {
+            Swal.fire({
+                title: `Xác nhận đơn tại quầy với hình thức nhận hàng tại quầy?`,
+                text: "",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Xác nhận",
+                cancelButtonText: "Hủy",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/api/admin/sell/updateOrder/${orderId}/6`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    })
+                        .then((reponse) => {
+                            if (!reponse.ok) {
+                                throw new Error("Lỗi server không trả dữ liệu về!");
+                            }
+                            return reponse.text();
+                        })
+                        .then((message) => {
+                            console.log(message);
+                            window.location.href = "/admin/sell?page=0&size=10";
+                        })
+                        .catch((err) => {
+                            console.error("Lỗi: " + err);
+                        });
+                }
+            });
+        }
+    };
+    // Chọn khách hàng cho đơn vận Chuyển
+    window.selectCustomerForOrder = function (button) {
+        const rows = button.closest("tr");
+        const fullname = rows.cells[2].textContent.trim();
+        const customerId = rows.cells[1].textContent.trim();
+        const orderData = {
+            orderId: orderId,
+            customerId: customerId,
+        };
+        Swal.fire({
+            title: `Xác nhận chọn khách hàng ${fullname}?`,
+            text: `Đơn hàng sẽ được vận chuyển theo địa chỉ của khách hàng ${fullname}`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Xác nhận",
+            cancelButtonText: "Hủy",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch("/api/admin/sell/selectCustomerForOrder", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(orderData),
+                })
+                    .then((reponse) => {
+                        if (!reponse.ok) {
+                            throw new Error("Lỗi server không trả dữ liệu về!");
+                        }
+                        return reponse.json();
+                    })
+                    .then((data) => {
+                        console.log(data);
+                        const { fullname, phoneNumber, street, ward, district, city } = data;
+                        const fullnameLabel = document.querySelector(".fullname");
+                        const fullnameInput = document.getElementById("floatinghovaten");
+                        const phoneNumberInput = document.getElementById("floatingsodienthoai");
+                        const streetInput = document.getElementById("floatingstreet");
+                        const cityInput = document.getElementById("floatingcity");
+                        const districtInput = document.getElementById("floatingdistrict");
+                        const wardInput = document.getElementById("floatingward");
+                        fullnameLabel.textContent = fullname;
+                        fullnameInput.value = fullname;
+                        phoneNumberInput.value = phoneNumber;
+                        streetInput.value = street;
+                        cityInput.value = city;
+                        districtInput.value = district;
+                        wardInput.value = ward;
+                        createToast(
+                            "success",
+                            "fa-solid fa-circle-check",
+                            "Thành công",
+                            "Chọn khách hàng cho đơn giao hàng thành công"
+                        );
+                    })
+                    .catch((err) => {
+                        console.error("Lỗi: " + err);
+                        createToast(
+                            "error",
+                            "fa-solid fa-circle-exclamation",
+                            "Lỗi",
+                            "Chọn khách hàng cho đơn giao hàng thất bại!"
+                        );
+                    });
+            }
+        });
+    };
+    //  giới tính nam và nữ
+    const radioNamAndNu = document.querySelectorAll("input[name='gridRadios']");
+    let gender = true; // mặc định là nam
+    if (radioNamAndNu) {
+        radioNamAndNu.forEach(function (radio) {
+            radio.addEventListener("change", function () {
+                if (document.getElementById("radionam").checked) {
+                    gender = true; // 1 là nam
+                } else if (document.getElementById("radionu").checked) {
+                    gender = false; // 0 là nữ
+                }
+            });
+        });
+    }
+    // lắng nghe địa chỉ
+    const city = document.querySelector(".floatingcity");
+    const district = document.querySelector(".floatingdistrict");
+    const ward = document.querySelector(".floatingward");
 
-    const value = document.querySelector('input[name="value"]').value;
-    fetch(`/admin/sell/search?value=${value}`)
-        .then((response) => response.text())
-        .then((html) => {
-            // Cập nhật bảng sản phẩm trong modal với kết quả mới
-            document.querySelector(".dssp").innerHTML = html;
-        })
-        .catch((err) => {
-            console.error("Lỗi khi tìm kiếm:", error);
-        });
-});
-// lọc sản phẩm theo kích cỡ
-document.getElementById("sizeSelect").addEventListener("change", () => {
-    const sizeId = document.getElementById("sizeSelect").value;
-    fetch(`/admin/sell/searchBySize?size=${sizeId}`)
-        .then((response) => {
-            return response.text();
-        })
-        .then((html) => {
-            // Cập nhật bảng sản phẩm trong modal với kết quả mới
-            document.querySelector(".dssp").innerHTML = html;
-        })
-        .catch((err) => {
-            console.error("Lỗi lọc sản phẩm:", error);
-        });
-});
-// lọc sản phẩm theo màu
-document.getElementById("colorSelect").addEventListener("change", () => {
-    const colorId = document.getElementById("colorSelect").value;
+    let cityValue;
+    let districtValue;
+    let wardValue;
+    city.addEventListener("change", function () {
+        cityValue = city.options[city.selectedIndex].textContent.trim();
+    });
+    district.addEventListener("change", function () {
+        districtValue = district.options[district.selectedIndex].textContent.trim();
+    });
+    ward.addEventListener("change", function () {
+        wardValue = ward.options[ward.selectedIndex].textContent.trim();
+    });
+    // kiểm tra địa chỉ email
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+    // Thêm khách hàng
+    window.insertCustomer = function () {
+        const fullname = document.getElementById("floatingtenkhachhang").value.trim();
+        const phoneNumber = document.getElementById("floatingphoneNumber").value.trim();
+        const street = document.getElementById("streetAddress").value.trim();
+        const customerData = {
+            fullname: fullname,
+            phoneNumber: phoneNumber,
+            gender: gender,
+            street: street,
+            ward: wardValue,
+            district: districtValue,
+            city: cityValue,
+        };
+        if (fullname && phoneNumber && street && wardValue && districtValue && cityValue) {
+            fetch("/admin/sell/addCustomer", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(customerData),
+            })
+                .then((reponse) => {
+                    if (!reponse.ok) {
+                        throw new Error("Lỗi server không trả dữ liệu về!");
+                    }
+                    return reponse.text();
+                })
+                .then((html) => {
+                    // Cập nhật bảng c trong modal với kết quả mới
+                    document.querySelector(".dscustomer").innerHTML = html;
+                    createToast("success", "fa-solid fa-circle-check", "Thành công", "Thêm khách hàng thành công");
+                })
+                .catch((err) => {
+                    console.error("Lỗi: " + err);
+                    createToast("error", "fa-solid fa-circle-exclamation", "Lỗi", "Thêm khách hàng thất bại!");
+                });
+        } else {
+            createToast(
+                "error",
+                "fa-solid fa-circle-exclamation",
+                "Lỗi",
+                "Lỗi thêm khách hàng! Vui lòng nhập đầy đủ thông tin!"
+            );
+            return;
+        }
+    };
+    // tìm kiếm khách hàng
+    document.querySelector("#searchCustomerForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const page = document.querySelector('input[name="page"]').value;
+        const size = document.querySelector('input[name="size"]').value;
+        const searchByCustomer = document.getElementById("searchByCustomer").value;
+        fetch(`/admin/sell/searchByCustomer?value=${searchByCustomer}&page=${page}&size=${size}`)
+            .then((response) => response.text())
+            .then((html) => {
+                // Cập nhật bảng c trong modal với kết quả mới
+                document.querySelector(".dscustomer").innerHTML = html;
+            })
+            .catch((err) => {
+                console.error("Lỗi khi tìm kiếm:", err);
+            });
+    });
+    // tìm kiếm sản  phẩm
+    document.querySelector("#searchForm").addEventListener("submit", (e) => {
+        e.preventDefault();
 
-    fetch(`/admin/sell/searchByColor?color=${colorId}`)
-        .then((response) => {
-            return response.text();
-        })
-        .then((html) => {
-            // Cập nhật bảng sản phẩm trong modal với kết quả mới
-            document.querySelector(".dssp").innerHTML = html;
-        })
-        .catch((err) => {
-            console.error("Lỗi lọc sản phẩm:", error);
-        });
-});
-// lọc sản phẩm theo danh mục
-document.getElementById("categorySelect").addEventListener("change", () => {
-    const categoryId = document.getElementById("categorySelect").value;
+        const value = document.querySelector('input[name="value"]').value;
+        fetch(`/admin/sell/search?value=${value}`)
+            .then((response) => response.text())
+            .then((html) => {
+                // Cập nhật bảng sản phẩm trong modal với kết quả mới
+                document.querySelector(".dssp").innerHTML = html;
+            })
+            .catch((err) => {
+                console.error("Lỗi khi tìm kiếm:", error);
+            });
+    });
+    // lọc sản phẩm theo kích cỡ
+    document.getElementById("sizeSelect").addEventListener("change", () => {
+        const sizeId = document.getElementById("sizeSelect").value;
+        fetch(`/admin/sell/searchBySize?size=${sizeId}`)
+            .then((response) => {
+                return response.text();
+            })
+            .then((html) => {
+                // Cập nhật bảng sản phẩm trong modal với kết quả mới
+                document.querySelector(".dssp").innerHTML = html;
+            })
+            .catch((err) => {
+                console.error("Lỗi lọc sản phẩm:", error);
+            });
+    });
+    // lọc sản phẩm theo màu
+    document.getElementById("colorSelect").addEventListener("change", () => {
+        const colorId = document.getElementById("colorSelect").value;
 
-    fetch(`/admin/sell/searchByCategory?category=${categoryId}`)
-        .then((response) => {
-            return response.text();
-        })
-        .then((html) => {
-            // Cập nhật bảng sản phẩm trong modal với kết quả mới
-            document.querySelector(".dssp").innerHTML = html;
-        })
-        .catch((err) => {
-            console.error("Lỗi lọc sản phẩm:", error);
-        });
-});
-window.createToast = function (type, icon, title, text) {
-    const newToast = document.createElement("div");
-    newToast.innerHTML = `<div class="toast ${type}">
+        fetch(`/admin/sell/searchByColor?color=${colorId}`)
+            .then((response) => {
+                return response.text();
+            })
+            .then((html) => {
+                // Cập nhật bảng sản phẩm trong modal với kết quả mới
+                document.querySelector(".dssp").innerHTML = html;
+            })
+            .catch((err) => {
+                console.error("Lỗi lọc sản phẩm:", error);
+            });
+    });
+    // lọc sản phẩm theo danh mục
+    document.getElementById("categorySelect").addEventListener("change", () => {
+        const categoryId = document.getElementById("categorySelect").value;
+
+        fetch(`/admin/sell/searchByCategory?category=${categoryId}`)
+            .then((response) => {
+                return response.text();
+            })
+            .then((html) => {
+                // Cập nhật bảng sản phẩm trong modal với kết quả mới
+                document.querySelector(".dssp").innerHTML = html;
+            })
+            .catch((err) => {
+                console.error("Lỗi lọc sản phẩm:", error);
+            });
+    });
+    window.createToast = function (type, icon, title, text) {
+        const newToast = document.createElement("div");
+        newToast.innerHTML = `<div class="toast ${type}">
     <i class="${icon}"></i>
     <div class="content">
         <div class="title">${title}</div>
@@ -556,9 +834,10 @@ window.createToast = function (type, icon, title, text) {
     </div>
     <i class="close fa-solid fa-xmark" onclick="(this.parentElement).remove()"></i>
 </div>`;
-    const displayNotifications = document.querySelector(".displayNotifications");
-    displayNotifications.appendChild(newToast);
-    setTimeout(() => {
-        newToast.remove();
-    }, 5000);
-};
+        const displayNotifications = document.querySelector(".displayNotifications");
+        displayNotifications.appendChild(newToast);
+        setTimeout(() => {
+            newToast.remove();
+        }, 5000);
+    };
+});

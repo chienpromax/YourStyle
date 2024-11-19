@@ -16,7 +16,6 @@ import yourstyle.com.shope.model.Order;
 import yourstyle.com.shope.model.OrderChannel;
 import yourstyle.com.shope.repository.OrderRepository;
 import yourstyle.com.shope.service.OrderService;
-import yourstyle.com.shope.validation.admin.OrderDto;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -140,6 +139,11 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public Page<Order> findByOrderChannel(OrderChannel orderChannel, Pageable pageable) {
 		return orderRepository.findByOrderChannel(orderChannel, pageable);
+	}
+
+	@Override
+	public Page<Order> findByCustomer(Customer customer, Pageable pageable) {
+		return orderRepository.findByCustomer(customer, pageable);
 	}
 
 }

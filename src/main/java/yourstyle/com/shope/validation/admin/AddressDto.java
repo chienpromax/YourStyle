@@ -21,6 +21,11 @@ public class AddressDto implements Serializable {
     private boolean isDefault = false;
     private Integer customerId;
     private Customer customer;
+    // thêm khách hàng sell
+    private String fullname;
+    private String phoneNumber;
+    private boolean gender;
+    private String email;
 
     public AddressDto(Integer addressId, String street, String ward, String district, String city, Customer customer,
             boolean isDefault) {
@@ -31,5 +36,27 @@ public class AddressDto implements Serializable {
         this.city = city;
         this.customer = customer;
         this.isDefault = isDefault;
+    }
+
+    public AddressDto(String fullname, String phoneNumber, boolean gender, String street, String ward, String district,
+            String city) {
+        this.fullname = fullname;
+        this.phoneNumber = phoneNumber;
+        this.gender = gender;
+        this.street = street;
+        this.ward = ward;
+        this.district = district;
+        this.city = city;
+    }
+
+    // chọn khách hàng
+    public AddressDto(String fullname, String phoneNumber, String street, String ward, String district,
+            String city) {
+        this.fullname = fullname;
+        this.phoneNumber = phoneNumber;
+        this.street = street;
+        this.ward = ward;
+        this.district = district;
+        this.city = city;
     }
 }

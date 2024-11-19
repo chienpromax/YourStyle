@@ -26,6 +26,8 @@ public class OrderDto implements Serializable {
     // chi tiết bán hàng
     private List<OrderDetailDto> orderDetailDtos;
     private VoucherDto voucherDto;
+    // thêm khách hàng cho đơn vận chuyển
+    private Integer customerId;
 
     public OrderDto(BigDecimal totalAmount, String transactionType, Timestamp transactionTime, String paymentMethod,
             String transactionStatus) {
@@ -46,5 +48,11 @@ public class OrderDto implements Serializable {
     public OrderDto(List<OrderDetailDto> orderDetailDtos, VoucherDto voucherDto) {
         this.orderDetailDtos = orderDetailDtos;
         this.voucherDto = voucherDto;
+    }
+
+    // thêm khách hàng cho đơn vận chuyển
+    public OrderDto(Integer orderId, Integer customerId) {
+        this.orderId = orderId;
+        this.customerId = customerId;
     }
 }

@@ -1,18 +1,20 @@
 const urlAPI = "https://provinces.open-api.vn/api/?depth=3";
 let locationData = [];
 
-async function loadAdress(selectCityElement) {
+async function loadAdress() {
     const reponse = await fetch(urlAPI);
     locationData = await reponse.json();
     // console.log(locationData);
     // city
-    selectCityElement.innerHTML = "<option selected>Chọn Tỉnh/thành phố</option>";
-    // đổ dữ liệu vào input thành phố
-    locationData.forEach((city) => {
-        const optionCity = document.createElement("option");
-        optionCity.value = city.code;
-        optionCity.textContent = city.name;
-        selectCityElement.appendChild(optionCity);
+    const selectCities = document.querySelectorAll(".floatingcity");
+    selectCities.forEach((selectCityElement) => {
+        selectCityElement.innerHTML = "<option selected>Chọn Tỉnh/thành phố</option>";
+        locationData.forEach((city) => {
+            const optionCity = document.createElement("option");
+            optionCity.value = city.code;
+            optionCity.textContent = city.name;
+            selectCityElement.appendChild(optionCity);
+        });
     });
 }
 function attachEventHandlers() {
@@ -240,5 +242,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // load dữ liệu khi trang  được tải
 const firstSelectCity = document.querySelector(".floatingcity");
-loadAdress(firstSelectCity);
+loadAdress();
 attachEventHandlers();

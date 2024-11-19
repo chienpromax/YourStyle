@@ -35,6 +35,9 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     // TÌM kiếm đơn hàng theo khách hàng
     List<Order> findByCustomer(Customer customer);
 
+    // TÌM kiếm đơn hàng theo khách hàng
+    Page<Order> findByCustomer(Customer customer, Pageable pageable);
+
     // đếm số lượng sử dụng voucher của khách hàng
     @Query("SELECT COUNT(o) FROM Order o WHERE o.voucher.voucherId = :voucherId AND o.customer.customerId = :customerId")
     Integer countVoucherUsedByCustomer(@Param("voucherId") Integer voucherId,

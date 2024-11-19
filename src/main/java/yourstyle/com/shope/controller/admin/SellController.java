@@ -8,7 +8,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,14 +19,21 @@ import java.math.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import org.springframework.ui.*;
+import org.springframework.util.StringUtils;
+
+import yourstyle.com.shope.model.Account;
+import yourstyle.com.shope.model.Address;
 import yourstyle.com.shope.model.Category;
 import yourstyle.com.shope.model.Color;
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Order;
+import yourstyle.com.shope.model.OrderChannel;
 import yourstyle.com.shope.model.OrderDetail;
 import yourstyle.com.shope.model.Product;
 import yourstyle.com.shope.model.ProductVariant;
 import yourstyle.com.shope.model.Size;
+import yourstyle.com.shope.service.AccountService;
+import yourstyle.com.shope.service.AddressService;
 import yourstyle.com.shope.service.CategoryService;
 import yourstyle.com.shope.service.ColorService;
 import yourstyle.com.shope.service.CustomerService;
@@ -33,6 +42,7 @@ import yourstyle.com.shope.service.OrderService;
 import yourstyle.com.shope.service.ProductService;
 import yourstyle.com.shope.service.ProductVariantService;
 import yourstyle.com.shope.service.SizeService;
+import yourstyle.com.shope.validation.admin.AddressDto;
 
 @Controller
 @RequestMapping("admin/sell")
@@ -53,6 +63,10 @@ public class SellController {
     ColorService colorService;
     @Autowired
     SizeService sizeService;
+    @Autowired
+    AddressService addressService;
+    @Autowired
+    AccountService accountService;
 
     private void formatProductVariant(List<ProductVariant> productVariants, Model model) {
         // xử lý thông tin đơn hàng và format tổng tiền
@@ -81,7 +95,7 @@ public class SellController {
 
     private void populateCustomerList(Model model, int currentPage, int pageSize) {
         Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by("fullname"));
-        Page<Customer> list = customerService.findAll(pageable);
+        Page<Customer> list = customerService.findAllNotRetailCustomer(4, pageable);
 
         int totalPages = list.getTotalPages();
         if (totalPages > 0) {
@@ -97,7 +111,7 @@ public class SellController {
             List<Integer> pageNumbers = IntStream.rangeClosed(start, end).boxed().collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-
+        System.out.println("Danh sách khách hàng: " + list);
         model.addAttribute("Customers", list.getContent());
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", totalPages);
@@ -107,33 +121,25 @@ public class SellController {
     @GetMapping("detail/{orderId}")
     public String sellDetail(@PathVariable("orderId") Integer orderId, Model model,
             @RequestParam("page") Optional<Integer> page,
-            @RequestParam("size") Optional<Integer> size,
-            @RequestParam("value") Optional<String> value) {
+            @RequestParam("size") Optional<Integer> size) {
         Optional<Order> orderOption = orderService.findById(orderId);
         if (orderOption.isPresent()) {
             Order order = orderOption.get();
             // thông tin địa chỉ giao hàng của khách hàng
             model.addAttribute("order", order);
-            // danh sách sản phẩm chi tiết của từng đơn hàng
-            if (order.getOrderDetails() != null && order.getOrderId() != null) {
-                model.addAttribute("orderDetails", order.getOrderDetails());
+            // thêm địa chỉ cho khách hàng bỏ vào object
+            model.addAttribute("address", new AddressDto());
+            if (order.getCustomer() != null && order.getCustomer().getCustomerId() != null) {
+                model.addAttribute("customer", order.getCustomer());
             }
             // danh sách sản phẩm chi tiết của từng đơn hàng
             if (order.getOrderDetails() != null && order.getOrderId() != null) {
                 model.addAttribute("orderDetails", order.getOrderDetails());
             }
-            // danh sách địa chỉ khách hàng
+            // danh sách khách hàng
             int currentPage = page.orElse(0);
             int pageSize = size.orElse(5);
             populateCustomerList(model, currentPage, pageSize);
-            // tìm kiếm khách hàng
-            String searchValue = value.orElse("");
-            Page<Customer> customers = customerService.searchByNameOrPhone(searchValue,
-                    PageRequest.of(currentPage, pageSize, Sort.by("fullname")));
-            model.addAttribute("Customers", customers.getContent());
-            model.addAttribute("currentPage", currentPage);
-            model.addAttribute("size", pageSize);
-            model.addAttribute("value", searchValue);
             // xử lý thông tin đơn hàng và format tổng tiền
             DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
             symbols.setGroupingSeparator('.'); // Dùng dấu '.' cho hàng nghìn
@@ -253,11 +259,57 @@ public class SellController {
     }
 
     @GetMapping("")
-    public String list(Model model) {
+    public String list(Model model, @RequestParam("page") Optional<Integer> page,
+            @RequestParam("size") Optional<Integer> size) {
+        int currentPage = page.orElse(0); // trang hiện tại
+        int pageSize = size.orElse(10); // mặc định hiển thị 10 hóa đơn 1 trang
         // khách hàng lẻ
-        Customer customer = customerService.findById(4).get();
-        List<Order> orders = orderService.findByCustomer(customer);
+        // Customer customer = customerService.findById(4).get();
+        Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by(Sort.Direction.DESC, "orderDate"));
+        Page<Order> orders = orderService.findByOrderChannel(OrderChannel.IN_STORE, pageable);
         model.addAttribute("orders", orders);
+        paginationOrders(orders, currentPage, model);
+        return "admin/sell/list";
+    }
+
+    public void paginationOrders(Page<Order> list, int currentPage, Model model) {
+        int totalPages = list.getTotalPages(); // lấy tổng số trang
+        if (totalPages > 0) {
+            // 1 2 3 4 5
+            int start = Math.max(1, currentPage + 1 - 2);
+            int end = Math.min(currentPage + 1 + 2, totalPages);
+            if (totalPages > 5) {
+                if (end == totalPages) {
+                    start = end - 5;
+                } else if (start == 1) {
+                    end = start + 5;
+                }
+            }
+            List<Integer> pageNumbers = IntStream.rangeClosed(start, end).boxed().collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+    }
+
+    @GetMapping("searchListOrderInStore")
+    public String searchAccount(Model model, @RequestParam(name = "value", required = false) String value,
+            @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
+        int currentPage = page.orElse(0); // trang hiện tại
+        int pageSize = size.orElse(10); // mặc định hiển thị 10 hóa đơn 1 trang
+        Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by(Sort.Direction.DESC, "orderDate"));
+        Page<Order> list = null;
+        if (StringUtils.hasText(value)) { // kiểm tra có giá trị hay không
+            if (checkNumber(value)) {
+                Integer orderId = Integer.valueOf(value);
+                list = orderService.findByOrderId(orderId, pageable);
+            } else {
+                list = orderService.findByCustomerFullname(value, pageable);
+            }
+        } else {
+            list = orderService.findAll(pageable);
+        }
+        paginationOrders(list, currentPage, model);
+        // totalQuantitiesAndTotalAmounts(list, model);
+        model.addAttribute("orders", list);
         return "admin/sell/list";
     }
 
@@ -327,7 +379,70 @@ public class SellController {
         return "admin/sell/fragments/productVariantList :: productRows";
     }
 
+    @GetMapping("searchByCustomer")
+    public String searchCustomer(org.springframework.ui.Model model,
+            @RequestParam("value") Optional<String> value,
+            @RequestParam("page") Optional<Integer> page,
+            @RequestParam("size") Optional<Integer> size) {
+        int currentPage = page.orElse(0);
+        int pageSize = size.orElse(5);
+        // tìm kiếm khách hàng
+        Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by("fullname"));
+        Page<Customer> customers;
+        String searchValue = value.orElse("");
+        System.out.println("giá trị tham số tìm là: " + searchValue);
+        if (checkPhoneNumber(searchValue)) {
+            System.out.println("kiểm tra số: " + checkNumber(searchValue));
+            customers = customerService.findByPhoneName(4, searchValue,
+                    pageable);
+        } else {
+            customers = customerService.findByFullnameContaining(4, searchValue,
+                    pageable);
+        }
+        model.addAttribute("Customers", customers.getContent());
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("size", pageSize);
+        model.addAttribute("value", searchValue);
+        return "admin/sell/fragments/CustomerList :: customerRows";
+    }
+
+    @RequestMapping(value = "/addCustomer", method = RequestMethod.POST)
+    public String addCustomer(@RequestBody AddressDto addressDto, Model model) {
+        // tài khoản nhân viên vai trò khách
+        Account account = accountService.findById(2).get();
+        // tạo khách hàng
+        Customer customer = new Customer();
+        customer.setFullname(addressDto.getFullname());
+        customer.setPhoneNumber(addressDto.getPhoneNumber());
+        customer.setGender(addressDto.isGender());
+        customer.setAccount(account);
+        customerService.save(customer);
+        // tạo địa chỉ
+        Address address = new Address();
+        address.setStreet(addressDto.getStreet());
+        address.setWard(addressDto.getWard());
+        address.setDistrict(addressDto.getDistrict());
+        address.setCity(addressDto.getCity());
+        address.setIsDefault(true); // tạo khách hàng và cho địa chỉ mặc định
+        address.setCustomer(customer);
+        addressService.save(address);
+        int currentPage = 0;
+        int pageSize = 5;
+        Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by("fullname"));
+        Page<Customer> customers = customerService.findByFullnameContaining(4, "",
+                pageable); // tìm kiếm tất cả khách hàng nhưng không có khách lẻ
+        model.addAttribute("Customers", customers.getContent());
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("size", pageSize);
+        return "admin/sell/fragments/CustomerList :: customerRows";
+    }
+
     private boolean checkNumber(String str) {
         return str != null && str.matches("-?\\d+(\\.\\d+)?"); // kiểm tra chuỗi có phải là số hay không
     }
+
+    private boolean checkPhoneNumber(String str) {
+        return str != null && str.matches("\\d+"); // kiểm tra chuỗi chỉ chứa các chữ số
+    }
+
 }

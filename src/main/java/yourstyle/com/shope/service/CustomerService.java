@@ -34,7 +34,20 @@ public interface CustomerService {
 
 	List<Customer> searchByNameOrPhone(String value);
 
-	// Page<Customer> findByFullnameOrPhoneNumber(String fullname, Pageable pageable);
+	// Page<Customer> findByFullnameOrPhoneNumber(String fullname, Pageable
+	// pageable);
 
 	// Customer findByFullnameOrPhoneNumber(String fullname, String phoneNumber);
+
+	Page<Customer> findAllNotRetailCustomer(Integer customerId, Pageable pageable);
+
+	Page<Customer> findByFullnameContaining(
+			Integer customerId,
+			String fullname,
+			Pageable pageable);
+
+	Page<Customer> findByPhoneName(
+			Integer customerId,
+			String phoneNumber,
+			Pageable pageable);
 }

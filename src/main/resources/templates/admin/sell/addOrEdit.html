@@ -30,10 +30,10 @@
                                     <div class="d-flex justify-content-between">
                                         <h2>Sản phẩm</h2>
                                         <div>
-                                            <button class="btn btn-outline-warning" id="printInvoice">
+                                            <button class="btn btn-outline-warning me-2" id="printInvoice">
                                                 IN HÓA ĐƠN
                                             </button>
-                                            <button class="btn btn-outline-warning">QUÉT QR SẢN PHẨM</button>
+                                            <!-- <button class="btn btn-outline-warning">QUÉT QR SẢN PHẨM</button> -->
                                             <button
                                                 class="btn btn-outline-warning"
                                                 data-bs-toggle="modal"
@@ -396,7 +396,7 @@
                                     <!-- giao hàng  -->
                                     <div class="d-flex justify-content-between align-items-center mt-2 mb-3">
                                         <h5>Tên khách hàng</h5>
-                                        <h6 class="">[[${order.customer.fullname}]]</h6>
+                                        <h6 class="fullname">[[${order.customer.fullname}]]</h6>
                                         <div class="form-check form-switch">
                                             <label for="shipping" class="form-check-label fw-bold">Giao hàng</label>
                                             <input id="shipping" class="form-check-input" type="checkbox" />
@@ -415,6 +415,7 @@
                                                                 class="form-control"
                                                                 id="floatinghovaten"
                                                                 placeholder="Họ và tên"
+                                                                th:value="${order.customer.fullname}"
                                                             />
                                                             <label for="floatinghovaten">
                                                                 <span class="text-danger">*</span>
@@ -429,6 +430,7 @@
                                                                 class="form-control"
                                                                 id="floatingsodienthoai"
                                                                 placeholder="Số điện thoại"
+                                                                th:value="${order.customer.phoneNumber}"
                                                             />
                                                             <label for="floatingsodienthoai">
                                                                 <span class="text-danger">*</span>
@@ -436,6 +438,12 @@
                                                             </label>
                                                         </div>
                                                     </div>
+                                                </div>
+                                                <div
+                                                    class="row"
+                                                    th:each="address : ${order.customer.addresses}"
+                                                    th:if="${address.isDefault}"
+                                                >
                                                     <div class="col-md-6 mb-3">
                                                         <div class="form-floating">
                                                             <input
@@ -443,6 +451,7 @@
                                                                 class="form-control"
                                                                 id="floatingstreet"
                                                                 placeholder="Địa chị cụ thể"
+                                                                th:value="${address.street}"
                                                             />
                                                             <label for="floatingstreet">
                                                                 <span class="text-danger">*</span>
@@ -456,6 +465,7 @@
                                                                 class="form-control"
                                                                 id="floatingcity"
                                                                 placeholder="Tỉnh/thành phố"
+                                                                th:value="${address.city}"
                                                             />
                                                             <label for="floatingCity">
                                                                 <span class="text-danger">*</span>
@@ -470,6 +480,7 @@
                                                                 id="floatingdistrict"
                                                                 class="form-control"
                                                                 placeholder="Quận/huyện"
+                                                                th:value="${address.district}"
                                                             />
                                                             <label for="floatingdistrict">
                                                                 <span class="text-danger">*</span>
@@ -484,6 +495,7 @@
                                                                 id="floatingward"
                                                                 class="form-control"
                                                                 placeholder="Xã/phường/thị trấn"
+                                                                th:value="${address.ward}"
                                                             />
 
                                                             <label for="floatingward">
@@ -492,6 +504,23 @@
                                                             </label>
                                                         </div>
                                                     </div>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <button
+                                                        class="btn btn-outline-primary"
+                                                        id="updateAddress"
+                                                        onclick="submitAddress()"
+                                                    >
+                                                        Cập nhật địa chỉ
+                                                    </button>
+                                                    <button
+                                                        class="btn btn-outline-warning"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#modalIdSelectAddress"
+                                                        id="btnSelectAddress"
+                                                    >
+                                                        Chọn địa chỉ
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -541,7 +570,7 @@
                                             <div class="d-flex justify-content-between align-items-center mt-1">
                                                 <p>Phí vận chuyển</p>
                                                 <div>
-                                                    <p>0 VND</p>
+                                                    <p id="feeShipping">0 VND</p>
                                                     <hr />
                                                 </div>
                                             </div>
@@ -579,17 +608,36 @@
                                                         <i class="fas fa-credit-card"></i>
                                                     </button>
                                                 </div>
-                                                <p class="text-danger fw-bold">0 VND</p>
+                                                <p
+                                                    class="text-danger fw-bold"
+                                                    th:if="${order.transactionType == null}"
+                                                    id="customerPay"
+                                                >
+                                                    0 VND
+                                                </p>
+                                                <p class="text-danger fw-bold" th:if="${order.transactionType != null}">
+                                                    [[${#numbers.formatDecimal(order.totalAmount,1,'COMMA',3,'POINT')+ '
+                                                    VND'}]]
+                                                </p>
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center mt-3 mb-2">
                                                 <p class="fw-bold">Tiền thiếu</p>
-                                                <p class="text-danger fw-bold">
-                                                    [[${#numbers.formatDecimal(order.totalAmount,1,'COMMA',3,'POINT') +
-                                                    ' VND'}]]
+                                                <p class="text-danger fw-bold" th:if="${order.transactionType != null}">
+                                                    0 VND
+                                                </p>
+                                                <p
+                                                    class="text-danger fw-bold"
+                                                    th:if="${order.transactionType == null}"
+                                                    id="tienThieu"
+                                                >
+                                                    [[${#numbers.formatDecimal(order.totalAmount,1,'COMMA',3,'POINT')+ '
+                                                    VND'}]]
                                                 </p>
                                             </div>
                                             <div class="text-end">
-                                                <button class="btn btn-outline-warning">XÁC NHẬN ĐẶT HÀNG</button>
+                                                <button class="btn btn-outline-warning" onclick="confirmOrderInStore()">
+                                                    XÁC NHẬN ĐẶT HÀNG
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -629,6 +677,7 @@
                                     <p class="text-danger fw-bold" id="TotalAmount">
                                         [[${#numbers.formatDecimal(order.totalAmount,1,'COMMA',3,'POINT') + ' VND'}]]
                                     </p>
+                                    <input type="hidden" name="" id="voucherTotalSum" th:value="${voucherTotalSum}" />
                                 </div>
                                 <p class="fw-bold text-center">Chọn phương thức thanh toán</p>
                                 <div class="d-flex justify-content-center">
@@ -654,34 +703,50 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-floating mt-3">
+                                <div class="form-floating mt-3 mb-3">
                                     <input id="customerGive" type="text" class="form-control" />
                                     <label for="customerGive">Tiền khách đưa</label>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input id="tienthua" type="text" class="form-control" value="0 VND" disabled />
+                                    <label for="tienthua" class="form-label fst-normal">Tiền thừa</label>
                                 </div>
                                 <div class="table-reponsive">
                                     <table class="table table-group-divider text-center">
                                         <thead class="">
                                             <tr>
                                                 <th>STT</th>
-                                                <th>Phương thức</th>
                                                 <th>Số tiền</th>
-                                                <th>Hành động</th>
+                                                <th>Phương thức</th>
+                                                <th>Thời gian</th>
+                                                <th>Trạng thái</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr></tr>
+                                        <tbody class="tablePayment">
+                                            <tr>
+                                                <td>1</td>
+                                                <td>
+                                                    [[${#numbers.formatDecimal(order.totalAmount,1,'COMMA',3,'POINT')+ '
+                                                    VND'}]]
+                                                </td>
+                                                <td>[[${order.paymentMethod}]]</td>
+                                                <td>[[${order.transactionTime}]]</td>
+                                                <td>[[${order.transactionStatus}]]</td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-center mt-5">
-                                    <h6 class="fw-bold">Tiền thiếu</h6>
-                                    <p class="text-danger fw-bold" id="tienthieu">
-                                        [[${#numbers.formatDecimal(order.totalAmount,1,'COMMA',3,'POINT') + ' VND'}]]
-                                    </p>
-                                </div>
                                 <hr />
                                 <div class="text-center">
-                                    <button type="button" class="btn btn-success" id="confirmPayment">XÁC NHẬN</button>
+                                    <button
+                                        type="button"
+                                        class="btn btn-success"
+                                        id="confirmPayment"
+                                        onclick="handlePaymentInStore()"
+                                        th:if="${order.transactionType == null}"
+                                    >
+                                        XÁC NHẬN
+                                    </button>
                                 </div>
                             </div>
                         </form>
@@ -730,8 +795,267 @@
                 </div>
             </div>
             <!-- modal chọn sản phẩm -->
+            <!-- Modal thêm khách hàng -->
+            <div
+                class="modal fade"
+                id="openModalAddCustomer"
+                tabindex="-1"
+                data-bs-backdrop="static"
+                data-bs-keyboard="false"
+                role="dialog"
+                aria-labelledby="modalTitleId"
+                aria-hidden="true"
+            >
+                <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalTitleId3">Thêm khách hàng</h5>
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-toggle="modal"
+                                data-bs-target="#openModalListCustomer"
+                                aria-label="Close"
+                            ></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-floating mb-3">
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="floatingtenkhachhang"
+                                            placeholder="Họ và tên"
+                                        />
+                                        <label for="floatinghovaten">
+                                            <span class="text-danger">*</span>
+                                            Tên khách hàng
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-floating mb-3">
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="floatingphoneNumber"
+                                            placeholder="Số điện thoại"
+                                        />
+                                        <label for="floatingsodienthoai">
+                                            <span class="text-danger">*</span>
+                                            Số điện thoại
+                                        </label>
+                                    </div>
+                                </div>
+                                <fieldset class="col-12 col-md-12">
+                                    <legend class="col-form-label pt-0">
+                                        <span class="text-danger">*</span>
+                                        Giới tính
+                                    </legend>
+                                </fieldset>
+                                <div class="col-12 col-md-12 d-flex align-items-center mb-3">
+                                    <div class="form-check me-3">
+                                        <input
+                                            class="form-check-input"
+                                            type="radio"
+                                            name="gridRadios"
+                                            id="radionam"
+                                            value="option1"
+                                            checked
+                                        />
+                                        <label class="form-check-label" for="radionam" style="cursor: pointer">
+                                            Nam
+                                        </label>
+                                    </div>
+                                    <div class="form-check cursor-pointer">
+                                        <input
+                                            class="form-check-input"
+                                            type="radio"
+                                            name="gridRadios"
+                                            id="radionu"
+                                            value="option2"
+                                        />
+                                        <label class="form-check-label" for="radionu" style="cursor: pointer">Nữ</label>
+                                    </div>
+                                </div>
+                                <!-- Street -->
+                                <div class="col-md-12 mb-3">
+                                    <div class="form-floating">
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="streetAddress"
+                                            placeholder="Địa chị cụ thể"
+                                        />
+                                        <label for="street">
+                                            <span class="text-danger">*</span>
+                                            Địa chị cụ thể
+                                        </label>
+                                    </div>
+                                </div>
+                                <!-- Street -->
+                                <!-- City -->
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-floating">
+                                        <select class="form-select floatingcity" id="">
+                                            <option selected>Chọn Tỉnh/thành phố</option>
+                                        </select>
+                                        <label for="floatingCity">
+                                            <span class="text-danger">*</span>
+                                            Chọn Tỉnh/thành phố
+                                        </label>
+                                    </div>
+                                </div>
+                                <!-- City -->
+                                <!-- District -->
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-floating">
+                                        <select name="" id="" class="form-select floatingdistrict" disabled>
+                                            <option selected>Chọn Quận/huyện</option>
+                                        </select>
+                                        <label for="floatingdistrict">
+                                            <span class="text-danger">*</span>
+                                            Quận/huyện
+                                        </label>
+                                    </div>
+                                </div>
+                                <!-- District -->
+                                <!-- Ward -->
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-floating">
+                                        <select name="" id="" class="form-select floatingward" disabled>
+                                            <option selected>Chọn Xã/phường/thị trấn</option>
+                                        </select>
+                                        <label for="floatingward">
+                                            <span class="text-danger">*</span>
+                                            Xã/phường/thị trấn
+                                        </label>
+                                    </div>
+                                </div>
+                                <!-- Ward -->
+                            </div>
+                        </div>
+                        <div class="modal-footer text-center">
+                            <button
+                                type="button"
+                                class="btn btn-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#openModalListCustomer"
+                                onclick="insertCustomer()"
+                            >
+                                Thêm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal thêm khách hàng -->
+            <!-- Modal thêm địa chỉ-->
+            <div
+                class="modal fade"
+                id="modalIdAddAddress"
+                tabindex="-1"
+                data-bs-backdrop="static"
+                role="dialog"
+                aria-labelledby="modalTitleId"
+                aria-hidden="true"
+            >
+                <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalTitleId5">Thêm địa chỉ</h5>
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalIdSelectAddress"
+                                aria-label="Close"
+                            ></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- thêm địa chỉ cho khách hàng-->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        <input type="hidden" th:value="${customer.customerId}" id="customerId" />
+                                        <input
+                                            type="text"
+                                            class="form-control floatingstreet"
+                                            placeholder="Địa chị cụ thể"
+                                            name="floatingstreet"
+                                            id="street"
+                                        />
+                                        <label for="floatingstreet">
+                                            <span class="text-danger">*</span>
+                                            Địa chị cụ thể
+                                        </label>
+                                    </div>
+                                    <span id="validatedAddAddress" class="text-danger"></span>
+                                </div>
+                                <!-- City -->
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        <select class="form-select floatingcity" id="city">
+                                            <option selected>Chọn Tỉnh/thành phố</option>
+                                        </select>
+                                        <label for="floatingCity">
+                                            <span class="text-danger">*</span>
+                                            Chọn Tỉnh/thành phố
+                                        </label>
+                                    </div>
+                                </div>
+                                <!-- City -->
+                                <!-- District -->
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        <select name="" id="district" class="form-select floatingdistrict" disabled>
+                                            <option selected>Chọn Quận/huyện</option>
+                                        </select>
+                                        <label for="floatingdistrict">
+                                            <span class="text-danger">*</span>
+                                            Quận/huyện
+                                        </label>
+                                    </div>
+                                </div>
+                                <!-- District -->
+                                <!-- Ward -->
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-floating">
+                                        <select name="" id="ward" class="form-select floatingward" disabled>
+                                            <option selected>Chọn Xã/phường/thị trấn</option>
+                                        </select>
+                                        <label for="floatingward">
+                                            <span class="text-danger">*</span>
+                                            Xã/phường/thị trấn
+                                        </label>
+                                    </div>
+                                </div>
+                                <!-- Ward -->
+                                <hr />
+                                <div class="col-md-12 text-end">
+                                    <button
+                                        type="button"
+                                        class="btn btn-outline-warning"
+                                        onclick="addAddress()"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalIdSelectAddress"
+                                        id="newAddresses"
+                                    >
+                                        TẠO MỚI
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- thêm địa chỉ cho khách hàng-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal thêm địa chỉ-->
             <!-- End #main -->
-            <script src="/admin/js/sell.js"></script>
+            <script type="module" src="/admin/js/sell.js"></script>
+            <script src="/admin/js/addressAPI.js"></script>
+            <script type="module" src="/admin/js/order.js"></script>
         </section>
     </body>
 </html>
@@ -749,24 +1073,29 @@
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalTitleId2">Tìm kiếm khách hàng</h5>
+                <h5 class="modal-title" id="modalTitleId2">Danh sách khách hàng</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <!-- search and create staff -->
+                <h6>Tìm kiếm khách hàng</h6>
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <!-- Start Search  -->
                     <div class="position-relative w-50">
-                        <form th:action="@{/admin/sell/detail/{orderId}(orderId=${order.orderId})}" method="get">
+                        <form id="searchCustomerForm">
                             <input type="hidden" name="size" th:value="${size}" />
                             <input type="hidden" name="page" th:value="${currentPage}" />
                             <button
-                                class="position-absolute end-0 top-50 translate-middle-y pe-3 border-0 me-1"
-                                style="background-color: white"
+                                class="position-absolute end-0 top-50 translate-middle-y pe-3 border-0 me-1 bg-transparent"
                             >
                                 <i class="bi bi-search"></i>
                             </button>
-                            <input class="form-control" placeholder="Nhập tên hoặc SĐT..." name="value" />
+                            <input
+                                class="form-control"
+                                placeholder="Nhập tên hoặc SĐT..."
+                                name="value"
+                                id="searchByCustomer"
+                            />
                         </form>
                     </div>
                     <!-- End Search  -->
@@ -787,32 +1116,30 @@
 
                 <!-- start list table -->
                 <div class="table-responsive">
-                    <table class="table table-striped-columns">
+                    <table class="table table-striped-columns text-center">
                         <thead>
                             <tr>
                                 <th scope="col">STT</th>
                                 <th scope="col">ID</th>
                                 <th scope="col">Họ và tên</th>
-                                <th scope="col">Email</th>
                                 <th scope="col">SĐT</th>
-                                <th scope="col">Ngày sinh</th>
                                 <th scope="col">Giới tính</th>
                                 <th scope="col">Thao tác</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="dscustomer">
                             <tr th:each="customer, stat : ${Customers}">
                                 <td th:text="${stat.count}"></td>
                                 <td th:text="${customer.customerId}"></td>
                                 <td th:text="${customer.fullname}"></td>
-                                <td th:text="${customer.account.email}"></td>
                                 <td th:text="${customer.phoneNumber}"></td>
-                                <td th:text="${#dates.format(customer.birthday, 'dd-MM-yyyy')}"></td>
                                 <td
                                     th:text="${customer.gender == true ? 'Nam' : (customer.gender == false ? 'Nữ' : 'Không xác định')}"
                                 ></td>
                                 <td class="text-center">
-                                    <button class="btn btn-outline-warning">Chọn</button>
+                                    <button class="btn btn-outline-warning" onclick="selectCustomerForOrder(this)">
+                                        Chọn
+                                    </button>
                                 </td>
                             </tr>
                         </tbody>
@@ -874,10 +1201,11 @@
     </div>
 </div>
 <!-- modal danh sách khách hàng -->
-<!-- Modal thêm khách hàng -->
+
+<!-- modal chọn địa chỉ -->
 <div
     class="modal fade"
-    id="openModalAddCustomer"
+    id="modalIdSelectAddress"
     tabindex="-1"
     data-bs-backdrop="static"
     data-bs-keyboard="false"
@@ -885,16 +1213,66 @@
     aria-labelledby="modalTitleId"
     aria-hidden="true"
 >
-    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-sm" role="document">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalTitleId3">Thêm khách hàng</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title" id="modalTitleId4">Danh sách địa chỉ</h5>
+                <button type="button" class="btn-close btn-lg" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body"></div>
-            <div class="modal-footer text-center">
-                <button type="button" class="btn btn-primary">TẠO MỚI</button>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-borderless">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên người nhận</th>
+                                <th>Số điện thoại</th>
+                                <th>Đường</th>
+                                <th>Xã/phường/thị trấn</th>
+                                <th>Quận/huyện</th>
+                                <th>Tỉnh/thành phố</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody class="listAddress">
+                            <tr th:each="address,iterStat: ${customer.addresses}" th:unless="${address.isDefault}">
+                                <td>[[${iterStat.index + 1}]]</td>
+                                <td>[[${customer.fullname}]]</td>
+                                <td>[[${customer.phoneNumber}]]</td>
+                                <td>[[${address.street}]]</td>
+                                <td>[[${address.ward}]]</td>
+                                <td>[[${address.district}]]</td>
+                                <td>[[${address.city}]]</td>
+                                <td>
+                                    <a
+                                        href="javascript:void(0);"
+                                        class="btn btn-outline-warning"
+                                        onclick="selectAddress(this)"
+                                        id="selectAddress"
+                                        data-bs-dismiss="modal"
+                                    >
+                                        Chọn
+                                    </a>
+                                </td>
+                                <input type="hidden" th:value="${customer.customerId}" id="inputCustomerId" />
+                                <input type="hidden" th:value="${address.addressId}" class="inputAddressId" />
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer text-start">
+                <button
+                    type="button"
+                    class="btn btn-outline-warning"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalIdAddAddress"
+                    id="btnAddAddress"
+                >
+                    Thêm địa chỉ
+                </button>
             </div>
         </div>
     </div>
 </div>
+<!-- modal chọn địa chỉ -->

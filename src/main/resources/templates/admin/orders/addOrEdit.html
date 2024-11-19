@@ -286,7 +286,7 @@
                                     <div class="col-md-4">
                                         <p>
                                             <strong>Tên khách hàng:</strong>
-                                            [[${order.customer.fullname}]]
+                                            <span id="fullname">[[${order.customer.fullname}]]</span>
                                         </p>
                                     </div>
                                     <div class="col-md-4">
@@ -300,14 +300,14 @@
                                     <div class="col-md-4">
                                         <p>
                                             <strong>SĐT người nhận:</strong>
-                                            [[${order.customer.phoneNumber}]]
+                                            <span id="phoneNumber">[[${order.customer.phoneNumber}]]</span>
                                         </p>
                                     </div>
                                     <div class="col-md-8">
                                         <p>
                                             <strong>Địa chỉ:</strong>
                                             <span th:if="${#lists.isEmpty(customer.addresses.?[isDefault])}">
-                                                <span class="text-danger">
+                                                <span class="text-danger" id="setNotDefaultAddress">
                                                     Không có địa chỉ mặc định!Vui lòng thêm địa chỉ mặc định!
                                                 </span>
                                             </span>
@@ -408,7 +408,7 @@
                                                         class="form-control"
                                                         id="floatingstreet"
                                                         placeholder="Địa chị cụ thể"
-                                                        th:field="*{addresses[0].street}"
+                                                        th:value="${address.street}"
                                                     />
                                                     <label for="floatingstreet">
                                                         <span class="text-danger">*</span>
@@ -422,7 +422,7 @@
                                                         class="form-control"
                                                         id="floatingcity"
                                                         placeholder="Tỉnh/thành phố"
-                                                        th:field="*{addresses[0].city}"
+                                                        th:value="${address.city}"
                                                     />
                                                     <label for="floatingCity">
                                                         <span class="text-danger">*</span>
@@ -437,7 +437,7 @@
                                                         id="floatingdistrict"
                                                         class="form-control"
                                                         placeholder="Quận/huyện"
-                                                        th:field="*{addresses[0].district}"
+                                                        th:value="${address.district}"
                                                     />
                                                     <label for="floatingdistrict">
                                                         <span class="text-danger">*</span>
@@ -452,7 +452,7 @@
                                                         id="floatingward"
                                                         class="form-control"
                                                         placeholder="Xã/phường/thị trấn"
-                                                        th:field="*{addresses[0].ward}"
+                                                        th:value="${address.ward}"
                                                     />
 
                                                     <label for="floatingward">
@@ -472,10 +472,9 @@
                                             </div>
                                         </div>
                                         <!-- nếu khách hàng không có địa chỉ mặc định  -->
-                                        <!-- <div
+                                        <div
                                             class="row"
-                                            th:each="address : *{addresses}"
-                                            th:unless="${address.isDefault}"
+                                            th:if="${#lists.isEmpty(customer.addresses.?[isDefault])}"
                                             id="addressNotIsDefault"
                                         >
                                             <div class="col-md-6 mb-3">
@@ -543,7 +542,7 @@
                                                     Xác nhận
                                                 </button>
                                             </div>
-                                        </div> -->
+                                        </div>
                                     </form>
                                 </div>
                             </div>

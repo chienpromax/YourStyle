@@ -115,7 +115,7 @@ public class OrderRestController {
 
     // xác nhận lưu địa chỉ
     @PutMapping("submitAddress")
-    public ResponseEntity<String> setAddressDefault(@RequestBody AddressDto addressDto) {
+    public ResponseEntity<AddressDto> setAddressDefault(@RequestBody AddressDto addressDto) {
         if (addressDto != null) {
             Customer customer = customerService.findById(addressDto.getCustomerId()).get();
             // kiểm tra xem có thay đổi tên và sdt không nếu có thì cập nhật
@@ -133,9 +133,16 @@ public class OrderRestController {
             addressUpdate.setIsDefault(true);
             addressService.save(addressUpdate);
             // Trả về phản hồi thành công
-            return ResponseEntity.ok("Cập nhật địa chỉ thành công.");
+            AddressDto addressDtoReponse = new AddressDto(
+                    addressUpdate.getCustomer().getFullname(),
+                    addressUpdate.getCustomer().getPhoneNumber(),
+                    addressUpdate.getStreet(),
+                    addressUpdate.getWard(),
+                    addressUpdate.getDistrict(),
+                    addressUpdate.getCity());
+            return ResponseEntity.ok(addressDtoReponse);
         }
-        return ResponseEntity.badRequest().body("Có lỗi xảy ra khi cập nhật địa chỉ!");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
 
     // thêm địa chỉ mới trong modal

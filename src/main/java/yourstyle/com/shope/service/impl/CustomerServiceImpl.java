@@ -25,9 +25,9 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-    public Customer update(Customer customer) {
-        return customerRepository.save(customer);
-    }
+	public Customer update(Customer customer) {
+		return customerRepository.save(customer);
+	}
 
 	@Override
 	public <S extends Customer> S save(S entity) {
@@ -40,9 +40,9 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-    public Page<Customer> findAll(Pageable pageable) {
-        return customerRepository.findAll(pageable);
-    }
+	public Page<Customer> findAll(Pageable pageable) {
+		return customerRepository.findAll(pageable);
+	}
 
 	@Override
 	public List<Customer> findAll(Sort sort) {
@@ -50,9 +50,9 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-    public Page<Customer> searchByNameOrPhone(String value, Pageable pageable) {
-        return customerRepository.findByFullnameContainingOrPhoneNumberContaining(value, value, pageable);
-    }
+	public Page<Customer> searchByNameOrPhone(String value, Pageable pageable) {
+		return customerRepository.findByFullnameContainingOrPhoneNumberContaining(value, value, pageable);
+	}
 
 	@Override
 	public List<Customer> findAll() {
@@ -75,17 +75,35 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-    public List<Customer> searchByNameOrPhone(String value) {
-        return customerRepository.findByFullnameContainingOrPhoneNumberContaining(value, value);
-    }
+	public List<Customer> searchByNameOrPhone(String value) {
+		return customerRepository.findByFullnameContainingOrPhoneNumberContaining(value, value);
+	}
+
+	@Override
+	public Page<Customer> findAllNotRetailCustomer(Integer customerId, Pageable pageable) {
+		return customerRepository.findAllNotRetailCustomer(customerId, pageable);
+	}
+
+	@Override
+	public Page<Customer> findByFullnameContaining(Integer customerId, String fullname, Pageable pageable) {
+		return customerRepository.findByFullnameContaining(customerId, fullname, pageable);
+	}
+
+	@Override
+	public Page<Customer> findByPhoneName(Integer customerId, String phoneNumber, Pageable pageable) {
+		return customerRepository.findByPhoneName(customerId, phoneNumber, pageable);
+	}
 
 	// @Override
-	// public Page<Customer> findByFullnameOrPhoneNumber(String value, Pageable pageable) {
-	// 	return customerRepository.findByFullnameOrPhoneNumber(value, pageable);
+	// public Page<Customer> findByFullnameOrPhoneNumber(String value, Pageable
+	// pageable) {
+	// return customerRepository.findByFullnameOrPhoneNumber(value, pageable);
 	// }
 
 	// @Override
-	// public Customer findByFullnameOrPhoneNumber(String fullname, String phoneNumber) {
-	// 	return customerRepository.findByFullnameOrPhoneNumber(fullname, phoneNumber);
+	// public Customer findByFullnameOrPhoneNumber(String fullname, String
+	// phoneNumber) {
+	// return customerRepository.findByFullnameOrPhoneNumber(fullname, phoneNumber);
 	// }
+
 }

@@ -63,4 +63,6 @@ public interface OrderService {
 	Integer countVoucherUsedByCustomer(Integer voucherId, Integer customerId);
 
 	Integer countVoucherUsed(@Param("voucherId") Integer voucherId);
+
+	Page<Order> findByCustomer(Customer customer, Pageable pageable);
 }

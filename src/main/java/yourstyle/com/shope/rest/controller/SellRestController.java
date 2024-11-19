@@ -11,15 +11,19 @@ import java.util.Locale;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import yourstyle.com.shope.model.Address;
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Order;
 import yourstyle.com.shope.model.OrderChannel;
@@ -27,6 +31,7 @@ import yourstyle.com.shope.model.OrderDetail;
 import yourstyle.com.shope.model.OrderStatus;
 import yourstyle.com.shope.model.ProductVariant;
 import yourstyle.com.shope.model.Voucher;
+import yourstyle.com.shope.service.AddressService;
 import yourstyle.com.shope.service.ColorService;
 import yourstyle.com.shope.service.CustomerService;
 import yourstyle.com.shope.service.OrderDetailService;
@@ -34,6 +39,7 @@ import yourstyle.com.shope.service.OrderService;
 import yourstyle.com.shope.service.ProductVariantService;
 import yourstyle.com.shope.service.SizeService;
 import yourstyle.com.shope.service.VoucherService;
+import yourstyle.com.shope.validation.admin.AddressDto;
 import yourstyle.com.shope.validation.admin.OrderDetailDto;
 import yourstyle.com.shope.validation.admin.OrderDto;
 import yourstyle.com.shope.validation.admin.VoucherDto;
@@ -56,6 +62,8 @@ public class SellRestController {
         CustomerService customerService;
         @Autowired
         VoucherService voucherService;
+        @Autowired
+        AddressService addressService;
 
         @GetMapping("saveOrUpdate")
         public ResponseEntity<List<OrderDto>> createOrderSellInStore() {
@@ -387,6 +395,47 @@ public class SellRestController {
                         // xử lý thông tin đơn hàng và format tổng tiền
                         OrderDto orderDto = listOrderDetailDto(order);
                         return ResponseEntity.ok(orderDto);
+                }
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+
+        @RequestMapping(value = "/selectCustomerForOrder", method = RequestMethod.PUT)
+        public ResponseEntity<AddressDto> selectCustomerForOrder(@RequestBody OrderDto orderDto) {
+                Optional<Order> orderOptional = orderService.findById(orderDto.getOrderId());
+                if (orderOptional.isPresent()) {
+                        Order order = orderOptional.get();
+                        Customer customer = customerService.findById(orderDto.getCustomerId()).get();
+                        order.setCustomer(customer); // cập nhật khách hàng
+                        orderService.save(order);
+                        List<Address> address = addressService
+                                        .findByAddressCustomerID(order.getCustomer().getCustomerId());
+                        Address addressDefault = new Address();
+                        for (Address checkAddress : address) {
+                                if (checkAddress.getIsDefault() == true) {
+                                        addressDefault = checkAddress;
+                                }
+                        }
+                        AddressDto addressDtoReponse = new AddressDto(
+                                        order.getCustomer().getFullname(),
+                                        order.getCustomer().getPhoneNumber(),
+                                        addressDefault.getStreet(),
+                                        addressDefault.getWard(),
+                                        addressDefault.getDistrict(),
+                                        addressDefault.getCity());
+                        return ResponseEntity.ok(addressDtoReponse);
+                }
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+
+        @PutMapping("updateOrder/{orderId}/{status}")
+        public ResponseEntity<String> updateOrderInStore(@PathVariable("orderId") Integer orderId,
+                        @PathVariable("status") Integer status) {
+                if (orderId != null && status != null) {
+                        Order order = orderService.findById(orderId).get();
+                        OrderStatus orderStatus = OrderStatus.fromCode(status);
+                        order.setStatus(orderStatus);
+                        orderService.save(order);
+                        return ResponseEntity.ok("Đặt hàng thành công");
                 }
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }

@@ -265,6 +265,7 @@ window.addEventListener("DOMContentLoaded", () => {
     };
     // hàm chọn địa chỉ buộc dữ liệu lên form
     let addressIdInput; // biến lưu addressid mặc đinh và không mặc định
+    const updateAddressButton = document.getElementById("updateAddress");
     window.selectAddress = function (button) {
         // lấy tr chứa các td
         let row = button.closest("tr"); // tìm phần tử cha gần nhất của nút
@@ -291,8 +292,16 @@ window.addEventListener("DOMContentLoaded", () => {
             document.getElementById("floatingdistrictNotDefault").value = district;
             document.getElementById("floatingwardNotDefault").value = ward;
         }
+        // hiện button cập nhật địa chỉ bên bán hàng tại quầy
+        if (updateAddressButton) {
+            updateAddressButton.style.visibility = "visible";
+        }
     };
     // hàm lưu địa chỉ
+    const fullnameElement = document.getElementById("fullname");
+    const phoneNumberElement = document.getElementById("phoneNumber");
+    const setDefaultAddressElement = document.getElementById("setDefaultAddress");
+    const setNotDefaultAddressElement = document.getElementById("setNotDefaultAddress");
     window.submitAddress = function () {
         const addressData = {
             addressId: addressIdInput,
@@ -303,8 +312,8 @@ window.addEventListener("DOMContentLoaded", () => {
             },
         };
         Swal.fire({
-            title: "Bạn có chắc chắn muốn thay đổi không?",
-            text: "Thông tin đơn hàng sẽ được cập nhật",
+            title: "Xác nhận thay đổi thông tin khách hàng?",
+            text: `Thông tin khách hàng ${addressData.customer.fullname} sẽ được cập nhật`,
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -324,17 +333,40 @@ window.addEventListener("DOMContentLoaded", () => {
                         if (!response.ok) {
                             throw new Error("Có lỗi xảy ra khi gửi dữ liệu.");
                         }
-                        return response.text(); // Bạn có thể dùng response.text() nếu chỉ cần thông báo
+                        return response.json(); // Bạn có thể dùng response.text() nếu chỉ cần thông báo
                     })
-                    .then((message) => {
+                    .then((data) => {
+                        const { fullname, phoneNumber, street, ward, district, city } = data;
+                        if (fullnameElement && phoneNumberElement) {
+                            fullnameElement.textContent = fullname;
+                            phoneNumberElement.textContent = phoneNumber;
+                        }
+                        let spanAddressElement = `${street}, ${ward}, ${district}, ${city}`;
+                        if (setDefaultAddressElement) {
+                            setDefaultAddressElement.textContent = spanAddressElement;
+                        }
+                        if (setNotDefaultAddressElement) {
+                            setNotDefaultAddressElement.textContent = spanAddressElement;
+                        }
+                        if (updateAddressButton) {
+                            // ẩn nút cập nhật khi cập nhật xong
+                            updateAddressButton.style.visibility = "hidden";
+                        }
                         // In ra thông báo từ server
-                        createToast("success", "fa-solid fa-circle-check", "Thành công", message);
-                        setTimeout(() => {
-                            window.location.href = `/admin/orders/detail/${orderId}`;
-                        }, 1000);
+                        createToast(
+                            "success",
+                            "fa-solid fa-circle-check",
+                            "Thành công",
+                            "Cập nhật thông tin khách hàng thành công"
+                        );
                     })
                     .catch((err) => {
-                        createToast("error", "fa-solid fa-circle-exclamation", "Lỗi", "Cập nhật địa chỉ thất bại!");
+                        createToast(
+                            "error",
+                            "fa-solid fa-circle-exclamation",
+                            "Lỗi",
+                            "Cập nhật thông tin khách hàng thất bại!"
+                        );
                         console.error("Lỗi:", err);
                     });
             }
@@ -371,7 +403,6 @@ window.addEventListener("DOMContentLoaded", () => {
         let inputCustomerId = document.getElementById("customerId");
         if (streetInput && streetInput.value.trim() === "") {
             createToast("warning", "fa-solid fa-triangle-exclamation", "Cảnh báo", "Vui lòng nhập địa chỉ cụ thể!");
-            streetInput.focus(); // trỏ chuột vào input
             return;
         }
         let addressData = {
@@ -465,10 +496,7 @@ window.addEventListener("DOMContentLoaded", () => {
         const defaultAddress = document.getElementById("setDefaultAddress");
         if (defaultAddress) {
             let addressText = defaultAddress.textContent;
-            if (addressText) {
-                const divaddressNotIsDefault = document.getElementById("addressNotIsDefault");
-                divaddressNotIsDefault.style.display = "none";
-            }
+
             let addressSplitArray = addressText.split(",").map((arr) => arr.trim());
             let street = addressSplitArray[0];
             let ward = addressSplitArray[1];
@@ -574,7 +602,9 @@ window.addEventListener("DOMContentLoaded", () => {
     };
     // vô hiệu hóa nút thanh toán
     window.openModalPayment = function () {
-        buttonPayment.setAttribute("disabled", true);
+        if (buttonPayment) {
+            buttonPayment.setAttribute("disabled", true);
+        }
     };
     window.deleteTextInputCustomerGive = function () {
         document.getElementById("customerGive").value = "";
@@ -583,10 +613,12 @@ window.addEventListener("DOMContentLoaded", () => {
     // hàm tính toán tiền khách đưa
     document.getElementById("customerGive").addEventListener("input", function () {
         let voucherTotalSum = document.getElementById("voucherTotalSum").value.trim();
+        console.log(voucherTotalSum);
 
         // Xóa VND nếu có và định dạng lại giá trị
         let voucherTotalSumMoney = voucherTotalSum.replace("VND", "").replace(/\./g, "");
         let voucherTotalSumMoneyFormat = parseInt(voucherTotalSumMoney, 10); // Chuyển đổi thành số nguyên
+        console.log(voucherTotalSumMoneyFormat);
 
         const customerGive = document.getElementById("customerGive").value.trim();
         const tienthua = document.getElementById("tienthua");
@@ -594,7 +626,7 @@ window.addEventListener("DOMContentLoaded", () => {
         // Xóa dấu chấm khi nhập vào và tính toán số tiền đã đưa
         let customerGiveFormatted = customerGive.replace(/\./g, ""); // Loại bỏ dấu chấm
         let customerGiveMoney = parseInt(customerGiveFormatted, 10); // Chuyển thành số
-
+        console.log("Tiền khách đưa ", customerGiveMoney);
         // Thêm dấu chấm vào số tiền đã nhập
         let customerGiveWithComma = customerGiveFormatted.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
@@ -606,9 +638,13 @@ window.addEventListener("DOMContentLoaded", () => {
         tienthua.value = tienthuaValue >= 0 ? tienthuaValue.toLocaleString() + " VND" : "0 VND";
 
         if (customerGiveMoney >= voucherTotalSumMoneyFormat) {
-            buttonPayment.removeAttribute("disabled");
+            if (buttonPayment) {
+                buttonPayment.removeAttribute("disabled");
+            }
         } else {
-            buttonPayment.setAttribute("disabled", true);
+            if (buttonPayment) {
+                buttonPayment.setAttribute("disabled", true);
+            }
         }
     });
     function createToast(type, icon, title, text) {

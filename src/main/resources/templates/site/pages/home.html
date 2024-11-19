@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{site/index.html}">
-
 <head>
 </head>
 
@@ -16,39 +15,50 @@
 					<a href=""> <img src="/site/images/ao/slide/sell.webp" class="img-fluid" alt="">
 					</a>
 				</div>
+				<!-- Slide -->
 				<div class="col-md-6">
 					<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
 						<div class="carousel-indicators">
-							<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0"
-								class="active" aria-current="true" aria-label="Slide 1"></button>
-							<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
-								aria-label="Slide 2"></button>
-							<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
-								aria-label="Slide 3"></button>
+							<!-- Tạo các nút chỉ số cho mỗi slide, có thể nhấn để chuyển đến slide tương ứng -->
+							<th:block th:each="slide, iterStat : ${slides}">
+								<button type="button" data-bs-target="#carouselExampleIndicators"
+									th:data-bs-slide-to="${iterStat.index}"
+									th:class="${iterStat.index == 0 ? 'active' : ''}"
+									aria-current="${iterStat.index == 0 ? 'true' : 'false'}"
+									th:aria-label="'Slide ' + (${iterStat.index + 1})"></button>
+							</th:block>
 						</div>
 						<div class="carousel-inner">
-							<div class="carousel-item active">
-								<img src="/site/images/ao/slide/slide1.webp" class="d-block w-100" alt="...">
-							</div>
-							<div class="carousel-item">
-								<img src="/site/images/ao/slide/slide2.webp" class="d-block w-100" alt="...">
-							</div>
-							<div class="carousel-item">
-								<img src="/site/images/ao/slide/slide3.webp" class="d-block w-100" alt="...">
-							</div>
+							<!-- Hiển thị các hình ảnh của từng slide -->
+							<th:block th:each="slide, iterStat : ${slides}">
+								<!-- Ảnh đầu tiên -->
+								<div th:class="'carousel-item ' + (${iterStat.index == 0 ? 'active' : ''})">
+									<img th:src="'/uploads/slide/' + ${slide.imagePaths.split(',')[0]}"
+										class="d-block w-100" th:alt="'Slide ' + (${iterStat.index + 1})"
+										style="height: 300px; object-fit: cover;">
+								</div>
+
+								<!-- Các ảnh bổ sung -->
+								<th:block th:each="imagePath, imgStat : ${slide.getImagePathsArray()}"
+									th:if="${imgStat.index != 0}">
+									<div class="carousel-item">
+										<img th:src="'/uploads/slide/' + ${imagePath}" class="d-block w-100"
+											th:alt="'Additional Image ' + (${iterStat.index + 1})"
+											style="height: 300px; object-fit: cover;">
+									</div>
+								</th:block>
+							</th:block>
 						</div>
-						<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
-							data-bs-slide="prev">
-							<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-							<span class="visually-hidden">Previous</span>
-						</button>
-						<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
-							data-bs-slide="next">
-							<span class="carousel-control-next-icon" aria-hidden="true"></span>
-							<span class="visually-hidden">Next</span>
-						</button>
+
+						<!-- Nút "Thêm" chỉ hiển thị khi người dùng có role admin hoặc staff -->
+						<div class="carousel-controls mt-3"
+							sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_EMPLOYEE')">
+							<a href="/admin/slide/add" class="btn btn-success"> <i class="bi bi-plus-circle"></i>
+							</a>
+						</div>
 					</div>
 				</div>
+
 				<div class="col-md-3" style="background: linear-gradient(0, rgb(255, 255, 255), rgb(255, 219, 218));">
 					<h6 class="text-danger py-2">
 						<i class="text-danger fa-solid fa-fire"></i> TOP DEAL
@@ -311,7 +321,7 @@
 			<div class="row">
 				<div class="col-md-3" th:each="product : ${products}">
 					<div class="card product-card">
-						<a th:href="@{/product/detail/{productId}(productId=${product.productId})}">
+						<a th:href="@{/yourstyle/product/detail/{productId}(productId=${product.productId})}">
 							<img th:src="@{/uploads/} + ${product.image}" class="img-fluid" alt="Hình ảnh sản phẩm">
 						</a>
 						<div class="p-2">
@@ -328,7 +338,8 @@
 				</div>
 			</div>
 		</section>
-		<script>//src="https://code.jquery.com/jquery-3.6.0.min.js"
+		<script>
+			
 			function fetchProductSuggestions(query) {
 				const historyDropdown = document.getElementById('searchHistoryDropdown');
 				const suggestionsDropdown = document.getElementById('suggestedProductsDropdown');
@@ -360,6 +371,31 @@
 				}
 			}
 
+			function addToFavorite(productId) {
+					if (productId != null) {
+						window.location.href = `/yourstyle/productfavorites/add?productId=${productId}`;
+
+					}
+				}
+				$(document).ready(function () {
+					$('#addFavoriteBtn').click(function () {
+						var productId = $(this).data('product-id');
+
+						$.ajax({
+							url: '/add', // Đường dẫn tới phương thức addFavorite
+							type: 'GET',
+							data: {
+								productId: productId
+							},
+							success: function (response) {
+								$('#messageArea').text(response);
+							},
+							error: function (xhr) {
+								$('#messageArea').text(xhr.responseText);
+							}
+						});
+					});
+				});
 		</script>
 	</section>
 </body>

@@ -30,6 +30,7 @@ public class SecurityConfig {
                         // .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/yourstyle/carts/**", "/yourstyle/VNPays/**")
                         .hasAnyAuthority("ROLE_ADMIN", "ROLE_USER", "ROLE_EMPLOYEE")
+                        .requestMatchers("/yourstyle/admin/slide/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE")
                         .anyRequest().authenticated())
                 .formLogin(login -> login
                         .loginPage("/yourstyle/accounts/login")
@@ -59,4 +60,3 @@ public class SecurityConfig {
         return http.build();
     }
 }
-

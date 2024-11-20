@@ -18,7 +18,7 @@ import yourstyle.com.shope.model.Address;
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.service.AddressService;
 import yourstyle.com.shope.service.CustomerService;
-import yourstyle.com.shope.validation.admin.AddressDTO;
+import yourstyle.com.shope.validation.admin.AddressDto;
 
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -36,7 +36,7 @@ public class AddressController {
 
         // Lấy danh sách địa chỉ của khách hàng
         List<Address> addresses = addressService.findByCustomerId(customerId);
-        model.addAttribute("address", new AddressDTO());
+        model.addAttribute("address", new AddressDto());
         model.addAttribute("addresses", addresses);
         model.addAttribute("customerId", customerId);
         return new ModelAndView("admin/customers/listAddress", model);
@@ -62,13 +62,13 @@ public class AddressController {
 
     @PostMapping("saveOrUpdate")
     public ModelAndView saveOrUpdate(ModelMap model,
-            @Valid @ModelAttribute AddressDTO addressDTO,
+            @Valid @ModelAttribute AddressDto addressDto,
             BindingResult result,
             @RequestParam("customerId") Integer customerId) {
 
         // Kiểm tra lỗi đầu vào
         if (result.hasErrors()) {
-            model.addAttribute("address", addressDTO);
+            model.addAttribute("address", addressDto);
             model.addAttribute("messageType", "error");
             model.addAttribute("messageContent", "Lỗi Kiểm tra lại thông tin!");
 
@@ -85,9 +85,9 @@ public class AddressController {
 
         // Kiểm tra số lượng địa chỉ hiện có của khách hàng
         List<Address> addresses = addressService.findByCustomerId(customerId);
-        if (addresses.size() >= 3 && addressDTO.getAddressId() == null) {
+        if (addresses.size() >= 3 && addressDto.getAddressId() == null) {
             // Nếu đã có 3 địa chỉ và địa chỉ mới chưa tồn tại, hiển thị thông báo lỗi
-            model.addAttribute("address", addressDTO);
+            model.addAttribute("address", addressDto);
             model.addAttribute("messageType", "error");
             model.addAttribute("messageContent", "Khách hàng chỉ có thể có tối đa 3 địa chỉ!");
             model.addAttribute("addresses", addresses);
@@ -97,15 +97,15 @@ public class AddressController {
 
         // Tạo hoặc cập nhật địa chỉ
         Address address;
-        if (addressDTO.getAddressId() != null) {
+        if (addressDto.getAddressId() != null) {
             // Nếu địa chỉ đã tồn tại, tìm địa chỉ để cập nhật
-            address = addressService.findById(addressDTO.getAddressId())
+            address = addressService.findById(addressDto.getAddressId())
                     .orElseThrow(() -> new IllegalArgumentException("Invalid address ID"));
-            address.setStreet(addressDTO.getStreet());
-            address.setCity(addressDTO.getCity());
-            address.setDistrict(addressDTO.getDistrict());
-            address.setWard(addressDTO.getWard());
-            address.setIsDefault(addressDTO.getIsDefault());
+            address.setStreet(addressDto.getStreet());
+            address.setCity(addressDto.getCity());
+            address.setDistrict(addressDto.getDistrict());
+            address.setWard(addressDto.getWard());
+            address.setIsDefault(addressDto.getIsDefault());
 
             model.addAttribute("messageType", "success");
             model.addAttribute("messageContent", "Cập nhật địa chỉ thành công!");
@@ -113,11 +113,11 @@ public class AddressController {
             // Nếu địa chỉ chưa tồn tại, tạo mới
             address = new Address();
             address.setCustomer(customer);
-            address.setStreet(addressDTO.getStreet());
-            address.setCity(addressDTO.getCity());
-            address.setDistrict(addressDTO.getDistrict());
-            address.setWard(addressDTO.getWard());
-            address.setIsDefault(addressDTO.getIsDefault());
+            address.setStreet(addressDto.getStreet());
+            address.setCity(addressDto.getCity());
+            address.setDistrict(addressDto.getDistrict());
+            address.setWard(addressDto.getWard());
+            address.setIsDefault(addressDto.getIsDefault());
 
             model.addAttribute("messageType", "success");
             model.addAttribute("messageContent", "Thêm địa chỉ mới thành công!");
@@ -128,7 +128,7 @@ public class AddressController {
 
         // Lấy lại danh sách địa chỉ của khách hàng để cập nhật trên trang
         addresses = addressService.findByCustomerId(customerId);
-        model.addAttribute("address", new AddressDTO()); // Đặt lại form trống
+        model.addAttribute("address", new AddressDto()); // Đặt lại form trống
         model.addAttribute("addresses", addresses);
         model.addAttribute("customerId", customerId);
 

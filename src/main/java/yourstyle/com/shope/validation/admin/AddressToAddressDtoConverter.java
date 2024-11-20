@@ -16,7 +16,7 @@ public class AddressToAddressDtoConverter implements Converter<Address, AddressD
         addressDto.setWard(source.getWard());
         addressDto.setDistrict(source.getDistrict());
         addressDto.setCity(source.getCity());
-        addressDto.setDefault(source.getIsDefault());
+        addressDto.setIsDefault(source.getIsDefault());
         addressDto.setCustomerId(source.getCustomer().getCustomerId());
         addressDto.setCustomer(source.getCustomer());
         return addressDto;

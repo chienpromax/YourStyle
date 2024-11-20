@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,7 +43,7 @@ import yourstyle.com.shope.service.VoucherService;
 import yourstyle.com.shope.validation.admin.AddressDto;
 import yourstyle.com.shope.validation.admin.OrderDetailDto;
 import yourstyle.com.shope.validation.admin.OrderDto;
-import yourstyle.com.shope.validation.admin.VoucherDto;
+import yourstyle.com.shope.validation.admin.VoucherDTO;
 
 @CrossOrigin("*")
 @RestController
@@ -108,8 +109,10 @@ public class SellRestController {
                                                 &&
 
                                                 // Kiểm tra thời gian hiệu lực
-                                                voucher.getStartDate().before(new Date()) &&
-                                                voucher.getEndDate().after(new Date()) &&
+                                                // voucher.getStartDate().before(new Date()) &&
+                                                // voucher.getEndDate().after(new Date()) &&
+                                                voucher.getStartDate().isBefore(LocalDateTime.now()) &&
+                                                voucher.getEndDate().isAfter(LocalDateTime.now()) &&
 
                                                 // Kiểm tra số lần sử dụng của voucher maxuse
                                                 Math.max(0, voucher.getMaxUses() - orderService
@@ -189,9 +192,9 @@ public class SellRestController {
                 List<Voucher> vouchers = voucherService.findAll();
                 Voucher voucher = getBestVoucherForOrder(vouchers, order.getTotalAmount(), 4);
                 order.setVoucher(voucher); // gán voucher cho đơn
-                VoucherDto voucherDto = null;
+                VoucherDTO voucherDto = null;
                 if (order.getVoucher() != null) {
-                        Short type = order.getVoucher().getType();
+                        Byte type = order.getVoucher().getType();
                         BigDecimal discountAmount = order.getVoucher().getDiscountAmount();
                         String formattedDiscount = "";
                         switch (type) {
@@ -226,13 +229,13 @@ public class SellRestController {
                                 default:
                                         break;
                         }
-                        voucherDto = new VoucherDto(
+                        voucherDto = new VoucherDTO(
                                         order.getVoucher().getVoucherCode(),
                                         type,
                                         formattedDiscount);
                 } else {
                         // Xử lý khi không có voucher
-                        voucherDto = new VoucherDto(
+                        voucherDto = new VoucherDTO(
                                         "",
                                         null,
                                         "0 VND");

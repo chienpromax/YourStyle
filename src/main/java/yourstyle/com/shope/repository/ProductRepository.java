@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import yourstyle.com.shope.model.Category;
 import yourstyle.com.shope.model.Product;
 
 @Repository
@@ -45,7 +46,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     List<Product> findByDiscount_discountId(Integer discountId);
 
-    
-
+    List<Product> findByCategory(Category category);
 
 }

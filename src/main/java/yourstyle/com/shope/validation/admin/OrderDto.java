@@ -25,7 +25,7 @@ public class OrderDto implements Serializable {
     private String status; // trạng thái đơn
     // chi tiết bán hàng
     private List<OrderDetailDto> orderDetailDtos;
-    private VoucherDto voucherDto;
+    private VoucherDTO voucherDto;
     // thêm khách hàng cho đơn vận chuyển
     private Integer customerId;
 
@@ -45,7 +45,7 @@ public class OrderDto implements Serializable {
         this.status = status;
     }
 
-    public OrderDto(List<OrderDetailDto> orderDetailDtos, VoucherDto voucherDto) {
+    public OrderDto(List<OrderDetailDto> orderDetailDtos, VoucherDTO voucherDto) {
         this.orderDetailDtos = orderDetailDtos;
         this.voucherDto = voucherDto;
     }

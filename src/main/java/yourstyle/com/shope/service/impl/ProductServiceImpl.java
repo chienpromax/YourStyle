@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 
+import yourstyle.com.shope.model.Category;
 import yourstyle.com.shope.model.Product;
 import yourstyle.com.shope.repository.ProductRepository;
 import yourstyle.com.shope.service.ProductService;
@@ -131,6 +132,11 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public List<Product> findSimilarProducts(Integer categoryId, Integer productId) {
 		return productRepository.findSimilarProducts(categoryId, productId);
+	}
+	
+    @Override
+	public List<Product> findByCategory(Category category) {
+		return productRepository.findByCategory(category);
 	}
 
 }

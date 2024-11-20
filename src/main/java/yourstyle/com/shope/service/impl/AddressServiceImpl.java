@@ -2,19 +2,23 @@ package yourstyle.com.shope.service.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Service;
 
 import yourstyle.com.shope.model.Address;
-import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.repository.AddressRepository;
 import yourstyle.com.shope.service.AddressService;
+import yourstyle.com.shope.validation.admin.AddressDto;
 
 @Service
 public class AddressServiceImpl implements AddressService {
     @Autowired
     AddressRepository addressRepository;
+    @Autowired
+	private Converter<Address, AddressDto> addressToAddressDtoConverter;
 
     @Override
     public void save(Address address) {
@@ -51,4 +55,15 @@ public class AddressServiceImpl implements AddressService {
             }
         }
     }
+
+    @Override
+	public List<AddressDto> findByAddressDtoCustomerID(Integer customerId) {
+		List<Address> address = addressRepository.findByAddressCustomerID(customerId);
+		return address.stream().map(addressToAddressDtoConverter::convert).collect(Collectors.toList());
+	}
+
+    @Override
+	public List<Address> findByAddressCustomerID(Integer customerId) {
+		return addressRepository.findByAddressCustomerID(customerId);
+	}
 }

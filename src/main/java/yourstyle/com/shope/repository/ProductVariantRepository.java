@@ -7,7 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import yourstyle.com.shope.model.Category;
+import yourstyle.com.shope.model.Color;
+import yourstyle.com.shope.model.Product;
 import yourstyle.com.shope.model.ProductVariant;
+import yourstyle.com.shope.model.Size;
 
 @Repository
 public interface ProductVariantRepository extends JpaRepository<ProductVariant, Integer> {
@@ -29,4 +33,16 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
 
     @Query("SELECT pv FROM ProductVariant pv WHERE pv.product.productId = ?1")
     List<ProductVariant> findByProductId(Integer productId);
+
+    List<ProductVariant> findByProductVariantId(Integer productVariantId);
+
+    @Query("SELECT pv FROM ProductVariant pv WHERE pv.product.name LIKE %?1%")
+    List<ProductVariant> findByProductNameContaining(String name);
+
+    List<ProductVariant> findBySize(Size size);
+
+    List<ProductVariant> findByColor(Color color);
+
+    List<ProductVariant> findByProduct(Product product);
+
 }

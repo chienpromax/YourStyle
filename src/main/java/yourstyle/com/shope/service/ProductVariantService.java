@@ -8,7 +8,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import yourstyle.com.shope.model.Category;
+import yourstyle.com.shope.model.Color;
+import yourstyle.com.shope.model.Product;
 import yourstyle.com.shope.model.ProductVariant;
+import yourstyle.com.shope.model.Size;
 
 public interface ProductVariantService {
 
@@ -37,5 +41,15 @@ public interface ProductVariantService {
     Page<ProductVariant> searchByProductName(String productName, Pageable pageable);
 
     List<ProductVariant> findByProductId(Integer productId);
+
+    List<ProductVariant> findByProductVariantId(Integer productVariantId);
+
+    List<ProductVariant> findByProductNameContaining(String name);
+
+    List<ProductVariant> findBySize(Size size);
+
+	List<ProductVariant> findByColor(Color color);
+
+	List<ProductVariant> findByProduct(Product product);
 
 }

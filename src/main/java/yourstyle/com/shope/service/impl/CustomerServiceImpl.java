@@ -89,4 +89,18 @@ public class CustomerServiceImpl implements CustomerService {
 		return customerRepository.findByAccountId(accountId);
 	}
 
+	@Override
+	public Page<Customer> findByFullnameContaining(Integer customerId, String fullname, Pageable pageable) {
+		return customerRepository.findByFullnameContaining(customerId, fullname, pageable);
+	}
+
+	@Override
+	public Page<Customer> findByPhoneName(Integer customerId, String phoneNumber, Pageable pageable) {
+		return customerRepository.findByPhoneName(customerId, phoneNumber, pageable);
+	}
+
+	@Override
+	public Page<Customer> findAllNotRetailCustomer(Integer customerId, Pageable pageable) {
+		return customerRepository.findAllNotRetailCustomer(customerId, pageable);
+	}
 }

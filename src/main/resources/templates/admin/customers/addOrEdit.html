@@ -10,21 +10,25 @@
     <main id="main" class="main">
       <div class="pagetitle">
         <h1>
-          <span th:if="${customer.isEdit}">Cập nhật</span>
-          <span th:unless="${customer.isEdit}">Tạo</span> khách hàng
+          <span th:if="${isEdit}">Cập nhật</span>
+          <span th:unless="${isEdit}">Tạo</span>
+          <span th:text="${type == 'staff' ? 'nhân viên' : 'khách hàng'}"></span>
         </h1>
+        
         <nav>
           <ol class="breadcrumb">
             <li class="breadcrumb-item">
-              <a href="index.html">Trang chủ/</a>
+              <a th:href="@{/admin/home}">Trang chủ / </a>
             </li>
             <li>
-              <a th:href="@{/admin/customers}">
-                <span>&nbsp; Khách hàng</span>
+              <a th:href="${type == 'staff' ? '/admin/staffs' : '/admin/customers'}">
+                <span th:text="${type == 'staff' ? 'Nhân viên' : 'Khách hàng'}"></span>
               </a>
+              
             </li>
           </ol>
         </nav>
+        
       </div>
       <!-- End Page Title -->
 
@@ -36,6 +40,7 @@
                 <!-- Floating Labels Form -->
                 <form class="" th:action="@{/admin/customers/saveOrUpdate}" th:object="${customer}" method="post"
                   enctype="multipart/form-data">
+                  <input type="hidden" name="type" value="${type}">
                   <div class="row mb-2">
                     <!-- cột bên trái -->
                     <div class="col-md-6">
@@ -116,7 +121,7 @@
                     <!-- Street -->
                     <div class="col-md-6 mb-3">
                       <div class="form-floating">
-                        <input type="text" th:field="*{street}" class="form-control" id="floatingstreet"
+                        <input type="text" name="street" th:field="*{street}" class="form-control" id="floatingstreet"
                           placeholder="Địa chỉ cụ thể" />
                         <label for="floatingstreet"><span class="text-danger">*</span> Địa chỉ cụ thể</label>
                         <div th:if="${#fields.hasErrors('street')}" class="text-danger" th:errors="*{street}">Địa chỉ cụ
@@ -128,7 +133,7 @@
                     <!-- City (Tỉnh/Thành Phố) -->
                     <div class="col-md-6 mb-3">
                       <div class="form-floating">
-                        <input type="text" th:field="*{city}" class="form-control" id="floatingCity"
+                        <input type="text" th:field="*{city}" name="city" class="form-control" id="floatingCity"
                           placeholder="Nhập Tỉnh/Thành phố" />
                         <label for="floatingCity"><span class="text-danger">*</span> Tỉnh/Thành Phố</label>
                         <div th:if="${#fields.hasErrors('city')}" class="text-danger" th:errors="*{city}">Tỉnh/Thành Phố
@@ -140,7 +145,7 @@
                     <!-- District (Quận/Huyện) -->
                     <div class="col-md-6 mb-3">
                       <div class="form-floating">
-                        <input type="text" th:field="*{district}" class="form-control" id="floatingdistrict"
+                        <input type="text" th:field="*{district}" name="district" class="form-control" id="floatingdistrict"
                           placeholder="Nhập Quận/Huyện" />
                         <label for="floatingdistrict"><span class="text-danger">*</span> Quận/Huyện</label>
                         <div th:if="${#fields.hasErrors('district')}" class="text-danger" th:errors="*{district}">
@@ -152,7 +157,7 @@
                     <!-- Ward (Xã/Phường/Thị Trấn) -->
                     <div class="col-md-6 mb-3">
                       <div class="form-floating">
-                        <input type="text" th:field="*{ward}" class="form-control" id="floatingward"
+                        <input type="text" th:field="*{ward}" name="ward" class="form-control" id="floatingward"
                           placeholder="Nhập Xã/Phường/Thị Trấn" />
                         <label for="floatingward"><span class="text-danger">*</span> Xã/Phường/Thị Trấn</label>
                         <div th:if="${#fields.hasErrors('ward')}" class="text-danger" th:errors="*{ward}">Xã/Phường/Thị
@@ -163,11 +168,12 @@
                   </div>
                   <div class="text-center mt-3">
                     <button class="btn btn-primary rounded-pill py-2 px-4 me-3" th:if="*{isEdit}">
-                      Cập nhật
+                      Cập nhật <span th:text="${type == 'staff' ? 'nhân viên' : 'khách hàng'}"></span>
                     </button>
                     <button class="btn btn-primary rounded-pill py-2 px-4 me-3" th:unless="*{isEdit}">
-                      Thêm khách hàng
+                      Thêm <span th:text="${type == 'staff' ? 'nhân viên' : 'khách hàng'}"></span>
                     </button>
+                    
                     <!-- <button type="reset" class="btn btn-danger me-3 px-4 rounded-pill">
                       Xóa Khách hàng
                     </button> -->

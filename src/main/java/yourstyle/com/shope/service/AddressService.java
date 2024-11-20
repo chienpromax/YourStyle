@@ -18,5 +18,6 @@ public interface AddressService {
     Optional<Address> findById(Integer addressId);
 
     void removeDefaultAddress(Integer customerId);
+    void updateDefaultAddress(Address address, Integer customerId);;
 
 }

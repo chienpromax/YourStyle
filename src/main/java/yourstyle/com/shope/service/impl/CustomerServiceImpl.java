@@ -8,11 +8,14 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.repository.CustomerRepository;
 import yourstyle.com.shope.service.CustomerService;
+import yourstyle.com.shope.validation.admin.CustomerDto;
+import yourstyle.com.shope.validation.admin.StaffDto;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -88,5 +91,37 @@ public class CustomerServiceImpl implements CustomerService {
 	public Customer findByAccountId(Integer accountId) {
 		return customerRepository.findByAccountId(accountId);
 	}
+
+	@Override
+	public Page<Customer> searchByNameOrPhoneStaff(String value, Pageable pageable) {
+		return customerRepository.searchEmployeesByNameOrPhone(value, pageable);
+	}
+
+	@Override
+	public Page<Customer> findAllStaff(String role, Pageable pageable) {
+		return customerRepository.findAllByRole(role, pageable);
+	}
+
+	@Override
+	public Page<StaffDto> getAllEmployees(Pageable pageable) {
+		// Lấy các Customer với role là "ROLE_EMPLOYEE" từ Repository
+		Page<Customer> customers = customerRepository.findAllByRole("ROLE_EMPLOYEE", pageable);
+		return customers.map(this::convertToStaffDto);
+	}
+
+	private StaffDto convertToStaffDto(Customer customer) {
+		return new StaffDto(
+				customer.getCustomerId(),
+				customer.getFullname(),
+				customer.getAccount().getEmail(),
+				customer.getPhoneNumber(),
+				customer.getAccount().getRole().getName(),
+				customer.getAccount().getStatus(),
+				customer.getAvatar(),
+				customer.getGender(),
+				customer.getBirthday());
+	}
+
+	
 
 }

@@ -1,5 +1,6 @@
 package yourstyle.com.shope.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import yourstyle.com.shope.model.Account;
+import yourstyle.com.shope.model.Role;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Integer> {
@@ -24,6 +26,10 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
 	boolean existsByEmail(String email);
 	boolean existsByUsername(String username);
 	Account findByResetToken(String resetToken);
+
+	@Query("SELECT a FROM Account a WHERE a.role.name = :roleName")
+List<Account> findAccountsByRoleName(String roleName);
+
 	
 }
 

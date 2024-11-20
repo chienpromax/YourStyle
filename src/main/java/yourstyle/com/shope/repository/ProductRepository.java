@@ -44,7 +44,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Product> findDiscountedProducts();
 
     List<Product> findByDiscount_discountId(Integer discountId);
-
     
 
 

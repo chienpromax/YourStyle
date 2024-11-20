@@ -579,10 +579,7 @@
                                                 <th:block
                                                     th:if="${(order.voucher != null && (order.voucher.type == 1 || order.voucher.type == 3))}"
                                                 >
-                                                    <p class="discountVoucher">
-                                                        [[${#numbers.formatDecimal(order.voucher.discountAmount,1,'COMMA',3,'POINT')
-                                                        + ' VND'}]]
-                                                    </p>
+                                                    <p class="discountVoucher">[[${formattedVoucher}]]</p>
                                                 </th:block>
                                                 <th:block th:unless="${order.voucher != null}">
                                                     <p class="discountVoucher">0 VND</p>
@@ -590,7 +587,7 @@
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center mt-3">
                                                 <p class="fw-bold">Tổng số tiền</p>
-                                                <p class="text-danger fw-bold">
+                                                <p class="text-danger fw-bold" id="totalAmountFinal">
                                                     [[${#numbers.formatDecimal(order.totalAmount,1,'COMMA',3,'POINT') +
                                                     ' VND'}]]
                                                 </p>
@@ -616,8 +613,8 @@
                                                     0 VND
                                                 </p>
                                                 <p class="text-danger fw-bold" th:if="${order.transactionType != null}">
-                                                    [[${#numbers.formatDecimal(order.totalAmount,1,'COMMA',3,'POINT')+ '
-                                                    VND'}]]
+                                                    [[${#numbers.formatDecimal(order.totalAmount,1,'COMMA',3,'POINT') +
+                                                    ' VND'}]]
                                                 </p>
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center mt-3 mb-2">
@@ -630,8 +627,8 @@
                                                     th:if="${order.transactionType == null}"
                                                     id="tienThieu"
                                                 >
-                                                    [[${#numbers.formatDecimal(order.totalAmount,1,'COMMA',3,'POINT')+ '
-                                                    VND'}]]
+                                                    [[${#numbers.formatDecimal(order.totalAmount,1,'COMMA',3,'POINT') +
+                                                    ' VND'}]]
                                                 </p>
                                             </div>
                                             <div class="text-end">

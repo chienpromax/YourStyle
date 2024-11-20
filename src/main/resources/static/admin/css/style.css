@@ -1317,6 +1317,17 @@ h6 {
 
 }
 
+/* thanh cuộn ngang trạng thái */
+#cardStatus {
+  overflow-x     : auto;
+  scroll-behavior: smooth;
+
+}
+
+#cardStatus::-webkit-scrollbar {
+  display: none;
+}
+
 /* chỉnh thời gian gần trạng thái đơn hàng*/
 .timeUpdatedStatus {
   color    : transparent;

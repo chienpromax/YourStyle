@@ -194,7 +194,6 @@ public class SellRestController {
                         Short type = order.getVoucher().getType();
                         BigDecimal discountAmount = order.getVoucher().getDiscountAmount();
                         String formattedDiscount = "";
-                        System.out.println("Kiểu giảm giá só: " + type);
                         switch (type) {
                                 case 1: // giảm giá trực tiếp
                                         order.setTotalAmount(order.getTotalAmount().subtract(discountAmount));
@@ -427,15 +426,37 @@ public class SellRestController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
 
+        // hàm xác nhận đặt hàng
         @PutMapping("updateOrder/{orderId}/{status}")
         public ResponseEntity<String> updateOrderInStore(@PathVariable("orderId") Integer orderId,
                         @PathVariable("status") Integer status) {
+                System.out.println("mã đơn hàng: " + orderId);
+                System.out.println("mã trạng thái: " + status);
                 if (orderId != null && status != null) {
                         Order order = orderService.findById(orderId).get();
                         OrderStatus orderStatus = OrderStatus.fromCode(status);
                         order.setStatus(orderStatus);
                         orderService.save(order);
                         return ResponseEntity.ok("Đặt hàng thành công");
+                }
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+
+        // hàm cập nhật phí ship vào đơn
+        @PutMapping("feeShipping/{orderId}/{feeShip}/{isShipping}")
+        public ResponseEntity<OrderDto> orderFeeShip(@PathVariable("orderId") Integer orderId,
+                        @PathVariable("feeShip") Float feeship, @PathVariable("isShipping") Boolean isShipping) {
+                if (orderId != null && feeship != null) {
+                        Order order = orderService.findById(orderId).get();
+                        BigDecimal feeShipDecimal = BigDecimal.valueOf(feeship);
+                        if (isShipping == true) {
+                                order.setTotalAmount(order.getTotalAmount().add(feeShipDecimal));
+                        } else {
+                                order.setTotalAmount(order.getTotalAmount().subtract(feeShipDecimal));
+                        }
+                        orderService.save(order);
+                        OrderDto orderDto = new OrderDto(order.getTotalAmount());
+                        return ResponseEntity.ok(orderDto);
                 }
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }

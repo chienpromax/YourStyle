@@ -513,87 +513,101 @@ window.addEventListener("DOMContentLoaded", function () {
     // click vào giao hàng
     const shipping = document.getElementById("shipping");
     const infoCustomer = document.getElementById("infoCustomer");
-    const feeShipping = this.document.getElementById("feeShipping");
+    const feeShipping = document.getElementById("feeShipping");
+    const totalAmountFinal = document.getElementById("totalAmountFinal");
+    const shippingKey = `isShippingChecked_${orderId}`;
     infoCustomer.style.display = "none";
+    const savedShippingState = localStorage.getItem(shippingKey);
+
+    if (savedShippingState === "true") {
+        shipping.checked = true;
+        infoCustomer.style.display = "block";
+        feeShipping.textContent = "32.000 VND";
+    } else {
+        shipping.checked = false;
+        infoCustomer.style.display = "none";
+        feeShipping.textContent = "0 VND";
+    }
     shipping.addEventListener("change", function () {
-        if (this.checked) {
+        const isChecked = this.checked;
+        localStorage.setItem(shippingKey, isChecked); // lưu trạng thái kèm orderId
+        if (isChecked) {
             infoCustomer.style.display = "block";
             feeShipping.textContent = "32.000 VND";
         } else {
             infoCustomer.style.display = "none";
             feeShipping.textContent = "0 VND";
         }
+        updateTotalAmount(isChecked);
     });
+    function updateTotalAmount(isShipping) {
+        let shippingValue = isShipping ? 32.0 : 32.0;
+        fetch(`/api/admin/sell/feeShipping/${orderId}/${shippingValue}/${isShipping}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((reponse) => {
+                if (!reponse.ok) {
+                    throw new Error("Lỗi server không trả dữ liệu về!");
+                }
+                return reponse.json();
+            })
+            .then((data) => {
+                const { totalAmount } = data;
+                const formatedTotalAmount = `${totalAmount.toLocaleString("vi-VN")}.000 VND`;
+                totalAmountFinal.textContent = formatedTotalAmount;
+            })
+            .catch((err) => {
+                console.error("Lỗi: " + err);
+            });
+    }
     // hàm xác nhận đặt hàng
     window.confirmOrderInStore = function () {
         if (shipping.checked) {
-            Swal.fire({
-                title: `Xác nhận đơn tại quầy với hình thức giao hàng?`,
-                text: "",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Xác nhận",
-                cancelButtonText: "Hủy",
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(`/api/admin/sell/updateOrder/${orderId}/1`, {
-                        method: "PUT",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    })
-                        .then((reponse) => {
-                            if (!reponse.ok) {
-                                throw new Error("Lỗi server không trả dữ liệu về!");
-                            }
-                            return reponse.text();
-                        })
-                        .then((message) => {
-                            console.log(message);
-                            window.location.href = "/admin/sell?page=0&size=10";
-                        })
-                        .catch((err) => {
-                            console.error("Lỗi: " + err);
-                        });
-                }
-            });
+            let title = "Xác nhận đơn tại quầy với hình thức giao hàng?";
+            updateOrderInStore(title, 1);
         } else {
-            Swal.fire({
-                title: `Xác nhận đơn tại quầy với hình thức nhận hàng tại quầy?`,
-                text: "",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Xác nhận",
-                cancelButtonText: "Hủy",
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(`/api/admin/sell/updateOrder/${orderId}/6`, {
-                        method: "PUT",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    })
-                        .then((reponse) => {
-                            if (!reponse.ok) {
-                                throw new Error("Lỗi server không trả dữ liệu về!");
-                            }
-                            return reponse.text();
-                        })
-                        .then((message) => {
-                            console.log(message);
-                            window.location.href = "/admin/sell?page=0&size=10";
-                        })
-                        .catch((err) => {
-                            console.error("Lỗi: " + err);
-                        });
-                }
-            });
+            let title = "Xác nhận đơn tại quầy với hình thức nhận hàng tại quầy?";
+            updateOrderInStore(title, 6);
         }
     };
+    // hàm xác nhận đặt hàng
+    function updateOrderInStore(title, status) {
+        Swal.fire({
+            title: `${title}`,
+            text: "",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Xác nhận",
+            cancelButtonText: "Hủy",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/api/admin/sell/updateOrder/${orderId}/${status}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then((reponse) => {
+                        if (!reponse.ok) {
+                            throw new Error("Lỗi server không trả dữ liệu về!");
+                        }
+                        return reponse.text();
+                    })
+                    .then((message) => {
+                        console.log(message);
+                        window.location.href = "/admin/sell?page=0&size=10";
+                    })
+                    .catch((err) => {
+                        console.error("Lỗi: " + err);
+                    });
+            }
+        });
+    }
     // Chọn khách hàng cho đơn vận Chuyển
     window.selectCustomerForOrder = function (button) {
         const rows = button.closest("tr");

@@ -58,6 +58,9 @@ public interface OrderService {
 
 	Page<Order> findByOrderChannel(OrderChannel orderChannel, Pageable pageable);
 
+	Page<Order> findByOrderChannelNotStatusComplete(OrderChannel orderChannel,
+			Integer status, Pageable pageable);
+
 	List<Order> findByCustomer(Customer customer);
 
 	Integer countVoucherUsedByCustomer(Integer voucherId, Integer customerId);

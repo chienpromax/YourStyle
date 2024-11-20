@@ -211,28 +211,25 @@ public class SellController {
             String formattedVoucher = "";
             // tính phiếu vouchernếu có
             if (order.getVoucher() != null) {
-                // định dạng voucher giảm giá 50.000 VND
-                BigDecimal discountVoucher = order.getVoucher().getDiscountAmount().setScale(0,
-                        RoundingMode.FLOOR);
                 // lấy kiểu giảm giá
                 int voucherType = order.getVoucher().getType();
+                System.out.println("kiểu voucher: " + voucherType);
                 BigDecimal voucherValue = order.getVoucher().getDiscountAmount().setScale(0, RoundingMode.FLOOR);
                 BigDecimal minTotalVoucher = order.getVoucher().getMinTotalAmount().setScale(0, RoundingMode.FLOOR);
                 switch (voucherType) {
                     case 1: // giảm giá tiền trực tiếp
                         // tính tổng tiền sau khi giảm voucher
                         voucherTotalSum = totalSum
-                                .subtract(voucherValue)
-                                .add(BigDecimal.valueOf(32));
+                                .subtract(voucherValue);
                         // định dạng voucher giảm giá 50.000 VND
-                        formattedVoucher = formatter.format(discountVoucher) + ".000 VND";
+                        formattedVoucher = formatter.format(voucherValue) + ".000 VND";
+                        System.out.println("da vao case 1");
                         break;
                     case 2: // giảm giá tiền theo phần trăm
                         voucherTotalSum = totalSum.multiply(BigDecimal.ONE
-                                .subtract(voucherValue.divide(BigDecimal.valueOf(100))))
-                                .add(BigDecimal.valueOf(32));
+                                .subtract(voucherValue.divide(BigDecimal.valueOf(100))));
                         // định dạng voucher giảm giá %
-                        formattedVoucher = formatter.format(discountVoucher) + "%";
+                        formattedVoucher = formatter.format(voucherValue) + "%";
                         break;
                     case 3: // Miển phí vận chuyển nếu đủ điều kiện
                         // thành tiền đơn hàng lớn hơn hoặc bằng 300.000đ thì miển phí vận chuyển cho
@@ -253,6 +250,7 @@ public class SellController {
             }
             // Tổng tiền sau khi giảm voucher
             model.addAttribute("voucherTotalSum", formatter.format(voucherTotalSum) + ".000 VND");
+            model.addAttribute("formattedVoucher", formattedVoucher);
             return "admin/sell/addOrEdit";
         }
         return "admin/sell/list";
@@ -266,7 +264,7 @@ public class SellController {
         // khách hàng lẻ
         // Customer customer = customerService.findById(4).get();
         Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by(Sort.Direction.DESC, "orderDate"));
-        Page<Order> orders = orderService.findByOrderChannel(OrderChannel.IN_STORE, pageable);
+        Page<Order> orders = orderService.findByOrderChannelNotStatusComplete(OrderChannel.IN_STORE, 6, pageable);
         model.addAttribute("orders", orders);
         paginationOrders(orders, currentPage, model);
         return "admin/sell/list";
@@ -305,7 +303,7 @@ public class SellController {
                 list = orderService.findByCustomerFullname(value, pageable);
             }
         } else {
-            list = orderService.findAll(pageable);
+            list = orderService.findByOrderChannelNotStatusComplete(OrderChannel.IN_STORE, 6, pageable);
         }
         paginationOrders(list, currentPage, model);
         // totalQuantitiesAndTotalAmounts(list, model);

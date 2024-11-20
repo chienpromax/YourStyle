@@ -101,7 +101,10 @@
                                                 [[${#dates.format(latestStatusTime['PACKING'], 'dd-MM-yyyy HH:mm:ss')
                                                 }]]
                                             </span>
-                                            <span th:unless="${latestStatusTime != null}" class="timeUpdatedStatus">
+                                            <span
+                                                th:unless="${latestStatusTime['PACKING'] != null}"
+                                                class="timeUpdatedStatus"
+                                            >
                                                 dd-MM-yyyy HH:mm:ss
                                             </span>
                                         </p>
@@ -119,7 +122,10 @@
                                                 [[${#dates.format(latestStatusTime['SHIPPED'], 'dd-MM-yyyy HH:mm:ss')
                                                 }]]
                                             </span>
-                                            <span th:unless="${latestStatusTime != null}" class="timeUpdatedStatus">
+                                            <span
+                                                th:unless="${latestStatusTime['SHIPPED'] != null}"
+                                                class="timeUpdatedStatus"
+                                            >
                                                 dd-MM-yyyy HH:mm:ss
                                             </span>
                                         </p>
@@ -141,7 +147,10 @@
                                                 [[${#dates.format(latestStatusTime['IN_TRANSIT'], 'dd-MM-yyyy HH:mm:ss')
                                                 }]]
                                             </span>
-                                            <span th:unless="${latestStatusTime != null}" class="timeUpdatedStatus">
+                                            <span
+                                                th:unless="${latestStatusTime['IN_TRANSIT'] != null}"
+                                                class="timeUpdatedStatus"
+                                            >
                                                 dd-MM-yyyy HH:mm:ss
                                             </span>
                                         </p>
@@ -159,7 +168,10 @@
                                             <span th:if="${latestStatusTime != null}" class="timeStatus paid" id="">
                                                 [[${#dates.format(latestStatusTime['PAID'], 'dd-MM-yyyy HH:mm:ss') }]]
                                             </span>
-                                            <span th:unless="${latestStatusTime != null}" class="timeUpdatedStatus">
+                                            <span
+                                                th:unless="${latestStatusTime['PAID'] != null}"
+                                                class="timeUpdatedStatus"
+                                            >
                                                 dd-MM-yyyy HH:mm:ss
                                             </span>
                                         </p>
@@ -181,7 +193,10 @@
                                                 [[${#dates.format(latestStatusTime['COMPLETED'], 'dd-MM-yyyy HH:mm:ss')
                                                 }]]
                                             </span>
-                                            <span th:unless="${latestStatusTime != null}" class="timeUpdatedStatus">
+                                            <span
+                                                th:unless="${latestStatusTime['COMPLETED'] != null}"
+                                                class="timeUpdatedStatus"
+                                            >
                                                 dd-MM-yyyy HH:mm:ss
                                             </span>
                                         </p>

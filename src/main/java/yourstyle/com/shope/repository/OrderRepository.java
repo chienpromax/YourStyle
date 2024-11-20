@@ -46,4 +46,9 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     // đếm số lượng voucher đã được sử dụng trong order
     @Query("SELECT COUNT(o) FROM Order o WHERE o.voucher.voucherId = :voucherId")
     Integer countVoucherUsed(@Param("voucherId") Integer voucherId);
+
+    // danh sách đơn tại quầy
+    @Query("SELECT o FROM Order o WHERE o.orderChannel LIKE :orderChannel AND NOT o.status = :status")
+    Page<Order> findByOrderChannelNotStatusComplete(@Param("orderChannel") OrderChannel orderChannel,
+            @Param("status") Integer status, Pageable pageable);
 }

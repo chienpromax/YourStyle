@@ -146,4 +146,10 @@ public class OrderServiceImpl implements OrderService {
 		return orderRepository.findByCustomer(customer, pageable);
 	}
 
+	@Override
+	public Page<Order> findByOrderChannelNotStatusComplete(OrderChannel orderChannel, Integer status,
+			Pageable pageable) {
+		return orderRepository.findByOrderChannelNotStatusComplete(orderChannel, status, pageable);
+	}
+
 }

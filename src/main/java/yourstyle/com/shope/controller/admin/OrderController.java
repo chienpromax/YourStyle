@@ -190,7 +190,6 @@ public class OrderController {
             orderService.save(order);
             // Định dạng tiền voucher
             model.addAttribute("formattedVoucher", formattedVoucher);
-            model.addAttribute("shippingFee", formatter.format(32) + ".000 VND");
             return "admin/orders/addOrEdit";
         } else {
             model.addAttribute("messageType", "error");

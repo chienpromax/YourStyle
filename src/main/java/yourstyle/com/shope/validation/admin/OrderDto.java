@@ -55,4 +55,8 @@ public class OrderDto implements Serializable {
         this.orderId = orderId;
         this.customerId = customerId;
     }
+
+    public OrderDto(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+    }
 }

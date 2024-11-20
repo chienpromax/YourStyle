@@ -26,23 +26,23 @@ public class HomeSiteController {
 
 	@Autowired
 	private ProductService productService;
-
+	// new
 	@Autowired
 	private SlideService slideService;
 
-    @RequestMapping({"/home", "/discount/{discountId}"})
-    public String showHomePage(Model model, Authentication authentication, 
-                               @PathVariable(value = "discountId", required = false) Integer discountId) {
-        List<Category> parentCategories = categoryService.findParentCategories();
-        model.addAttribute("parentCategories", parentCategories);
-    
-        // Lấy tên người dùng nếu đã đăng nhập
-        String userName = (authentication != null && authentication.isAuthenticated()) ? authentication.getName() : null;
-        model.addAttribute("userName", userName);
-    
-        // Lấy tất cả sản phẩm
-        List<Product> products = productService.getAllProducts();
-        model.addAttribute("products", products);
+	@RequestMapping("/home")
+	public String showHomePage(Model model, Authentication authentication, @PathVariable(value = "discountId", required = false) Integer discountId) {
+		List<Category> parentCategories = categoryService.findParentCategories();
+
+		model.addAttribute("parentCategories", parentCategories);
+
+		String userName = (authentication != null && authentication.isAuthenticated()) ? authentication.getName()
+				: null;
+		model.addAttribute("userName", userName);
+
+		List<Product> products = productService.getAllProducts();
+
+		model.addAttribute("products", products);
     
         // Lấy sản phẩm bán chạy
         List<Product> bestSellers = productService.getBestSellingProducts();
@@ -53,8 +53,20 @@ public class HomeSiteController {
                                             productService.getProductsByDiscountId(discountId) : 
                                             productService.getDiscountedProducts();
         model.addAttribute("discountedProducts", discountedProducts);
-    
-        return "site/pages/home";
-    }
 
+		// Lấy danh sách các slide và xử lý imagePaths
+		List<Slide> slides = slideService.getAllSlides();
+		for (Slide slide : slides) {
+			String imagePaths = slide.getImagePaths();
+			if (imagePaths != null) {
+				String[] imagePathsArray = imagePaths.split(",");
+				slide.setImagePathsArray(imagePathsArray);
+			} else {
+				slide.setImagePathsArray(new String[0]);
+			}
+		}
+		model.addAttribute("slides", slides);
+
+		return "site/pages/home";
+	}
 }

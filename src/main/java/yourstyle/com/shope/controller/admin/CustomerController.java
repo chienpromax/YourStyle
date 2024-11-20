@@ -214,6 +214,7 @@ public class CustomerController {
 	public ModelAndView delete(ModelMap model, @PathVariable("customerId") Integer customerId) {
 		Optional<Customer> customer = customerService.findById(customerId);
 		if (customer.isPresent()) {
+			System.out.println("Deleting customer with ID: " + customerId);
 			customerService.deleteById(customerId);
 			model.addAttribute("messageType", "success");
 			model.addAttribute("messageContent", "Xóa thành công");

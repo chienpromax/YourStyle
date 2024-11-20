@@ -9,7 +9,6 @@ import yourstyle.com.shope.model.Slide;
 import yourstyle.com.shope.repository.SlideRepository;
 import yourstyle.com.shope.service.SlideService;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,42 +29,42 @@ public class SlideImageController {
 	@Autowired
 	private SlideService slideService;
 
-	 @PostMapping("/upload")
-	    public ResponseEntity<Map<String, Object>> uploadImages(@RequestParam("mainImage") MultipartFile mainImage,
-	                                                             @RequestParam("additionalImages") MultipartFile[] additionalImages) {
-	        Map<String, Object> response = new HashMap<>();
-	        
-	        try {
-	            // Kiểm tra thư mục upload
-	            File uploadDir = new File(UPLOAD_DIR);
-	            if (!uploadDir.exists()) {
-	                uploadDir.mkdirs();
-	            }
-	            
-	            // Lưu ảnh chính
-	            String mainImagePath = saveImage(mainImage);
+	@PostMapping("/upload")
+	public ResponseEntity<Map<String, Object>> uploadImages(@RequestParam("mainImage") MultipartFile mainImage,
+			@RequestParam("additionalImages") MultipartFile[] additionalImages) {
+		Map<String, Object> response = new HashMap<>();
 
-	            // Lưu ảnh phụ
-	            for (MultipartFile additionalImage : additionalImages) {
-	                saveImage(additionalImage); // Lưu từng ảnh phụ
-	            }
+		slideRepository.deleteAll();
+		try {
+			Path uploadDir = Paths.get(UPLOAD_DIR);
+			Files.createDirectories(uploadDir);
 
-	            response.put("success", true);
-	            response.put("mainImage", mainImagePath);
-	            response.put("message", "Images uploaded successfully");
-	        } catch (IOException e) {
-	            response.put("success", false);
-	            response.put("message", "Error: " + e.getMessage());
-	        }
-	        
-	        return ResponseEntity.ok(response);
-	    }
+			String mainImageName = null;
+			if (mainImage != null && !mainImage.isEmpty()) {
+				mainImageName = UUID.randomUUID().toString() + "_" + mainImage.getOriginalFilename();
+				Path mainImagePath = uploadDir.resolve(mainImageName);
+				mainImage.transferTo(mainImagePath);
+				slideRepository.save(new Slide(mainImageName));
+			}
 
-	    // Phương thức lưu ảnh vào thư mục upload
-	    private String saveImage(MultipartFile image) throws IOException {
-	        String fileName = image.getOriginalFilename();
-	        Path path = Paths.get(UPLOAD_DIR, fileName);
-	        Files.write(path, image.getBytes());
-	        return path.toString(); // Trả về đường dẫn đến ảnh đã lưu
-	    }
+			for (MultipartFile file : additionalImages) {
+				if (!file.isEmpty()) {
+					String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+					Path filePath = uploadDir.resolve(fileName);
+					file.transferTo(filePath);
+					slideRepository.save(new Slide(fileName));
+				}
+			}
+			List<Slide> slides = slideService.getAllSlides();
+			response.put("success", true);
+			response.put("message", "Ảnh đã được lưu thành công!");
+			response.put("redirectUrl", "/yourstyle/home"); 
+			response.put("slides", slides.toString());
+		} catch (IOException e) {
+			response.put("success", false);
+			response.put("message", "Lỗi khi lưu ảnh: " + e.getMessage());
+		}
+
+		return ResponseEntity.ok(response);
+	}
 }

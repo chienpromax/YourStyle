@@ -1,189 +1,178 @@
 <!DOCTYPE html>
 <html
-  lang="en"
-  xmlns:th="http://www.thymeleaf.org"
-  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  layout:decorate="~{admin/index.html}"
+    lang="en"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/index.html}"
 >
-  <head> </head>
+    <head></head>
 
-  <body>
-    <section layout:fragment="main">
-      <div class="displayNotifications"></div>
-      <main id="main" class="main">
-        <div class="pagetitle">
-          <h1>Danh sách Tài khoản</h1>
-          <nav>
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item">
-                <a href="index.html">Trang chủ</a>
-              </li>
-              <li class="breadcrumb-item active">Tài khoản</li>
-            </ol>
-          </nav>
-        </div>
-        <!-- End Page Title -->
+    <body>
+        <section layout:fragment="main">
+            <div class="displayNotifications"></div>
+            <main id="main" class="main">
+                <div class="pagetitle">
+                    <h1>Danh sách Tài khoản</h1>
+                    <nav>
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="index.html">Trang chủ</a>
+                            </li>
+                            <li class="breadcrumb-item active">Tài khoản</li>
+                        </ol>
+                    </nav>
+                </div>
+                <!-- End Page Title -->
 
-        <section class="section bg-white p-4">
-          <div class="row">
-            <div class="col-lg-12">
-              <!-- search and create staff -->
-              <div
-                class="d-flex align-items-center justify-content-between mb-3"
-              >
-                <!-- Start Search  -->
-                <div class="position-relative w-50">
-                  <form th:action="@{/admin/accounts/search}" method="get">
-                    <button
-                      class="position-absolute end-0 top-50 translate-middle-y pe-3 border-0 me-1"
-                      style="background-color: white"
-                    >
-                      <i class="bi bi-search"></i>
-                    </button>
-                    <input
-                      class="form-control"
-                      placeholder="Nhập tên hoặc email..."
-                      name="value"
-                    />
-                  </form>
-                </div>
-                <!-- End Search  -->
-                <!-- start account -->
-                <div>
-                  <a
-                    id="addAccount"
-                    class="btn btn-warning py-lg-1 px-lg-3 rounded-pill text-white ms-3"
-                    th:href="@{/admin/accounts/add}"
-                  >
-                    <i class="bi bi-plus-circle"></i> Tạo tài khoản
-                  </a>
-                </div>
-                <!-- add account -->
-              </div>
-              <!-- search and create staff -->
-              <!-- start list table -->
-              <div class="table-responsive">
-                <table class="table table-striped-columns">
-                  <thead>
-                    <tr>
-                      <th scope="col">STT</th>
-                      <th scope="col">ID</th>
-                      <th scope="col">Tên tài khoản</th>
-                      <th scope="col">Mật khẩu</th>
-                      <th scope="col">Email</th>
-                      <th scope="col">Chức vụ</th>
-                      <th scope="col">Trạng thái</th>
-                      <th scope="col">Thao tác</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr th:each="account, iStat : ${accounts}">
-                      <td>[[${iStat.index + 1}]]</td>
-                      <td class="account-id">[[${account.accountId}]]</td>
-                      <td>[[${account.username}]]</td>
-                      <td>[[${account.password}]]</td>
-                      <td>[[${account.email}]]</td>
-                      <td>[[${account.role.name}]]</td>
-                      <td>
-                        <div class="form-check form-switch">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            th:id="'statusToggle'+ ${account.accountId}"
-                            th:checked="${account.status}"
-                          />
-                          <label
-                            class="form-check-label"
-                            th:for="'statusToggle'+ ${account.accountId}"
-                          >
-                            [[${account.status} ? 'Hoạt động' : 'Bị khóa']]
-                          </label>
+                <section class="section bg-white p-4">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <!-- search and create staff -->
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <!-- Start Search  -->
+                                <div class="position-relative w-50">
+                                    <form th:action="@{/admin/accounts/search}" method="get">
+                                        <button
+                                            class="position-absolute end-0 top-50 translate-middle-y pe-3 border-0 bg-transparent"
+                                        >
+                                            <i class="bi bi-search"></i>
+                                        </button>
+                                        <input class="form-control" placeholder="Nhập tên hoặc email..." name="value" />
+                                    </form>
+                                </div>
+                                <!-- End Search  -->
+                                <!-- start account -->
+                                <div>
+                                    <a
+                                        id="addAccount"
+                                        class="btn btn-warning py-lg-1 px-lg-3 rounded-pill text-white ms-3"
+                                        th:href="@{/admin/accounts/add}"
+                                    >
+                                        <i class="bi bi-plus-circle"></i>
+                                        Tạo tài khoản
+                                    </a>
+                                </div>
+                                <!-- add account -->
+                            </div>
+                            <!-- search and create staff -->
+                            <!-- start list table -->
+                            <div class="table-responsive">
+                                <table class="table table-striped-columns">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">STT</th>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Tên tài khoản</th>
+                                            <th scope="col">Mật khẩu</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Chức vụ</th>
+                                            <th scope="col">Trạng thái</th>
+                                            <th scope="col">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="account, iStat : ${accounts}">
+                                            <td>[[${iStat.index + 1}]]</td>
+                                            <td class="account-id">[[${account.accountId}]]</td>
+                                            <td>[[${account.username}]]</td>
+                                            <td>[[${account.password}]]</td>
+                                            <td>[[${account.email}]]</td>
+                                            <td>[[${account.role.name}]]</td>
+                                            <td>
+                                                <div class="form-check form-switch">
+                                                    <input
+                                                        class="form-check-input"
+                                                        type="checkbox"
+                                                        th:id="'statusToggle'+ ${account.accountId}"
+                                                        th:checked="${account.status}"
+                                                    />
+                                                    <label
+                                                        class="form-check-label"
+                                                        th:for="'statusToggle'+ ${account.accountId}"
+                                                    >
+                                                        [[${account.status} ? 'Hoạt động' : 'Bị khóa']]
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <a
+                                                    style="cursor: pointer; font-size: 21px"
+                                                    th:href="@{/admin/accounts/edit/{id}(id=${account.accountId})}"
+                                                >
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- End table-->
+                            <!-- start pagination -->
+                            <div class="text-muted d-flex justify-content-between">
+                                <form action="">
+                                    <div class="form-inline">
+                                        <label for="size">Hiển thị:</label>
+                                        <select
+                                            class="px-lg-2 py-lg-1"
+                                            name="size"
+                                            id="size"
+                                            onchange="this.form.submit()"
+                                        >
+                                            <option th:selected="${accounts.size == 5}" value="5">5</option>
+                                            <option th:selected="${accounts.size == 10}" value="10">10</option>
+                                            <option th:selected="${accounts.size == 20}" value="20">20</option>
+                                            <option th:selected="${accounts.size == 30}" value="30">30</option>
+                                        </select>
+                                    </div>
+                                </form>
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination" th:if="${accounts.totalPages > 0}">
+                                        <li
+                                            class="page-item"
+                                            th:classappend="${accounts.number == 0} ? 'disabled' : ''"
+                                        >
+                                            <a
+                                                class="page-link"
+                                                th:href="@{/admin/accounts/search(name=${name}, size=${accounts.size}, page=${0})}"
+                                            >
+                                                <i class="bi bi-chevron-double-left"></i>
+                                            </a>
+                                        </li>
+                                        <li
+                                            th:each="pageNumber : ${pageNumbers}"
+                                            th:classappend="${pageNumber == accounts.number + 1} ? ' active' : ''"
+                                            class="page-item"
+                                        >
+                                            <a
+                                                th:href="@{/admin/accounts/search(name=${name}, size=${accounts.size}, page=${pageNumber - 1})}"
+                                                class="page-link"
+                                                th:text="${pageNumber}"
+                                            ></a>
+                                        </li>
+                                        <li
+                                            th:classappend="${accounts.number + 1 == accounts.totalPages} ? ' disabled' : ''"
+                                            class="page-item"
+                                        >
+                                            <a
+                                                th:href="@{/admin/accounts/search(name=${name}, size=${accounts.size}, page=${accounts.totalPages - 1})}"
+                                                class="page-link"
+                                            >
+                                                <i class="bi bi-chevron-double-right"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                            <!-- end pagination -->
                         </div>
-                      </td>
-                      <td class="text-center">
-                        <a
-                          style="cursor: pointer; font-size: 21px"
-                          th:href="@{/admin/accounts/edit/{id}(id=${account.accountId})}"
-                          ><i class="bi bi-eye"></i
-                        ></a>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <!-- End table-->
-              <!-- start pagination -->
-              <div class="text-muted d-flex justify-content-between">
-                <form action="">
-                  <div class="form-inline">
-                    <label for="size">Hiển thị:</label>
-                    <select
-                      class="px-lg-2 py-lg-1"
-                      name="size"
-                      id="size"
-                      onchange="this.form.submit()"
-                    >
-                      <option th:selected="${accounts.size == 5}" value="5">
-                        5
-                      </option>
-                      <option th:selected="${accounts.size == 10}" value="10">
-                        10
-                      </option>
-                      <option th:selected="${accounts.size == 20}" value="20">
-                        20
-                      </option>
-                      <option th:selected="${accounts.size == 30}" value="30">
-                        30
-                      </option>
-                    </select>
-                  </div>
-                </form>
-                <nav aria-label="Page navigation">
-                  <ul class="pagination" th:if="${accounts.totalPages > 0}">
-                    <li
-                      class="page-item"
-                      th:classappend="${accounts.number == 0} ? 'disabled' : ''"
-                    >
-                      <a
-                        class="page-link"
-                        th:href="@{/admin/accounts/search(name=${name}, size=${accounts.size}, page=${0})}"
-                        ><i class="bi bi-chevron-double-left"></i
-                      ></a>
-                    </li>
-                    <li
-                      th:each="pageNumber : ${pageNumbers}"
-                      th:classappend="${pageNumber == accounts.number + 1} ? ' active' : ''"
-                      class="page-item"
-                    >
-                      <a
-                        th:href="@{/admin/accounts/search(name=${name}, size=${accounts.size}, page=${pageNumber - 1})}"
-                        class="page-link"
-                        th:text="${pageNumber}"
-                      ></a>
-                    </li>
-                    <li
-                      th:classappend="${accounts.number + 1 == accounts.totalPages} ? ' disabled' : ''"
-                      class="page-item"
-                    >
-                      <a
-                        th:href="@{/admin/accounts/search(name=${name}, size=${accounts.size}, page=${accounts.totalPages - 1})}"
-                        class="page-link"
-                        ><i class="bi bi-chevron-double-right"></i
-                      ></a>
-                    </li>
-                  </ul>
-                </nav>
-              </div>
-              <!-- end pagination -->
-            </div>
-            <!-- end col -->
-          </div>
-          <!-- end row -->
+                        <!-- end col -->
+                    </div>
+                    <!-- end row -->
+                </section>
+            </main>
+            <script src="/admin/js/accountList.js"></script>
+            <script src="/admin/js/accountAddOrEdit.js"></script>
         </section>
-      </main>
-      <script src="/admin/js/accountList.js"></script>
-      <script src="/admin/js/accountAddOrEdit.js"></script>
-    </section>
-  </body>
+    </body>
 </html>

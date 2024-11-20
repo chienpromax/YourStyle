@@ -1,0 +1,62 @@
+#modalTitleIdPayment {
+    margin-left: 18rem;
+}
+
+#BANK_TRANSFERPayment {
+    border-radius: 18px;
+}
+
+#CODPayment {
+    border-radius: 18px;
+}
+
+
+/* nút tăng giảm */
+/* Ẩn dấu lên/xuống cho input type="number" */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin            : 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.input-group {
+    display      : flex;
+    width        : 90px;
+    border-radius: 7px;
+    margin-left  : 23px;
+}
+
+/* Định dạng cho các nút + và - */
+.input-group #increaseQuantity {
+    width        : 30px;
+    border-radius: 7px;
+    border       : none;
+    height       : 38px;
+    position     : absolute;
+    left         : 0;
+    top          : 0;
+}
+
+.input-group #decreaseQuantity {
+    width        : 30px;
+    border-radius: 7px;
+    border       : none;
+    height       : 38px;
+    position     : absolute;
+    right        : 0;
+    top          : 0;
+}
+
+/* Định dạng cho ô input */
+#quantityInput {
+    text-align   : center;
+    border-radius: 7px;
+    height       : 38px;
+    padding      : 0;
+    width        : 30px;
+    position     : relative;
+}

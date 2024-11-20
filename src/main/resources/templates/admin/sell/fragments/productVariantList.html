@@ -1,0 +1,45 @@
+<!-- productVariant danh sách tìm kiếm -->
+<tbody class="dssp" th:fragment="productRows">
+    <tr th:each="productVariant,iterStat : ${productVariants}" class="align-middle">
+        <td>[[${productVariant.productVariantId}]]</td>
+        <td scope="row" class="position-relative">
+            <img
+                th:src="@{'/admin/img/'+${productVariant.product.image}}"
+                alt=""
+                class="img-fluid rounded-circle object-cover w-100 h-100"
+            />
+            <span
+                class="badge bg-success badge-custom position-absolute top-0 right-0"
+                th:if="${productVariant.product.discount}"
+            >
+                [[${#numbers.formatDecimal(productVariant.product.discount.discountPercent,0,'POINT',0,'COMMA')}]] %
+            </span>
+        </td>
+        <td>[[${productVariant.product.name}]]</td>
+        <td>[[${productVariant.product.category.name}]]</td>
+        <td>[[${productVariant.color.colorName}]]</td>
+        <td>[[${productVariant.size.sizeName}]]</td>
+        <td>
+            <span th:unless="${productVariant.product.discount}">
+                [[${productVariantFormatedPrices[iterStat.index]['oldPrice']}]]
+            </span>
+            <span th:if="${productVariant.product.discount}" class="text-decoration-line-through d-block">
+                [[${productVariantFormatedPrices[iterStat.index]['oldPrice']}]]
+            </span>
+            <span th:if="${productVariant.product.discount}" class="text-danger fw-bold">
+                [[${productVariantFormatedPrices[iterStat.index]['discountedPrice']}]]
+            </span>
+        </td>
+        <td>[[${productVariant.quantity}]]</td>
+        <td class="text-end">
+            <button
+                class="btn btn-outline-danger btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#selectProductModal"
+                id="openChildModal"
+            >
+                Chọn
+            </button>
+        </td>
+    </tr>
+</tbody>

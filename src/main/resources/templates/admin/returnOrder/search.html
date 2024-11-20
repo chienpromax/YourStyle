@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html
+    lang="en"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/index.html}"
+>
+    <head></head>
+    <body>
+        <section layout:fragment="main">
+            <main id="main" class="main">
+                <div class="container my-5">
+                    <h2 class="text-start">Trả hàng</h2>
+                    <div class="search-container shadow-lg p-4">
+                        <div class="row">
+                            <div class="col-md-2"></div>
+                            <div class="col-md-6">
+                                <label for="order-code" class="form-label fw-bold">
+                                    <i class="bi bi-pencil"></i>
+                                    Mã hóa đơn:
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <div class="d-flex align-items-center">
+                                    <h6 class="fw-bold me-2">Trả hàng</h6>
+                                    <i class="bi bi-truck iconReturn"></i>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <input
+                                    type="text"
+                                    class="form-control search-bar"
+                                    id="order-code"
+                                    placeholder="HD123"
+                                />
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn search-btn w-100">
+                                    <i class="bi bi-search"></i>
+                                    Tìm kiếm
+                                </button>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn scan-btn w-100">
+                                    <i class="bi bi-qr-code-scan"></i>
+                                    Quét mã
+                                </button>
+                            </div>
+                        </div>
+                        <div class="return-image">
+                            <img src="/admin/img/image-return-order.png" alt="Return Image" />
+                        </div>
+                        <div class="return-title">TRẢ HÀNG</div>
+                    </div>
+                </div>
+            </main>
+        </section>
+    </body>
+</html>

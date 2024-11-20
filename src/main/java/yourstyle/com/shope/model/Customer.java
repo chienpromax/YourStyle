@@ -67,33 +67,33 @@ public class Customer implements Serializable {
 
 	@Transient // Để không lưu vào database
 	private MultipartFile imageFile;
-	
+
 	@Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        Customer customer = (Customer) obj;
-        return customerId != null && customerId.equals(customer.customerId);
-    }
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null || getClass() != obj.getClass())
+			return false;
+		Customer customer = (Customer) obj;
+		return customerId != null && customerId.equals(customer.customerId);
+	}
 
-    @Override
-    public int hashCode() {
-        return customerId != null ? customerId.hashCode() : 0;
-    }
+	@Override
+	public int hashCode() {
+		return customerId != null ? customerId.hashCode() : 0;
+	}
 
-    @Override
-    public String toString() {
-        return "Customer{" +
-                "customerId=" + customerId +
-                ", fullname='" + fullname + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "Customer{" +
+				"customerId=" + customerId +
+				", fullname='" + fullname + '\'' +
+				", phoneNumber='" + phoneNumber + '\'' +
+				'}';
+	}
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "customer")
-    private List<Address> addresses;
+	@JsonIgnore
+	@OneToMany(mappedBy = "customer")
+	private List<Address> addresses;
 
 }

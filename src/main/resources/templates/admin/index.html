@@ -27,7 +27,7 @@
   <link href="/admin/css/style.css" rel="stylesheet" />
 </head>
 
-<body>
+<body ng-app="adminApp">
   <div th:replace="~{admin/fragments/header :: header}"></div>
   <div th:replace="~{admin/fragments/nav :: nav}"></div>
   <div layout:fragment="main" class="main_index"></div>
@@ -42,6 +42,10 @@
   <!-- Template Main JS File -->
   <script src="/admin/js/main.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- AngularJS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script src="/admin/js/admin-app.js"></script>
+  <script src="/admin/js/report-ctrl.js"></script>
 
 </body>
 

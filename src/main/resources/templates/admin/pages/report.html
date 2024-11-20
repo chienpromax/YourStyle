@@ -2,10 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
     layout:decorate="~{admin/index.html}">
 
-<head> </head>
+<head></head>
 
 <body>
-    <section layout:fragment="main">
+    <section layout:fragment="main" ng-controller="reportCtrl">
         <main id="main" class="main">
             <div class="pagetitle">
                 <h1>Thống kê</h1>
@@ -25,61 +25,71 @@
                             <!-- Sales Card -->
                             <div class="col-xxl-4 col-md-6">
                                 <div class="card info-card sales-card">
-
                                     <div class="filter">
-                                        <a class="icon" href="#" data-bs-toggle="dropdown"><i
-                                                class="bi bi-three-dots"></i></a>
+                                        <a class="icon" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
                                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                                             <li class="dropdown-header text-start">
                                                 <h6>Lọc</h6>
                                             </li>
-
-                                            <li><a class="dropdown-item" href="#">Hôm nay</a></li>
-                                            <li><a class="dropdown-item" href="#">Tháng này</a></li>
-                                            <li><a class="dropdown-item" href="#">Năm này</a></li>
+                                            <li><a class="dropdown-item" ng-click="selectedSalesTime = 'today'">Hôm
+                                                    nay</a></li>
+                                            <li><a class="dropdown-item"
+                                                    ng-click="selectedSalesTime = 'thisMonth'">Tháng này</a></li>
+                                            <li><a class="dropdown-item" ng-click="selectedSalesTime = 'thisYear'">Năm
+                                                    này</a></li>
                                         </ul>
                                     </div>
-
                                     <div class="card-body">
-                                        <h5 class="card-title">Bán được <span>| Hôm nay</span></h5>
-
+                                        <h5 class="card-title">Bán được <span>| {{ selectedSalesTime === 'today' ? 'Hôm
+                                                nay' : (selectedSalesTime === 'thisMonth' ? 'Tháng này' : 'Năm nay')
+                                                }}</span></h5>
                                         <div class="d-flex align-items-center">
                                             <div
                                                 class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                                                 <i class="bi bi-cart"></i>
                                             </div>
                                             <div class="ps-3">
-                                                <h6>145</h6>
-                                                <span class="text-success small pt-1 fw-bold">12%</span> <span
-                                                    class="text-muted small pt-2 ps-1">Tăng</span>
-
+                                                <h6 ng-if="selectedSalesTime === 'today'">{{ salesStats.today }}</h6>
+                                                <h6 ng-if="selectedSalesTime === 'thisMonth'">{{ salesStats.thisMonth
+                                                    }}
+                                                </h6>
+                                                <h6 ng-if="selectedSalesTime === 'thisYear'">{{ salesStats.thisYear }}
+                                                </h6>
+                                                <span class="text-muted small pt-2 ps-1">Sản phẩm</span>
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                             </div><!-- End Sales Card -->
-
                             <!-- Revenue Card -->
                             <div class="col-xxl-4 col-md-6">
                                 <div class="card info-card revenue-card">
-
                                     <div class="filter">
-                                        <a class="icon" href="#" data-bs-toggle="dropdown"><i
-                                                class="bi bi-three-dots"></i></a>
+                                        <a class="icon" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
                                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                                             <li class="dropdown-header text-start">
-                                                <h6>Filter</h6>
+                                                <h6>Lọc</h6>
                                             </li>
-
-                                            <li><a class="dropdown-item" href="#">Hôm nay</a></li>
-                                            <li><a class="dropdown-item" href="#">Tháng này</a></li>
-                                            <li><a class="dropdown-item" href="#">Năm này</a></li>
+                                            <li><a class="dropdown-item" ng-click="selectedRevenueTime = 'today'">Hôm
+                                                    nay</a></li>
+                                            <li><a class="dropdown-item"
+                                                    ng-click="selectedRevenueTime = 'thisWeek'">Tuần
+                                                    này</a></li>
+                                            <li><a class="dropdown-item"
+                                                    ng-click="selectedRevenueTime = 'thisMonth'">Tháng này</a></li>
+                                            <li><a class="dropdown-item"
+                                                    ng-click="selectedRevenueTime = 'thisQuarter'">Quý này</a></li>
+                                            <li><a class="dropdown-item" ng-click="selectedRevenueTime = 'thisYear'">Năm
+                                                    này</a></li>
                                         </ul>
                                     </div>
-
                                     <div class="card-body">
-                                        <h5 class="card-title">Doanh thu <span>| Tháng này</span></h5>
+                                        <h5 class="card-title">Doanh thu <span>|
+                                                {{ selectedRevenueTime === 'today' ? 'Hôm nay' :
+                                                (selectedRevenueTime === 'thisWeek' ? 'Tuần này' :
+                                                (selectedRevenueTime === 'thisMonth' ? 'Tháng này' :
+                                                (selectedRevenueTime === 'thisQuarter' ? 'Quý này' : 'Năm nay'))) }}
+                                            </span></h5>
 
                                         <div class="d-flex align-items-center">
                                             <div
@@ -87,333 +97,377 @@
                                                 <i class="bi bi-currency-dollar"></i>
                                             </div>
                                             <div class="ps-3">
-                                                <h6>$3,264</h6>
-                                                <span class="text-success small pt-1 fw-bold">8%</span> <span
-                                                    class="text-muted small pt-2 ps-1">Tăng</span>
-
+                                                <h6 ng-if="selectedRevenueTime === 'today'">{{ revenueStats.today |
+                                                    currencyVND }}</h6>
+                                                <h6 ng-if="selectedRevenueTime === 'thisWeek'">{{ revenueStats.thisWeek
+                                                    | currencyVND }}</h6>
+                                                <h6 ng-if="selectedRevenueTime === 'thisMonth'">{{
+                                                    revenueStats.thisMonth | currencyVND }}</h6>
+                                                <h6 ng-if="selectedRevenueTime === 'thisQuarter'">{{
+                                                    revenueStats.thisQuarter | currencyVND }}</h6>
+                                                <h6 ng-if="selectedRevenueTime === 'thisYear'">{{ revenueStats.thisYear
+                                                    | currencyVND }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">VND</span>
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
-                            </div><!-- End Revenue Card -->
-
+                            </div>
+                            <!-- End Revenue Card -->
                             <!-- Customers Card -->
                             <div class="col-xxl-4 col-md-6">
-
                                 <div class="card info-card customers-card">
-
                                     <div class="filter">
-                                        <a class="icon" href="#" data-bs-toggle="dropdown"><i
-                                                class="bi bi-three-dots"></i></a>
+                                        <a class="icon" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
                                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                                             <li class="dropdown-header text-start">
                                                 <h6>Lọc</h6>
                                             </li>
-
-                                            <li><a class="dropdown-item" href="#">Hôm nay</a></li>
-                                            <li><a class="dropdown-item" href="#">Tháng này</a></li>
-                                            <li><a class="dropdown-item" href="#">Năm này</a></li>
+                                            <li><a class="dropdown-item" ng-click="selectedCusTime = 'today'">Hôm
+                                                    nay</a></li>
+                                            <li><a class="dropdown-item" ng-click="selectedCusTime = 'thisMonth'">Tháng
+                                                    này</a></li>
+                                            <li><a class="dropdown-item" ng-click="selectedCusTime = 'thisYear'">Năm
+                                                    này</a></li>
                                         </ul>
                                     </div>
-
                                     <div class="card-body">
-                                        <h5 class="card-title">Khách hàng <span>| Năm nay</span></h5>
-
+                                        <h5 class="card-title">Khách hàng <span>| {{ selectedCusTime === 'today' ? 'Hôm
+                                                nay' : (selectedCusTime === 'thisMonth' ? 'Tháng này' : 'Năm nay')
+                                                }}</span></h5>
                                         <div class="d-flex align-items-center">
                                             <div
                                                 class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                                                 <i class="bi bi-people"></i>
                                             </div>
                                             <div class="ps-3">
-                                                <h6>1244</h6>
-                                                <span class="text-danger small pt-1 fw-bold">12%</span> <span
-                                                    class="text-muted small pt-2 ps-1">Giảm</span>
-
+                                                <h6 ng-if="selectedCusTime === 'today'">{{ customerStats.today }}</h6>
+                                                <h6 ng-if="selectedCusTime === 'thisMonth'">{{ customerStats.thisMonth
+                                                    }}
+                                                </h6>
+                                                <h6 ng-if="selectedCusTime === 'thisYear'">{{ customerStats.thisYear }}
+                                                </h6>
+                                                <span class="text-muted small pt-2 ps-1">Tăng</span>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
-
-                            </div><!-- End Customers Card -->
+                            </div>
+                            <!-- End Customers Card -->
 
                             <!-- Product Card -->
                             <div class="col-xxl-4 col-md-6">
                                 <div class="card info-card product-card">
-
                                     <div class="filter">
-                                        <a class="icon" href="#" data-bs-toggle="dropdown"><i
-                                                class="bi bi-three-dots"></i></a>
+                                        <a class="icon" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
                                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                                             <li class="dropdown-header text-start">
                                                 <h6>Lọc</h6>
                                             </li>
-
-                                            <li><a class="dropdown-item" href="#">Hôm nay</a></li>
-                                            <li><a class="dropdown-item" href="#">Tháng này</a></li>
-                                            <li><a class="dropdown-item" href="#">Năm này</a></li>
+                                            <li><a class="dropdown-item" ng-click="selectedPVTime = 'today'">Hôm
+                                                    nay</a></li>
+                                            <li><a class="dropdown-item" ng-click="selectedPVTime = 'thisMonth'">Tháng
+                                                    này</a></li>
+                                            <li><a class="dropdown-item" ng-click="selectedPVTime = 'thisYear'">Năm
+                                                    này</a></li>
                                         </ul>
                                     </div>
-
                                     <div class="card-body">
-                                        <h5 class="card-title">Sản phẩm <span>| Năm này</span></h5>
-
+                                        <h5 class="card-title">Sản phẩm <span>|
+                                                {{ selectedPVTime === 'today' ? 'Hôm nay' :
+                                                (selectedPVTime === 'thisMonth' ? 'Tháng này' : 'Năm nay') }}</span>
+                                        </h5>
                                         <div class="d-flex align-items-center">
                                             <div
                                                 class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                                <i class="bi bi-box"></i> <!-- Biểu tượng sản phẩm -->
+                                                <i class="bi bi-box"></i>
                                             </div>
                                             <div class="ps-3">
-                                                <h6>350</h6> <!-- Số lượng sản phẩm -->
-                                                <span class="text-success small pt-1 fw-bold">5%</span> <span
-                                                    class="text-muted small pt-2 ps-1">Tăng</span>
+                                                <h6 ng-if="selectedPVTime === 'today'">{{ productVariantStats.today }}
+                                                </h6>
+                                                <h6 ng-if="selectedPVTime === 'thisMonth'">{{
+                                                    productVariantStats.thisMonth }}
+                                                </h6>
+                                                <h6 ng-if="selectedPVTime === 'thisYear'">{{
+                                                    productVariantStats.thisYear
+                                                    }}</h6>
+                                                <span class="text-muted small pt-2 ps-1">Tăng</span>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
-                            </div><!-- End Product Card -->
+                            </div>
+                            <!-- End Product Card -->
 
                             <!-- Recent Sales -->
                             <div class="col-12">
                                 <div class="card recent-sales overflow-auto">
-
                                     <div class="filter">
-                                        <a class="icon" href="#" data-bs-toggle="dropdown"><i
-                                                class="bi bi-three-dots"></i></a>
+                                        <a class="icon" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
                                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                                             <li class="dropdown-header text-start">
                                                 <h6>Lọc</h6>
                                             </li>
-                                            <li><a class="dropdown-item" href="#">Hôm nay</a></li>
-                                            <li><a class="dropdown-item" href="#">Tháng này</a></li>
-                                            <li><a class="dropdown-item" href="#">Năm này</a></li>
+                                            <li><a class="dropdown-item" ng-click="selectedCustomerTime = 'today'">Hôm
+                                                    nay</a></li>
+                                            <li><a class="dropdown-item"
+                                                    ng-click="selectedCustomerTime = 'thisMonth'">Tháng này</a></li>
+                                            <li><a class="dropdown-item"
+                                                    ng-click="selectedCustomerTime = 'thisYear'">Năm này</a></li>
                                         </ul>
                                     </div>
-
                                     <div class="card-body">
-                                        <h5 class="card-title">Khách hàng <span>| Hôm nay</span></h5>
-
+                                        <h5 class="card-title">Khách hàng chi tiêu nhiều nhất <span>|
+                                                {{ selectedCustomerTime === 'today' ? 'Hôm nay' : (selectedCustomerTime
+                                                === 'thisMonth' ? 'Tháng này' : 'Năm nay') }}
+                                            </span></h5>
                                         <table class="table table-borderless">
                                             <thead>
                                                 <tr>
                                                     <th scope="col">#</th>
                                                     <th scope="col">Tên</th>
+                                                    <th scope="col">Số điện thoại</th>
+                                                    <th scope="col">Chi tiêu</th>
+                                                    <th scope="col">Giới tính</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="customer in customers">
+                                                    <th scope="row"><a>#{{ customer.customerId }}</a></th>
+                                                    <td>{{ customer.fullname }}</td>
+                                                    <td>{{ customer.phoneNumber }}</td>
+                                                    <td>{{ customer.totalSpending | currencyVND }}</td>
+                                                    <td>
+                                                        <span class="badge"
+                                                            ng-class="customer.gender ? 'bg-primary' : 'bg-danger'">
+                                                            {{ customer.gender ? 'Nam' : 'Nữ' }}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Recent Sales -->
+                            <!-- Top Selling -->
+                            <div class="col-12">
+                                <div class="card top-selling overflow-auto">
+                                    <div class="filter">
+                                        <a class="icon" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                            <li class="dropdown-header text-start">
+                                                <h6>Lọc</h6>
+                                            </li>
+                                            <li><a class="dropdown-item" ng-click="selectedProductTime = 'today'">Hôm
+                                                    nay</a></li>
+                                            <li><a class="dropdown-item"
+                                                    ng-click="selectedProductTime = 'thisMonth'">Tháng này</a></li>
+                                            <li><a class="dropdown-item" ng-click="selectedProductTime = 'thisYear'">Năm
+                                                    này</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="card-body pb-0">
+                                        <h5 class="card-title">Bán chạy nhất <span>| {{ selectedProductTime === 'today'
+                                                ? 'Hôm nay' : (selectedProductTime === 'thisMonth' ? 'Tháng này' : 'Năm
+                                                nay') }}</span></h5>
+
+                                        <table class="table table-borderless">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Ảnh</th>
+                                                    <th scope="col">Mã</th>
+                                                    <th scope="col">Sản phẩm</th>
+                                                    <th scope="col">Số lượng</th>
+                                                    <th scope="col">Tổng tiền</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="product in topProducts">
+                                                    <th scope="row"><a>
+                                                            <img ng-src="/uploads/{{product.image || 'default-product.png'}}"
+                                                                alt=""></a></th>
+                                                    <td>{{ product.productId }}</td>
+                                                    <td><a class="text-primary fw-bold">{{ product.productName
+                                                            }}</a></td>
+                                                    <td>{{ product.quantitySold }}</td>
+                                                    <td class="fw-bold">{{ product.totalSales | currencyVND }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Top Selling -->
+                            <div class="col-12">
+                                <div class="card top-selling overflow-auto">
+                                    <div class="card-body pb-0">
+                                        <h5 class="card-title">Sản phẩm <span>| Không có người mua</span></h5>
+                                        <table class="table table-borderless">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Ảnh</th>
+                                                    <th scope="col">Mã</th>
                                                     <th scope="col">Sản phẩm</th>
                                                     <th scope="col">Giá</th>
                                                     <th scope="col">Trạng thái</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <th scope="row"><a href="#">#2457</a></th>
-                                                    <td>Brandon Jacob</td>
-                                                    <td><a href="#" class="text-primary">At praesentium minu</a></td>
-                                                    <td>$64</td>
-                                                    <td><span class="badge bg-success">Approved</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row"><a href="#">#2147</a></th>
-                                                    <td>Bridie Kessler</td>
-                                                    <td><a href="#" class="text-primary">Blanditiis dolor omnis
-                                                            similique</a></td>
-                                                    <td>$47</td>
-                                                    <td><span class="badge bg-warning">Pending</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row"><a href="#">#2049</a></th>
-                                                    <td>Ashleigh Langosh</td>
-                                                    <td><a href="#" class="text-primary">At recusandae consectetur</a>
+                                                <tr ng-repeat="product in productWithoutOrders">
+                                                    <th scope="row">
+                                                        <a>
+                                                            <img ng-src="/uploads/{{product.image || 'default-product.png'}}"
+                                                                alt="" style="width: 50px; height: 50px;">
+                                                        </a>
+                                                    </th>
+                                                    <td>{{ product.productId }}</td>
+                                                    <td><a class="text-primary fw-bold">{{ product.name }}</a>
                                                     </td>
-                                                    <td>$147</td>
-                                                    <td><span class="badge bg-success">Approved</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row"><a href="#">#2644</a></th>
-                                                    <td>Angus Grady</td>
-                                                    <td><a href="#" class="text-primar">Ut voluptatem id earum et</a>
-                                                    </td>
-                                                    <td>$67</td>
-                                                    <td><span class="badge bg-danger">Rejected</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row"><a href="#">#2644</a></th>
-                                                    <td>Raheem Lehner</td>
-                                                    <td><a href="#" class="text-primary">Sunt similique distinctio</a>
-                                                    </td>
-                                                    <td>$165</td>
-                                                    <td><span class="badge bg-success">Approved</span></td>
+                                                    <td>{{ product.price | currencyVND}}</td>
+                                                    <td>{{ product.status ? 'Còn hàng' : 'Hết hàng' }}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
-
+                                        <nav>
+                                            <ul class="pagination justify-content-center">
+                                                <!-- Nút quay lại -->
+                                                <li class="page-item" ng-class="{disabled: currentPage === 0}">
+                                                    <a class="page-link"
+                                                        ng-click="changePage(currentPage - 1)">Trước</a>
+                                                </li>
+                                                <!-- Danh sách các trang -->
+                                                <li class="page-item"
+                                                    ng-repeat="page in [].constructor(totalPages) track by $index"
+                                                    ng-class="{active: currentPage === $index}">
+                                                    <a class="page-link" ng-click="changePage($index)">{{
+                                                        $index + 1 }}</a>
+                                                </li>
+                                                <!-- Nút tiếp theo -->
+                                                <li class="page-item"
+                                                    ng-class="{disabled: currentPage === totalPages - 1}">
+                                                    <a class="page-link" ng-click="changePage(currentPage + 1)">Tiếp</a>
+                                                </li>
+                                            </ul>
+                                        </nav>
                                     </div>
-
                                 </div>
-                            </div><!-- End Recent Sales -->
-
-                            <!-- Top Selling -->
+                            </div>
                             <div class="col-12">
                                 <div class="card top-selling overflow-auto">
-
-                                    <div class="filter">
-                                        <a class="icon" href="#" data-bs-toggle="dropdown"><i
-                                                class="bi bi-three-dots"></i></a>
-                                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                                            <li class="dropdown-header text-start">
-                                                <h6>Lọc</h6>
-                                            </li>
-
-                                            <li><a class="dropdown-item" href="#">Hôm nay</a></li>
-                                            <li><a class="dropdown-item" href="#">Tháng này</a></li>
-                                            <li><a class="dropdown-item" href="#">Năm này</a></li>
-                                        </ul>
-                                    </div>
-
                                     <div class="card-body pb-0">
-                                        <h5 class="card-title">Bán chạy nhất <span>| Hôm nay</span></h5>
-
+                                        <h5 class="card-title">Sản phẩm <span>| Sắp hết hàng</span></h5>
                                         <table class="table table-borderless">
                                             <thead>
                                                 <tr>
                                                     <th scope="col">Ảnh</th>
+                                                    <th scope="col">Mã</th>
                                                     <th scope="col">Sản phẩm</th>
                                                     <th scope="col">Giá</th>
-                                                    <th scope="col">Số lượng</th>
-                                                    <th scope="col">Tổng tiền</th>
+                                                    <th scope="col">Tổng số lượng</th>
+
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <th scope="row"><a href="#"><img src="/admin/img/product-1.jpg"
-                                                                alt=""></a></th>
-                                                    <td><a href="#" class="text-primary fw-bold">Ut inventore ipsa
-                                                            voluptas nulla</a></td>
-                                                    <td>$64</td>
-                                                    <td>124</td>
-                                                    <td class="fw-bold">$5,828</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row"><a href="#"><img src="/admin/img/product-2.jpg"
-                                                                alt=""></a></th>
-                                                    <td><a href="#" class="text-primary fw-bold">Exercitationem
-                                                            similique doloremque</a></td>
-                                                    <td>$46</td>
-                                                    <td class="fw-bold">98</td>
-                                                    <td class="fw-bold">$4,508</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row"><a href="#"><img src="/admin/img/product-3.jpg"
-                                                                alt=""></a></th>
-                                                    <td><a href="#" class="text-primary fw-bold">Doloribus nisi
-                                                            exercitationem</a></td>
-                                                    <td>$59</td>
-                                                    <td>74</td>
-                                                    <td class="fw-bold">$4,366</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row"><a href="#"><img src="/admin/img/product-4.jpg"
-                                                                alt=""></a></th>
-                                                    <td><a href="#" class="text-primary fw-bold">Officiis quaerat sint
-                                                            rerum error</a></td>
-                                                    <td>$32</td>
-                                                    <td>63</td>
-                                                    <td class="fw-bold">$2,016</td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row"><a href="#"><img src="assets/img/product-5.jpg"
-                                                                alt=""></a></th>
-                                                    <td><a href="#" class="text-primary fw-bold">Sit unde debitis
-                                                            delectus repellendus</a></td>
-                                                    <td>$79</td>
-                                                    <td class="fw-bold">41</td>
-                                                    <td>$3,239</td>
+                                                <tr ng-repeat="product in lowStockProducts">
+                                                    <th scope="row">
+                                                        <a>
+                                                            <img ng-src="/uploads/{{product.image || 'default-product.png'}}"
+                                                                alt="" style="width: 50px; height: 50px;">
+                                                        </a>
+                                                    </th>
+                                                    <td>{{ product.productId }}</td>
+                                                    <td><a class="text-primary fw-bold">{{ product.name }}</a></td>
+                                                    <td>{{ product.price | currencyVND }}</td>
+                                                    <td>{{ product.totalQuantity }}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
-
+                                        <nav>
+                                            <ul class="pagination justify-content-center">
+                                                <!-- Nút quay lại -->
+                                                <li class="page-item"
+                                                    ng-class="{disabled: lowStockProductsCurrentPage === 0}">
+                                                    <a class="page-link"
+                                                        ng-click="changeLowStockProductsPage(lowStockProductsCurrentPage - 1)">Trước</a>
+                                                </li>
+                                                <!-- Danh sách các trang -->
+                                                <li class="page-item"
+                                                    ng-repeat="page in [].constructor(lowStockProductsTotalPages) track by $index"
+                                                    ng-class="{active: lowStockProductsCurrentPage === $index}">
+                                                    <a class="page-link"
+                                                        ng-click="changeLowStockProductsPage($index)">{{ $index + 1
+                                                        }}</a>
+                                                </li>
+                                                <!-- Nút tiếp theo -->
+                                                <li class="page-item"
+                                                    ng-class="{disabled: lowStockProductsCurrentPage === lowStockProductsTotalPages - 1}">
+                                                    <a class="page-link"
+                                                        ng-click="changeLowStockProductsPage(lowStockProductsCurrentPage + 1)">Tiếp</a>
+                                                </li>
+                                            </ul>
+                                        </nav>
                                     </div>
-
                                 </div>
-                            </div><!-- End Top Selling -->
-
+                            </div>
                             <!-- -------------Doanh thu-------------- -->
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-body">
                                         <h5 class="card-title">Doanh Thu 12 Tháng</h5>
-
                                         <!-- Area Chart -->
                                         <div id="areaChart"></div>
-
                                         <script>
                                             document.addEventListener("DOMContentLoaded", () => {
-                                                const series = {
-                                                    "yearDataSeries1": {
-                                                        "revenue": [
-                                                            1200, 1500, 1700, 1300, 1800, 2000, 2500, 2300, 2700, 3100, 3200, 4000
-                                                        ],
-                                                        "months": [
-                                                            "Tháng 1",
-                                                            "Tháng 2",
-                                                            "Tháng 3",
-                                                            "Tháng 4",
-                                                            "Tháng 5",
-                                                            "Tháng 6",
-                                                            "Tháng 7",
-                                                            "Tháng 8",
-                                                            "Tháng 9",
-                                                            "Tháng 10",
-                                                            "Tháng 11",
-                                                            "Tháng 12"
-                                                        ]
-                                                    },
-                                                };
+                                                fetch("/rest/reports/revenue/monthly")
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        const revenueData = data.map(item => item.totalRevenue);
+                                                        const months = data.map(item => `Tháng ${item.month}`);
 
-                                                new ApexCharts(document.querySelector("#areaChart"), {
-                                                    series: [{
-                                                        name: "Doanh Thu",
-                                                        data: series.yearDataSeries1.revenue
-                                                    }],
-                                                    chart: {
-                                                        type: 'area',
-                                                        height: 350,
-                                                        zoom: {
-                                                            enabled: false
-                                                        }
-                                                    },
-                                                    dataLabels: {
-                                                        enabled: false
-                                                    },
-                                                    stroke: {
-                                                        curve: 'smooth' // Sử dụng 'smooth' để có đường cong mượt mà hơn
-                                                    },
-                                                    subtitle: {
-                                                        text: 'Biến động doanh thu',
-                                                        align: 'top'
-                                                    },
-                                                    labels: series.yearDataSeries1.months,
-                                                    xaxis: {
-                                                        type: 'category', // Thay đổi loại thành 'category'
-                                                    },
-                                                    yaxis: {
-                                                        title: {
-                                                            text: 'Doanh Thu ($)'
-                                                        }
-                                                    },
-                                                    legend: {
-                                                        horizontalAlign: 'left'
-                                                    }
-                                                }).render();
+                                                        new ApexCharts(document.querySelector("#areaChart"), {
+                                                            series: [{
+                                                                name: "Doanh Thu",
+                                                                data: revenueData
+                                                            }],
+                                                            chart: {
+                                                                type: 'area',
+                                                                height: 350,
+                                                                zoom: {
+                                                                    enabled: false
+                                                                }
+                                                            },
+                                                            dataLabels: {
+                                                                enabled: false
+                                                            },
+                                                            stroke: {
+                                                                curve: 'smooth'
+                                                            },
+                                                            subtitle: {
+                                                                text: 'Biến động doanh thu',
+                                                                align: 'top'
+                                                            },
+                                                            labels: months,
+                                                            xaxis: {
+                                                                type: 'category'
+                                                            },
+                                                            yaxis: {
+                                                                title: {
+                                                                    text: 'Doanh Thu (đ)'
+                                                                }
+                                                            },
+                                                            legend: {
+                                                                horizontalAlign: 'left'
+                                                            }
+                                                        }).render();
+                                                    });
                                             });
+
                                         </script>
                                         <!-- End Area Chart -->
-
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                     <!-- End Left side columns -->

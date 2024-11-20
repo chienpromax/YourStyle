@@ -54,7 +54,26 @@
         </ul>
       </li>
       <!-- End Tables Nav -->
+      <!-- Thành -->
+      <!-- End Tables Nav -->
 
+      <li class="nav-item"><a class="nav-link collapsed" data-bs-target="#reviews" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-star"></i> <span>Quản Lý Đánh giá</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="reviews" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+          <li><a th:href="@{/admin/reviews}"> <i class="bi bi-circle"></i><span>Danh sách Đánh giá</span></a></li>
+        </ul>
+      </li>
+      <!-- End Reviews Nav -->
+
+      <li class="nav-item"><a class="nav-link collapsed" data-bs-target="#banners" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-image"></i> <span>Quản Lý Banner</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="banners" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+          <li><a th:href="@{/admin/slide/add}"> <i class="bi bi-circle"></i><span>Quản lý slide</span></a></li>
+        </ul>
+      </li>
+      <!-- End Banner Nav -->
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#vouchers" data-bs-toggle="collapse" href="#">
           <i class="bi bi-receipt"></i><span>Phiếu giảm giá</span><i class="bi bi-chevron-down ms-auto"></i>

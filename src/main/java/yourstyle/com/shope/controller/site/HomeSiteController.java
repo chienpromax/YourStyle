@@ -1,25 +1,34 @@
 package yourstyle.com.shope.controller.site;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+
 import yourstyle.com.shope.model.Category;
 import yourstyle.com.shope.model.Product;
+import yourstyle.com.shope.model.Slide;
 import yourstyle.com.shope.service.CategoryService;
 import yourstyle.com.shope.service.ProductService;
+import yourstyle.com.shope.service.SlideService;
+
 import org.springframework.security.core.Authentication;
 
 @Controller
 @RequestMapping("/yourstyle")
 public class HomeSiteController {
-    @Autowired
-    private CategoryService categoryService;
+	@Autowired
+	private CategoryService categoryService;
 
-    @Autowired
-    private ProductService productService;
+	@Autowired
+	private ProductService productService;
+
+	@Autowired
+	private SlideService slideService;
 
     @RequestMapping({"/home", "/discount/{discountId}"})
     public String showHomePage(Model model, Authentication authentication, 
@@ -47,5 +56,5 @@ public class HomeSiteController {
     
         return "site/pages/home";
     }
-    
+
 }

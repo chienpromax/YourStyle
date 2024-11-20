@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,6 +53,15 @@ public class ProductDetailRestController {
         return ResponseEntity.ok(reviewsPage);
     }
 
+    @GetMapping("/reviews/getCustomer")
+    public Customer getCustomer() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account account = accountService.findByUsername(username);
+
+        Customer customer = customerService.findByAccountId(account.getAccountId());
+        return customer;
+    }
+
     // Thêm đánh giá cho sản phẩm
     @PostMapping("/reviews/{productId}")
     public ResponseEntity<Review> submitReview(@PathVariable("productId") Integer productId,
@@ -71,4 +81,15 @@ public class ProductDetailRestController {
 
         return ResponseEntity.ok(savedReview);
     }
+
+    @DeleteMapping("/reviews/{reviewId}")
+    public ResponseEntity<Void> deleteReview(@PathVariable("reviewId") Integer reviewId) {
+        Optional<Review> reviewOpt = reviewService.findById(reviewId);
+        if (reviewOpt.isPresent()) {
+            reviewService.deleteById(reviewId);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
 }

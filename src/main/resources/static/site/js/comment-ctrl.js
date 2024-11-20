@@ -1,18 +1,20 @@
 app.controller('comment-ctrl', function ($scope, $http, $location) {
-    console.log('Comment controller initialized');
 
-    // Lấy productId từ URL
     const productId = $location.absUrl().split('/').pop(); // Lấy giá trị productId từ URL
-
-    console.log('ProductID: ' + productId);
 
     $scope.reviews = [];
     $scope.currentPage = 0;
-    $scope.totalPages = 0;  // Khởi tạo totalPages
+    $scope.totalPages = 0;
     $scope.newComment = '';
     $scope.rating = 0;
 
-    // Hàm để tải danh sách đánh giá
+    $scope.customerNow;
+
+    $http.get('/reviews/getCustomer').then(function (response) {
+        console.log(response.data);
+        $scope.customerNow = response.data;
+    });
+
     $scope.loadReviews = function (page) {
         $http.get('/reviews/' + productId + '?page=' + page)
             .then(function (response) {
@@ -64,4 +66,17 @@ app.controller('comment-ctrl', function ($scope, $http, $location) {
 
     // Gọi hàm tải dữ liệu lần đầu
     $scope.loadReviews($scope.currentPage);
+
+    $scope.deleteReview = function (reviewId) {
+        if (confirm("Bạn có chắc chắn muốn xóa đánh giá này không?")) {
+            $http.delete('/reviews/' + reviewId)
+                .then(function (response) {
+                    // Tải lại danh sách đánh giá sau khi xóa
+                    $scope.loadReviews($scope.currentPage);
+                }, function (error) {
+                    console.error('Error deleting review:', error);
+                });
+        }
+    };
+
 });

@@ -71,6 +71,8 @@ public interface OrderService {
 	Page<Order> findByCustomer(Customer customer, Pageable pageable);
 
 	// thêm giỏ hàng
+	public List<Order> findByCustomerAndStatus(Customer customer, int status);
+
 	void addProductToCart(Integer customerid, Integer productVariantId, Integer colorId, Integer sizeId,
 			Integer quantity);
 

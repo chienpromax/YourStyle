@@ -44,7 +44,7 @@ public class ProductFavoriteController {
         String username = authentication.getName();
         Integer accountId = accountService.findByUsername(username).getAccountId(); // Replace with your method to get accountId
 
-        Customer customer = customerRepository.findByCustomerAccountId(accountId);
+        Customer customer = customerRepository.findByCustomerAccountIdWithQuery(accountId);
         if (customer != null) {
             List<Product> favoriteProducts = productFavoriteService
                     .getFavoriteProductsByCustomerId(customer.getCustomerId())
@@ -69,7 +69,7 @@ public class ProductFavoriteController {
 
         String username = authentication.getName();
         Integer accountId = accountService.findByUsername(username).getAccountId(); // Replace with your method to get accountId
-        Customer customer = customerRepository.findByCustomerAccountId(accountId);
+        Customer customer = customerRepository.findByCustomerAccountIdWithQuery(accountId);
 
         if (customer == null) {
             redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy thông tin khách hàng.");
@@ -97,7 +97,7 @@ public class ProductFavoriteController {
 
         String username = authentication.getName();
         Integer accountId = accountService.findByUsername(username).getAccountId(); // Replace with your method to get accountId
-        Customer customer = customerRepository.findByCustomerAccountId(accountId);
+        Customer customer = customerRepository.findByCustomerAccountIdWithQuery(accountId);
 
         if (customer == null) {
             redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy thông tin khách hàng.");

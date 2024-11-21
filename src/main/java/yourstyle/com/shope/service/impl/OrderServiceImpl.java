@@ -173,6 +173,11 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
+	public List<Order> findByCustomerAndStatus(Customer customer, int status) {
+		return orderRepository.findByCustomerAndStatus(customer, status);
+	}
+
+	@Override
 	public void addProductToCart(Integer customerId, Integer productVariantId, Integer colorId, Integer sizeId,
 			Integer quantity) {
 		Order order = orderRepository.findOrderByCustomerIdAndStatus(customerId);

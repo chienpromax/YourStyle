@@ -44,5 +44,8 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Intege
                         @Param("colorId") Integer colorId,
                         @Param("sizeId") Integer sizeId);
 
+        List<OrderDetail> findByOrder_Customer_CustomerId(Integer customerId);
+
+        List<OrderDetail> findByOrder_Customer_CustomerIdAndOrder_Status(Integer customerId, int status);
         // List<OrderDetail> findByOrder(Order order);
 }

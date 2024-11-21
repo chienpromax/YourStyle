@@ -22,8 +22,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
     boolean existsByPhoneNumber(String phoneNumber);
 
-    // @Query("SELECT c FROM Customer c WHERE c.account.accountId = ?1")
-    // Customer findByCustomerAccountId(Integer accountId);
+    @Query("SELECT c FROM Customer c WHERE c.account.accountId = ?1")
+    Customer findByCustomerAccountIdWithQuery(Integer accountId);
 
     @Query("SELECT c FROM Customer c WHERE c.account.accountId = ?1")
     Customer findByAccountId(Integer accountId);
@@ -43,7 +43,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     @Query("SELECT c FROM Customer c WHERE NOT c.customerId = :customerId")
     Page<Customer> findAllNotRetailCustomer(@Param("customerId") Integer customerId, Pageable pageable);
 
-    Customer  findByCustomerAccountId(Integer accountId);
+//     Customer  findByCustomerAccountId(Integer accountId);
 
     Customer findByAccount_AccountId(Integer accountId);
 

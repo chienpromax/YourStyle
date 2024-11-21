@@ -126,7 +126,7 @@
 										<img th:src="@{'/uploads/' + ${product.image}}" class="img-fluid" alt="Product Image">
 									</a>
 									<div class="card-body">
-										<h5 th:text="${product.name}"></h5>
+										<h5 class="product-name" th:text="${product.name}"></h5>
 										<p class="card-text text-center text-danger fw-bolder fs-5" th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')} + ' Đ'"></p>
 										<p class="card-text position-absolute bottom-0 end-0 text-muted m-2 small">
 											Đã bán: <span th:text="${product.totalQuantity}">0</span> sản phẩm</p>
@@ -173,7 +173,7 @@
 									<img th:src="'/uploads/' + ${product.image}" class="img-fluid">
 								</a>
 								<div class="card-body">
-									<h5 class="card-title" th:text="${product.name}">Tên Sản Phẩm</h5>
+									<h5 class="card-title product-name" th:text="${product.name}">Tên Sản Phẩm</h5>
 									<div class="price-info d-flex align-items-center">
 										<!-- Giá đã giảm -->
 										<div class="price-discount-container d-flex flex-column me-2">
@@ -255,13 +255,9 @@
 				<h2 class="fw-bolder" style="margin-top: 7px">TẤT CẢ SẢN PHẨM</h2>
 			</div>
 			<div class="row py-5">
-				<div class="col-md-3 pt-5" th:each="product : ${products}" data-aos="fade-up">
+				<div class="col-md-2 pt-5" th:each="product : ${products}" data-aos="fade-up">
 					<div class="card product-card">
-<<<<<<< HEAD
 						<a th:href="@{/yourstyle/product/detail/{productId}(productId=${product.productId})}">
-=======
-						<a th:href="@{/product/detail/{id}(id=${product.productId})}">
->>>>>>> cartUserOfChienTX
 							<img th:src="@{/uploads/} + ${product.image}" class="img-fluid" alt="Hình ảnh sản phẩm">
 						</a>
 						<div class="p-2">

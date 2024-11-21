@@ -71,11 +71,11 @@
                                 <div class="text-end">
                                     <!-- <span id="order-status" th:attr="data-status=${order.getStatusCode()}"></span> -->
 
-                                    <form th:if="${order.getStatusCode() == 1 || order.getStatusCode() == 2}"
+                                    <!-- <form th:if="${order.getStatusCode() == 1 || order.getStatusCode() == 2}"
                                         th:action="@{/yourstyle/order/cancel/{id}(id=${order.orderId})}" method="post"
                                         style="display:inline;">
                                         <button type="submit" class="btn btn-outline-secondary">Hủy Đơn</button>
-                                    </form>
+                                    </form> -->
                                     <a class="btn btn-outline-secondary"
                                         th:href="@{/yourstyle/order/orderhistorydetail/{id}(id=${order.orderId})}">
                                         Xem Chi tiết

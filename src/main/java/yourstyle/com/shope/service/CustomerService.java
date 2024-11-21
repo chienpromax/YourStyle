@@ -49,4 +49,5 @@ public interface CustomerService {
 			Pageable pageable);
 
 	Page<Customer> findAllNotRetailCustomer(Integer customerId, Pageable pageable);
+
 }

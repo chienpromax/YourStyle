@@ -5,7 +5,6 @@
 
 </head>
 
-
 <body>
     <!-- ======= nav ======= -->
     <section th:fragment="nav">
@@ -23,41 +22,27 @@
                             <span class="logo-bis">Your</span><span class="logo-lite">Style</span>
                         </a>
                         <div class="mx-auto" style="width: 40%;">
-                            <form th:action="@{/search}" method="get" class="input-group rounded">
-                                <input type="search" name="name" class="form-control rounded" placeholder="TÌM KIẾM"
-                                    aria-label="Search" aria-describedby="search-addon" onfocus="showDropdown()"
-                                    oninput="fetchProductSuggestions(this.value)" autocomplete="off" />
-
-                                <button class="input-group-text border-0" type="submit" id="search-addon">
+                            <div class="input-group rounded">
+                                <input type="search" class="form-control rounded" placeholder="TÌM KIẾM"
+                                    aria-label="Search" aria-describedby="search-addon" />
+                                <span class="input-group-text border-0" id="search-addon">
                                     <i class="fas fa-search"></i>
-                                </button>
-
-                                <ul id="searchHistoryDropdown" class="dropdown-menu historymenu"
-                                    onmousedown="event.preventDefault()">
-                                    <li th:each="history : ${searchHistories}"
-                                        th:id="'history-item-' + ${history.searchId}">
-                                        <a th:href="@{/search?name=${history.keyword}}"
-                                            th:text="${history.keyword}"></a>
-                                        <span onclick="deleteSearchHistory([[{history:searchId}]])">X</span>
-                                    </li>
-                                </ul>
-
-                                <ul id="suggestedProductsDropdown" class="dropdown-menu historymenu "
-                                    onmousedown="event.preventDefault()">
-                                    <!-- Gợi ý sản phẩm sẽ được tải vào đây -->
-                                </ul>
-                            </form>
+                                </span>
+                            </div>
                         </div>
-
-
-
                     </div>
 
                     <div class="d-flex align-items-center pt-3">
-                        <a class="link-secondary me-3" href="/yourstyle/cartdetail">
+                        <a class="link-secondary me-3" data-bs-toggle="modal" data-bs-target="#cartModal">
                             <i class="fas fa-shopping-cart"></i>
-                            <span class="badge rounded-pill badge-notification bg-danger">1</span>
+                            <span class="badge rounded-pill badge-notification bg-danger"
+                                th:text="${cartItemCount}"></span>
+
                         </a>
+
+                        <!-- Modal -->
+                        <div th:replace="~{site/carts/cartshopping :: cartshopping}"></div>
+
                         <a class="link-secondary me-3" th:href="@{/yourstyle/productfavorites}"> <i
                                 class="fa-solid fa-heart"></i>
                         </a>
@@ -100,6 +85,9 @@
                                 </li>
                                 <!-- Nút Đăng xuất chỉ hiển thị khi đã đăng nhập -->
                                 <li sec:authorize="isAuthenticated()">
+                                    <a class="dropdown-item" th:href="@{/yourstyle/order/orderhistory}">LỊCH SỬ</a>
+                                </li>
+                                <li sec:authorize="isAuthenticated()">
                                     <a class="dropdown-item" th:href="@{/yourstyle/accounts/logout}">ĐĂNG XUẤT</a>
                                 </li>
                             </ul>
@@ -128,23 +116,25 @@
                                             <a th:href="@{/allproduct(categoryId=${childCategory.categoryId})}">
                                                 <div class="bg-image hover-overlay ripple mb-3"
                                                     data-mdb-ripple-color="light"
-                                                    style="width: 150px; height: 150px; overflow: hidden; border-radius: 8px;">
+                                                    style="width: 200px; height: 150px; overflow: hidden; border-radius: 8px;">
                                                     <img th:src="@{/uploads/{image}(image=${childCategory.image})}"
                                                         style="width: 100%; height: 100%; object-fit: cover;"
                                                         alt="Category Image" />
                                                 </div>
                                             </a>
+
+
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            
                         </li>
                     </ul>
                 </div>
             </nav>
 
         </section>
-        <script src="/site/js/nav.js"></script>
     </section>
 </body>
 

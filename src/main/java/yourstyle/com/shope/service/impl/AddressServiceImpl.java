@@ -9,6 +9,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Service;
 
 import yourstyle.com.shope.model.Address;
+import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.repository.AddressRepository;
 import yourstyle.com.shope.service.AddressService;
 import yourstyle.com.shope.validation.admin.AddressDto;
@@ -66,4 +67,15 @@ public class AddressServiceImpl implements AddressService {
 	public List<Address> findByAddressCustomerID(Integer customerId) {
 		return addressRepository.findByAddressCustomerID(customerId);
 	}
+    
+    @Override
+    public void deleteAllByCustomer(Customer customer) {
+        addressRepository.deleteAllByCustomer(customer);
+    }
+
+    @Override
+    public boolean existsById(Integer addressId) {
+        return addressRepository.existsById(addressId);
+    }
+    
 }

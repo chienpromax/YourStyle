@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import yourstyle.com.shope.model.Address;
 import yourstyle.com.shope.validation.admin.AddressDto;
+import yourstyle.com.shope.model.Customer;
+
 
 public interface AddressService {
 
@@ -23,5 +25,9 @@ public interface AddressService {
     List<AddressDto> findByAddressDtoCustomerID(Integer customerId);
     
     List<Address> findByAddressCustomerID(Integer customerId);
+
+    void deleteAllByCustomer(Customer customer);
+
+    boolean existsById(Integer addressId);
 
 }

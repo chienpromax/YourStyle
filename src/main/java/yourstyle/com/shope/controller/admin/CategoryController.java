@@ -59,7 +59,7 @@ public class CategoryController {
 
             // Xử lý file upload
             if (!imageFile.isEmpty()) {
-                String uploadDir = "src/main/resources/static/uploads"; // Đường dẫn lưu file trong static
+                String uploadDir = "YourStyle/src/main/resources/static/uploads"; // Đường dẫn lưu file trong static
                 Path uploadPath = Paths.get(uploadDir);
 
                 // Tạo thư mục nếu chưa tồn tại

@@ -9,57 +9,130 @@
     <!--===== main =======-->
     <section class="py-5 container" layout:fragment="main">
         <div class="setepaction d-flex justify-content-center">
-
         </div>
         <div class="row py-5">
             <div class="col-md-8">
-                <div class="table-responsive">
-                    <table class="table border">
-                        <thead>
-                            <tr class="text-center">
-                                <th scope="col">Ảnh</th>
-                                <th scope="col">Tên</th>
-                                <th scope="col">Giá</th>
-                                <th scope="col">Số lượng</th>
-                                <th scope="col"></th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-center">
-                            <tr class="">
-                                <td scope="row">
-                                    <a href="">
-                                        <img src="/site/images/product/product-1.webp" width="70px" height="150px"
-                                            class="img-fluid">
+                <h3 class="bg-light"><strong>TẤT CẢ MẶT HÀNG: <span th:text="${cartItemCount}"> </span></strong></h3>
+                <div class="table-responsive bg-light">
+                    <table class="table bg-light">
+                        <tbody th:each="orderDetail : ${orderDetails}">
+                            <tr class="align-items-stretch">
+                                <td class="text-center" scope="row">
+                                    <a
+                                        th:href="@{/product/detail/{id}(id=${orderDetail.productVariant.product.productId})}">
+                                        <img th:src="@{/uploads/} + ${orderDetail.productVariant.product.image}"
+                                            alt="Image" width="100" style="object-fit: cover; max-height: 120px;"
+                                            class="img-fluid" />
                                     </a>
                                 </td>
-                                <td>ÁO 12345</td>
-                                <td>100.000</td>
                                 <td>
-                                    <div class="form-outline" data-mdb-input-init>
-                                        <input min="1" max="5" type="number" id="form12" class="form-control"
-                                            readonly />
-                                        <label class="form-label" for="form12">Số Lượng</label>
+                                    <span th:text="${orderDetail.productVariant.product.name}"
+                                        style="font-size: 0.9rem;"></span><br>
+                                    <span th:text="${orderDetail.productVariant.color.colorName}"
+                                        style="font-size: 0.8rem;"></span> /
+                                    <span th:text="${orderDetail.productVariant.size.sizeName}"
+                                        style="font-size: 0.8rem;"></span>
+                                    <div style="margin-top: 10px;">
+                                        <div style="margin-top: 10px;">
+                                            <span class="text-danger fw-bold"
+                                                th:if="${orderDetail.productVariant.product.discount != null}"
+                                                th:text="${#numbers.formatDecimal(orderDetail.productVariant.product.price - orderDetail.productVariant.product.price * orderDetail.productVariant.product.discount.discountPercent / 100, 1, 'COMMA', 3, 'POINT') + ' Đ'}">
+                                            </span>
+                                            <span class="text-muted ms-2"
+                                                th:if="${orderDetail.productVariant.product.discount != null}">
+                                                <del
+                                                    th:text="${#numbers.formatDecimal(orderDetail.productVariant.product.price, 1, 'COMMA', 3, 'POINT') + ' Đ'}"></del>
+                                            </span>
+                                            <span class="badge bg-danger ms-2"
+                                                th:if="${orderDetail.productVariant.product.discount != null}"
+                                                th:text="'-' + ${#numbers.formatDecimal(orderDetail.productVariant.product.discount.discountPercent, 0, 0)} + '%'">
+                                            </span>
+
+                                            <span th:if="${orderDetail.productVariant.product.discount == null}"
+                                                th:text="${#numbers.formatDecimal(orderDetail.productVariant.product.price, 1, 'COMMA', 3, 'POINT') + ' Đ'}">
+                                            </span>
+                                        </div>
                                     </div>
                                 </td>
-                                <td><a href="">X</a></td>
-                            </tr>
-                            <tr class="">
-                                <td scope="row">
-                                    <a href="">
-                                        <img src="/site/images/product/product-1.webp" width="70px" height="150px"
-                                            class="img-fluid">
-                                    </a>
-                                </td>
-                                <td>ÁO 12345</td>
-                                <td>100.000</td>
-                                <td>
-                                    <div class="form-outline" data-mdb-input-init>
-                                        <input min="1" max="5" type="number" id="form12" class="form-control"
-                                            readonly />
-                                        <label class="form-label" for="form12">Số Lượng</label>
+                                <td class="text-center d-flex align-items-end justify-content-center"
+                                    style="min-height: 163px;">
+                                    <form action="/yourstyle/carts/updateQuantity" method="post" class="px-2">
+                                        <input type="hidden" name="orderDetailId"
+                                            th:value="${orderDetail.orderDetailId}" />
+                                        <select style="font-size: 0.7rem; width: 90px;" name="quantity"
+                                            class="form-select quantity-selector rounded-pill"
+                                            onchange="this.form.submit()">
+                                            <option th:selected="${orderDetail.quantity == 1}" value="1">SL: 1</option>
+                                            <option th:selected="${orderDetail.quantity == 2}" value="2">SL: 2</option>
+                                            <option th:selected="${orderDetail.quantity == 3}" value="3">SL: 3</option>
+                                            <option th:selected="${orderDetail.quantity == 4}" value="4">SL: 4</option>
+                                            <option th:selected="${orderDetail.quantity == 5}" value="5">SL: 5</option>
+                                            <option th:selected="${orderDetail.quantity == 10}" value="5">SL: 10
+                                            </option>
+                                            <option th:selected="${orderDetail.quantity == 15}" value="5">SL: 15
+                                            </option>
+                                        </select>
+                                    </form>
+
+
+                                    <!-- Action Icons -->
+                                    <div class="d-flex gap-1">
+                                        <div class="d-flex gap-1">
+                                            <form action="" method="post">
+                                                <input type="hidden" name="orderDetailId"
+                                                    th:value="${orderDetail.orderDetailId}" />
+                                                <button type="button" class="icon-cartDetail-button"
+                                                    data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                                    <i class="bi bi-search icon-cartDetail-button px-1"></i>
+                                                </button>
+                                            </form>
+
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static"
+                                                data-bs-keyboard="false" tabindex="-1"
+                                                aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="staticBackdropLabel">Xem sản phẩm khác</h5>
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="row">
+                                                                <div class="col-md-3 pt-3"
+                                                                    th:each="product : ${products}" data-aos="fade-up">
+                                                                    <div class="card product-card">
+                                                                        <a th:href="@{/product/detail/{id}(id=${product.productId})}">
+                                                                            <img th:src="@{/uploads/} + ${product.image}"
+                                                                                class="img-fluid"
+                                                                                alt="Hình ảnh sản phẩm">
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <form action="" method="post">
+                                                <input type="hidden" name="orderDetailId"
+                                                    th:value="${orderDetail.orderDetailId}" />
+                                                <button type="submit" class="icon-cartDetail-button">
+                                                    <i class="bi bi-heart icon-cartDetail-button px-1"></i>
+                                                </button>
+                                            </form>
+                                            <form action="/yourstyle/carts/removeProduct" method="post">
+                                                <input type="hidden" name="orderDetailId"
+                                                    th:value="${orderDetail.orderDetailId}" />
+                                                <button type="submit" class="icon-cartDetail-button">
+                                                    <i class="bi bi-trash icon-cartDetail-button px-1"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </td>
-                                <td><a href="">X</a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -69,10 +142,15 @@
                 <div class="card">
                     <h3 class="p-2">Tóm Tắt Đơn Hàng</h3>
                     <div class="card-body">
-                        <h5 class="card-title pb-3">Giá ước tính: <span class="float-end">100.000 Đ</span></h5>
-                        <a class="py-5" th:href="@{/yourstyle/orderdetail}">
-                            <button class="btn-cart-detail">THÊM VÀO GIỎ HÀNG</button>
-                        </a>
+                        <h5 class="card-title pb-3">Giá ước tính: <strong><span class="float-end"
+                                    th:text="${#numbers.formatDecimal(totalAmount, 1, 'COMMA', 3, 'POINT')+ ' Đ'}"></span></strong>
+                        </h5>
+
+                        <div class="text-center">
+                            <a class="py-5" th:href="@{/yourstyle/carts/orderdetail}">
+                                <button class="custom-btn-main">CHUẨN BỊ ĐẶT HÀNG</button>
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div class="row pt-4 d-flex align-items-center justify-content-center">
@@ -100,6 +178,75 @@
                 </div>
             </div>
         </div>
+        <div class="row pt-5">
+            <h2 class="text-center">CÓ LẼ BẠN MUỐN THÊM VÀO</h2>
+
+            <div class="col-md-3 pt-5" data-aos="fade-up">
+                <div class="card product-card">
+                    <a href="/allproduct">
+                        <img src="/site/images/product/product-2.webp" class="img-fluid">
+                    </a>
+                    <div class="p-2">
+                        <h5>Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
+                            <a href="/productfavorites">
+                                <i class="fa-regular fa-heart"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 pt-5" data-aos="fade-up">
+                <div class="card product-card">
+                    <a href="/allproduct">
+                        <img src="/site/images/product/product-2.webp" class="img-fluid">
+                    </a>
+                    <div class="p-2">
+                        <h5>Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
+                            <a href="/productfavorites">
+                                <i class="fa-regular fa-heart"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 pt-5" data-aos="fade-up">
+                <div class="card product-card">
+                    <a href="/allproduct">
+                        <img src="/site/images/product/product-2.webp" class="img-fluid">
+                    </a>
+                    <div class="p-2">
+                        <h5>Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
+                            <a href="/productfavorites">
+                                <i class="fa-regular fa-heart"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 pt-5" data-aos="fade-up">
+                <div class="card product-card">
+                    <a href="/allproduct">
+                        <img src="/site/images/product/product-2.webp" class="img-fluid">
+                    </a>
+                    <div class="p-2">
+                        <h5>Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
+                            <a href="/productfavorites">
+                                <i class="fa-regular fa-heart"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="/site/js/cartDetail.js"></script>
     </section>
 </body>
 

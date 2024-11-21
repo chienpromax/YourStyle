@@ -87,7 +87,7 @@ public class CustomerController {
 		// Xử lý upload tệp
 		if (imageFile != null && !imageFile.isEmpty()) {
 			try {
-				String uploadDir = "src/main/resources/static/uploads/";
+				String uploadDir = "YourStyle/src/main/resources/static/uploads/";
 				String originalFilename = imageFile.getOriginalFilename();
 				String newFilename = UploadUtils.saveFile(uploadDir, originalFilename, imageFile);
 				customer.setAvatar(newFilename);

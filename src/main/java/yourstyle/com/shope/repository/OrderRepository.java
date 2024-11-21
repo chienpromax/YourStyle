@@ -51,4 +51,16 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     @Query("SELECT o FROM Order o WHERE o.orderChannel LIKE :orderChannel AND NOT o.status = :status")
     Page<Order> findByOrderChannelNotStatusComplete(@Param("orderChannel") OrderChannel orderChannel,
             @Param("status") Integer status, Pageable pageable);
+
+
+//     List<Order> findByCustomer(Customer customer);
+
+    List<Order> findByCustomerAndStatus(Customer customer, int status);
+
+    List<Order> findByCustomer_CustomerId(Integer customerId);
+
+    @Query("SELECT o FROM Order o WHERE o.customer.customerId = :customerId AND o.status = 9")
+    Order findOrderByCustomerIdAndStatus(@Param("customerId") Integer customerId);
+    
+    List<Order> findByCustomerOrderByOrderDateDesc(Customer customer);
 }

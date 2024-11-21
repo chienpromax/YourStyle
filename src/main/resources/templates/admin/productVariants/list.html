@@ -60,6 +60,7 @@
                                     <tr>
                                         <th scope="col">STT</th>
                                         <th scope="col">ID</th>
+                                        <th scope="col">Ảnh</th>
                                         <th scope="col">Tên sản phẩm</th>
                                         <th scope="col">Màu sắc</th>
                                         <th scope="col">Kích thước</th>
@@ -76,6 +77,10 @@
                                     <tr th:each="variant, stat : ${productVariants}">
                                         <td th:text="${stat.count}"></td>
                                         <td th:text="${variant.productVariantId}"></td>
+                                        <td>
+                                            <img th:src="@{/uploads/} + ${variant.product.image}" alt="Image" width="50"
+                                                height="50" style="object-fit: cover; border-radius: 10%;" />
+                                        </td>
                                         <td th:text="${variant.product.name}"></td>
                                         <td th:text="${variant.color.colorName}"></td>
                                         <td th:text="${variant.size.sizeName}"></td>

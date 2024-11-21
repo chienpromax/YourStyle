@@ -1,5 +1,6 @@
 package yourstyle.com.shope.service;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
@@ -68,4 +69,14 @@ public interface OrderService {
 	Integer countVoucherUsed(@Param("voucherId") Integer voucherId);
 
 	Page<Order> findByCustomer(Customer customer, Pageable pageable);
+
+	// thêm giỏ hàng
+	void addProductToCart(Integer customerid, Integer productVariantId, Integer colorId, Integer sizeId,
+			Integer quantity);
+
+	BigDecimal applyVoucher(String voucherCode, BigDecimal totalAmount);
+
+	BigDecimal calculateDiscountedTotal(BigDecimal totalAmount, BigDecimal discountAmount);
+
+	List<Order> findByCustomerOrderByOrderDateDesc(Customer customer);
 }

@@ -8,8 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import jakarta.transaction.Transactional;
+
 import yourstyle.com.shope.model.Address;
 import yourstyle.com.shope.validation.admin.AddressDto;
+import yourstyle.com.shope.model.Customer;
+
 
 @Repository
 public interface AddressRepository extends JpaRepository<Address, Integer> {
@@ -25,4 +29,8 @@ public interface AddressRepository extends JpaRepository<Address, Integer> {
     
     @Query("SELECT a FROM Address a WHERE a.customer.customerId = ?1")
 	List<Address> findByAddressCustomerID(Integer customerId);
+
+    @Transactional
+    void deleteAllByCustomer(Customer customer);
+
 }

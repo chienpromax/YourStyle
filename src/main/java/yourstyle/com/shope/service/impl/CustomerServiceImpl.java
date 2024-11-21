@@ -84,10 +84,10 @@ public class CustomerServiceImpl implements CustomerService {
 		return customerRepository.existsByPhoneNumber(phoneNumber);
 	}
 
-	@Override
-	public Customer findByAccountId(Integer accountId) {
-		return customerRepository.findByAccountId(accountId);
-	}
+	// @Override
+	// public Customer findByAccountId(Integer accountId) {
+	// 	return customerRepository.findByAccountId(accountId);
+	// }
 
 	@Override
 	public Page<Customer> findByFullnameContaining(Integer customerId, String fullname, Pageable pageable) {
@@ -103,4 +103,9 @@ public class CustomerServiceImpl implements CustomerService {
 	public Page<Customer> findAllNotRetailCustomer(Integer customerId, Pageable pageable) {
 		return customerRepository.findAllNotRetailCustomer(customerId, pageable);
 	}
+
+    public Customer findByAccountId(Integer accountId) {
+        return customerRepository.findByAccount_AccountId(accountId);
+    }
+
 }

@@ -106,4 +106,12 @@ public class Customer implements Serializable {
 				'}';
 	}
 
+	public Address getDefaultAddress() {
+		if (addresses == null || addresses.isEmpty()) {
+			return new Address();
+		}
+		return addresses.stream().filter(Address::getIsDefault).findFirst().orElse(new Address());
+	}
+	
+	
 }

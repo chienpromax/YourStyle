@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{site/index.html}">
+
+<head>
+    <title>Lịch sử đơn hàng</title>
+    <style>
+        .timeline {
+            border-left: 3px solid #ddd;
+            padding-left: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            margin-top: 20px;
+        }
+
+        .order-status-timeline {
+            position: relative;
+            height: 30px;
+            width: 100%;
+            /* background: linear-gradient(to right, #fcff32, #f2fa68, #fff97f); */
+            border-radius: 5px;
+            overflow: hidden;
+            border: 1px solid #1E90FF;
+        }
+
+        .fill-bar {
+            position: relative;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(to right, #9ae6ff, #1E90FF);
+            animation: fillAnimation 5s forwards;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .fill-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 200%;
+            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.5) 20%, transparent 20%),
+                radial-gradient(circle, rgba(255, 255, 255, 0.5) 20%, transparent 20%);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            animation: waveAnimation 4s linear infinite;
+        }
+
+        /* @keyframes fillAnimation {
+            to {
+                width: 100%;
+            }
+        } */
+
+        @keyframes waveAnimation {
+            from {
+                background-position: -60px 0, -45px 15px;
+            }
+
+            to {
+                background-position: 0 0, 15px 15px;
+                /* background-position: -60px 0, -45px 15px; */
+            }
+        }
+
+
+        .order-status i {
+            font-size: 1.5em;
+            color: #28a745;
+        }
+
+        .icon-wrapper {
+            margin-top: -100px;
+            margin-bottom: 30px;
+        }
+
+        .icon-wrapper .bi-check2-square {
+            color: transparent;
+        }
+
+        .icon-wrapper.active .bi-check2-square {
+            color: green;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .icon-wrapper i {
+            font-size: 2em;
+            color: red;
+        }
+
+        .icon-wrapper.active i.bi-check2-square {
+            display: inline-block;
+            color: green;
+        }
+    </style>
+</head>
+
+<body>
+    <!--===== main =======-->
+    <section class="py-5 container bg-light" layout:fragment="main">
+        <div class="container my-5">
+            <a th:href="@{/yourstyle/order/orderhistory}" class="btn btn-link mb-3">← Trở Lại</a>
+
+            <button th:if="${order.getStatusCode() == 6}" type="button" class="btn btn-link float-end mb-3 text-danger" data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop">
+                <i class="bi bi-exclamation-triangle"></i> TRẢ HÀNG
+            </button>
+
+            <h1 th:if="${order.getStatusCode() == 0}" class="text-center text-danger"
+                th:text="${order.transactionStatus ?: ''}"></h1>
+            <div class="order-status row">
+                <section class="py-1 bg-light">
+                    <div class="order-status row">
+                        <div class="order-status-timeline">
+                            <div class="fill-bar"></div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Trạng thái đơn hàng -->
+                <div class="d-flex justify-content-between mb-4 position-relative order-status-time">
+                    <div class="text-center icon-container">
+                        <div class="icon-wrapper">
+                            <i class="bi bi-check2-square"></i><br>
+                        </div>
+                        <i class="bi bi-box-seam"></i><br>
+                        Đơn Hàng Đã Đặt <br><small th:text="${order.orderDate}"></small>
+                    </div>
+                    <div class="text-center icon-container">
+                        <div class="icon-wrapper">
+                            <i class="bi bi-check2-square"></i><br>
+                        </div>
+                        <i class="bi bi-house-door"></i><br>
+                        ĐANG ĐÓNG GÓI <br>
+                    </div>
+                    <div class="text-center icon-container">
+                        <div class="icon-wrapper">
+                            <i class="bi bi-check2-square"></i><br>
+                        </div>
+                        <i class="bi bi-truck"></i><br>
+                        GIAO VẬN CHUYỂN <br>
+                    </div>
+                    <div class="text-center icon-container">
+                        <div class="icon-wrapper">
+                            <i class="bi bi-check2-square"></i><br>
+                        </div>
+                        <i class="bi bi-box-arrow-up"></i><br>
+                        ĐANG GIAO HÀNG <br>
+                    </div>
+                    <div class="text-center icon-container">
+                        <div class="icon-wrapper">
+                            <i class="bi bi-check2-square"></i><br>
+                        </div>
+                        <i class="bi bi-currency-dollar"></i><br>
+                        ĐÃ THANH TOÁN <br>
+                    </div>
+                    <div class="text-center icon-container">
+                        <div class="icon-wrapper">
+                            <i class="bi bi-check2-square"></i><br>
+                        </div>
+                        <i class="bi bi-star"></i><br>
+                        Hoàn Thành <br>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Hiển thị địa chỉ giao hàng -->
+                <div class="row d-flex py-5">
+                    <div class="text-start col-md-6">
+                        <h4><strong>Địa chỉ nhận hàng</strong></h4>
+                        <p th:if="${defaultAddress != null}">
+                            <span th:text="${customer.fullname}"></span><br>
+                            <span th:text="'(+84 )' + ' ' + ${customer.phoneNumber}"></span><br>
+                            <span
+                                th:text="${defaultAddress.street} + ', ' + ${defaultAddress.district} + ', ' + ${defaultAddress.city} + ', ' + ${defaultAddress.ward}"></span>
+                        </p>
+                        <p th:if="${defaultAddress == null}">
+                            <span>Bạn chưa có địa chỉ.</span>
+                        </p>
+                    </div>
+                    <div class="text-end col-md-6 bg-light">
+                        <p>Áp dụng:
+                            <span
+                                th:text="${order.voucher != null ? order.voucher.voucherName : 'Không có voucher'}"></span>
+                        </p>
+                        <p>Thành tiền: <span class="text-danger"
+                                th:text="${#numbers.formatDecimal(order.totalAmount, 1, 'COMMA', 3, 'POINT') + ' Đ'}"></span>
+                        </p>
+                        <span
+                            th:text="${order.transactionType ?: 'Đang xử lý'} + ' - ' + ${order.transactionStatus ?: ''}"></span>
+                        <span class="badge" th:classappend="${order.status == 9 ? 'bg-warning' : 'bg-success'}"
+                            th:text="${order.getStatusDescription()}">Status</span>
+                        <span id="order-status" th:attr="data-status=${order.getStatusCode()}"></span>
+                    </div>
+                </div>
+
+                <div th:each="detail : ${orderDetails}">
+                    <div class="d-flex py-2">
+                        <img th:src="@{'/uploads/' + ${detail.productVariant.product.image}}" alt="Product Image"
+                            width="140" class="me-3 img-fluid" />
+                        <div>
+                            <h6 th:text="${detail.productVariant.product.name}">Tên sản phẩm</h6>
+                            <p>Số lượng: <span th:text="${detail.quantity}"></span></p>
+                            <p>Giá: <span
+                                    th:text="${#numbers.formatDecimal(detail.price, 1, 'COMMA', 3, 'POINT') + ' Đ'}"></span>
+                            </p>
+                            <a th:href="@{/product/detail/{id}(id=${detail.productVariant.product.productId})}"
+                                class="btn">Mua Lại</a>
+                        </div>
+                    </div>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+                        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="staticBackdropLabel">Lưu ý Về việc trả hàng</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Khi bạn muốn trả hàng vui lòng liên hệ nhân viên hoạc nhắn tin trực tiếp, bạn
+                                        phải cung cấp được lý do trả hàng và Mã hóa đơn, khi có xác nhận từ nhân viên
+                                        bạn có thể trả lại hàng và sẽ được hoàn lại tiền trong thời gian cụ thể</p><br>
+                                    <h4>MÃ HÓA ĐƠN CỦA BẠN LÀ: 
+                                    <strong class="text-danger">HD <span th:text="${order.orderId}"></span></strong></h4><br>
+                                    <h5>Bạn có thể liên hệ qua SDT: 0359690062</h5>
+                                    <h5>Hoạc liên hệ qua dịch vụ tin nhắn có trên trang web</h5>
+                                    <h5>Hoạc click vào đây
+                                        <a
+                                            href="https://www.messenger.com/t/468726266327729/?messaging_source=source%3Apages%3Amessage_shortlink&source_id=1441792&recurring_notification=0">messeger</a>
+                                        ,<a href="https://zalo.me/0899871800">Zalo</a>
+                                    </h5>
+                                    <h5>Xin chân thành cảm ơn!</h5>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ĐÃ
+                                        RÕ</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const orderStatus = document.getElementById("order-status").getAttribute("data-status") || 9;
+
+                if (orderStatus == 9) {
+                    console.log("Status is 9, no progress animation will run.");
+                    return;
+                }
+
+                const maxStatus = 6;
+                const progressWidth = (orderStatus / maxStatus) * 100;
+
+                console.log("Progress Width: ", progressWidth);
+
+                const fillBar = document.querySelector(".fill-bar");
+                fillBar.style.transition = "width 4s ease";
+                fillBar.style.width = progressWidth + "%";
+
+                const timelineItems = document.querySelectorAll(".icon-wrapper");
+                timelineItems.forEach((item, index) => {
+                    if (index + 1 <= orderStatus) {
+                        item.classList.add("active");
+                    } else {
+                        item.classList.remove("active");
+                    }
+                });
+            });
+
+        </script>
+
+    </section>
+</body>
+
+</html>

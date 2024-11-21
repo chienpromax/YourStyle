@@ -37,4 +37,12 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Intege
                         @Param("productVariant") ProductVariant productVariant,
                         @Param("size") Size size,
                         @Param("color") Color color);
+
+        @Query("SELECT od FROM OrderDetail od WHERE od.order.orderId = :orderId AND od.productVariant.productVariantId = :productVariantId AND od.productVariant.color.colorId = :colorId AND od.productVariant.size.sizeId = :sizeId")
+        Optional<OrderDetail> findOneByOrderAndProductVariant(@Param("orderId") Integer orderId,
+                        @Param("productVariantId") Integer productVariantId,
+                        @Param("colorId") Integer colorId,
+                        @Param("sizeId") Integer sizeId);
+
+        // List<OrderDetail> findByOrder(Order order);
 }

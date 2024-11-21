@@ -17,6 +17,7 @@ import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.repository.AccountRepository;
 import yourstyle.com.shope.repository.CustomerRepository;
 import yourstyle.com.shope.repository.RoleRepository;
+import yourstyle.com.shope.repository.SearchHistoryRepository;
 import yourstyle.com.shope.service.AccountService;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -41,6 +42,8 @@ public class AccountServiceImpl implements AccountService {
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder; // Cần có @Autowired ở đây
 
+	@Autowired
+	private SearchHistoryRepository searchHistoryRepository;
 	public AccountServiceImpl() {
 	}
 
@@ -85,6 +88,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public void deleteById(Integer id) {
+		searchHistoryRepository.deleteById(id); // Xóa các liên kết trước
 		accountRepository.deleteById(id);
 	}
 

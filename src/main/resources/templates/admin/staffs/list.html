@@ -143,16 +143,16 @@
       function confirmDelete(customerId) {
         Swal.fire({
           title: 'Bạn có chắc chắn muốn xóa?',
-          text: "Bạn sẽ không thể hoàn tác sau khi xóa!",
+          html: '<span style="color: red;">Tài khoản cũng sẽ bị xóa!</span><br>Bạn sẽ không thể hoàn tác sau khi xóa!',
           icon: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
-          confirmButtonText: 'xóa nó!',
+          confirmButtonText: 'Xóa nó!',
           cancelButtonText: 'Hủy'
         }).then((result) => {
           if (result.isConfirmed) {
-            window.location.href = '/admin/staffs/delete/' + 10;
+            window.location.href = '/admin/staffs/delete/' + customerId;
           }
         });
       }
@@ -160,7 +160,7 @@
         window.location.href = "/admin/staffs?page=0&size=" + size;
       }
     </script>
-    <script src="/admin/js/accountList.js"></script>
+   
     <script src="/admin/js/accountAddOrEdit.js"></script>
 </section>
   </section>

@@ -112,7 +112,7 @@
                     <option value="5" th:selected="${size == 5}">5</option>
                     <option value="10" th:selected="${size == 10}">10</option>
                     <option value="20" th:selected="${size == 20}">20</option>
-                </select>
+                  </select>
                 </div>
               </form>
               <nav aria-label="Page navigation">
@@ -147,12 +147,12 @@
       function confirmDelete(customerId) {
         Swal.fire({
           title: 'Bạn có chắc chắn muốn xóa?',
-          text: "Bạn sẽ không thể hoàn tác sau khi xóa!",
+          html: '<span style="color: red;">Tài khoản cũng sẽ bị xóa!</span><br>Bạn sẽ không thể hoàn tác sau khi xóa!',
           icon: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
-          confirmButtonText: 'xóa nó!',
+          confirmButtonText: 'Xóa nó!',
           cancelButtonText: 'Hủy'
         }).then((result) => {
           if (result.isConfirmed) {
@@ -160,9 +160,10 @@
           }
         });
       }
+
       function changePageSize(size) {
         window.location.href = "/admin/customers?page=0&size=" + size;
-    }
+      }
     </script>
 
     <script src="/admin/js/accountList.js"></script>

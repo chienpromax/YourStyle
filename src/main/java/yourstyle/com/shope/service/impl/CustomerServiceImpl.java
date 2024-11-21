@@ -7,14 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import yourstyle.com.shope.model.Customer;
+import yourstyle.com.shope.repository.AccountRepository;
 import yourstyle.com.shope.repository.CustomerRepository;
+import yourstyle.com.shope.repository.SearchHistoryRepository;
+import yourstyle.com.shope.repository.VoucherRepository;
 import yourstyle.com.shope.service.CustomerService;
-import yourstyle.com.shope.validation.admin.CustomerDto;
 import yourstyle.com.shope.validation.admin.StaffDto;
 
 @Service
@@ -22,6 +27,18 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Autowired
 	CustomerRepository customerRepository;
+
+	@Autowired
+	AccountRepository accountRepository;
+
+	@Autowired
+	SearchHistoryRepository searchHistoryRepository;
+
+	@Autowired
+	VoucherRepository voucherRepository;
+
+	// @Autowired
+	// OrderRepository orderRepository;
 
 	public CustomerServiceImpl(CustomerRepository customerRepository) {
 		this.customerRepository = customerRepository;
@@ -73,7 +90,19 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteById(Integer id) {
+		Customer customer = customerRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng"));
+
+		voucherRepository.deleteById(id);
+
+		// Xóa lịch sử tkiem trước
+		searchHistoryRepository.deleteById(id);
+		// Xóa tài khoản trước
+		accountRepository.deleteById(customer.getAccount().getAccountId());
+
+		// Xóa khách hàng
 		customerRepository.deleteById(id);
 	}
 
@@ -121,7 +150,5 @@ public class CustomerServiceImpl implements CustomerService {
 				customer.getGender(),
 				customer.getBirthday());
 	}
-
-	
 
 }

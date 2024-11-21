@@ -104,7 +104,7 @@ public class SearchProductController {
 
     @GetMapping("/deleteSearchHistory")
     @ResponseBody
-    public String deleteSearchHistory(@RequestParam("id") Long id) {
+    public String deleteSearchHistory(@RequestParam("id") Integer id) {
         searchHistoryRepository.deleteById(id);
         return "Deleted";
     }

@@ -55,111 +55,120 @@ public class CustomerController {
 	}
 
 	@PostMapping("saveOrUpdate")
-	public ModelAndView saveOrUpdate(ModelMap model, @Validated @ModelAttribute("customer") CustomerDto customerDto,
-			BindingResult result, @RequestParam MultipartFile imageFile,
-			@RequestParam(required = false, defaultValue = "customer") String type,
-			RedirectAttributes redirectAttributes) {
+public ModelAndView saveOrUpdate(ModelMap model, 
+                                 @Validated @ModelAttribute("customer") CustomerDto customerDto,
+                                 BindingResult result, 
+                                 @RequestParam MultipartFile imageFile,
+                                 @RequestParam(required = false, defaultValue = "customer") String type,
+                                 RedirectAttributes redirectAttributes) {
 
-		List<Account> accounts = accountService.findAll();
-		model.addAttribute("accounts", accounts);
+    List<Account> accounts = accountService.findAll();
+    model.addAttribute("accounts", accounts);
 
-		Customer customer = convertToCustomer(customerDto);
+    Customer customer = convertToCustomer(customerDto);
+    if (result.hasErrors()) {
+        model.addAttribute("customer", customerDto);
+        model.addAttribute("messageType", "error");
+        model.addAttribute("messageContent", "Lỗi! Kiểm tra lại thông tin!");
+        return new ModelAndView("admin/customers/addOrEdit", model);
+    }
 
-		// Address address = convertToAddress(customerDto); // Convert DTO thành Address
-		// FIX
-		Address address = addressService.findDefaultByCustomerId(customer.getCustomerId()).orElse(new Address());
-		BeanUtils.copyProperties(customerDto, address);
-		// END FIX
+    // Upload và xử lý ảnh đại diện
+    if (imageFile != null && !imageFile.isEmpty()) {
+        try {
+            String uploadDir = "src/main/resources/static/uploads/";
+            String originalFilename = imageFile.getOriginalFilename();
+            String newFilename = UploadUtils.saveFile(uploadDir, originalFilename, imageFile);
+            customer.setAvatar(newFilename);
+        } catch (IOException e) {
+            model.addAttribute("messageType", "error");
+            model.addAttribute("messageContent", "Lỗi khi tải tệp: " + e.getMessage());
+            return new ModelAndView("admin/customers/addOrEdit", model);
+        }
+    }
 
-		if (result.hasErrors()) {
-			redirectAttributes.addAttribute("customer", customerDto);
-			redirectAttributes.addAttribute("messageType", "error");
-			redirectAttributes.addAttribute("messageContent", "Lỗi Kiểm tra lại thông tin!");
-			return new ModelAndView("admin/customers/addOrEdit", model);
-		}
+    // Xử lý lưu hoặc cập nhật khách hàng và địa chỉ
+    if (customer.getCustomerId() != null) {
+        customerService.update(customer);
 
-		// Upload và xử lý ảnh đại diện
-		if (imageFile != null && !imageFile.isEmpty()) {
-			try {
-				String uploadDir = "src/main/resources/static/uploads/";
-				String originalFilename = imageFile.getOriginalFilename();
-				String newFilename = UploadUtils.saveFile(uploadDir, originalFilename, imageFile);
-				customer.setAvatar(newFilename);
-			} catch (IOException e) {
-				model.addAttribute("messageType", "error");
-				model.addAttribute("messageContent", "Lỗi khi tải tệp: " + e.getMessage());
-				return new ModelAndView("admin/customers/addOrEdit", model);
-			}
-		}
+        Address address = addressService.findDefaultByCustomerId(customer.getCustomerId()).orElse(new Address());
+        BeanUtils.copyProperties(customerDto, address);
+        address.setCustomer(customer);
+        addressService.updateDefaultAddress(address, customer.getCustomerId());
 
-		// Lưu hoặc cập nhật thông tin
-		if (customer.getCustomerId() != null) {
-			customerService.update(customer);
-			addressService.updateDefaultAddress(address, customer.getCustomerId());
-			redirectAttributes.addAttribute("messageType", "success");
-			redirectAttributes.addAttribute("messageContent", "Cập nhật thành công!");
+        redirectAttributes.addAttribute("messageType", "success");
+        redirectAttributes.addAttribute("messageContent", "Cập nhật thành công!");
+    } else {
+        Customer savedCustomer = customerService.save(customer);
 
-		} else {
-			Customer savedCustomer = customerService.save(customer);
-			address.setCustomer(savedCustomer);
-			address.setIsDefault(true);
-			addressService.save(address);
-			redirectAttributes.addAttribute("messageType", "success");
-			redirectAttributes.addAttribute("messageContent", "Thêm thành công!");
+        Address address = new Address();
+        BeanUtils.copyProperties(customerDto, address);
+        address.setCustomer(savedCustomer);
+        address.setIsDefault(true); // Đặt địa chỉ này là mặc định
+        addressService.save(address);
 
-		}
+        redirectAttributes.addAttribute("messageType", "success");
+        redirectAttributes.addAttribute("messageContent", "Thêm mới thành công!");
+    }
 
-		// String redirectUrl = "/admin/customers"; // Mặc định chuyển hướng đến trang customers
-		// if (customer.getAccount() != null && customer.getAccount().getRole() != null) {
-		// 	// Debug thông tin vai trò
-		// 	System.out.println("Role name: " + customer.getAccount().getRole().getName());
-		// 	boolean isEmployee = "ROLE_EMPLOYEE".equals(customer.getAccount().getRole().getName());
-		// 	if (isEmployee) {
-		// 		redirectUrl = "/admin/staffs"; // Nếu là employee, chuyển hướng đến trang staffs
-		// 	}
-		// } else {
-		// 	System.out.println("Account or Role is null");
-		// }
+    // Kiểm tra vai trò của tài khoản để chuyển hướng
+    String redirectUrl = "/admin/customers"; // Mặc định
+    if (customer.getAccount() != null && customer.getAccount().getRole() != null) {
+        String roleName = customer.getAccount().getRole().getName();
+        if ("ROLE_EMPLOYEE".equalsIgnoreCase(roleName)) {
+            redirectUrl = "/admin/staffs";
+        }
+    }
 
-		// Điều hướng đến trang phù hợp
-		String redirectUrl = type.equals("staff") ? "/admin/staffs" :
-		"/admin/customers";
-		return new ModelAndView("redirect:" + redirectUrl);
+    return new ModelAndView("redirect:" + redirectUrl);
+}
 
-	}
 
 	@GetMapping("edit")
-	public ModelAndView edit(ModelMap model,
-			@RequestParam("id") Integer customerId,
-			@RequestParam String type) {
-		CustomerDto customerDto = new CustomerDto();
-		Optional<Customer> optional = customerService.findById(customerId);
-		List<Account> accounts = accountService.findAll();
+public ModelAndView edit(ModelMap model,
+                         @RequestParam("id") Integer customerId,
+                         @RequestParam String type) {
+    CustomerDto customerDto = new CustomerDto();
+    Optional<Customer> optional = customerService.findById(customerId);
+    List<Account> accounts = accountService.findAll();
 
-		if (optional.isPresent()) {
-			Customer customer = optional.get();
-			BeanUtils.copyProperties(customer, customerDto);
-			customerDto.setEdit(true);
+    if (optional.isPresent()) {
+        Customer customer = optional.get();
+        BeanUtils.copyProperties(customer, customerDto);
+        customerDto.setEdit(true);
 
-			// Lấy địa chỉ mặc định
-			Optional<Address> defaultAddressOpt = addressService.findDefaultByCustomerId(customerId);
-			Address defaultAddress = defaultAddressOpt.orElse(new Address());
+        // Lấy địa chỉ mặc định
+        Optional<Address> defaultAddressOpt = addressService.findDefaultByCustomerId(customerId);
+        Address defaultAddress = defaultAddressOpt.orElse(new Address());
 
-			// Thiết lập địa chỉ mặc định cho customerDto
-			customerDto.setStreet(defaultAddress.getStreet());
-			customerDto.setCity(defaultAddress.getCity());
-			customerDto.setDistrict(defaultAddress.getDistrict());
-			customerDto.setWard(defaultAddress.getWard());
+        // Thiết lập địa chỉ mặc định cho customerDto
+        customerDto.setStreet(defaultAddress.getStreet());
+        customerDto.setCity(defaultAddress.getCity());
+        customerDto.setDistrict(defaultAddress.getDistrict());
+        customerDto.setWard(defaultAddress.getWard());
 
-			model.addAttribute("customer", customerDto);
-			model.addAttribute("accounts", accounts);
-			model.addAttribute("type", type); // Thêm type vào model
-			return new ModelAndView("admin/customers/addOrEdit");
-		}
-		model.addAttribute("messageType", "warning");
-		model.addAttribute("messageContent", "Người dùng không tồn tại!");
-		return new ModelAndView("redirect:/admin/customers", model);
-	}
+        model.addAttribute("customer", customerDto);
+        model.addAttribute("accounts", accounts);
+        model.addAttribute("type", type); // Thêm type vào model
+
+        // Kiểm tra vai trò của tài khoản để thiết lập trang điều hướng
+        if (customer.getAccount() != null && customer.getAccount().getRole() != null) {
+            String roleName = customer.getAccount().getRole().getName();
+            if ("ROLE_EMPLOYEE".equalsIgnoreCase(roleName)) {
+                model.addAttribute("redirectUrl", "/admin/staffs");
+            } else {
+                model.addAttribute("redirectUrl", "/admin/customers");
+            }
+        }
+
+        return new ModelAndView("admin/customers/addOrEdit", model);
+    }
+
+    model.addAttribute("messageType", "warning");
+    model.addAttribute("messageContent", "Người dùng không tồn tại!");
+    return new ModelAndView("redirect:/admin/customers", model);
+}
+
 
 	private Address convertToAddress(CustomerDto customerDto) {
 		Address address = new Address();
@@ -207,16 +216,23 @@ public class CustomerController {
 	}
 
 	@GetMapping("delete/{customerId}")
-	public ModelAndView delete(ModelMap model, @PathVariable("customerId") Integer customerId) {
+	public ModelAndView delete(ModelMap model, @PathVariable("customerId") Integer customerId,
+			RedirectAttributes redirectAttribute) {
 		Optional<Customer> customer = customerService.findById(customerId);
 		if (customer.isPresent()) {
-			System.out.println("Deleting customer with ID: " + customerId);
-			customerService.deleteById(customerId);
-			model.addAttribute("messageType", "success");
-			model.addAttribute("messageContent", "Xóa thành công");
+			try {
+				customerService.deleteById(customerId);
+				redirectAttribute.addFlashAttribute("messageType", "success");
+				redirectAttribute.addFlashAttribute("messageContent", "Xóa thành công");
+			} catch (Exception e) {
+				// Lỗi khi không thể xóa do ràng buộc
+				model.addAttribute("messageType", "error");
+				model.addAttribute("messageContent", "Không thể xóa khách hàng vì có ràng buộc.");
+			}
 		} else {
+			// Trường hợp khách hàng không tồn tại
 			model.addAttribute("messageType", "error");
-			model.addAttribute("messageContent", "Khách hàng không tồn tại");
+			model.addAttribute("messageContent", "Khách hàng không tồn tại.");
 		}
 		return new ModelAndView("redirect:/admin/customers", model);
 	}

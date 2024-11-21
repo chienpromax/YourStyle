@@ -9,7 +9,7 @@ import yourstyle.com.shope.model.Account;
 import yourstyle.com.shope.model.SearchHistory;
 
 @Repository
-public interface SearchHistoryRepository extends JpaRepository<SearchHistory, Long> {
+public interface SearchHistoryRepository extends JpaRepository<SearchHistory, Integer> {
     List<SearchHistory> findTop10ByAccountOrderBySearchTimeDesc(Account account);
 }
 

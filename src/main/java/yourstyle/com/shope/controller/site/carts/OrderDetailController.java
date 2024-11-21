@@ -52,47 +52,46 @@ public class OrderDetailController {
     @Autowired
     private CustomerRepository customerRepository;
 
-@GetMapping("/orderdetail")
-public String showCartDetail(Model model) {
-    CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
-            .getPrincipal();
-    Integer accountId = customUserDetails.getAccountId();
+    @GetMapping("/orderdetail")
+    public String showCartDetail(Model model) {
+        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        Integer accountId = customUserDetails.getAccountId();
 
-    Optional<Account> optionalAccount = accountService.findById(accountId);
-    Account account = optionalAccount.get();
-    Customer customer = customerRepository.findCustomerWithAddresses(account.getCustomer().getCustomerId())
-            .orElse(null);
-    List<Address> addresses = customer != null ? customer.getAddresses() : new ArrayList<>();
+        Optional<Account> optionalAccount = accountService.findById(accountId);
+        Account account = optionalAccount.get();
+        Customer customer = customerRepository.findCustomerWithAddresses(account.getCustomer().getCustomerId())
+                .orElse(null);
+        List<Address> addresses = customer != null ? customer.getAddresses() : new ArrayList<>();
 
-    model.addAttribute("account", account);
-    model.addAttribute("customer", customer != null ? customer : new Customer());
-    model.addAttribute("addresses", addresses.isEmpty() ? List.of(new Address()) : addresses);
+        model.addAttribute("account", account);
+        model.addAttribute("customer", customer != null ? customer : new Customer());
+        model.addAttribute("addresses", addresses.isEmpty() ? List.of(new Address()) : addresses);
 
-    Address defaultAddress = addresses.stream()
-            .filter(Address::getIsDefault)
-            .findFirst()
-            .orElse(null);
-    model.addAttribute("defaultAddress", defaultAddress);
+        Address defaultAddress = addresses.stream()
+                .filter(Address::getIsDefault)
+                .findFirst()
+                .orElse(null);
+        model.addAttribute("defaultAddress", defaultAddress);
 
-    List<Order> orders = orderService.findByCustomerAndStatus(customer, 9);
-    if (orders.isEmpty()) {
-        model.addAttribute("errorMessage", "Không có hóa đơn nào đang xử lý.");
-        return "errorPage";
+        List<Order> orders = orderService.findByCustomerAndStatus(customer, 9);
+        if (orders.isEmpty()) {
+            model.addAttribute("errorMessage", "Không có hóa đơn nào đang xử lý.");
+            return "errorPage";
+        }
+
+        Order currentOrder = orders.get(0);
+        BigDecimal totalAmount = currentOrder.getTotalAmount();
+        model.addAttribute("orderTotal", totalAmount);
+        model.addAttribute("orderDate", currentOrder.getOrderDate());
+
+        // Lọc voucher dựa trên tổng tiền
+        List<Voucher> vouchers = voucherService.findVouchersByTotalAmount(totalAmount);
+
+        model.addAttribute("vouchers", vouchers);
+
+        return "site/carts/orderdetail";
     }
-
-    Order currentOrder = orders.get(0);
-    BigDecimal totalAmount = currentOrder.getTotalAmount();
-    model.addAttribute("orderTotal", totalAmount);
-    model.addAttribute("orderDate", currentOrder.getOrderDate());
-
-    // Lọc voucher dựa trên tổng tiền
-    List<Voucher> vouchers = voucherService.findVouchersByTotalAmount(totalAmount);
-
-    model.addAttribute("vouchers", vouchers);
-
-    return "site/carts/orderdetail";
-}
-
 
     @PostMapping("/save")
     public String saveCustomerAndAddress(@ModelAttribute("customer") Customer customer,

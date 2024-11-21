@@ -1,6 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{site/index.html}">
 
 <head>
@@ -8,7 +7,7 @@
 
 <body>
 	<section class="py-5 container" layout:fragment="main">
-		<h1 class="alert alert-success "  th:if="${message}" th:text="${message}"></h1>
+		<h1 class="alert alert-success " th:if="${message}" th:text="${message}"></h1>
 
 		<!-- sản phẩm yêu thích -->
 		<hr class="separator" />
@@ -20,20 +19,19 @@
 				<div class="col-md-3" th:each="product : ${favoriteProducts}">
 					<div class="card product-card">
 						<a th:href="@{/productdetail/{id}(id=${product.productId})}">
-							<img th:src="@{/uploads/{image}(image=${product.image})}"
-							class="card-img-top img-fluid" alt="Hình ảnh sản phẩm">
+							<img th:src="@{/uploads/{image}(image=${product.image})}" class="card-img-top img-fluid"
+								alt="Hình ảnh sản phẩm">
 						</a>
 						<div class="card-body text-center">
 							<div class="product-info">
 								<h5 class="card-title" th:text="${product.name}"></h5>
-								<a
-									th:href="@{/yourstyle/productfavorites/removefavorite/{id}(id=${product.productId})}"
-									aria-label="Xóa Khỏi Yêu Thích"> <i
-									class="bi bi-heart-fill" id="heart-${product.productId}"></i>
+								<a th:href="@{/yourstyle/productfavorites/removefavorite/{id}(id=${product.productId})}"
+									aria-label="Xóa Khỏi Yêu Thích"> <i class="bi bi-heart-fill"
+										id="heart-${product.productId}"></i>
 								</a>
 							</div>
 							<p class="text-danger fw-bolder"
-								th:text="${product.price} + ' Đ'"></p>
+								th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'"></p>
 						</div>
 					</div>
 				</div>
@@ -41,4 +39,5 @@
 		</section>
 	</section>
 </body>
+
 </html>

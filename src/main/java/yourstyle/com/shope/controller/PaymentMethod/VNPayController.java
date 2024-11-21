@@ -119,7 +119,7 @@ public class VNPayController {
             order.setStatus(OrderStatus.PLACED);
             order.setTransactionType(TransactionType.ONLINE);
             order.setOrderChannel(OrderChannel.ONLINE);
-            order.setTransactionStatus("ĐÃ THANH TOÁN");
+            order.setTransactionStatus("Thành công");
             orderService.save(order);
             // Cập nhật các trường khác vào cơ sở dữ liệu
         } else if (orderId != null) {

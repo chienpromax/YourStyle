@@ -45,4 +45,16 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
 
     List<ProductVariant> findByProduct(Product product);
 
+    // Đếm số lượng sản phẩm được tạo hôm nay
+    @Query("SELECT COUNT(pv) FROM ProductVariant pv WHERE DATE(pv.createAt) = CURRENT_DATE")
+    Long countByCreateDateToday();
+
+    // Đếm số lượng sản phẩm được tạo trong tháng này
+    @Query("SELECT COUNT(pv) FROM ProductVariant pv WHERE MONTH(pv.createAt) = MONTH(CURRENT_DATE) AND YEAR(pv.createAt) = YEAR(CURRENT_DATE)")
+    Long countByCreateDateThisMonth();
+
+    // Đếm số lượng sản phẩm được tạo trong năm này
+    @Query("SELECT COUNT(pv) FROM ProductVariant pv WHERE YEAR(pv.createAt) = YEAR(CURRENT_DATE)")
+    Long countByCreateDateThisYear();
+
 }

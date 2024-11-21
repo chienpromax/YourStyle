@@ -112,19 +112,20 @@
                                         <!-- Kiểm tra nếu có discount thì hiển thị giá giảm và giá gốc -->
                                         <span class="price-discount text-danger fw-bold"
                                             th:if="${product.discount != null}"
-                                            th:text="${#numbers.formatDecimal(product.price - product.price * product.discount.discountPercent / 100, 1, 'COMMA', 0, 'POINT') + ' Đ'}">
+                                            th:text="${#numbers.formatDecimal(product.price - product.price * product.discount.discountPercent / 100, 1, 'COMMA', 3, 'POINT') + ' Đ'}">
                                         </span>
                                         <span class="price-original ms-2 text-muted"
                                             th:if="${product.discount != null}">
-                                            <del th:text="${#numbers.formatDecimal(product.price, 0, 0)}"></del>
+                                            <del
+                                                th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'"></del>
                                         </span>
                                         <span class="badge bg-danger ms-2" th:if="${product.discount != null}"
-                                            th:text="'-' + ${#numbers.formatDecimal(product.discount.discountPercent, 0, 0)} + '%'">
+                                            th:text="${#numbers.formatDecimal(product.discount.discountPercent, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'">
                                         </span>
                                         <!-- Hiển thị giá gốc nếu không có discount -->
                                         <span class="card-text text-danger fw-bolder fs-5 mb-0"
                                             th:if="${product.discount == null}"
-                                            th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')} + ' Đ'">
+                                            th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'">
                                         </span>
 
                                         <a th:href="@{/yourstyle/productfavorites/add(productId=${product.productId})}">

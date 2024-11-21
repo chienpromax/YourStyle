@@ -49,5 +49,17 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
     @Query("SELECT c FROM Customer c LEFT JOIN FETCH c.addresses WHERE c.customerId = :customerId")
     Optional<Customer> findCustomerWithAddresses(@Param("customerId") Integer customerId);
+    
+    @Query("SELECT c FROM Customer c WHERE c.account.accountId = ?1")
+    Customer findByCustomerAccountId(Integer accountId);
+
+    @Query("SELECT COUNT(c) FROM Customer c WHERE DATE(c.createDate) = CURRENT_DATE")
+    Long countByCreateDateToday();
+
+    @Query("SELECT COUNT(c) FROM Customer c WHERE MONTH(c.createDate) = MONTH(CURRENT_DATE) AND YEAR(c.createDate) = YEAR(CURRENT_DATE)")
+    Long countByCreateDateThisMonth();
+
+    @Query("SELECT COUNT(c) FROM Customer c WHERE YEAR(c.createDate) = YEAR(CURRENT_DATE)")
+    Long countByCreateDateThisYear();
 
 }

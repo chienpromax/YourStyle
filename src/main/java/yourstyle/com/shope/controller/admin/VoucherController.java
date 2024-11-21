@@ -33,12 +33,14 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.data.domain.Page;
 
 import yourstyle.com.shope.model.Account;
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Voucher;
 import yourstyle.com.shope.model.VoucherCustomer;
+import yourstyle.com.shope.service.AccountService;
 import yourstyle.com.shope.service.CustomerService;
 import yourstyle.com.shope.service.VoucherCustomerService;
 import yourstyle.com.shope.service.VoucherService;
@@ -55,6 +57,9 @@ public class VoucherController {
 
     @Autowired
     CustomerService customerService;
+
+    @Autowired
+    AccountService accountService;
 
     @Autowired
     VoucherCustomerService voucherCustomerService;
@@ -197,8 +202,9 @@ public class VoucherController {
             @Valid @ModelAttribute("voucher") VoucherDTO voucherDTO,
             BindingResult result) {
 
-        Account account = new Account();
-        account.setAccountId(2);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account account = accountService.findByUsername(username);
+
         voucherDTO.setAccount(account); // Thiết lập người tạo
 
         // Kiểm tra lỗi dữ liệu từ DTO

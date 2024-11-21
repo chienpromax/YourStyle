@@ -126,7 +126,7 @@
 										<img th:src="@{'/uploads/' + ${product.image}}" class="img-fluid" alt="Product Image">
 									</a>
 									<div class="card-body">
-										<h5 class="product-name" th:text="${product.name}"></h5>
+										<p class="product-name" th:text="${product.name}"></p>
 										<p class="card-text text-center text-danger fw-bolder fs-5" th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')} + ' Đ'"></p>
 										<p class="card-text position-absolute bottom-0 end-0 text-muted m-2 small">
 											Đã bán: <span th:text="${product.totalQuantity}">0</span> sản phẩm</p>
@@ -173,7 +173,7 @@
 									<img th:src="'/uploads/' + ${product.image}" class="img-fluid">
 								</a>
 								<div class="card-body">
-									<h5 class="card-title product-name" th:text="${product.name}">Tên Sản Phẩm</h5>
+									<p class="card-title product-name" th:text="${product.name}">Tên Sản Phẩm</p>
 									<div class="price-info d-flex align-items-center">
 										<!-- Giá đã giảm -->
 										<div class="price-discount-container d-flex flex-column me-2">
@@ -262,7 +262,7 @@
 						</a>
 						<div class="p-2">
 							<div class="product-info">
-								<h5 class="product-name" th:text="${product.name}"></h5>
+								<h6 class="product-name" th:text="${product.name}"></h6>
 								<a href="javascript:void(0)" th:onclick="'addToFavorite(' + ${product.productId} + ');'"
 									aria-label="Thêm vào yêu thích"> <i class="bi bi-heart"
 										id="heart-${product.productId}"></i>

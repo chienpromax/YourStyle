@@ -13,22 +13,22 @@ import yourstyle.com.shope.validation.admin.ProductSalesDto;
 @Repository
 public interface OrderDetailRepository extends JpaRepository<OrderDetail, Integer> {
         // Thống kê số lượng sản phẩm bán được trong ngày hôm nay
-        @Query("SELECT SUM(od.quantity) FROM OrderDetail od WHERE DATE(od.order.transactionTime) = CURRENT_DATE AND od.order.transactionStatus LIKE 'Completed' ")
+        @Query("SELECT SUM(od.quantity) FROM OrderDetail od WHERE DATE(od.order.transactionTime) = CURRENT_DATE AND od.order.transactionStatus LIKE 'Thành công' ")
         Long countSalesByDateToday();
 
         // Thống kê số lượng sản phẩm bán được trong tháng này
-        @Query("SELECT SUM(od.quantity) FROM OrderDetail od WHERE MONTH(od.order.transactionTime) = MONTH(CURRENT_DATE) AND YEAR(od.order.transactionTime) = YEAR(CURRENT_DATE) AND od.order.transactionStatus LIKE 'Completed' ")
+        @Query("SELECT SUM(od.quantity) FROM OrderDetail od WHERE MONTH(od.order.transactionTime) = MONTH(CURRENT_DATE) AND YEAR(od.order.transactionTime) = YEAR(CURRENT_DATE) AND od.order.transactionStatus LIKE 'Thành công' ")
         Long countSalesByDateThisMonth();
 
         // Thống kê số lượng sản phẩm bán được trong năm nay
-        @Query("SELECT SUM(od.quantity) FROM OrderDetail od WHERE YEAR(od.order.transactionTime) = YEAR(CURRENT_DATE) AND od.order.transactionStatus LIKE 'Completed' ")
+        @Query("SELECT SUM(od.quantity) FROM OrderDetail od WHERE YEAR(od.order.transactionTime) = YEAR(CURRENT_DATE) AND od.order.transactionStatus LIKE 'Thành công' ")
         Long countSalesByDateThisYear();
 
         // Thống kê sản phẩm bán chạy nhất trong ngày
         @Query("SELECT new yourstyle.com.shope.validation.admin.ProductSalesDto(od.productVariant.product.image, " +
                         "od.productVariant.product.productId, " +
                         "od.productVariant.product.name, SUM(od.quantity), SUM(od.quantity * od.price)) " +
-                        "FROM OrderDetail od WHERE DATE(od.order.transactionTime) = CURRENT_DATE AND od.order.transactionStatus LIKE 'Completed' "
+                        "FROM OrderDetail od WHERE DATE(od.order.transactionTime) = CURRENT_DATE AND od.order.transactionStatus LIKE 'Thành công' "
                         +
                         "GROUP BY od.productVariant.product.productId " +
                         "ORDER BY SUM(od.quantity) DESC")
@@ -42,7 +42,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Intege
                         "FROM OrderDetail od " +
                         "WHERE MONTH(od.order.transactionTime) = MONTH(CURRENT_DATE) AND YEAR(od.order.transactionTime) = YEAR(CURRENT_DATE) "
                         +
-                        "AND od.order.transactionStatus LIKE 'Completed'"
+                        "AND od.order.transactionStatus LIKE 'Thành công'"
                         +
                         "GROUP BY od.productVariant.product.productId " +
                         "ORDER BY SUM(od.quantity) DESC")
@@ -53,7 +53,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Intege
                         "od.productVariant.product.productId, " +
                         "od.productVariant.product.name, SUM(od.quantity), SUM(od.quantity * od.price)) "
                         +
-                        "FROM OrderDetail od WHERE YEAR(od.order.transactionTime) = YEAR(CURRENT_DATE) AND od.order.transactionStatus LIKE 'Completed' "
+                        "FROM OrderDetail od WHERE YEAR(od.order.transactionTime) = YEAR(CURRENT_DATE) AND od.order.transactionStatus LIKE 'Thành công' "
                         +
                         "GROUP BY od.productVariant.product.productId " +
                         "ORDER BY SUM(od.quantity) DESC")

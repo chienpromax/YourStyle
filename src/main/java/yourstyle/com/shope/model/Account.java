@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -47,9 +48,12 @@ public class Account implements Serializable {
 	@OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
 	private Customer customer;
 	@Column(name = "reset_token")
-	private String resetToken; 
+	private String resetToken;
 
-	@OneToMany(mappedBy = "account")
+	// @OneToMany(mappedBy = "account")
+	// private List<Voucher> vouchers;
+
+	@OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
 	private List<Voucher> vouchers;
 
 }

@@ -90,7 +90,7 @@
                                             </div>
                                         </td>
                                         
-                                        <td th:text="${product.price}"></td>
+                                        <td th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'"></td>
                                         <td class="text-center">
                                             <a style="cursor: pointer; font-size: 21px; color: green;"
                                                 th:href="@{/admin/products/edit/{id}(id=${product.productId})}">

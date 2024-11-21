@@ -68,4 +68,13 @@ public class VoucherDTO {
     private List<Integer> customerIds;
 
     private Account account;
+
+    private String formattedDiscount;
+
+    public VoucherDTO(String voucherCode, Byte type, String formattedDiscount) {
+        this.voucherCode = voucherCode;
+        this.type = type;
+        this.formattedDiscount = formattedDiscount;
+    }
+
 }

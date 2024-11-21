@@ -9,10 +9,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -65,6 +67,18 @@ public class Customer implements Serializable {
 	@JsonIgnore
 	private Account account;
 
+	// @JsonIgnore
+	@OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
+	@JsonManagedReference
+	private List<Address> addresses;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
+	private List<Order> orders;
+	@JsonIgnore
+	@OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
+	private List<Voucher> vouchers;
+
 	private boolean isEdit = false;
 
 	@Transient // Để không lưu vào database
@@ -94,8 +108,12 @@ public class Customer implements Serializable {
 				'}';
 	}
 
-	@JsonIgnore
-	@OneToMany(mappedBy = "customer")
-	private List<Address> addresses;
-
+	public Address getDefaultAddress() {
+		if (addresses == null || addresses.isEmpty()) {
+			return new Address();
+		}
+		return addresses.stream().filter(Address::getIsDefault).findFirst().orElse(new Address());
+	}
+	
+	
 }

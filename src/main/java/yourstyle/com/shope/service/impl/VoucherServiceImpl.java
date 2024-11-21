@@ -1,14 +1,17 @@
 package yourstyle.com.shope.service.impl;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import yourstyle.com.shope.Exception.VoucherNotFoundException;
 import yourstyle.com.shope.model.Voucher;
 import yourstyle.com.shope.repository.VoucherRepository;
 import yourstyle.com.shope.service.VoucherService;
@@ -53,5 +56,16 @@ public class VoucherServiceImpl implements VoucherService {
     public List<Voucher> findAll() {
         return voucherRepository.findAll();
     }
+
+    @Override
+    public Optional<Voucher> findByVoucherCode(String voucherCode) {
+        return voucherRepository.findByVoucherCodeOrder(voucherCode);
+    }
+
+    @Override
+    public List<Voucher> findVouchersByTotalAmount(BigDecimal totalAmount) {
+        return voucherRepository.findVouchersByTotalAmount(totalAmount);
+    }
+    
 
 }

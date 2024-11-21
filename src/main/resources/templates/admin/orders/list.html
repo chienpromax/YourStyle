@@ -2,51 +2,55 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
     layout:decorate="~{admin/index.html}">
 
-<head> </head>
+<head></head>
 
 <body>
     <section layout:fragment="main">
         <main id="main" class="main">
-
             <div class="pagetitle">
-                <h1>Bảng hóa đơn</h1>
+                <h1>Quản lý đơn hàng</h1>
                 <nav>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html">Trang chủ</a></li>
-                        <li class="breadcrumb-item active">Bảng hóa đơn</li>
+                        <li class="breadcrumb-item active">Bảng đơn hàng</li>
                     </ol>
                 </nav>
-            </div><!-- End Page Title -->
+            </div>
+            <!-- End Page Title -->
 
             <section class="section">
                 <div class="card">
                     <div class="card-body">
-                        <div class=" mt-3">
-                            <h4>Hóa đơn</h4>
+                        <div class="mt-3">
+                            <h4>Đơn hàng</h4>
                             <!-- Tìm kiếm -->
                             <div class="row mb-3">
                                 <!-- Ô tìm kiếm -->
                                 <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
-                                    <div class="position-relative w-100">
-                                        <span class="position-absolute start-0 top-50 translate-middle-y ps-2">
-                                            <i class="bi bi-search"></i>
-                                        </span>
-                                        <input class="form-control ps-5" placeholder="Tìm phiếu giảm giá theo...">
-                                    </div>
+                                    <form th:action="@{/admin/orders/search}" method="get">
+                                        <div class="position-relative w-100">
+                                            <button type="submit"
+                                                class="position-absolute end-0 top-50 translate-middle-y pe-3 text-warning fw-bold border-0 bg-transparent">
+                                                <i class="bi bi-search"></i>
+                                            </button>
+                                            <input name="value" class="form-control ps-3"
+                                                placeholder="Tìm kiếm hóa đơn ..." />
+                                        </div>
+                                    </form>
                                 </div>
 
                                 <!-- Date and time picker -->
                                 <div class="col-lg-3 col-md-6 mb-3 mb-md-0">
                                     <div class="form-floating">
-                                        <input type="datetime-local" class="form-control" id="datetimepickerFrom"
-                                            value="2020-12-22T14:12:56">
+                                        <input type="datetime-local" class="form-control" id="datetimeFrom"
+                                            value="2024-10-23T14:12:56" />
                                         <label for="datetimepickerFrom">Từ ngày</label>
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-md-6">
                                     <div class="form-floating">
-                                        <input type="datetime-local" class="form-control" id="datetimepickerTo"
-                                            value="2020-12-22T14:12:56">
+                                        <input type="datetime-local" class="form-control" id="datetimeTo"
+                                            value="2024-10-23T14:12:56" onchange="filterOrders()" />
                                         <label for="datetimepickerTo">Đến ngày</label>
                                     </div>
                                 </div>
@@ -54,180 +58,138 @@
 
                             <!-- Bộ lọc -->
                             <div class="row mb-3">
-                                <div class="col-lg-2 col-md-12 mb-3 mb-lg-0">
-                                    <select class="form-select">
-                                        <option selected>Kiểu</option>
-                                        <option value="1">Cá nhân</option>
-                                        <option value="2">Công khai</option>
+                                <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
+                                    <select class="form-select" id="statusSelect">
+                                        <option value="" selected disabled>Trạng thái</option>
+                                        <option th:each="status : ${orderStatus}" th:value="${status.code}">
+                                            [[${status.description}]]
+                                        </option>
                                     </select>
                                 </div>
-                                <div class="col-lg-2 col-md-12 mb-3 mb-lg-0">
-                                    <select class="form-select">
-                                        <option selected>Loại</option>
-                                        <option value="1">10%</option>
-                                        <option value="2">100%</option>
+                                <div class="col-lg-3 col-md-12 mb-3 mb-lg-0">
+                                    <select name="" id="orderChannelSelect" class="form-select">
+                                        <option value="" selected disabled>Loại đơn</option>
+                                        <option th:each="orderChannel : ${orderChannels}"
+                                            th:value="${orderChannel.value}">
+                                            [[${orderChannel.name}]]
+                                        </option>
                                     </select>
                                 </div>
-                                <div class="col-lg-2 col-md-12 mb-3 mb-lg-0">
-                                    <select class="form-select">
-                                        <option selected>Trạng thái</option>
-                                        <option value="1">Đang diễn ra</option>
-                                        <option value="2">Đã kết thúc</option>
-                                    </select>
-                                </div>
-                                <div class="col-lg-4 col-md-12 mb-3 mb-lg-0">
+                                <div class="col-lg-3 col-md-12 mb-3 mb-lg-0">
                                     <!-- Xuất Excel -->
-                                    <button class="btn btn-outline-secondary">Xuất Excel</button>
-                                    <button class="btn btn-outline-primary ms-4">+ Tạo mới</a></button>
+                                    <a th:href="@{/admin/orders/export/excel}" class="btn btn-outline-warning fw-bold">
+                                        Xuất Excel
+                                    </a>
                                 </div>
                             </div>
 
-                            <!-- Nav tabs -->
-                            <ul class="nav nav-tabs" id="orderTabs" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="all-tab" data-bs-toggle="tab"
-                                        data-bs-target="#all" type="button" role="tab" aria-controls="all"
-                                        aria-selected="true">Tất Cả</button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="cancel-tab" data-bs-toggle="tab"
-                                        data-bs-target="#cancel" type="button" role="tab" aria-controls="cancel"
-                                        aria-selected="false">Đã
-                                        Hủy</button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="confirm-tab" data-bs-toggle="tab"
-                                        data-bs-target="#confirm" type="button" role="tab" aria-controls="confirm"
-                                        aria-selected="false">Chờ Xác
-                                        Nhận</button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="shipping-tab" data-bs-toggle="tab"
-                                        data-bs-target="#shipping" type="button" role="tab" aria-controls="shipping"
-                                        aria-selected="false">Chờ Giao Hàng</button>
-                                </li>
-                                <!-- Add more tabs as needed -->
-                            </ul>
-                            <!-- Tab content -->
-                            <div class="tab-content" id="orderTabsContent">
-                                <!-- Tất Cả tab content -->
-                                <div class="tab-pane fade show active" id="all" role="tabpanel"
-                                    aria-labelledby="all-tab">
-                                    <!-- Bảng phiếu giảm giá -->
-                                    <div class="table-responsive text-center">
-                                        <table class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>STT</th>
-                                                    <th>Mã</th>
-                                                    <th>Tên khách</th>
-                                                    <th>Số lượng</th>
-                                                    <th>Tổng tiền</th>
-                                                    <th>Ngày tạo</th>
-                                                    <th>Loại đơn</th>
-                                                    <th>Trạng thái</th>
-                                                    <th>Hành động</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody style="word-break: break-word;">
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>231253</td>
-                                                    <td>Văn An</td>
-                                                    <td>20</td>
-                                                    <td>200000</td>
-                                                    <td>21/12/2024 13:36</td>
-                                                    <td><span class="badge bg-info text-dark">Trưc tuyến</span></td>
-                                                    <td><span class="badge bg-success">Đang diễn ra</span></td>
-                                                    <td><i class="bi bi-eye"></i></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>2</td>
-                                                    <td>321245</td>
-                                                    <td>Trương Quốc Bảo</td>
-                                                    <td>2</td>
-                                                    <td>250000</td>
-                                                    <td>20/12/2024 10:29</td>
-                                                    <td><span class="badge bg-info text-dark">Trực tuyến</span></td>
-                                                    <td><span class="badge bg-success">Đang diễn ra</span></td>
-                                                    <td><i class="bi bi-eye"></i></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>3</td>
-                                                    <td>092132</td>
-                                                    <td>Trần Văn Đại</td>
-                                                    <td>30</td>
-                                                    <td>30000000000000000</td>
-                                                    <td>20/12/2024 10:05</td>
-                                                    <td><span class="badge bg-primary">Trực tiếp</span></td>
-                                                    <td><span class="badge bg-success">Đang diễn ra</span></td>
-                                                    <td><i class="bi bi-eye"></i></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                            <!-- Bảng Hóa đơn -->
+                            <div class="table-responsive text-center">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>STT</th>
+                                            <th>Mã HĐ</th>
+                                            <th>Tên khách hàng</th>
+                                            <th>Tổng SP</th>
+                                            <th>Tổng số tiền</th>
+                                            <th>Ngày tạo</th>
+                                            <th>Loại đơn</th>
+                                            <th>Trạng thái</th>
+                                            <th>Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="word-break: break-word">
+                                        <tr th:each="order,iStat : ${orders}">
+                                            <td>[[${iStat.index + 1}]]</td>
+                                            <td>[[${order.orderId}]]</td>
+                                            <td>[[${order.customer.fullname}]]</td>
+                                            <td>
+                                                <span>[[${totalQuantities[order.orderId]}]]</span>
+                                            </td>
+                                            <td>[[${totalAmounts[order.orderId]}]]</td>
+                                            <td>[[${#dates.format(order.orderDate,'dd-MM-yyyy HH:mm:ss')}]]</td>
+
+                                            <td
+                                                th:if="${order.orderChannel != null and order.orderChannel.value == 'ONLINE'}">
+                                                <span class="badge bg-success"
+                                                    th:text="${order.orderChannel.name}">Online</span>
+                                            </td>
+                                            <td
+                                                th:if="${order.orderChannel != null and order.orderChannel.value == 'DIRECT'}">
+                                                <span class="badge bg-warning"
+                                                    th:text="${order.orderChannel.name}">Direct</span>
+                                            </td>
+                                            <td
+                                                th:if="${order.orderChannel != null and order.orderChannel.value == 'IN_STORE'}">
+                                                <span class="badge bg-primary" th:text="${order.orderChannel.name}">In
+                                                    Store</span>
+                                            </td>
+                                            <td th:if="${order.orderChannel == null}">
+                                                <span class="badge bg-secondary">N/A</span>
+                                            </td>
+
+                                            <td>
+                                                <span class="badge bg-success"
+                                                    th:text="${order.statusDescription != null ? order.statusDescription : 'N/A'}"></span>
+                                            </td>
+
+                                            <td th:if="${order.orderChannel != null}">
+                                                <a th:href="@{/admin/orders/detail/{orderId}(orderId=${order.orderId})}">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                            </td>
+                                            
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- start pagination -->
+                            <div class="text-muted d-flex justify-content-between">
+                                <form action="">
+                                    <div class="form-inline">
+                                        <label for="size">Hiển thị:</label>
+                                        <select class="px-lg-2 py-lg-1" name="size" id="size"
+                                            onchange="this.form.submit()">
+                                            <option th:selected="${orders.size == 30}" value="30">30</option>
+                                            <option th:selected="${orders.size == 40}" value="40">40</option>
+                                            <option th:selected="${orders.size == 50}" value="50">50</option>
+                                        </select>
                                     </div>
-
-                                    <nav aria-label="Page navigation">
-                                        <ul class="pagination justify-content-center">
-                                            <!-- Đầu -->
-                                            <li class="page-item">
-                                                <a class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                    href="#" aria-label="First">
-                                                    <span aria-hidden="true">&laquo;</span>
-                                                </a>
-                                            </li>
-                                            <!-- Trước -->
-                                            <li class="page-item">
-                                                <a class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                    href="#" aria-label="Previous">
-                                                    <span aria-hidden="true">&lsaquo;</span>
-                                                </a>
-                                            </li>
-                                            <!-- Trang Số -->
-                                            <li class="page-item"><a
-                                                    class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                    href="#">1</a>
-                                            </li>
-                                            <li class="page-item"><a
-                                                    class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                    href="#">2</a>
-                                            </li>
-                                            <li class="page-item"><a
-                                                    class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                    href="#">3</a>
-                                            </li>
-                                            <li class="page-item disabled"><a
-                                                    class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                    href="#">...</a>
-                                            </li>
-                                            <li class="page-item"><a
-                                                    class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                    href="#">10</a>
-                                            </li>
-                                            <!-- Sau -->
-                                            <li class="page-item">
-                                                <a class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                    href="#" aria-label="Next">
-                                                    <span aria-hidden="true">&rsaquo;</span>
-                                                </a>
-                                            </li>
-                                            <!-- Cuối -->
-                                            <li class="page-item">
-                                                <a class="page-link rounded text-dark bg-light border-0 shadow-sm"
-                                                    href="#" aria-label="Last">
-                                                    <span aria-hidden="true">&raquo;</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                                </form>
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination" th:if="${orders.totalPages > 0}">
+                                        <li class="page-item" th:classappend="${orders.number == 0} ? 'disabled' : ''">
+                                            <a class="page-link"
+                                                th:href="@{/admin/orders/search(name=${name}, size=${orders.size}, page=${0})}">
+                                                <i class="bi bi-chevron-double-left"></i>
+                                            </a>
+                                        </li>
+                                        <li th:each="pageNumber : ${pageNumbers}"
+                                            th:classappend="${pageNumber == orders.number + 1} ? ' active' : ''"
+                                            class="page-item">
+                                            <a th:href="@{/admin/orders/search(name=${name}, size=${orders.size}, page=${pageNumber - 1})}"
+                                                class="page-link" th:text="${pageNumber}"></a>
+                                        </li>
+                                        <li th:classappend="${orders.number + 1 == orders.totalPages} ? ' disabled' : ''"
+                                            class="page-item">
+                                            <a th:href="@{/admin/orders/search(name=${name}, size=${orders.size}, page=${orders.totalPages - 1})}"
+                                                class="page-link">
+                                                <i class="bi bi-chevron-double-right"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
                             </div>
+                            <!-- end pagination -->
                         </div>
                     </div>
                 </div>
             </section>
-
-        </main><!-- End #main -->
+        </main>
+        <!-- End #main -->
+        <script src="/admin/js/listorder.js"></script>
     </section>
 </body>
 

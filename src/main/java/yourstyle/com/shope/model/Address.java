@@ -1,5 +1,7 @@
 package yourstyle.com.shope.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,9 +18,9 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer addressId;
 
-    @ManyToOne
-    @JoinColumn(name = "customerId", nullable = false)
-    private Customer customer;
+    // @ManyToOne
+    // @JoinColumn(name = "customerId", nullable = false)
+    // private Customer customer;
 
     @Column(name = "street", length = 255)
     private String street;
@@ -35,4 +37,8 @@ public class Address {
     @Column(name = "isDefault", columnDefinition = "BIT DEFAULT 0")
     private Boolean isDefault = false; // Địa chỉ mặc định
 
+    @ManyToOne()
+    @JoinColumn(name = "customerId", referencedColumnName = "customerId")
+    @JsonBackReference
+    private Customer customer;
 }

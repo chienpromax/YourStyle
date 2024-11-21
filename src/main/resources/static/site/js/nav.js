@@ -29,7 +29,7 @@ function fetchProductSuggestions(query) {
             const suggestionsDropdown = document.getElementById('suggestedProductsDropdown');
             suggestionsDropdown.innerHTML = data.map(product => `
                 <li>
-                    <a href="/product/detail/${product.productId}" 
+                    <a href="/yourstyle/product/detail/${product.productId}" 
                        onclick="addToSearchHistory('${product.name}')">
                        ${product.name}
                     </a>
@@ -58,7 +58,6 @@ function addToSearchHistory(keyword) {
 }
 
 
-
 // Ẩn dropdown khi nhấp ra ngoài ô tìm kiếm
 document.addEventListener("click", function (event) {
     const historyDropdown = document.getElementById('searchHistoryDropdown');
@@ -76,6 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch('/searchHistory')
         .then(response => response.json())
         .then(data => {
+            console.log(data);
             const dropdown = document.getElementById('searchHistoryDropdown');
             dropdown.innerHTML = data.map(item => `
                 <li id="history-item-${item.searchId}">

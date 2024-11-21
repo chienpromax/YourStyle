@@ -59,7 +59,8 @@
                       <label for="categorySelect" class="form-label fs-5">Chọn Danh Mục</label>
                       <select required style="color: rgb(247, 120, 141); font-weight: 600;" class="form-control mb-3"
                         th:field="*{category.categoryId}" id="categorySelect">
-                        <option value="">꧁⁣༒ ----------------- ∩(ミ ˃̵ ω ˂̵ ミ)∩ ---------- /ᐠ - ˕ -マ Ⳋ ---------------- ༒꧂</option>
+                        <option value="">꧁⁣༒ ----------------- ∩(ミ ˃̵ ω ˂̵ ミ)∩ ---------- /ᐠ - ˕ -マ Ⳋ ----------------
+                          ༒꧂</option>
                         <th:block th:each="cat : ${categories}">
                           <!-- <option th:value="${cat.categoryId}" th:text="${cat.name}"> -->
                           <option th:value="${cat.categoryId}">
@@ -134,13 +135,12 @@
                         <!-- Hiển thị ảnh bổ sung -->
                         <div id="additionalImagesPreview" class="mt-2"></div>
                         <!-- Hiển thị ảnh bổ sung -->
-
                         <h5>Danh sách ảnh sản phẩm</h5>
                         <div id="additionalImagesPreview" class="mt-2">
                           <div th:each="image : ${productImages}" class="img-container">
                             <img th:src="@{/uploads/} + ${image.imageUrl}" class="preview-image" alt="Product Image" />
                             <button type="button" class="delete-button"
-                            th:attr="onclick='confirmDeleteImage(' + ${image.imageId} + ')'">X</button>
+                              th:attr="onclick='confirmDeleteImage(' + ${image.imageId} + ')'">X</button>
                           </div>
                         </div>
                       </div>

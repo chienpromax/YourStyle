@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Example;
 
+import yourstyle.com.shope.model.Category;
 import yourstyle.com.shope.model.Product;
 
 public interface ProductService {
@@ -51,6 +52,7 @@ public interface ProductService {
     List<Product> getProductsByDiscountId(Integer discountId);
 
 
-    
+    List<Product> findByCategory(Category category);    
+
 
 }

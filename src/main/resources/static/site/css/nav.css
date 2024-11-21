@@ -15,31 +15,50 @@
         justify-content: space-between;
         align-items: center;
     }
-    
+
     #searchHistoryDropdown li span {
         margin-left: 10px;
         color: red;
     }
 
-    .historymenu{
-        display: none; position: absolute; width: 90%;
+    .historymenu {
+        display: none;
+        position: absolute;
+        width: 90%;
     }
 
-    #suggestedProductsDropdown{
-        display: none; position: absolute;
+    #suggestedProductsDropdown {
+        display: none;
+        position: absolute;
     }
 
-    .nav-flow {
+    /* Tên sản phẩm màu đen */
+    .search-history-item span {
+        color: black;
+    }
+
+    /* Nút xóa hiển thị con trỏ khi di chuột */
+    .delete-btn {
+        cursor: pointer;
+    }
+
+    /* Thêm khoảng cách giữa icon và tên lịch sử */
+    .search-history-item i {
+        margin-right: 5px;
+        color: gray;
+    }
+
+    /* .nav-flow {
         overflow-x: scroll; 
-        scroll-behavior: smooth; 
+        scroll-behavior: smooth;  */
         /* Ẩn thanh cuộn trong IE và Edge */
-        -ms-overflow-style: none; 
+        /* -ms-overflow-style: none;  */
          /* Ẩn thanh cuộn trong Firefox */
-        scrollbar-width: none;
-    }
+        /* scrollbar-width: none; */
+    /* } */
     
-    .nav-flow::-webkit-scrollbar {
+    /* .nav-flow::-webkit-scrollbar { */
         /* Ẩn thanh cuộn trong Chrome, Safari và Edge */
-        display: none; 
-    }
+        /* display: none; 
+    } */
     

@@ -65,12 +65,27 @@ public class Voucher implements Serializable {
 
     private Boolean isPublic;
 
-    @ManyToOne
-    @JoinColumn(name = "createBy", nullable = false)
-    private Account account;
+    // @ManyToOne
+    // @JoinColumn(name = "createBy", nullable = false)
+    // private Account account;
 
     @JsonIgnore
     @OneToMany(mappedBy = "voucher", fetch = FetchType.EAGER)
     List<VoucherCustomer> voucherCustomers;
+
+    // private Timestamp startDate = new Timestamp(System.currentTimeMillis());
+    // private Timestamp endDate;
+
+    @ManyToOne
+    @JoinColumn(name = "accountId", referencedColumnName = "accountId")
+    private Account account;
+
+    @ManyToOne
+    @JoinColumn(name = "customerId", referencedColumnName = "customerId")
+    private Customer customer;
+
+    @OneToMany(mappedBy = "voucher")
+    private List<Order> orders;
+
 
 }

@@ -115,7 +115,7 @@
                                         <tr th:each="voucher, iStat : ${vouchers}">
                                             <td>[[${voucher.voucherCode}]]</td>
                                             <td>[[${voucher.voucherName}]]</td>
-                                            <td>[[${voucher.discountAmount}]]</td>
+                                            <td th:text="${#numbers.formatDecimal(voucher.discountAmount, 1, 'COMMA', 0, 'POINT')} + ''"></td>
                                             <td>
                                                 <span th:switch="${voucher.type}">
                                                     <span th:case="1" class="badge bg-success">Giảm giá trực tiếp</span>
@@ -125,8 +125,8 @@
                                                     <span th:case="4" class="badge bg-primary">Voucher</span>
                                                 </span>
                                             </td>
-                                            <td>[[${voucher.minTotalAmount}]]</td>
-                                            <td>[[${voucher.maxTotalAmount}]]</td>
+                                            <td th:text="${#numbers.formatDecimal(voucher.minTotalAmount, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'"></td>
+                                            <td th:text="${#numbers.formatDecimal(voucher.maxTotalAmount, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'"></td>
                                             <td>[[${voucher.maxUses}]]</td>
                                             <td>[[${voucher.maxUsesUser}]]</td>
                                             <td>[[${voucher.createAt}]]</td>
@@ -147,8 +147,10 @@
                                                     <p>Không có khách hàng</p>
                                                 </div>
                                             </td>
-                                            <td>[[${voucher.account.accountId}]]</td>
-                                            <td>[[${voucher.description}]]</td>
+                                            
+                                            <td>[[${voucher.account?.accountId ?: 'N/A'}]]</td>
+                                            <td>[[${voucher.description ?: 'Không có mô tả'}]]</td>
+                                            
                                             <td>
                                                 <!-- Chỉnh sửa Voucher -->
                                                 <a style="cursor: pointer; font-size: 21px;"

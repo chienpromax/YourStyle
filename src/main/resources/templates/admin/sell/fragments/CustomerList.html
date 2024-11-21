@@ -1,0 +1,13 @@
+<!-- customer danh sách tìm kiếm -->
+<tbody class="dscustomer" th:fragment="customerRows">
+    <tr th:each="customer, stat : ${Customers}">
+        <td th:text="${stat.count}"></td>
+        <td th:text="${customer.customerId}"></td>
+        <td th:text="${customer.fullname}"></td>
+        <td th:text="${customer.phoneNumber}"></td>
+        <td th:text="${customer.gender == true ? 'Nam' : (customer.gender == false ? 'Nữ' : 'Không xác định')}"></td>
+        <td class="text-center">
+            <button class="btn btn-outline-warning" onclick="selectCustomerForOrder(this)">Chọn</button>
+        </td>
+    </tr>
+</tbody>

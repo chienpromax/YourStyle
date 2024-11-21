@@ -116,12 +116,14 @@ public class CustomerServiceImpl implements CustomerService {
 		return customerRepository.existsByPhoneNumber(phoneNumber);
 	}
 
+
 	@Override
-	public Customer findByAccountId(Integer accountId) {
-		return customerRepository.findByAccountId(accountId);
+	public Page<Customer> findByFullnameContaining(Integer customerId, String fullname, Pageable pageable) {
+		return customerRepository.findByFullnameContaining(customerId, fullname, pageable);
 	}
 
 	@Override
+
 	public Page<Customer> searchByNameOrPhoneStaff(String value, Pageable pageable) {
 		return customerRepository.searchEmployeesByNameOrPhone(value, pageable);
 	}
@@ -150,5 +152,18 @@ public class CustomerServiceImpl implements CustomerService {
 				customer.getGender(),
 				customer.getBirthday());
 	}
+
+	public Page<Customer> findByPhoneName(Integer customerId, String phoneNumber, Pageable pageable) {
+		return customerRepository.findByPhoneName(customerId, phoneNumber, pageable);
+	}
+
+	@Override
+	public Page<Customer> findAllNotRetailCustomer(Integer customerId, Pageable pageable) {
+		return customerRepository.findAllNotRetailCustomer(customerId, pageable);
+	}
+
+    public Customer findByAccountId(Integer accountId) {
+        return customerRepository.findByAccount_AccountId(accountId);
+    }
 
 }

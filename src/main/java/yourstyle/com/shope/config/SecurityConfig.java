@@ -24,12 +24,14 @@ public class SecurityConfig {
                         .requestMatchers("/*").permitAll()
                         .requestMatchers("/static/**", "/images/**", "/uploads/**", "/site/**").permitAll()
                         .requestMatchers("/yourstyle/home","/yourstyle/discount/**").permitAll()
-                        .requestMatchers("/product/detail/**").permitAll()
+                        .requestMatchers("/yourstyle/product/detail/**").permitAll()
                         .requestMatchers("/yourstyle/best-sellers**").permitAll()
                         .requestMatchers("/yourstyle/accounts/**").permitAll()
                         .requestMatchers("/yourstyle/product/**").permitAll()
-                        // .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                        .requestMatchers("/yourstyle/carts/**", "/yourstyle/VNPays/**")
+                        .requestMatchers("/yourstyle/productfavorites/**").permitAll()
+                        .requestMatchers("/yourstyle/product/detail/**").permitAll()
+                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/yourstyle/carts/**", "/yourstyle/VNPays/**", "/yourstyle/order/**")
                         .hasAnyAuthority("ROLE_ADMIN", "ROLE_USER", "ROLE_EMPLOYEE")
                         .requestMatchers("/yourstyle/admin/slide/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE")
                         .anyRequest().authenticated())
@@ -56,8 +58,13 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/yourstyle/accounts/login")
                         .clearAuthentication(true)
                         .deleteCookies("JSESSIONID", "loggedInUser")
-                        .invalidateHttpSession(true));
-
+                        .invalidateHttpSession(true))
+                .rememberMe(rememberMe -> rememberMe
+                        .key("uniqueAndSecret")
+                        .tokenValiditySeconds(86400)
+                        .rememberMeParameter("remember-me")
+                        .useSecureCookie(true)
+                        .alwaysRemember(true));
         return http.build();
     }
 }

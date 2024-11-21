@@ -1,5 +1,6 @@
 package yourstyle.com.shope.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -7,6 +8,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import yourstyle.com.shope.Exception.VoucherNotFoundException;
 import yourstyle.com.shope.model.Voucher;
 
 public interface VoucherService {
@@ -25,5 +27,9 @@ public interface VoucherService {
             LocalDateTime toDate, Pageable pageable);
 
     List<Voucher> findAll();
+    
+    Optional<Voucher> findByVoucherCode(String voucherCode);
+
+    List<Voucher> findVouchersByTotalAmount(BigDecimal totalAmount);
 
 }

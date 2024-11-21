@@ -40,8 +40,23 @@ public interface CustomerService {
 
 	Customer findByAccountId(Integer accountId);
 
+
 	Page<StaffDto> getAllEmployees(Pageable pageable);
 
 	Page<Customer> searchByNameOrPhoneStaff(String value, Pageable pageable) ;
 	Page<Customer> findAllStaff( String role,Pageable pageable);
+
+	Page<Customer> findByFullnameContaining(
+			Integer customerId,
+			String fullname,
+			Pageable pageable);
+
+	Page<Customer> findByPhoneName(
+			Integer customerId,
+			String phoneNumber,
+			Pageable pageable);
+
+	Page<Customer> findAllNotRetailCustomer(Integer customerId, Pageable pageable);
+
+
 }

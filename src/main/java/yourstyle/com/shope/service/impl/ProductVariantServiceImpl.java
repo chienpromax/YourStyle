@@ -10,7 +10,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import yourstyle.com.shope.model.Category;
+import yourstyle.com.shope.model.Color;
+import yourstyle.com.shope.model.Product;
 import yourstyle.com.shope.model.ProductVariant;
+import yourstyle.com.shope.model.Size;
 import yourstyle.com.shope.repository.ProductVariantRepository;
 import yourstyle.com.shope.service.ProductVariantService;
 
@@ -84,4 +88,30 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     public List<ProductVariant> findByProductId(Integer productId) {
         return productVariantRepository.findByProductId(productId);
     }
+
+    @Override
+	public List<ProductVariant> findByProductVariantId(Integer productVariantId) {
+		return productVariantRepository.findByProductVariantId(productVariantId);
+	}
+
+    @Override
+	public List<ProductVariant> findByProductNameContaining(String name) {
+		return productVariantRepository.findByProductNameContaining(name);
+	}
+
+    @Override
+	public List<ProductVariant> findBySize(Size size) {
+		return productVariantRepository.findBySize(size);
+	}
+
+	@Override
+	public List<ProductVariant> findByColor(Color color) {
+		return productVariantRepository.findByColor(color);
+	}
+
+	@Override
+	public List<ProductVariant> findByProduct(Product product) {
+		return productVariantRepository.findByProduct(product);
+	}
+
 }

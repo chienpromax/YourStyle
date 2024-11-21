@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{site/index.html}">
+
+<head>
+    <title>Lịch sử đơn hàng</title>
+</head>
+
+<body>
+    <!--===== main =======-->
+    <section class="py-5 container bg-light" id="order-content" layout:fragment="main">
+        <div class="container-fluid">
+            <h3 class="py-3">Lịch sử đơn hàng</h3>
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- Hiển thị tất cả các trạng thái đơn hàng -->
+                    <ul class="nav nav-tabs mb-3" id="order-status-tabs" role="tablist">
+                        <li class="nav-item" role="presentation" th:each="status : ${orderStatuses}">
+                            <a class="nav-link" th:classappend="${status.code == selectedStatus ? 'active' : ''}"
+                                href="javascript:void(0);" th:onclick="'filterOrdersByStatus(' + ${status.code} + ')'"
+                                th:text="${statusDescriptions[status.code]}">Trạng thái</a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="order-content">
+                        <div th:if="${#lists.isEmpty(orders)}">
+                            <h3 class="text-center">Không có đơn hàng nào cho trạng thái này.</h3>
+                        </div>
+
+                        <!-- Nội dung các đơn hàng sẽ được tải lại bằng AJAX -->
+                        <div th:each="order : ${orders}">
+                            <div class="order-card">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span
+                                        th:text="${order.transactionType ?: 'Đang xử lý'} + ' - ' + ${order.transactionStatus ?: ''}"></span>
+                                    <div>
+                                        <span class="badge"
+                                            th:classappend="${order.status == 9 ? 'bg-warning' : 'bg-success'}"
+                                            th:text="${order.getStatusDescription()}">Status</span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div th:each="orderDetail : ${order.orderDetails}">
+                                    <div class="d-flex py-2">
+                                        <img th:src="@{'/uploads/' + ${orderDetail.productVariant.product.image}}"
+                                            alt="Product Image" class="me-3" />
+                                        <div>
+                                            <h6 th:text="${orderDetail.productVariant.product.name}">Tên sản phẩm</h6>
+                                            <p th:text="'số lượng x ' + ${orderDetail.quantity}">Quantity</p>
+                                            <p>
+                                                <span
+                                                    th:text="${#numbers.formatDecimal(orderDetail.price, 1, 'COMMA', 3, 'POINT') + ' Đ'}"
+                                                    class="text-muted"></span>
+                                            </p>
+                                            <a
+                                                th:href="@{/product/detail/{id}(id=${orderDetail.productVariant.product.productId})}">
+                                                Mua Lại
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-end">
+                                    Thành tiền:
+                                    <span
+                                        th:text="${#numbers.formatDecimal(order.totalAmount, 1, 'COMMA', 3, 'POINT') + ' Đ'}"
+                                        class="text-danger">
+                                    </span>
+                                    <br>
+                                    <span th:text="${order.voucher != null ? order.voucher.voucherName : ''}"></span>
+                                </p>
+                                <div class="text-end">
+                                    <!-- <span id="order-status" th:attr="data-status=${order.getStatusCode()}"></span> -->
+
+                                    <form th:if="${order.getStatusCode() == 1 || order.getStatusCode() == 2}"
+                                        th:action="@{/yourstyle/order/cancel/{id}(id=${order.orderId})}" method="post"
+                                        style="display:inline;">
+                                        <button type="submit" class="btn btn-outline-secondary">Hủy Đơn</button>
+                                    </form>
+                                    <a class="btn btn-outline-secondary"
+                                        th:href="@{/yourstyle/order/orderhistorydetail/{id}(id=${order.orderId})}">
+                                        Xem Chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function filterOrdersByStatus(status) {
+                fetch(`/yourstyle/order/orderhistory?selectedStatus=${status}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error("Network response was not ok");
+                        return response.text();
+                    })
+                    .then(html => {
+                        document.querySelector('#order-content').innerHTML = html;
+                    })
+                    .catch(error => console.error('Error loading orders:', error));
+            }
+
+        </script>
+    </section>
+
+</body>
+
+</html>

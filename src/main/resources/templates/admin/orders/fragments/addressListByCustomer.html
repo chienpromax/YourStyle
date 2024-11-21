@@ -1,0 +1,24 @@
+<tbody class="listAddress" th:fragment="addressRows">
+    <tr th:each="address,iterStat: ${customer.addresses}" th:unless="${address.isDefault}">
+        <td>[[${iterStat.index + 1}]]</td>
+        <td>[[${customer.fullname}]]</td>
+        <td>[[${customer.phoneNumber}]]</td>
+        <td>[[${address.street}]]</td>
+        <td>[[${address.ward}]]</td>
+        <td>[[${address.district}]]</td>
+        <td>[[${address.city}]]</td>
+        <td>
+            <a
+                href="javascript:void(0);"
+                class="btn btn-outline-warning"
+                onclick="selectAddress(this)"
+                data-bs-dismiss="modal"
+                id="selectAddress"
+            >
+                Chọn
+            </a>
+        </td>
+        <input type="hidden" th:value="${address.addressId}" id="inputAddressId" />
+        <input type="hidden" th:value="${customer.customerId}" id="inputCustomerId" />
+    </tr>
+</tbody>

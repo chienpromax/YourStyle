@@ -1,6 +1,7 @@
 package yourstyle.com.shope.model;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -21,13 +22,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "roles")
-public class Role implements Serializable{
+public class Role implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int roleId;
-	@Column(name = "name",nullable = false,length= 20,unique = true)
+	@Column(name = "name", nullable = false, length = 20, unique = true)
 	private String name;
-    @OneToMany(mappedBy = "role", fetch = FetchType.EAGER)
-    private Set<Account> accounts;
-	
+	@OneToMany(mappedBy = "role", fetch = FetchType.EAGER)
+	private Set<Account> accounts;
+
 }

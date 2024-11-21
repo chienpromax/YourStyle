@@ -30,7 +30,7 @@ public class HomeSiteController {
 	@Autowired
 	private SlideService slideService;
 
-	@RequestMapping("/home")
+	@RequestMapping({"/home", "/discount/{discountId}"})
 	public String showHomePage(Model model, Authentication authentication, @PathVariable(value = "discountId", required = false) Integer discountId) {
 		List<Category> parentCategories = categoryService.findParentCategories();
 

@@ -125,17 +125,21 @@
                                                 <span class="badge bg-primary" th:text="${order.orderChannel.name}">In
                                                     Store</span>
                                             </td>
+                                            <td th:if="${order.orderChannel == null}">
+                                                <span class="badge bg-secondary">N/A</span>
+                                            </td>
 
                                             <td>
-                                                <span class="badge bg-success" th:text="${order.statusDescription != null ? order.statusDescription : 'N/A'}"></span>
+                                                <span class="badge bg-success"
+                                                    th:text="${order.statusDescription != null ? order.statusDescription : 'N/A'}"></span>
                                             </td>
-                                            
-                                            <td>
-                                                <a
-                                                    th:href="@{/admin/orders/detail/{orderId}(orderId=${order.orderId})}">
+
+                                            <td th:if="${order.orderChannel != null}">
+                                                <a th:href="@{/admin/orders/detail/{orderId}(orderId=${order.orderId})}">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
                                             </td>
+                                            
                                         </tr>
                                     </tbody>
                                 </table>

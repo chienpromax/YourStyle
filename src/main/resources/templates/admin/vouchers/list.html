@@ -147,8 +147,10 @@
                                                     <p>Không có khách hàng</p>
                                                 </div>
                                             </td>
-                                            <td>[[${voucher.account.accountId}]]</td>
-                                            <td>[[${voucher.description}]]</td>
+                                            
+                                            <td>[[${voucher.account?.accountId ?: 'N/A'}]]</td>
+                                            <td>[[${voucher.description ?: 'Không có mô tả'}]]</td>
+                                            
                                             <td>
                                                 <!-- Chỉnh sửa Voucher -->
                                                 <a style="cursor: pointer; font-size: 21px;"

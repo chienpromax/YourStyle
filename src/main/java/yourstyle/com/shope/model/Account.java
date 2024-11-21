@@ -4,6 +4,9 @@ import jakarta.persistence.CascadeType;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -53,7 +56,8 @@ public class Account implements Serializable {
 	// @OneToMany(mappedBy = "account")
 	// private List<Voucher> vouchers;
 
-	@OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "account")
+	@JsonIgnore
 	private List<Voucher> vouchers;
 
 }

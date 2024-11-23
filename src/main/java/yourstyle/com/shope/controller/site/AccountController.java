@@ -10,19 +10,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import yourstyle.com.shope.model.Account;
-import yourstyle.com.shope.repository.CustomerRepository;
 import yourstyle.com.shope.service.AccountService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Controller("siteAccountController")
 @RequestMapping("/yourstyle/accounts")
 public class AccountController {
-	@Autowired
-	private CustomerRepository customerRepository;
+
 	@Autowired
 	private AccountService accountService;
-	@Autowired
-	private BCryptPasswordEncoder passwordEncoder;
+	
 
 	@GetMapping("/register")
 	public String showRegisterForm(Model model) {

@@ -103,6 +103,9 @@
                                     <a class="dropdown-item" th:href="@{/yourstyle/accounts/forgotpassword}">QUÊN MẬT
                                         KHẨU</a>
                                 </li>
+                                <li sec:authorize="isAuthenticated()"><a
+									class="dropdown-item" th:href="@{/yourstyle/accounts/profile}">Hồ
+										sơ cá nhân</a></li>
                                 <!-- Nút Đăng xuất chỉ hiển thị khi đã đăng nhập -->
                                 <li sec:authorize="isAuthenticated()">
                                     <a class="dropdown-item" th:href="@{/yourstyle/order/orderhistory}">LỊCH SỬ</a>

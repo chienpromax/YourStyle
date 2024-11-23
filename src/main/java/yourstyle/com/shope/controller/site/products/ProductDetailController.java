@@ -82,6 +82,7 @@ public class ProductDetailController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Integer accountId = userDetails.getAccountId();
         Customer customer = customerRepository.findByAccount_AccountId(accountId);
+
         if (customer == null) {
             response.put("success", false);
             response.put("errorMessage", "Không tìm thấy khách hàng.");

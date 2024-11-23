@@ -1,5 +1,8 @@
 package yourstyle.com.shope.service.impl;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.servlet.http.HttpSession;
 import yourstyle.com.shope.model.Role;
 import yourstyle.com.shope.model.Account;
 import yourstyle.com.shope.model.Customer;
@@ -21,8 +24,13 @@ import yourstyle.com.shope.service.AccountService;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import java.util.UUID;
+//new
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -213,4 +221,238 @@ public class AccountServiceImpl implements AccountService {
     public Optional<Account> findByEmail(String email) {
         return accountRepository.findByEmail(email);
     }
+
+	// new---------------------------------------------------------------------------
+	public boolean updateEmailByUsername(String username, String newEmail) {
+		Optional<Account> optionalAccount = accountRepository.findByUsername(username);
+
+		if (!optionalAccount.isPresent()) {
+			return false;
+		}
+
+		Account account = optionalAccount.get();
+
+		if (accountRepository.existsByEmail(newEmail)) {
+			return false;
+		}
+		account.setEmail(newEmail);
+		accountRepository.save(account);
+
+		return true;
+	}
+
+	public boolean isValidEmail(String email) {
+		String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+		return email.matches(emailRegex);
+	}
+
+	@Override
+	public boolean isEmailExist(String email) {
+		return accountRepository.existsByEmail(email);
+	}
+
+	public String getPhoneNumberByUsername(String username) {
+		Optional<Account> optionalAccount = accountRepository.findByUsername(username);
+		if (optionalAccount.isPresent()) {
+			Account account = optionalAccount.get();
+			Integer accountId = account.getAccountId();
+			Optional<Customer> optionalCustomer =customerRepository.findOptionalByAccount_AccountId(accountId);
+			if (optionalCustomer.isPresent()) {
+				return optionalCustomer.get().getPhoneNumber();
+			}
+		}
+		return "Số điện thoại không tồn tại";
+	}
+
+	public boolean addOrUpdatePhoneNumber(String username, String newPhone) {
+		Optional<Account> optionalAccount = accountRepository.findByUsername(username);
+
+		if (optionalAccount.isPresent()) {
+			Account account = optionalAccount.get();
+			Integer accountId = account.getAccountId();
+			Optional<Customer> optionalCustomer = customerRepository.findOptionalByAccount_AccountId(accountId);
+
+			if (optionalCustomer.isPresent()) {
+				Customer customer = optionalCustomer.get();
+				customer.setPhoneNumber(newPhone);
+				customerRepository.save(customer);
+			} else {
+				Customer newCustomer = new Customer();
+				newCustomer.setAccount(account);
+				newCustomer.setPhoneNumber(newPhone);
+				customerRepository.save(newCustomer);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public boolean updateUserInfo(String username, String fullName, LocalDate birthday, String gender,
+			String nationality, MultipartFile avatar) {
+		Optional<Account> optionalAccount = accountRepository.findByUsername(username);
+
+		if (optionalAccount.isPresent()) {
+			Account account = optionalAccount.get();
+			Integer accountId = account.getAccountId();
+
+			Optional<Customer> optionalCustomer = customerRepository.findOptionalByAccount_AccountId(accountId);
+
+			Customer customer;
+
+			if (optionalCustomer.isPresent()) {
+				customer = optionalCustomer.get();
+			} else {
+				customer = new Customer();
+				customer.setAccount(account);
+			}
+
+			customer.setFullname(fullName);
+			customer.setBirthday(java.sql.Date.valueOf(birthday));
+
+			if (gender != null) {
+				switch (gender.toLowerCase()) {
+				case "true":
+					customer.setGender(true);
+					break;
+				case "false":
+					customer.setGender(false);
+					break;
+				default:
+					customer.setGender(null);
+					break;
+				}
+			}
+			String existingAvatar = customer.getAvatar();
+			if (avatar != null && !avatar.isEmpty()) {
+				try {
+					Path path = Paths.get("src", "main", "resources", "static", "uploads", "Avatar");
+					Files.createDirectories(path);
+
+					String fileName = accountId + "_" + avatar.getOriginalFilename();
+					Path filePath = path.resolve(fileName);
+
+					avatar.transferTo(filePath);
+
+					customer.setAvatar("/uploads/Avatar/" + fileName);
+				} catch (Exception e) {
+					e.printStackTrace();
+					return false;
+				}
+			} else {
+				customer.setAvatar(existingAvatar);
+			}
+			customer.setNationality(nationality);
+
+			customerRepository.save(customer);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	// new
+	public String getFullNameByUsername(String username) {
+		Optional<Account> optionalAccount = accountRepository.findByUsername(username);
+
+		if (optionalAccount.isPresent()) {
+			Account account = optionalAccount.get();
+			Integer accountId = account.getAccountId();
+			Optional<Customer> optionalCustomer = customerRepository.findOptionalByAccount_AccountId(accountId);
+
+			if (optionalCustomer.isPresent()) {
+				return optionalCustomer.get().getFullname();
+			}
+		}
+		return "Tên không tồn tại";
+	}
+
+	public Date getBirthdayByUsername(String username) {
+
+	    Optional<Account> optionalAccount = accountRepository.findByUsername(username);
+
+	    if (optionalAccount.isPresent()) {
+	        Account account = optionalAccount.get();
+	        Integer accountId = account.getAccountId();
+	        
+	        Optional<Customer> optionalCustomer = customerRepository.findOptionalByAccount_AccountId(accountId);
+
+	        if (optionalCustomer.isPresent()) {
+	            java.util.Date birthdayUtil = optionalCustomer.get().getBirthday();
+
+	            if (birthdayUtil != null) {
+	                return birthdayUtil;
+	            }
+	        }
+	    }
+
+	    return null;
+	}
+
+
+	
+	public Boolean getGenderByUsername(String username) {
+		Optional<Account> optionalAccount = accountRepository.findByUsername(username);
+
+		if (optionalAccount.isPresent()) {
+			Account account = optionalAccount.get();
+			Integer accountId = account.getAccountId();
+
+			Optional<Customer> optionalCustomer = customerRepository.findOptionalByAccount_AccountId(accountId);
+
+			if (optionalCustomer.isPresent()) {
+				Boolean gender = optionalCustomer.get().getGender();
+				return gender;
+			}
+		}
+		return null;
+	}
+
+	public String getNationalityByUsername(String username) {
+		Optional<Account> optionalAccount = accountRepository.findByUsername(username);
+		if (optionalAccount.isPresent()) {
+			Account account = optionalAccount.get();
+			Integer accountId = account.getAccountId();
+
+			Optional<Customer> optionalCustomer = customerRepository.findOptionalByAccount_AccountId(accountId);
+
+			if (optionalCustomer.isPresent()) {
+				String nationality = optionalCustomer.get().getNationality();
+				return nationality != null ? nationality : "Quốc tịch không tồn tại";
+			}
+		}
+		return "Quốc tịch không tồn tại";
+	}
+
+	@Override
+	public String getAvatarByUsername(String username) {
+		// Lấy thông tin account theo username
+		Optional<Account> optionalAccount = accountRepository.findByUsername(username);
+		if (!optionalAccount.isPresent()) {
+			return null; // Không tìm thấy account
+		}
+
+		Account account = optionalAccount.get();
+		Integer accountId = account.getAccountId();
+
+		Optional<Customer> optionalCustomer = customerRepository.findOptionalByAccount_AccountId(accountId);
+		if (!optionalCustomer.isPresent()) {
+			return null;
+		}
+
+		String avatarPath = optionalCustomer.get().getAvatar();
+
+		if (avatarPath == null || avatarPath.isEmpty()) {
+			return null; // Nếu không có avatar
+		}
+
+		if (avatarPath.startsWith("/uploads/Avatar/")) {
+			avatarPath = avatarPath.substring("/uploads/Avatar/".length()); // Cắt bỏ phần đầu nếu có
+		}
+
+		// Trả về đường dẫn URL hợp lệ
+		return "/uploads/Avatar/" + avatarPath;
+	}
+
+
 }

@@ -295,7 +295,6 @@
 									th:if="${product.discount == null}"
 									th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'">
 								</span>
-
 								<a th:href="@{/yourstyle/productfavorites/add(productId=${product.productId})}">
 									<i class="fa-regular fa-heart "></i>
 								</a>
@@ -307,11 +306,3 @@
 
 				</div>
 			</div>
-
-		</section>
-		<script src="/site/js/home.js"></script>
-	</section>
-
-</body>
-
-</html>

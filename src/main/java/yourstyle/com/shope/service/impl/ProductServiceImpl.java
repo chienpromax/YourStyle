@@ -33,6 +33,20 @@ public class ProductServiceImpl implements ProductService {
 		return productRepository.findDiscountedProducts(); // Sử dụng repository để tìm sản phẩm có giảm giá
 	}
 
+	// @Override
+	// public List<Product> getDiscountedProducts() {
+	// 	List<Object[]> results = productRepository.findDiscountedProducts();
+	// 	return results.stream().map(result -> {
+	// 		Product product = new Product();
+	// 		product.setProductId((Integer) result[0]);
+	// 		product.setName((String) result[1]);
+	// 		product.setPrice((BigDecimal) result[2]);
+	// 		product.setImage((String) result[3]);
+	// 		product.setTotalQuantity(((Number) result[4]).intValue()); // Ánh xạ totalQuantity
+	// 		return product;
+	// 	}).collect(Collectors.toList());
+	// }
+
 	// Sp bán chạy nhất
 	@Override
 	public List<Product> getBestSellingProducts() {

@@ -48,17 +48,5 @@
         color: gray;
     }
 
-    /* .nav-flow {
-        overflow-x: scroll; 
-        scroll-behavior: smooth;  */
-        /* Ẩn thanh cuộn trong IE và Edge */
-        /* -ms-overflow-style: none;  */
-         /* Ẩn thanh cuộn trong Firefox */
-        /* scrollbar-width: none; */
-    /* } */
-    
-    /* .nav-flow::-webkit-scrollbar { */
-        /* Ẩn thanh cuộn trong Chrome, Safari và Edge */
-        /* display: none; 
-    } */
+
     

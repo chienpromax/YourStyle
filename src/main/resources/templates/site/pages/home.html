@@ -123,13 +123,15 @@
 					<div class="row">
 						<th:block th:each="product, iterStat : ${bestSellers}">
 							<div class="col-md-2">
-								<div class="card" th:if="${iterStat.index < 6}">
-									<a th:href="@{/product/detail/{productId}(productId=${product.productId})}">
-										<img th:src="@{'/uploads/' + ${product.image}}" class="img-fluid" alt="Product Image">
+								<div class="card product-card" th:if="${iterStat.index < 6}">
+									<a
+										th:href="@{/yourstyle/product/detail/{productId}(productId=${product.productId})}">
+										<img th:src="@{'/uploads/' + ${product.image}}" class="img-fluid"
+											alt="Product Image">
 									</a>
 									<div class="card-body">
 										<p class="product-name" th:text="${product.name}"></p>
-										<p class="card-text text-center text-danger fw-bolder fs-5"
+										<p class="card-text text-center text-danger fw-bolder "
 											th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'">
 										</p>
 										<p class="card-text position-absolute bottom-0 end-0 text-muted m-2 small">
@@ -172,8 +174,8 @@
 				<div class="discount">
 					<div class="row">
 						<div class="col-md-2" th:each="product,iterStat : ${discountedProducts}">
-							<div class="card"  th:if="${iterStat.index < 6}">
-								<a th:href="@{/product/detail/{productId}(productId=${product.productId})}">
+							<div class="card product-card" th:if="${iterStat.index < 6}">
+								<a th:href="@{/yourstyle/product/detail/{productId}(productId=${product.productId})}">
 									<img th:src="'/uploads/' + ${product.image}" class="img-fluid">
 								</a>
 								<div class="card-body">
@@ -191,13 +193,20 @@
 											</span>
 										</div>
 										<!-- Phần trăm giảm giá -->
-										<span class="badge discount-badge bg-danger" th:if="${product.discount != null}"
-											th:text="${#numbers.formatDecimal(product.discount.discountPercent, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'">
+										<span class="badge discount-badge bg-danger m-2"
+											th:if="${product.discount != null}"
+											th:text="'-' + ${#numbers.formatDecimal(product.discount.discountPercent, 0, 0)} + '%'">
 										</span>
 										<!-- Giá gốc khi không có giảm giá -->
-										<span class="price text-danger fw-bold" th:if="${product.discount == null}"
+										<span class="price text-danger card-text fw-bolder fs-5  "
+											th:if="${product.discount == null}"
 											th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'">
 										</span>
+
+										<a th:href="@{/yourstyle/productfavorites/add(productId=${product.productId})}">
+											<i class="fa-regular fa-heart "></i>
+										</a>
+
 									</div>
 
 								</div>
@@ -259,25 +268,46 @@
 				<h2 class="fw-bolder" style="margin-top: 7px">TẤT CẢ SẢN PHẨM</h2>
 			</div>
 			<div class="row py-5">
-				<div class="col-md-2 pt-5" th:each="product : ${products}" data-aos="fade-up">
-					<div class="card product-card">
+				<div class="col-md-2 pt-5" th:each="product : ${products}">
+					<div class="card product-card ">
 						<a th:href="@{/yourstyle/product/detail/{productId}(productId=${product.productId})}">
-							<img th:src="@{/uploads/} + ${product.image}" class="img-fluid" alt="Hình ảnh sản phẩm">
+							<img th:src="'/uploads/' + ${product.image}" class="img-fluid">
 						</a>
-						<div class="p-2">
-							<div class="product-info">
-								<h6 class="product-name" th:text="${product.name}"></h6>
-								<a href="javascript:void(0)" th:onclick="'addToFavorite(' + ${product.productId} + ');'"
-									aria-label="Thêm vào yêu thích"> <i class="bi bi-heart"
-										id="heart-${product.productId}"></i>
+						<div class="card-body ">
+							<p class="card-title product-name" th:text="${product.name}">Tên Sản Phẩm</p>
+							<div class="price-info d-flex align-items-center">
+								<!-- Giá đã giảm -->
+								<div class="price-discount-container d-flex flex-column me-2">
+									<span class="price-discount text-danger fw-bold" th:if="${product.discount != null}"
+										th:text="${#numbers.formatDecimal(product.price - product.price * product.discount.discountPercent / 100, 1, 'COMMA', 3, 'POINT') + ' VNĐ'}">
+									</span>
+									<span class="price-original text-muted" th:if="${product.discount != null}">
+										<del
+											th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'"></del>
+									</span>
+								</div>
+								<!-- Phần trăm giảm giá -->
+								<span class="badge discount-badge bg-danger m-2" th:if="${product.discount != null}"
+									th:text="'-' + ${#numbers.formatDecimal(product.discount.discountPercent, 0, 0)} + '%'">
+								</span>
+								<!-- Giá gốc khi không có giảm giá -->
+								<span class="price text-danger card-text fw-bolder m-2"
+									th:if="${product.discount == null}"
+									th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'">
+								</span>
+
+								<a th:href="@{/yourstyle/productfavorites/add(productId=${product.productId})}">
+									<i class="fa-regular fa-heart "></i>
 								</a>
+
 							</div>
-							<p class="text-danger fw-bolder"
-								th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')+ ' VNĐ'}"></p>
+
 						</div>
 					</div>
+
 				</div>
 			</div>
+
 		</section>
 		<script src="/site/js/home.js"></script>
 	</section>

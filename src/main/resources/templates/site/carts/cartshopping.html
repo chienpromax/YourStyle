@@ -25,7 +25,7 @@
                                 <tbody th:each="orderDetail : ${orderDetails}">
                                     <tr class="align-items-stretch">
                                         <td class="text-center" scope="row">
-                                            <a th:href="@{/product/detail/{id}(id=${orderDetail.productVariant.product.productId})}">
+                                            <a th:href="@{/yourstyle/product/detail/{id}(id=${orderDetail.productVariant.product.productId})}">
                                                 <img th:src="@{/uploads/} + ${orderDetail.productVariant.product.image}"
                                                      alt="Image" width="100"
                                                      style="object-fit: cover; max-height: 150px;" class="img-fluid" />

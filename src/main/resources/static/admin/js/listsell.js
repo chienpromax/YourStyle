@@ -29,16 +29,29 @@ window.addEventListener("DOMContentLoaded", () => {
                         tbody.innerHTML = "";
                         let rows = "";
                         data.forEach((order, index) => {
-                            const { orderId, fullname, orderDate, status } = order;
+                            const {
+                                orderId,
+                                fullname,
+                                totalQuantities,
+                                totalAmounts,
+                                orderDate,
+                                orderChannel,
+                                status,
+                            } = order;
                             const formatedOrderDate = orderDate
                                 ? format(new Date(orderDate), "dd-MM-yyyy HH:mm:ss")
                                 : "dd-MM-yyyy HH:mm:ss";
+                            const totalQuantity = totalQuantities[orderId] || 0;
+                            const totalAmount = totalAmounts[orderId] || "0.000 VND";
                             rows += `
                             <tr>
                                 <td>${index + 1}</td>
                                 <td>${orderId}</td>
                                 <td>${fullname}</td>
+                                <td>${totalQuantity}</td>
+                                <td>${totalAmount}</td>
                                 <td>${formatedOrderDate}</td>
+                                <td>${orderChannel}</td>
                                 <td>
                                     <span class="badge bg-success">
                                         ${status}
@@ -63,6 +76,32 @@ window.addEventListener("DOMContentLoaded", () => {
                     });
             }
         });
+    });
+
+    document.getElementById("value").addEventListener("input", function (e) {
+        e.preventDefault();
+        const value = document.getElementById("value").value.trim();
+        // console.log(value);
+
+        fetch(`/admin/sell/searchListOrderInStore?value=${value}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Lỗi: ", error);
+                }
+                return response.text(); // Bạn có thể dùng response.text() nếu chỉ cần thông báo
+            })
+            .then((html) => {
+                const tbody = document.querySelector(".listOrderInStore");
+                tbody.innerHTML = html;
+            })
+            .catch((err) => {
+                console.error("Lỗi:", err);
+            });
     });
     window.createToast = function (type, icon, title, text) {
         const newToast = document.createElement("div");

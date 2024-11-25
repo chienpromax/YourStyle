@@ -1,196 +1,230 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-    layout:decorate="~{admin/index.html}">
+<html
+    lang="en"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/index.html}"
+>
+    <head></head>
 
-<head></head>
+    <body>
+        <section layout:fragment="main">
+            <main id="main" class="main">
+                <div class="pagetitle">
+                    <h1>Quản lý đơn hàng</h1>
+                    <nav>
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="index.html">Trang chủ</a></li>
+                            <li class="breadcrumb-item active">Bảng đơn hàng</li>
+                        </ol>
+                    </nav>
+                </div>
+                <!-- End Page Title -->
 
-<body>
-    <section layout:fragment="main">
-        <main id="main" class="main">
-            <div class="pagetitle">
-                <h1>Quản lý đơn hàng</h1>
-                <nav>
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Trang chủ</a></li>
-                        <li class="breadcrumb-item active">Bảng đơn hàng</li>
-                    </ol>
-                </nav>
-            </div>
-            <!-- End Page Title -->
+                <section class="section">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mt-3">
+                                <h4>Đơn hàng</h4>
+                                <!-- Tìm kiếm -->
+                                <div class="row mb-3">
+                                    <!-- Ô tìm kiếm -->
+                                    <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
+                                        <form id="searchOrderListForm">
+                                            <div class="position-relative w-100">
+                                                <button
+                                                    type="submit"
+                                                    class="position-absolute end-0 top-50 translate-middle-y pe-3 text-warning fw-bold border-0 bg-transparent"
+                                                >
+                                                    <i class="bi bi-search"></i>
+                                                </button>
+                                                <input
+                                                    id="value"
+                                                    name="value"
+                                                    class="form-control ps-3"
+                                                    placeholder="Tìm kiếm hóa đơn theo mã hoặc tên khách hàng"
+                                                />
+                                            </div>
+                                        </form>
+                                    </div>
 
-            <section class="section">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="mt-3">
-                            <h4>Đơn hàng</h4>
-                            <!-- Tìm kiếm -->
-                            <div class="row mb-3">
-                                <!-- Ô tìm kiếm -->
-                                <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
-                                    <form th:action="@{/admin/orders/search}" method="get">
-                                        <div class="position-relative w-100">
-                                            <button type="submit"
-                                                class="position-absolute end-0 top-50 translate-middle-y pe-3 text-warning fw-bold border-0 bg-transparent">
-                                                <i class="bi bi-search"></i>
-                                            </button>
-                                            <input name="value" class="form-control ps-3"
-                                                placeholder="Tìm kiếm hóa đơn ..." />
+                                    <!-- Date and time picker -->
+                                    <div class="col-lg-3 col-md-6 mb-3 mb-md-0">
+                                        <div class="form-floating">
+                                            <input
+                                                type="datetime-local"
+                                                class="form-control"
+                                                id="datetimeFrom"
+                                                value="2024-10-23T14:12:56"
+                                            />
+                                            <label for="datetimepickerFrom">Từ ngày</label>
                                         </div>
-                                    </form>
-                                </div>
-
-                                <!-- Date and time picker -->
-                                <div class="col-lg-3 col-md-6 mb-3 mb-md-0">
-                                    <div class="form-floating">
-                                        <input type="datetime-local" class="form-control" id="datetimeFrom"
-                                            value="2024-10-23T14:12:56" />
-                                        <label for="datetimepickerFrom">Từ ngày</label>
+                                    </div>
+                                    <div class="col-lg-3 col-md-6">
+                                        <div class="form-floating">
+                                            <input
+                                                type="datetime-local"
+                                                class="form-control"
+                                                id="datetimeTo"
+                                                value="2024-10-23T14:12:56"
+                                                onchange="filterOrders()"
+                                            />
+                                            <label for="datetimepickerTo">Đến ngày</label>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-md-6">
-                                    <div class="form-floating">
-                                        <input type="datetime-local" class="form-control" id="datetimeTo"
-                                            value="2024-10-23T14:12:56" onchange="filterOrders()" />
-                                        <label for="datetimepickerTo">Đến ngày</label>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <!-- Bộ lọc -->
-                            <div class="row mb-3">
-                                <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
-                                    <select class="form-select" id="statusSelect">
-                                        <option value="" selected disabled>Trạng thái</option>
-                                        <option th:each="status : ${orderStatus}" th:value="${status.code}">
-                                            [[${status.description}]]
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="col-lg-3 col-md-12 mb-3 mb-lg-0">
-                                    <select name="" id="orderChannelSelect" class="form-select">
-                                        <option value="" selected disabled>Loại đơn</option>
-                                        <option th:each="orderChannel : ${orderChannels}"
-                                            th:value="${orderChannel.value}">
-                                            [[${orderChannel.name}]]
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="col-lg-3 col-md-12 mb-3 mb-lg-0">
-                                    <!-- Xuất Excel -->
-                                    <a th:href="@{/admin/orders/export/excel}" class="btn btn-outline-warning fw-bold">
-                                        Xuất Excel
-                                    </a>
-                                </div>
-                            </div>
-
-                            <!-- Bảng Hóa đơn -->
-                            <div class="table-responsive text-center">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>STT</th>
-                                            <th>Mã HĐ</th>
-                                            <th>Tên khách hàng</th>
-                                            <th>Tổng SP</th>
-                                            <th>Tổng số tiền</th>
-                                            <th>Ngày tạo</th>
-                                            <th>Loại đơn</th>
-                                            <th>Trạng thái</th>
-                                            <th>Hành động</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody style="word-break: break-word">
-                                        <tr th:each="order,iStat : ${orders}">
-                                            <td>[[${iStat.index + 1}]]</td>
-                                            <td>[[${order.orderId}]]</td>
-                                            <td>[[${order.customer.fullname}]]</td>
-                                            <td>
-                                                <span>[[${totalQuantities[order.orderId]}]]</span>
-                                            </td>
-                                            <td>[[${totalAmounts[order.orderId]}]]</td>
-                                            <td>[[${#dates.format(order.orderDate,'dd-MM-yyyy HH:mm:ss')}]]</td>
-
-                                            <td
-                                                th:if="${order.orderChannel != null and order.orderChannel.value == 'ONLINE'}">
-                                                <span class="badge bg-success"
-                                                    th:text="${order.orderChannel.name}">Online</span>
-                                            </td>
-                                            <td
-                                                th:if="${order.orderChannel != null and order.orderChannel.value == 'DIRECT'}">
-                                                <span class="badge bg-warning"
-                                                    th:text="${order.orderChannel.name}">Direct</span>
-                                            </td>
-                                            <td
-                                                th:if="${order.orderChannel != null and order.orderChannel.value == 'IN_STORE'}">
-                                                <span class="badge bg-primary" th:text="${order.orderChannel.name}">In
-                                                    Store</span>
-                                            </td>
-                                            <td th:if="${order.orderChannel == null}">
-                                                <span class="badge bg-secondary">N/A</span>
-                                            </td>
-
-                                            <td>
-                                                <span class="badge bg-success"
-                                                    th:text="${order.statusDescription != null ? order.statusDescription : 'N/A'}"></span>
-                                            </td>
-
-                                            <td th:if="${order.orderChannel != null}">
-                                                <a th:href="@{/admin/orders/detail/{orderId}(orderId=${order.orderId})}">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
-                                            </td>
-                                            
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <!-- start pagination -->
-                            <div class="text-muted d-flex justify-content-between">
-                                <form action="">
-                                    <div class="form-inline">
-                                        <label for="size">Hiển thị:</label>
-                                        <select class="px-lg-2 py-lg-1" name="size" id="size"
-                                            onchange="this.form.submit()">
-                                            <option th:selected="${orders.size == 30}" value="30">30</option>
-                                            <option th:selected="${orders.size == 40}" value="40">40</option>
-                                            <option th:selected="${orders.size == 50}" value="50">50</option>
+                                <!-- Bộ lọc -->
+                                <div class="row mb-3">
+                                    <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
+                                        <select class="form-select" id="statusSelect">
+                                            <option value="" selected disabled>Trạng thái</option>
+                                            <option th:each="status : ${orderStatus}" th:value="${status.code}">
+                                                [[${status.description}]]
+                                            </option>
                                         </select>
                                     </div>
-                                </form>
-                                <nav aria-label="Page navigation">
-                                    <ul class="pagination" th:if="${orders.totalPages > 0}">
-                                        <li class="page-item" th:classappend="${orders.number == 0} ? 'disabled' : ''">
-                                            <a class="page-link"
-                                                th:href="@{/admin/orders/search(name=${name}, size=${orders.size}, page=${0})}">
-                                                <i class="bi bi-chevron-double-left"></i>
-                                            </a>
-                                        </li>
-                                        <li th:each="pageNumber : ${pageNumbers}"
-                                            th:classappend="${pageNumber == orders.number + 1} ? ' active' : ''"
-                                            class="page-item">
-                                            <a th:href="@{/admin/orders/search(name=${name}, size=${orders.size}, page=${pageNumber - 1})}"
-                                                class="page-link" th:text="${pageNumber}"></a>
-                                        </li>
-                                        <li th:classappend="${orders.number + 1 == orders.totalPages} ? ' disabled' : ''"
-                                            class="page-item">
-                                            <a th:href="@{/admin/orders/search(name=${name}, size=${orders.size}, page=${orders.totalPages - 1})}"
-                                                class="page-link">
-                                                <i class="bi bi-chevron-double-right"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </nav>
+                                    <div class="col-lg-3 col-md-12 mb-3 mb-lg-0">
+                                        <select name="" id="orderChannelSelect" class="form-select">
+                                            <option value="" selected disabled>Loại đơn</option>
+                                            <option
+                                                th:each="orderChannel : ${orderChannels}"
+                                                th:value="${orderChannel.value}"
+                                            >
+                                                [[${orderChannel.name}]]
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3 col-md-12 mb-3 mb-lg-0">
+                                        <!-- Xuất Excel -->
+                                        <a
+                                            th:href="@{/admin/orders/export/excel}"
+                                            class="btn btn-outline-warning fw-bold"
+                                        >
+                                            Xuất Excel
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Bảng Hóa đơn -->
+                                <div class="table-responsive text-center">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>STT</th>
+                                                <th>Mã HĐ</th>
+                                                <th>Tên khách hàng</th>
+                                                <th>Tổng SP</th>
+                                                <th>Tổng số tiền</th>
+                                                <th>Ngày tạo</th>
+                                                <th>Loại đơn</th>
+                                                <th>Trạng thái</th>
+                                                <th>Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody style="word-break: break-word" class="dsorder">
+                                            <tr th:each="order,iStat : ${orders}">
+                                                <td>[[${iStat.index + 1}]]</td>
+                                                <td>[[${order.orderId}]]</td>
+                                                <td>[[${order.customer.fullname}]]</td>
+                                                <td>
+                                                    <span>[[${totalQuantities[order.orderId]}]]</span>
+                                                </td>
+                                                <td>[[${totalAmounts[order.orderId]}]]</td>
+                                                <td>[[${#dates.format(order.orderDate,'dd-MM-yyyy HH:mm:ss')}]]</td>
+                                                <td
+                                                    th:if="${order.orderChannel != null and order.orderChannel.value == 'ONLINE'}"
+                                                >
+                                                    <span class="badge bg-success">[[${order.orderChannel.name}]]</span>
+                                                </td>
+                                                <td
+                                                    th:if="${order.orderChannel != null and  order.orderChannel.value == 'DIRECT'}"
+                                                >
+                                                    <span class="badge bg-warning">[[${order.orderChannel.name}]]</span>
+                                                </td>
+                                                <td
+                                                    th:if="${order.orderChannel != null and  order.orderChannel.value == 'IN_STORE'}"
+                                                >
+                                                    <span class="badge bg-primary">[[${order.orderChannel.name}]]</span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-success">[[${order.statusDescription}]]</span>
+                                                </td>
+                                                <td>
+                                                    <a
+                                                        th:href="@{/admin/orders/detail/{orderId}(orderId=${order.orderId})}"
+                                                    >
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- start pagination -->
+                                <div class="text-muted d-flex justify-content-between">
+                                    <form action="">
+                                        <div class="form-inline">
+                                            <label for="size">Hiển thị:</label>
+                                            <select
+                                                class="px-lg-2 py-lg-1"
+                                                name="size"
+                                                id="size"
+                                                onchange="this.form.submit()"
+                                            >
+                                                <option th:selected="${orders.size == 40}" value="40">40</option>
+                                                <option th:selected="${orders.size == 50}" value="50">50</option>
+                                                <option th:selected="${orders.size == 60}" value="60">60</option>
+                                            </select>
+                                        </div>
+                                    </form>
+                                    <nav aria-label="Page navigation">
+                                        <ul class="pagination" th:if="${orders.totalPages > 0}">
+                                            <li
+                                                class="page-item"
+                                                th:classappend="${orders.number == 0} ? 'disabled' : ''"
+                                            >
+                                                <a
+                                                    class="page-link"
+                                                    th:href="@{/admin/orders/search(name=${name}, size=${orders.size}, page=${0})}"
+                                                >
+                                                    <i class="bi bi-chevron-double-left"></i>
+                                                </a>
+                                            </li>
+                                            <li
+                                                th:each="pageNumber : ${pageNumbers}"
+                                                th:classappend="${pageNumber == orders.number + 1} ? ' active' : ''"
+                                                class="page-item"
+                                            >
+                                                <a
+                                                    th:href="@{/admin/orders/search(name=${name}, size=${orders.size}, page=${pageNumber - 1})}"
+                                                    class="page-link"
+                                                    th:text="${pageNumber}"
+                                                ></a>
+                                            </li>
+                                            <li
+                                                th:classappend="${orders.number + 1 == orders.totalPages} ? ' disabled' : ''"
+                                                class="page-item"
+                                            >
+                                                <a
+                                                    th:href="@{/admin/orders/search(name=${name}, size=${orders.size}, page=${orders.totalPages - 1})}"
+                                                    class="page-link"
+                                                >
+                                                    <i class="bi bi-chevron-double-right"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                                <!-- end pagination -->
                             </div>
-                            <!-- end pagination -->
                         </div>
                     </div>
-                </div>
-            </section>
-        </main>
-        <!-- End #main -->
-        <script src="/admin/js/listorder.js"></script>
-    </section>
-</body>
-
+                </section>
+            </main>
+            <!-- End #main -->
+            <script src="/admin/js/listorder.js"></script>
+        </section>
+    </body>
 </html>

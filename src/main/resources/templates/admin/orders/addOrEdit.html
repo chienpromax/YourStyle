@@ -30,10 +30,32 @@
                                 <div class="order-status text-danger text-center">
                                     <i class="bi bi-x-circle-fill"></i>
                                     <p>Đơn hàng [[${order.orderId}]] đã bị hủy</p>
-                                    <p>[[${#dates.format(latestStatusTime['CANCELED'], 'dd-MM-yyyy HH:mm:ss')}]]</p>
+                                    <p>
+                                        Thời gian hủy đơn: [[${#dates.format(latestStatusTime['CANCELED'], 'dd-MM-yyyy
+                                        HH:mm:ss')}]]
+                                    </p>
                                 </div>
                             </div>
-                            <div class="card-body p-5" id="cardStatus" th:unless="${order.status.code == 0}">
+                            <div th:if="${order.status.code == 8}">
+                                <div class="order-status text-danger text-center">
+                                    <p>Mã đơn hàng [[${order.orderId}]] sẽ được trả lại</p>
+                                    <p>
+                                        Thời gian trả hàng: [[${#dates.format(latestStatusTime['RETURNED'], 'dd-MM-yyyy
+                                        HH:mm:ss')}]]
+                                    </p>
+                                    <img
+                                        src="/admin/img/image-return-order.png"
+                                        alt=""
+                                        style="width: 400px; height: 200px; object-fit: contain"
+                                        class="rounded-4"
+                                    />
+                                </div>
+                            </div>
+                            <div
+                                class="card-body p-5"
+                                id="cardStatus"
+                                th:unless="${(order.status != null) and (order.status.code == 0 or order.status.code == 8)}"
+                            >
                                 <!-- Progress bar -->
                                 <ul id="progressbar-2">
                                     <li
@@ -246,7 +268,11 @@
                                         </th:block>
                                         <i class="fas fa-arrow-right"></i>
                                     </button>
-                                    <button class="btn btn-outline-danger ms-4" id="btnCancel">
+                                    <button
+                                        class="btn btn-outline-danger ms-4"
+                                        id="btnCancel"
+                                        th:disabled="${order.status.code == 0 or order.status.code == 8}"
+                                    >
                                         Hủy đơn
                                         <i class="fas fa-times"></i>
                                     </button>
@@ -262,7 +288,7 @@
                                     <button
                                         class="btn btn-outline-primary"
                                         id="btnPreviousStatus"
-                                        th:disabled="${order.status.code == 5}"
+                                        th:disabled="${order.status.code == 5 or order.status.code == 6 or order.status.code == 8}"
                                     >
                                         <i class="fas fa-arrow-left"></i>
                                         Quay lại trạng thái trước

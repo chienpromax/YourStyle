@@ -21,8 +21,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.stream.*;
-
-import yourstyle.com.shope.model.Address;
 import yourstyle.com.shope.model.Order;
 import yourstyle.com.shope.model.OrderChannel;
 import yourstyle.com.shope.model.OrderDetail;
@@ -249,43 +247,11 @@ public class OrderController {
 
     @GetMapping("")
     public String list(Model model, @RequestParam(name = "page", required = false) Optional<Integer> page,
-            @RequestParam(name = "size", required = false) Optional<Integer> size,
-            @RequestParam(name = "status", required = false) Optional<Integer> status,
-            @RequestParam(name = "from_date", required = false) Optional<String> fromDate,
-            @RequestParam(name = "to_date", required = false) Optional<String> toDate,
-            @RequestParam(name = "orderChannel", required = false) Optional<OrderChannel> orderChannel) {
+            @RequestParam(name = "size", required = false) Optional<Integer> size) {
         int currentPage = page.orElse(0);
         int pageSize = size.orElse(30);
         Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by(Sort.Direction.DESC, "orderDate"));
-        Page<Order> list = null;
-        if (status.isPresent()) {
-            Integer statusCode = status.get();
-            if (statusCode == 7) { // 7 là trạng thái tất cả lọc tất cả đơn hàng
-                list = orderService.findAll(pageable);
-            } else { // còn lại là trạng thái lọc
-                list = orderService.findByStatus(statusCode, pageable);
-            }
-        } else {
-            list = orderService.findAll(pageable);
-        }
-        if (fromDate.isPresent() && toDate.isPresent()) {
-            try {
-                // Định dạng DateTimeFormatter cho kiểu yyyy-MM-dd HH:mm:ss
-                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-                // chuyển từ chuổi sang LocalDateTime
-                LocalDateTime fromDateTime = LocalDateTime.parse(fromDate.get(), dateTimeFormatter);
-                LocalDateTime toDateTime = LocalDateTime.parse(toDate.get(), dateTimeFormatter);
-                // chuyển từ LocalDateTime Sang Timestamp
-                Timestamp fromDateTimestamp = Timestamp.valueOf(fromDateTime);
-                Timestamp toDateTimestamp = Timestamp.valueOf(toDateTime);
-                list = orderService.findByFromDateAndToDate(fromDateTimestamp, toDateTimestamp, pageable);
-            } catch (DateTimeParseException e) {
-                System.err.println("Date format is invalid: " + e.getMessage());
-            }
-        }
-        if (orderChannel.isPresent()) {
-            list = orderService.findByOrderChannel(orderChannel.get(), pageable);
-        }
+        Page<Order> list = orderService.findAll(pageable);
         paginationOrders(list, currentPage, model);
         totalQuantitiesAndTotalAmounts(list, model);
         model.addAttribute("orderStatus", orderStatus);
@@ -313,9 +279,57 @@ public class OrderController {
         }
         paginationOrders(list, currentPage, model);
         totalQuantitiesAndTotalAmounts(list, model);
-        model.addAttribute("orderStatus", orderStatus);
         model.addAttribute("orders", list);
-        return "admin/orders/list";
+        return "admin/orders/fragments/orderList :: orderRows";
+    }
+
+    @GetMapping("filterOrder")
+    public String filterFromDateAndToDate(Model model,
+            @RequestParam(name = "page", required = false) Optional<Integer> page,
+            @RequestParam(name = "size", required = false) Optional<Integer> size,
+            @RequestParam(name = "status", required = false) Optional<Integer> status,
+            @RequestParam(name = "from_date", required = false) Optional<String> fromDate,
+            @RequestParam(name = "to_date", required = false) Optional<String> toDate,
+            @RequestParam(name = "orderChannel", required = false) Optional<OrderChannel> orderChannel) {
+        int currentPage = page.orElse(0);
+        int pageSize = size.orElse(30);
+        Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by(Sort.Direction.DESC, "orderDate"));
+        Page<Order> list = null;
+        // lọc theo trạng thái đơn hàng
+        if (status.isPresent()) {
+            Integer statusCode = status.get();
+            if (statusCode == 7) { // 7 là trạng thái tất cả lọc tất cả đơn hàng
+                list = orderService.findAll(pageable);
+            } else { // còn lại là trạng thái lọc
+                list = orderService.findByStatus(statusCode, pageable);
+            }
+        } else {
+            list = orderService.findAll(pageable);
+        }
+        // lọc theo từ ngày đến ngày
+        if (fromDate.isPresent() && toDate.isPresent()) {
+            try {
+                // Định dạng DateTimeFormatter cho kiểu yyyy-MM-dd HH:mm:ss
+                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+                // chuyển từ chuổi sang LocalDateTime
+                LocalDateTime fromDateTime = LocalDateTime.parse(fromDate.get(), dateTimeFormatter);
+                LocalDateTime toDateTime = LocalDateTime.parse(toDate.get(), dateTimeFormatter);
+                // chuyển từ LocalDateTime Sang Timestamp
+                Timestamp fromDateTimestamp = Timestamp.valueOf(fromDateTime);
+                Timestamp toDateTimestamp = Timestamp.valueOf(toDateTime);
+                list = orderService.findByFromDateAndToDate(fromDateTimestamp, toDateTimestamp, pageable);
+            } catch (DateTimeParseException e) {
+                System.err.println("Date format is invalid: " + e.getMessage());
+            }
+        }
+        // lọc theo kênh mua hàng
+        if (orderChannel.isPresent()) {
+            list = orderService.findByOrderChannel(orderChannel.get(), pageable);
+        }
+        paginationOrders(list, currentPage, model);
+        totalQuantitiesAndTotalAmounts(list, model);
+        model.addAttribute("orders", list);
+        return "admin/orders/fragments/orderList :: orderRows";
     }
 
     @SuppressWarnings("unused")

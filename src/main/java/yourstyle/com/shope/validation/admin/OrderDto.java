@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +24,9 @@ public class OrderDto implements Serializable {
     private String fullname;// khách hàng lẻ
     private Timestamp orderDate;
     private String status; // trạng thái đơn
+    private Map<Integer, Integer> totalQuantities;
+    private Map<Integer, String> totalAmounts;
+    private String orderChannel;
     // chi tiết bán hàng
     private List<OrderDetailDto> orderDetailDtos;
     private VoucherDTO voucherDto;
@@ -38,10 +42,14 @@ public class OrderDto implements Serializable {
         this.transactionStatus = transactionStatus;
     }
 
-    public OrderDto(Integer orderId, String fullname, Timestamp orderDate, String status) {
+    public OrderDto(Integer orderId, String fullname, Map<Integer, Integer> totalQuantities,
+            Map<Integer, String> totalAmounts, Timestamp orderDate, String orderChannel, String status) {
         this.orderId = orderId;
         this.fullname = fullname;
+        this.totalQuantities = totalQuantities;
+        this.totalAmounts = totalAmounts;
         this.orderDate = orderDate;
+        this.orderChannel = orderChannel;
         this.status = status;
     }
 

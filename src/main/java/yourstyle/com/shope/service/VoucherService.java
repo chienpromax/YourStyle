@@ -12,6 +12,7 @@ import yourstyle.com.shope.Exception.VoucherNotFoundException;
 import yourstyle.com.shope.model.Voucher;
 
 public interface VoucherService {
+    void save(Voucher voucher);
     // Thêm một voucher mới
     Voucher createVoucher(Voucher voucher);
 

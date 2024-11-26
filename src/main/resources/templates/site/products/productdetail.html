@@ -57,6 +57,13 @@
 
 <body>
     <section class="py-5 container" layout:fragment="main" ng-controller="comment-ctrl">
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
         <div class="row">
             <!-- Phần ảnh sản phẩm -->
             <div class="col-md-1 border-end border-top">
@@ -182,6 +189,56 @@
 
             <!-- Thông tin sản phẩm -->
             <div class="col-md-4 border-start border-top py-4">
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    Chia sẻ sản phẩm tới email!
+                </button>
+
+                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+                    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Chia sẻ sản phẩm</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form th:action="@{/yourstyle/product/share}" method="post" id="shareProductForm">
+                                <div class="modal-body">
+                                    <!-- Email người gửi (readonly) -->
+                                    <div class="mb-3">
+                                        <label for="senderEmailDisplay" class="form-label">Email của bạn</label>
+                                        <!-- Hiển thị email người gửi (readonly) -->
+                                        <input type="email" id="senderEmailDisplay" class="form-control"
+                                            th:value="${#authentication.principal.email}" readonly>
+                                    </div>
+
+                                    <!-- Trường hidden chứa email người gửi -->
+                                    <input type="hidden" name="senderEmail"
+                                        th:value="${#authentication.principal.email}">
+
+                                    <!-- Email người nhận -->
+                                    <div class="mb-3">
+                                        <label for="recipientEmail" class="form-label">Email người nhận</label>
+                                        <input type="email" id="recipientEmail" name="recipientEmail"
+                                            class="form-control" placeholder="Nhập email người nhận" required>
+                                    </div>
+
+                                    <!-- Trường hidden chứa ID sản phẩm -->
+                                    <input type="hidden" name="productId" th:value="${product.productId}">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Đóng</button>
+                                    <button type="submit" class="btn btn-primary">Chia sẻ</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+
                 <h4 class="product-title">[[${product.name}]]</h4>
                 <div class="rating">
                     <span class="text-danger">
@@ -211,7 +268,8 @@
                 </div>
 
                 <hr>
-                <form id="addToCartForm" th:action="@{/yourstyle/carts/addtocart}" method="post" onsubmit="return addToCart(event)">
+                <form id="addToCartForm" th:action="@{/yourstyle/carts/addtocart}" method="post"
+                    onsubmit="return addToCart(event)">
                     <div class="mt-3">
                         <h5>Màu sắc: </h5>
                         <div class="product-color">
@@ -347,6 +405,56 @@
                 </div>
             </div>
         </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const senderEmailInput = document.getElementById("senderEmailDisplay"); // Trường hiển thị email người gửi
+                const hiddenSenderEmailInput = document.querySelector("input[name='senderEmail']"); // Trường hidden email người gửi
+        
+                // Khi trang được tải, lấy email đăng nhập từ server
+                fetch("/yourstyle/accounts/logged-in-email")
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Điền email vào cả hai trường
+                            senderEmailInput.value = data.email;
+                            hiddenSenderEmailInput.value = data.email;
+                        } else {
+                            console.error("Không thể lấy email đăng nhập.");
+                        }
+                    })
+                    .catch(error => console.error("Lỗi khi lấy email:", error));
+        
+                // Xử lý khi form được submit
+                const shareProductForm = document.getElementById("shareProductForm");
+                shareProductForm.addEventListener("submit", function (event) {
+                    event.preventDefault(); // Ngăn reload trang
+        
+                    const formData = new FormData(shareProductForm);
+        
+                    fetch(shareProductForm.action, {
+                        method: shareProductForm.method,
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert(data.message);
+                                if (data.redirectUrl) {
+                                    window.location.href = data.redirectUrl; // Chuyển hướng về trang chi tiết sản phẩm
+                                }
+                            } else {
+                                alert(data.errorMessage);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Lỗi:", error);
+                            alert("Đã xảy ra lỗi khi chia sẻ sản phẩm.");
+                        });
+                });
+            });
+        </script>
+        
+
         <script src="/site/js/cartDetail.js"></script>
     </section>
 

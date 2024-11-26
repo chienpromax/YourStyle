@@ -22,6 +22,11 @@ public class VoucherServiceImpl implements VoucherService {
     VoucherRepository voucherRepository;
 
     @Override
+    public void save(Voucher voucher) {
+        voucherRepository.save(voucher); // Lưu voucher vào DB
+    }
+
+    @Override
     public Voucher createVoucher(Voucher voucher) {
         return voucherRepository.save(voucher);
     }

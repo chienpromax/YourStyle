@@ -69,16 +69,29 @@ app.controller('comment-ctrl', function ($scope, $http, $location) {
         });
     };
 
-    // Xử lý khi người dùng chọn ảnh
+    $scope.images = [];
+    $scope.previewImages = [];
+
     $scope.handleFileUpload = function (files) {
+        $scope.images = []; // Xóa ảnh cũ
+        $scope.previewImages = []; // Xóa preview cũ
         if (files.length > 4) {
-            document.getElementById('imagesInput').value = null;
             alert("Bạn chỉ có thể tải tối đa 4 ảnh.");
-            $scope.images = files.slice(0, 4);
-        } else {
-            $scope.images = files;
+            return;
+        }
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                $scope.$apply(function () {
+                    $scope.previewImages.push(e.target.result); // Lưu base64 ảnh vào danh sách
+                    $scope.images.push(file); // Lưu file để gửi lên server
+                });
+            };
+            reader.readAsDataURL(file); // Đọc file
         }
     };
+
 
 
     $scope.resetForm = function () {

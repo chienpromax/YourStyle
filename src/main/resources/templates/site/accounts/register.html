@@ -14,18 +14,23 @@
 					<h1>Đăng Ký</h1>
 					<form th:action="@{/yourstyle/accounts/register}"
 						th:object="${account}" method="post">
-						<div th:if="${errorMessage}" class="alert alert-danger"
-							role="alert">
+						<div th:if="${errorMessage}" class="alert-danger-register" role="alert">
 							<p th:text="${errorMessage}"></p>
-						</div>
+						</div>						
 						<div class="input-container input-icon">
 							<input type="text" class="form-control" placeholder="Họ và Tên"
 								th:field="*{username}" /> <i class="bi bi-person-fill"></i>
 						</div>
+						<!--báo lỗi-->
+						<p class="text-danger" th:if="${#fields.hasErrors('username')}"
+								th:errors="*{username}"></p>
 						<div class="input-container input-icon">
 							<input type="email" class="form-control" placeholder="Email"
 								th:field="*{email}" /> <i class="bi bi-envelope"></i>
 						</div>
+						<!--báo lỗi-->
+						<p class="text-danger" th:if="${#fields.hasErrors('email')}"
+							th:errors="*{email}"></p>
 						<div class="input-container input-icon">
 							<input type="password" class="form-control"
 								placeholder="Mật khẩu" th:field="*{password}" /> <i

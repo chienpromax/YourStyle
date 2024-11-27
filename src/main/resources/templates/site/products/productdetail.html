@@ -52,6 +52,46 @@
         .stars .star.filled {
             color: #ffcc00;
         }
+
+        .hover-container {
+            position: relative;
+        }
+
+        .hover-container .btn-danger {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .hover-container:hover .btn-danger {
+            opacity: 1;
+        }
+
+        /* Đảm bảo ảnh trong phần review có kích thước đồng đều */
+        .review-images {
+            display: flex;
+            flex-wrap: wrap;
+            /* Cho phép ảnh gói gọn và hiển thị trên nhiều dòng nếu cần */
+            gap: 10px;
+            /* Khoảng cách giữa các ảnh */
+        }
+
+        .comment-image {
+            max-width: 150px;
+            /* Giới hạn chiều rộng ảnh để ảnh không bị quá lớn */
+            max-height: 150px;
+            /* Giới hạn chiều cao ảnh */
+            object-fit: cover;
+            /* Đảm bảo ảnh sẽ được cắt phù hợp với khung */
+            border-radius: 5px;
+            /* Tạo hiệu ứng bo góc cho ảnh */
+            transition: transform 0.3s ease-in-out;
+            /* Hiệu ứng khi hover ảnh */
+        }
+
+        .comment-image:hover {
+            transform: scale(1.1);
+            /* Phóng to ảnh khi hover */
+        }
     </style>
 </head>
 
@@ -106,8 +146,7 @@
                                 <button type="submit" class="btn btn-outline-info" data-mdb-ripple-init
                                     data-mdb-ripple-color="dark">Đăng</button>
                             </div>
-                            <!-- Rating: sao -->
-                            <div class="rating">
+                            <div class="rating mt-3">
                                 <span class="star" ng-click="setRating(1)"
                                     ng-class="{'filled': rating >= 1}">&#9733;</span>
                                 <span class="star" ng-click="setRating(2)"
@@ -119,7 +158,23 @@
                                 <span class="star" ng-click="setRating(5)"
                                     ng-class="{'filled': rating >= 5}">&#9733;</span>
                             </div>
-
+                            <div class="mt-3">
+                                <label for="imagesInput" class="btn btn-outline-primary">
+                                    <i class="fas fa-upload"></i> Thêm ảnh
+                                </label>
+                                <input type="file" id="imagesInput" name="images" class="d-none" multiple
+                                    onchange="angular.element(this).scope().handleFileUpload(this.files)"
+                                    ng-model="imageFiles">
+                            </div>
+                            <!-- Hiển thị ảnh đã chọn -->
+                            <div class="mt-3" ng-if="images.length > 0">
+                                <div class="d-flex flex-wrap">
+                                    <div class="me-2 mb-2" ng-repeat="image in previewImages track by $index">
+                                        <img ng-src="{{image}}" class="img-thumbnail"
+                                            style="width: 100px; height: 100px;" />
+                                    </div>
+                                </div>
+                            </div>
                         </form>
                     </div>
 
@@ -133,22 +188,34 @@
                         <div class="tab-pane fade show active" id="ex1-tabs-1" role="tabpanel"
                             aria-labelledby="ex1-tab-1" ng-repeat="review in reviews">
                             <hr>
-                            <div class="comment-header d-flex align-items-center">
-                                <img ng-src="/uploads/{{review.customer.avatar || 'default-avatar.png'}}" alt="Logo"
-                                    class="comment-logo">
-                                <span class="comment-name">{{review.customer.fullname }}</span>
-                                <span class="comment-date ms-auto">{{ review.createAt | date:'dd/MM/yyyy' }}</span>
-                            </div>
-                            <div class="comment-body">
-                                <h5>{{review.comment }}</h5>
-                                <div class="rating">
-                                    <span class="star" ng-class="{'filled': review.rating >= 1}">&#9733;</span>
-                                    <span class="star" ng-class="{'filled': review.rating >= 2}">&#9733;</span>
-                                    <span class="star" ng-class="{'filled': review.rating >= 3}">&#9733;</span>
-                                    <span class="star" ng-class="{'filled': review.rating >= 4}">&#9733;</span>
-                                    <span class="star" ng-class="{'filled': review.rating >= 5}">&#9733;</span>
+                            <div class="hover-container" ng-mouseenter="review.hover = true"
+                                ng-mouseleave="review.hover = false">
+                                <div class="comment-header d-flex align-items-center">
+                                    <img ng-src="/uploads/{{review.customer.avatar || 'default-avatar.png'}}" alt="Logo"
+                                        class="comment-logo">
+                                    <span class="comment-name">{{review.customer.fullname }}</span>
+                                    <span class="comment-date ms-auto">{{ review.createAt | date:'dd/MM/yyyy' }}</span>
+                                    <button class="btn btn-danger btn-sm ms-2"
+                                        ng-show="review.hover && review.customer.customerId === customerNow.customerId"
+                                        ng-click="deleteReview(review.reviewId)">
+                                        Xóa
+                                    </button>
                                 </div>
-                                <img ng-src="/site/images/product/product-3.webp" class="comment-image" alt="">
+                                <div class="comment-body">
+                                    <h5>{{review.comment }}</h5>
+                                    <div class="rating">
+                                        <span class="star" ng-class="{'filled': review.rating >= 1}">&#9733;</span>
+                                        <span class="star" ng-class="{'filled': review.rating >= 2}">&#9733;</span>
+                                        <span class="star" ng-class="{'filled': review.rating >= 3}">&#9733;</span>
+                                        <span class="star" ng-class="{'filled': review.rating >= 4}">&#9733;</span>
+                                        <span class="star" ng-class="{'filled': review.rating >= 5}">&#9733;</span>
+                                    </div>
+                                    <!-- Hiển thị danh sách ảnh -->
+                                    <div ng-if="review.images.length > 0" class="review-images">
+                                        <img ng-repeat="image in review.images" ng-src="/uploads/reviewImages/{{image}}"
+                                            class="comment-image" alt="Review Image">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="d-flex justify-content-center align-items-center py-3">
@@ -211,7 +278,8 @@
                 </div>
 
                 <hr>
-                <form id="addToCartForm" th:action="@{/yourstyle/carts/addtocart}" method="post" onsubmit="return addToCart(event)">
+                <form id="addToCartForm" th:action="@{/yourstyle/carts/addtocart}" method="post"
+                    onsubmit="return addToCart(event)">
                     <div class="mt-3">
                         <h5>Màu sắc: </h5>
                         <div class="product-color">

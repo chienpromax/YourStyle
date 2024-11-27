@@ -54,7 +54,6 @@ public class ReviewServiceImpl implements ReviewService {
 		return review.orElse(null); // Return null if no review is found
 	}
 
-
 	@Override
 	public void deleteReviewsByIds(List<Integer> reviewIds) {
 		// Kiểm tra nếu danh sách rỗng
@@ -67,16 +66,19 @@ public class ReviewServiceImpl implements ReviewService {
 		reviewRepository.deleteByReviewIdIn(reviewIds);
 		System.out.println("Đã xóa các đánh giá có ID: " + String.join(" ", reviewIds.toString()));
 	}
-	
+
 	public boolean deleteMultipleReviews(List<Integer> reviewIds) {
-	    try {
-	        reviewRepository.deleteByReviewIdIn(reviewIds); // Gọi repository để xóa các đánh giá
-	        return true; // Trả về true nếu xóa thành công
-	    } catch (Exception e) {
-	        e.printStackTrace(); // Ghi log lỗi để kiểm tra
-	        return false; // Trả về false nếu có lỗi
-	    }
+		try {
+			reviewRepository.deleteByReviewIdIn(reviewIds); // Gọi repository để xóa các đánh giá
+			return true; // Trả về true nếu xóa thành công
+		} catch (Exception e) {
+			e.printStackTrace(); // Ghi log lỗi để kiểm tra
+			return false; // Trả về false nếu có lỗi
+		}
 	}
 
-
+	@Override
+	public void deleteById(Integer reviewId) {
+		reviewRepository.deleteById(reviewId);
+	}
 }

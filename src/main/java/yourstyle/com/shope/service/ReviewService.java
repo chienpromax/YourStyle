@@ -24,8 +24,11 @@ public interface ReviewService {
 
     // Thêm phương thức xóa nhiều đánh giá
     void deleteReviewsByIds(List<Integer> reviewIds);
-    
+
     Review findById(Integer reviewId);
-    //pthuc new
+
+    // pthuc new
     boolean deleteMultipleReviews(List<Integer> reviewIds);
+
+    void deleteById(Integer reviewId);
 }

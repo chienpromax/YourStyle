@@ -52,5 +52,8 @@ public interface ProductService {
     List<Product> getProductsByDiscountId(Integer discountId);
 
     List<Product> findByCategory(Category category);    
+    
+    //6 sp cao price 1
+    Page<Product> getTop6Products(Pageable pageable);
 
 }

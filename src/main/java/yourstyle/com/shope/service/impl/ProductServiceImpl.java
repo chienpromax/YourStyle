@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
@@ -25,9 +26,9 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public List<Product> getProductsByDiscountId(Integer discountId) {
-		return productRepository.findByDiscount_discountId(discountId); 
+		return productRepository.findByDiscount_discountId(discountId);
 	}
-	
+
 	@Override
 	public List<Product> getDiscountedProducts() {
 		return productRepository.findDiscountedProducts(); // Sử dụng repository để tìm sản phẩm có giảm giá
@@ -63,9 +64,10 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-    public Page<Product> findByCategory_CategoryId(Integer categoryId, Pageable pageable) {
-        return productRepository.findByCategory_CategoryId(categoryId, pageable);
-    }
+	public Page<Product> findByCategory_CategoryId(Integer categoryId, Pageable pageable) {
+		return productRepository.findByCategory_CategoryId(categoryId, pageable);
+	}
+
 	@Override
 	public Product update(Product product) {
 		return productRepository.save(product);
@@ -129,10 +131,15 @@ public class ProductServiceImpl implements ProductService {
 	public List<Product> findSimilarProducts(Integer categoryId, Integer productId) {
 		return productRepository.findSimilarProducts(categoryId, productId);
 	}
-	
-    @Override
+
+	@Override
 	public List<Product> findByCategory(Category category) {
 		return productRepository.findByCategory(category);
+	}
+
+	// lấy 6 sp cao giá 1
+	public Page<Product> getTop6Products(Pageable pageable) {
+		return productRepository.findAllByOrderByPriceDesc(pageable); 
 	}
 
 }

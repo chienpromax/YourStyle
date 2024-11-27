@@ -8,21 +8,15 @@
     border       : 2px solid #ff7f00;
     border-radius: 5px;
     padding-left : 10px;
+    margin-right : 12px;
+    width        : 400px;
+    height       : 40px;
 }
 
 .search-btn,
 .scan-btn {
     background-color: #ff7f00;
     color           : white;
-}
-
-.return-image {
-    text-align: center;
-    margin-top: 30px;
-}
-
-.return-image img {
-    max-width: 50%;
 }
 
 .return-title {
@@ -38,8 +32,27 @@
     color    : #ff7f00;
 }
 
-.return-image img {
-    min-width: 900px;
-    height   : 400px;
 
+.card-returnOrder {
+    height        : 429px;
+    display       : flex;
+    flex-direction: column;
+}
+
+.card-body {
+    flex-grow     : 1;
+    overflow      : hidden;
+    display       : flex;
+    flex-direction: column;
+}
+
+.table-container {
+    overflow-y     : auto;
+    scroll-behavior: smooth;
+    max-height     : 100%;
+}
+
+#returnOrderButton {
+    width : 290.33px;
+    height: 40px;
 }

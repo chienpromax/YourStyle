@@ -71,10 +71,13 @@ public class VoucherDTO {
 
     private String formattedDiscount;
 
-    public VoucherDTO(String voucherCode, Byte type, String formattedDiscount) {
+    private String finalTotalAmount;
+
+    public VoucherDTO(String voucherCode, Byte type, String formattedDiscount, String finalTotalAmount) {
         this.voucherCode = voucherCode;
         this.type = type;
         this.formattedDiscount = formattedDiscount;
+        this.finalTotalAmount = finalTotalAmount;
     }
 
 }

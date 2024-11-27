@@ -10,7 +10,7 @@
     <body>
         <section layout:fragment="main">
             <div class="displayNotifications"></div>
-            <main id="main" class="main" style="height: 1450px">
+            <main id="main" class="main" style="height: 1300px">
                 <div class="pagetitle">
                     <h1>Bán hàng</h1>
                     <nav>
@@ -88,7 +88,7 @@
                                                                 </div>
                                                             </form>
                                                         </div>
-                                                        <div>Lọc theo giá</div>
+                                                        <!-- <div>Lọc theo giá</div> -->
                                                     </div>
                                                     <!-- Lọc sản phẩm -->
                                                     <div class="d-flex align-items-center mb-3">
@@ -720,7 +720,7 @@
                                             </tr>
                                         </thead>
                                         <tbody class="tablePayment">
-                                            <tr>
+                                            <tr th:if="${order.transactionType != null}">
                                                 <td>1</td>
                                                 <td>
                                                     [[${#numbers.formatDecimal(order.totalAmount,1,'COMMA',3,'POINT')+ '

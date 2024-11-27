@@ -13,13 +13,13 @@
 
 /* nút tăng giảm */
 /* Ẩn dấu lên/xuống cho input type="number" */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
+.quantityInput::-webkit-outer-spin-button,
+.quantityInput::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin            : 0;
 }
 
-input[type="number"] {
+.quantityInput {
     -moz-appearance: textfield;
 }
 

@@ -1136,7 +1136,7 @@
                         </thead>
                         <tbody>
                             <tr th:each="history : ${orderStatusHistories}">
-                                <td></td>
+                                <td>[[${#authentication.principal.username}]]</td>
                                 <td>[[${#dates.format(history.statusTime,'dd-MM-yyyy HH:mm:ss')}]]</td>
                                 <td>[[${history.statusDescription}]]</td>
                             </tr>

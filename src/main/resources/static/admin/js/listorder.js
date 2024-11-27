@@ -100,3 +100,28 @@ function filterOrders() {
         }
     }
 }
+// hàm xử lý xuất excel
+window.exportExcel = function () {
+    fetch(`/admin/orders/export/excel`, {
+        method: "GET",
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Lỗi: ", error);
+            }
+            return response.blob(); // Bạn có thể dùng response.text() nếu chỉ cần thông báo
+        })
+        .then((blob) => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "danhsachdonhang.xlsx";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url); // giải phóng url của blob
+        })
+        .catch((err) => {
+            console.error("Lỗi:", err);
+        });
+};

@@ -235,6 +235,7 @@ public class SellRestController {
                 Voucher voucher = getBestVoucherForOrder(vouchers, order.getTotalAmount(), 4);
                 order.setVoucher(voucher); // gán voucher cho đơn
                 VoucherDTO voucherDto = null;
+                String finalTotalAmount = formatter.format(order.getTotalAmount()) + ".000 VND";
                 if (order.getVoucher() != null) {
                         Byte type = order.getVoucher().getType();
                         BigDecimal discountAmount = order.getVoucher().getDiscountAmount();
@@ -243,6 +244,7 @@ public class SellRestController {
                                 case 1: // giảm giá trực tiếp
                                         order.setTotalAmount(order.getTotalAmount().subtract(discountAmount));
                                         formattedDiscount = formatter.format(discountAmount) + ".000 VND";
+                                        finalTotalAmount = formatter.format(order.getTotalAmount()) + ".000 VND";
                                         orderService.save(order); // Lưu lại sau khi trừ giảm giá
                                         break;
                                 case 2: // giảm giá theo phần trăm
@@ -257,11 +259,13 @@ public class SellRestController {
                                         // Trừ mức giảm từ tổng tiền đơn hàng
                                         order.setTotalAmount(order.getTotalAmount().subtract(percentageDiscount)); // VND
                                         formattedDiscount = formatter.format(discountAmount) + "%";
+                                        finalTotalAmount = formatter.format(order.getTotalAmount()) + ".000 VND";
                                         orderService.save(order);
                                         break;
                                 case 3: // giảm giá vận chuyển
                                         order.setTotalAmount(order.getTotalAmount().subtract(discountAmount));
                                         formattedDiscount = formatter.format(discountAmount) + ".000 VND";
+                                        finalTotalAmount = formatter.format(order.getTotalAmount()) + ".000 VND";
                                         orderService.save(order);
                                         break;
                                 // case 4: // giảm giá 100%
@@ -274,13 +278,15 @@ public class SellRestController {
                         voucherDto = new VoucherDTO(
                                         order.getVoucher().getVoucherCode(),
                                         type,
-                                        formattedDiscount);
+                                        formattedDiscount,
+                                        finalTotalAmount);
                 } else {
                         // Xử lý khi không có voucher
                         voucherDto = new VoucherDTO(
                                         "",
                                         null,
-                                        "0 VND");
+                                        "0 VND",
+                                        finalTotalAmount);
                 }
                 return new OrderDto(orderDetailDtos, voucherDto); // trả về danh sách
         }
@@ -475,8 +481,6 @@ public class SellRestController {
         @PutMapping("updateOrder/{orderId}/{status}")
         public ResponseEntity<String> updateOrderInStore(@PathVariable("orderId") Integer orderId,
                         @PathVariable("status") Integer status) {
-                System.out.println("mã đơn hàng: " + orderId);
-                System.out.println("mã trạng thái: " + status);
                 if (orderId != null && status != null) {
                         Order order = orderService.findById(orderId).get();
                         OrderStatus orderStatus = OrderStatus.fromCode(status);

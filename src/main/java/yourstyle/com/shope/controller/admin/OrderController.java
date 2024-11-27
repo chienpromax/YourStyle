@@ -141,9 +141,6 @@ public class OrderController {
                     formatter.format(totalSum.setScale(0, RoundingMode.FLOOR)) + ".000 VND");
             // tính phiếu voucher nếu có
             if (order.getVoucher() != null) {
-                // định dạng voucher giảm giá 50.000 VND
-                BigDecimal discountVoucher = order.getVoucher().getDiscountAmount().setScale(0,
-                        RoundingMode.FLOOR);
                 // lấy kiểu giảm giá
                 int voucherType = order.getVoucher().getType();
                 BigDecimal voucherValue = order.getVoucher().getDiscountAmount().setScale(0, RoundingMode.FLOOR);
@@ -152,20 +149,19 @@ public class OrderController {
                     case 1: // giảm giá tiền trực tiếp
                         // tính tổng tiền sau khi giảm voucher
                         voucherTotalSum = totalSum
-                                .subtract(voucherValue)
-                                .add(BigDecimal.valueOf(32));
+                                .subtract(voucherValue);
                         // định dạng voucher giảm giá 50.000 VND
-                        formattedVoucher = formatter.format(discountVoucher) + ".000 VND";
+                        formattedVoucher = formatter.format(voucherValue) + ".000 VND";
                         break;
                     case 2: // giảm giá tiền theo phần trăm
                         voucherTotalSum = totalSum.multiply(BigDecimal.ONE
-                                .subtract(voucherValue.divide(BigDecimal.valueOf(100))))
-                                .add(BigDecimal.valueOf(32));
+                                .subtract(voucherValue.divide(BigDecimal.valueOf(100))));
                         // định dạng voucher giảm giá %
-                        formattedVoucher = formatter.format(discountVoucher) + "%";
+                        formattedVoucher = formatter.format(voucherValue) + "%";
                         break;
                     case 3: // Miển phí vận chuyển nếu đủ điều kiện
-                        // thành tiền đơn hàng lớn hơn hoặc bằng 300.000đ thì miển phí vận chuyển cho
+                        // thành tiền đơn hàng lớn hơn hoặc bằng minTotalVoucher thì miển phí vận chuyển
+                        // cho
                         // đơn hàng đó
                         if (totalSum.compareTo(minTotalVoucher) >= 0) { // trả về 1 và 0
                             voucherTotalSum = totalSum.subtract(BigDecimal.valueOf(32));
@@ -207,23 +203,17 @@ public class OrderController {
         symbols.setDecimalSeparator(','); // Dùng dấu ',' cho phần thập phân
         DecimalFormat formatter = new DecimalFormat("#,##0", symbols); // định dạng tiền
         for (Order order : list) {
-            // lấy orderId
-            Integer orderId = order.getOrderId();
-            // Tìm kiếm đơn hàng theo orderID
-            Order order2 = orderService.findById(orderId).get();
-            if (order2 != null) {
-                // lấy đơn hàng vừa tìm được lấy danh sách đơn hàng chi tiết
-                List<OrderDetail> orderDetails = order2.getOrderDetails();
-                // tính tổng số lượng trong đơn hàng chi tiết của mỗi đơn hàng
-                int totalQuantity = orderDetails.stream().mapToInt((OrderDetail::getQuantity)).sum();
-                // đưa tổng số lượng vào map
-                totalQuantities.put(orderId, totalQuantity);
-                totalAmounts.put(orderId,
-                        formatter.format(order2.getTotalAmount().setScale(0, RoundingMode.FLOOR)) + ".000 VND");
-                // chia sẻ tổng số lượng và tổng tiền qua model để hiển thị trong view
-                model.addAttribute("totalQuantities", totalQuantities);
-                model.addAttribute("totalAmounts", totalAmounts);
-            }
+            // lấy đơn hàng vừa tìm được lấy danh sách đơn hàng chi tiết
+            List<OrderDetail> orderDetails = order.getOrderDetails();
+            // tính tổng số lượng trong đơn hàng chi tiết của mỗi đơn hàng
+            int totalQuantity = orderDetails.stream().mapToInt((OrderDetail::getQuantity)).sum();
+            // đưa tổng số lượng vào map
+            totalQuantities.put(order.getOrderId(), totalQuantity);
+            totalAmounts.put(order.getOrderId(),
+                    formatter.format(order.getTotalAmount().setScale(0, RoundingMode.FLOOR)) + ".000 VND");
+            // chia sẻ tổng số lượng và tổng tiền qua model để hiển thị trong view
+            model.addAttribute("totalQuantities", totalQuantities);
+            model.addAttribute("totalAmounts", totalAmounts);
         }
     }
 
@@ -264,7 +254,7 @@ public class OrderController {
     public String searchAccount(Model model, @RequestParam(name = "value", required = false) String value,
             @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
         int currentPage = page.orElse(0); // trang hiện tại
-        int pageSize = size.orElse(10); // mặc định hiển thị 10 hóa đơn 1 trang
+        int pageSize = size.orElse(30); // mặc định hiển thị 10 hóa đơn 1 trang
         Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by(Sort.Direction.DESC, "orderDate"));
         Page<Order> list = null;
         if (StringUtils.hasText(value)) { // kiểm tra có giá trị hay không

@@ -24,133 +24,86 @@ window.addEventListener("DOMContentLoaded", function () {
             });
         });
     }
-    // Lắng nghe sự kiện click vào nút giảm số lượng
-    document.querySelectorAll(".decreaseQuantity").forEach(function (button) {
-        button.addEventListener("click", function () {
-            let index = this.getAttribute("data-index");
-            if (index) {
-                // Tìm ô input tương ứng với data-index
-                let quantityInput = document.querySelector(`.quantityInput[data-index="${index}"]`);
-
-                if (quantityInput) {
-                    // Kiểm tra nếu phần tử tồn tại
-                    let currentValue = parseInt(quantityInput.value);
-                    if (currentValue > 1) {
-                        quantityInput.value = currentValue - 1; // cập nhật ô input
-                        const rows = this.closest("tr");
-                        const productVariantId = rows.cells[1].querySelector('input[name="productVariantId"]').value;
-                        const colorId = rows.cells[2].querySelector('input[name="colorId"]').value;
-                        const sizeId = rows.cells[3].querySelector('input[name="sizeId"]').value;
-                        const orderDetailData = {
-                            orderId: orderId,
-                            productVariantId: productVariantId,
-                            colorId: colorId,
-                            sizeId: sizeId,
-                        };
-                        fetch("/api/admin/sell/decreaseQuantity", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify(orderDetailData),
-                        })
-                            .then((reponse) => {
-                                if (!reponse.ok) {
-                                    throw new Error("Lỗi server không trả dữ liệu về!");
-                                }
-                                return reponse.json();
-                            })
-                            .then((data) => {
-                                console.log(data);
-                                updateOrderDetailTable(data);
-                                createToast(
-                                    "success",
-                                    "fa-solid fa-circle-check",
-                                    "Thành công",
-                                    "Giảm số lượng sản phẩm trong đơn thành công"
-                                );
-                            })
-                            .catch((err) => {
-                                console.error("Lỗi: " + err);
-                                createToast(
-                                    "error",
-                                    "fa-solid fa-circle-exclamation",
-                                    "Lỗi",
-                                    "Giảm số lượng sản phẩm trong đơn thất bại!"
-                                );
-                            });
-                    }
-                } else {
-                    console.error(`Không tìm thấy ô input với data-index="${index}"`);
-                }
-            }
+    // gán lại sự kiện click cho button khi trả API về
+    function rebindQuantityButtons() {
+        // Lắng nghe sự kiện click vào nút giảm số lượng
+        document.querySelectorAll(".decreaseQuantity").forEach(function (button) {
+            button.addEventListener("click", function () {
+                handleQuantityChange(this, "decrease");
+            });
         });
-    });
 
-    // Lắng nghe sự kiện click vào nút tăng số lượng
-    document.querySelectorAll(".increaseQuantity").forEach(function (button) {
-        button.addEventListener("click", function () {
-            let index = this.getAttribute("data-index");
-            if (index) {
-                // Tìm ô input tương ứng với data-index
-                let quantityInput = document.querySelector(`.quantityInput[data-index="${index}"]`);
+        // Lắng nghe sự kiện click vào nút tăng số lượng
+        document.querySelectorAll(".increaseQuantity").forEach(function (button) {
+            button.addEventListener("click", function () {
+                handleQuantityChange(this, "increase");
+            });
+        });
+    }
+    function handleQuantityChange(button, action) {
+        let index = button.getAttribute("data-index");
+        if (index) {
+            // Tìm ô input tương ứng với data-index
+            let quantityInput = document.querySelector(`.quantityInput[data-index="${index}"]`);
 
-                if (quantityInput) {
-                    // Kiểm tra nếu phần tử tồn tại
-                    let currentValue = parseInt(quantityInput.value);
+            if (quantityInput) {
+                // Kiểm tra nếu phần tử tồn tại
+                let currentValue = parseInt(quantityInput.value);
+                if (action === "decrease" && currentValue > 1) {
+                    quantityInput.value = currentValue - 1;
+                } else if (action === "increase") {
                     quantityInput.value = currentValue + 1;
-
-                    const rows = this.closest("tr");
-                    const productVariantId = rows.cells[1].querySelector('input[name="productVariantId"]').value;
-                    const colorId = rows.cells[2].querySelector('input[name="colorId"]').value;
-                    const sizeId = rows.cells[3].querySelector('input[name="sizeId"]').value;
-                    const orderDetailData = {
-                        orderId: orderId,
-                        productVariantId: productVariantId,
-                        colorId: colorId,
-                        sizeId: sizeId,
-                    };
-                    fetch("/api/admin/sell/increaseQuantity", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(orderDetailData),
-                    })
-                        .then((reponse) => {
-                            if (!reponse.ok) {
-                                throw new Error("Lỗi server không trả dữ liệu về!");
-                            }
-                            return reponse.json();
-                        })
-                        .then((data) => {
-                            console.log(data);
-                            updateOrderDetailTable(data);
-                            createToast(
-                                "success",
-                                "fa-solid fa-circle-check",
-                                "Thành công",
-                                "Tăng số lượng sản phẩm vào đơn thành công"
-                            );
-                        })
-                        .catch((err) => {
-                            console.error("Lỗi: " + err);
-                            createToast(
-                                "error",
-                                "fa-solid fa-circle-exclamation",
-                                "Lỗi",
-                                "Tăng số lượng sản phẩm vào đơn thất bại!"
-                            );
-                        });
-                } else {
-                    console.error(`Không tìm thấy ô input với data-index="${index}"`);
                 }
+
+                const rows = button.closest("tr");
+                const productVariantId = rows.cells[1].querySelector('input[name="productVariantId"]').value;
+                const colorId = rows.cells[2].querySelector('input[name="colorId"]').value;
+                const sizeId = rows.cells[3].querySelector('input[name="sizeId"]').value;
+                const orderDetailData = {
+                    orderId: orderId,
+                    productVariantId: productVariantId,
+                    colorId: colorId,
+                    sizeId: sizeId,
+                };
+                fetch(`/api/admin/sell/${action}Quantity`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(orderDetailData),
+                })
+                    .then((reponse) => {
+                        if (!reponse.ok) {
+                            throw new Error("Lỗi server không trả dữ liệu về!");
+                        }
+                        return reponse.json();
+                    })
+                    .then((data) => {
+                        updateOrderDetailTable(data);
+                        rebindQuantityButtons();
+                        createToast(
+                            "success",
+                            "fa-solid fa-circle-check",
+                            "Thành công",
+                            `${action === "increase" ? "Tăng" : "Giảm"} số lượng sản phẩm thành công`
+                        );
+                    })
+                    .catch((err) => {
+                        console.error("Lỗi: " + err);
+                        createToast(
+                            "error",
+                            "fa-solid fa-circle-exclamation",
+                            "Lỗi",
+                            `${action === "increase" ? "Tăng" : "Giảm"} số lượng sản phẩm thất bại!`
+                        );
+                    });
+            } else {
+                console.error(`Không tìm thấy ô input với data-index="${index}"`);
             }
-        });
-    });
+        }
+    }
 
     window.deleteProduct = function (orderDetailId) {
-        console.log("orderDetailId: " + orderDetailId);
         Swal.fire({
             title: "Bạn có chắc chắn muốn xóa sản phẩm này không?",
             text: "sản phẩm này sẽ được xóa ra khỏi đơn",
@@ -179,8 +132,8 @@ window.addEventListener("DOMContentLoaded", function () {
                         return response.json();
                     })
                     .then((data) => {
-                        console.log(data);
                         updateOrderDetailTable(data);
+                        rebindQuantityButtons();
                         createToast(
                             "success",
                             "fa-solid fa-circle-check",
@@ -238,7 +191,7 @@ window.addEventListener("DOMContentLoaded", function () {
                     </p>
                     <p><strong>Size:</strong> ${size}</p>
                     <p><strong class="text-danger">Số lượng: ${quantity}</strong>
-                    <input class="" type="number" value="1" min="0" name="inputQuantity" id="inputQuantity"></p>`;
+                    <input class="" type="number" value="1" min="0" name="inputQuantity" id="inputQuantity"/></p>`;
         } else {
             // Nếu không có giảm giá
             price = parseFloat(oldPriceNotDiscount.replace(" VND", "").replace(",", ""));
@@ -251,7 +204,7 @@ window.addEventListener("DOMContentLoaded", function () {
                     </p>
                     <p><strong>Size:</strong> ${size}</p>
                     <p><strong class="text-danger">Số lượng: ${quantity}</strong>
-                    <input type="number" value="1" min="0" name="inputQuantity" id="inputQuantity"></p>`;
+                    <input type="number" value="1" min="0" name="inputQuantity" id="inputQuantity"/></p>`;
         }
         selectProductModal.querySelector(".modal-title").innerHTML = modalTitleContent;
         selectProductModal.querySelector(".modal-body").innerHTML = modalBodyContent;
@@ -290,6 +243,7 @@ window.addEventListener("DOMContentLoaded", function () {
             })
             .then((data) => {
                 updateOrderDetailTable(data);
+                rebindQuantityButtons();
                 createToast("success", "fa-solid fa-circle-check", "Thành công", "Thêm sản phẩm vào đơn thành công");
             })
             .catch((err) => {
@@ -301,6 +255,13 @@ window.addEventListener("DOMContentLoaded", function () {
     if (confirmButton) {
         confirmButton.addEventListener("click", confirmInsertProduct);
     }
+    // tổng tiền sau khi giảm voucher nếu có
+    const totalAmountFinalElement = document.getElementById("totalAmountFinal");
+    const tienThieuElement = document.getElementById("tienThieu"); // tiền thiếu
+    // tổng tiền ở trong modal thanh toán
+    const TotalAmountELement = document.getElementById("TotalAmount");
+    // gọi hàm lắng nghe sự kiện nút tăng và giảm
+    rebindQuantityButtons();
     function updateOrderDetailTable(data) {
         const totalElement = document.getElementById("totalSum"); // lấy element tổng tiền
         const goodMoneyElement = document.getElementById("goodMoney"); // tiền hàng
@@ -312,7 +273,7 @@ window.addEventListener("DOMContentLoaded", function () {
         let rows = "";
         let formattedTotal;
         const { orderDetailDtos, voucherDto } = data;
-        const { voucherCode, discountType, formattedDiscount } = voucherDto; // VOUCHER
+        const { voucherCode, discountType, formattedDiscount, finalTotalAmount } = voucherDto; // VOUCHER
         if (voucherCodeElement) {
             voucherCodeElement.value = voucherCode;
         }
@@ -426,6 +387,9 @@ window.addEventListener("DOMContentLoaded", function () {
         tbody.innerHTML = rows; // Thêm dòng mới vào tbody
         totalElement.textContent = formattedTotal;
         goodMoneyElement.textContent = formattedTotal;
+        totalAmountFinalElement.textContent = finalTotalAmount; // tổng số tiền
+        tienThieuElement.textContent = finalTotalAmount;
+        TotalAmountELement.textContent = finalTotalAmount;
     }
     // ẩn nút cập nhật địa chỉ
     const updateAddressButton = document.getElementById("updateAddress");
@@ -514,7 +478,6 @@ window.addEventListener("DOMContentLoaded", function () {
     const shipping = document.getElementById("shipping");
     const infoCustomer = document.getElementById("infoCustomer");
     const feeShipping = document.getElementById("feeShipping");
-    const totalAmountFinal = document.getElementById("totalAmountFinal");
     const shippingKey = `isShippingChecked_${orderId}`;
     infoCustomer.style.display = "none";
     const savedShippingState = localStorage.getItem(shippingKey);
@@ -557,7 +520,9 @@ window.addEventListener("DOMContentLoaded", function () {
             .then((data) => {
                 const { totalAmount } = data;
                 const formatedTotalAmount = `${totalAmount.toLocaleString("vi-VN")}.000 VND`;
-                totalAmountFinal.textContent = formatedTotalAmount;
+                totalAmountFinalElement.textContent = formatedTotalAmount;
+                tienThieuElement.textContent = formatedTotalAmount;
+                TotalAmountELement.textContent = formatedTotalAmount;
             })
             .catch((err) => {
                 console.error("Lỗi: " + err);

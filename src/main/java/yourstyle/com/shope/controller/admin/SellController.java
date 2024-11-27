@@ -264,23 +264,17 @@ public class SellController {
         symbols.setDecimalSeparator(','); // Dùng dấu ',' cho phần thập phân
         DecimalFormat formatter = new DecimalFormat("#,##0", symbols); // định dạng tiền
         for (Order order : list) {
-            // lấy orderId
-            Integer orderId = order.getOrderId();
-            // Tìm kiếm đơn hàng theo orderID
-            Order order2 = orderService.findById(orderId).get();
-            if (order2 != null) {
-                // lấy đơn hàng vừa tìm được lấy danh sách đơn hàng chi tiết
-                List<OrderDetail> orderDetails = order2.getOrderDetails();
-                // tính tổng số lượng trong đơn hàng chi tiết của mỗi đơn hàng
-                int totalQuantity = orderDetails.stream().mapToInt((OrderDetail::getQuantity)).sum();
-                // đưa tổng số lượng vào map
-                totalQuantities.put(orderId, totalQuantity);
-                totalAmounts.put(orderId,
-                        formatter.format(order2.getTotalAmount().setScale(0, RoundingMode.FLOOR)) + ".000 VND");
-                // chia sẻ tổng số lượng và tổng tiền qua model để hiển thị trong view
-                model.addAttribute("totalQuantities", totalQuantities);
-                model.addAttribute("totalAmounts", totalAmounts);
-            }
+            // lấy đơn hàng vừa tìm được lấy danh sách đơn hàng chi tiết
+            List<OrderDetail> orderDetails = order.getOrderDetails();
+            // tính tổng số lượng trong đơn hàng chi tiết của mỗi đơn hàng
+            int totalQuantity = orderDetails.stream().mapToInt((OrderDetail::getQuantity)).sum();
+            // đưa tổng số lượng vào map
+            totalQuantities.put(order.getOrderId(), totalQuantity);
+            totalAmounts.put(order.getOrderId(),
+                    formatter.format(order.getTotalAmount().setScale(0, RoundingMode.FLOOR)) + ".000 VND");
+            // chia sẻ tổng số lượng và tổng tiền qua model để hiển thị trong view
+            model.addAttribute("totalQuantities", totalQuantities);
+            model.addAttribute("totalAmounts", totalAmounts);
         }
     }
 

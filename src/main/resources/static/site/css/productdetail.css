@@ -1,0 +1,107 @@
+.price-discount {
+    font-size: 1.5em;
+    /* Tăng kích thước cho giá đã giảm */
+    color: #dc3545;
+    /* Màu đỏ */
+}
+
+.price-original {
+    font-size: 1em;
+    /* Kích thước nhỏ hơn cho giá gốc */
+    color: #6c757d;
+    /* Màu xám nhạt */
+    text-decoration: line-through;
+    /* Gạch ngang */
+}
+
+.price-similar-product,
+.price-product {
+    font-size: 1.5em;
+    color: #dc3545;
+}
+
+/* Rating stars */
+.rating {
+    font-size: 24px;
+    color: #ddd;
+    cursor: pointer;
+}
+
+.star {
+    transition: color 0.3s ease;
+}
+
+.star.filled {
+    color: #ffcc00;
+}
+
+.stars {
+    font-size: 18px;
+}
+
+.stars .star {
+    color: #ddd;
+}
+
+.stars .star.filled {
+    color: #ffcc00;
+}
+
+/* hiệu ứng tick xanh khi chia sẻ sp tới email thành công */
+.checkmark {
+    width: 80px;
+    height: 80px;
+    stroke-width: 2;
+    stroke: #4caf50;
+    stroke-miterlimit: 10;
+    display: block;
+    animation: scale 0.3s ease-in-out;
+}
+
+.checkmark__circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 4;
+    fill: none;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark__check {
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    stroke-width: 4;
+    fill: none;
+    animation: stroke 0.4s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards;
+}
+
+@keyframes stroke {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes scale {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+#successOverlay {
+    z-index: 1050;
+}
+
+/*loadingSpinner: load khi đang gửi mail  */
+#loadingSpinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    /* Đảm bảo spinner nằm trên các phần tử khác */
+}

@@ -158,9 +158,10 @@ public class ProductDetailController {
             @RequestParam("senderEmail") String senderEmail,
             @RequestParam("productId") Integer productId,
             Authentication authentication) {
-
+    
         Map<String, Object> response = new HashMap<>();
-
+        Map<String, String> fieldErrors = new HashMap<>(); // Lưu lỗi từng trường
+    
         // Kiểm tra đăng nhập
         if (authentication == null || !authentication.isAuthenticated()) {
             response.put("success", false);
@@ -168,37 +169,28 @@ public class ProductDetailController {
             response.put("redirectUrl", "/yourstyle/accounts/login");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-
-        // Lấy email người dùng đăng nhập
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        String loggedInEmail = userDetails.getEmail();
-
-        // So sánh email người gửi
-        if (!loggedInEmail.equals(senderEmail)) {
-            response.put("success", false);
-            response.put("errorMessage", "Email gửi không khớp với email của tài khoản đang đăng nhập.");
-            return ResponseEntity.badRequest().body(response);
-        }
-
+    
         // Kiểm tra sản phẩm tồn tại
         Optional<Product> productOptional = productService.findById(productId);
         if (productOptional.isEmpty()) {
-            response.put("success", false);
-            response.put("errorMessage", "Sản phẩm không tồn tại.");
-            return ResponseEntity.badRequest().body(response);
+            fieldErrors.put("productId", "Sản phẩm không tồn tại.");
         }
-
-        Product product = productOptional.get();
-
+    
         // Kiểm tra email người nhận hợp lệ
         if (!recipientEmail.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+            fieldErrors.put("recipientEmail", "Email người nhận không hợp lệ.");
+        }
+    
+        // Nếu có lỗi thì trả về lỗi
+        if (!fieldErrors.isEmpty()) {
             response.put("success", false);
-            response.put("errorMessage", "Email người nhận không hợp lệ.");
+            response.put("fieldErrors", fieldErrors); // Trả về lỗi theo từng trường
             return ResponseEntity.badRequest().body(response);
         }
-
+    
         try {
             // Gửi email
+            Product product = productOptional.get();
             emailService.sendProductShareEmail(senderEmail, recipientEmail, product);
             response.put("success", true);
             response.put("message", "Chia sẻ sản phẩm thành công!");
@@ -207,24 +199,8 @@ public class ProductDetailController {
             response.put("success", false);
             response.put("errorMessage", "Đã xảy ra lỗi khi gửi email: " + e.getMessage());
         }
-
+    
         return ResponseEntity.ok(response);
     }
-
-    @GetMapping("/yourstyle/accounts/logged-in-email")
-    @ResponseBody
-    public ResponseEntity<Map<String, Object>> getLoggedInEmail(Authentication authentication) {
-        Map<String, Object> response = new HashMap<>();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            response.put("success", false);
-            response.put("errorMessage", "Người dùng chưa đăng nhập.");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
-
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        response.put("success", true);
-        response.put("email", userDetails.getEmail());
-        return ResponseEntity.ok(response);
-    }
-
+    
 }

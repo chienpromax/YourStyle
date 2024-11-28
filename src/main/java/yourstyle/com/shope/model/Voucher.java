@@ -80,12 +80,12 @@ public class Voucher implements Serializable {
     @JoinColumn(name = "accountId", referencedColumnName = "accountId")
     private Account account;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "customerId", referencedColumnName = "customerId")
     private Customer customer;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "voucher")
     private List<Order> orders;
-
-
 }

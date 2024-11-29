@@ -1,85 +1,134 @@
-/* Container chính chứa ảnh đại diện và các thông tin */
+/* Cấu trúc container với Grid */
 .personal-info-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 20px;
-    flex-wrap: nowrap; /* Đảm bảo không xuống hàng */
-    height:auto;
+	display: grid;
+	grid-template-columns: repeat(10, 1fr); /* Chia ra 10 phần đều nhau */
+	gap: 20px;
+	align-items: stretch; /* Các phần tử giãn đều */
 }
 
-/* Phần ảnh đại diện (30%) */
+/* Phần Avatar */
 .avatar-section {
-    flex: 0 0 30%;
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 12px;
-    text-align: center;
+	grid-column: span 2; /* Avatar chiếm 2 phần */
+	background-color: #ffffff;
+	padding: 20px;
+	border-radius: 12px;
+	text-align: center;
+}
+/* Nút tải lên hình ảnh */
+.upload-btn {
+	background-color: #28a745;
+	color: white;
+	border: none;
+	border-radius: 20px;
+	padding: 10px 20px;
+	margin-top: 15px;
+	font-size: 16px;
+	cursor: pointer;
+	margin-left: -50px;
 }
 
-.avatar-section i {
-    font-size: 6rem;
-    color: #285944;
+/* Không thay đổi màu khi hover */
+.upload-btn:hover {
+	background-color: #28a745;
 }
 
-.avatar-section .upload-btn {
-    margin-top: 20px;
-    border-radius: 20px;
-    background-color: #285944;
-    color: white;
-    padding: 10px 20px;
-    border: none;
+/* Khung avatar với viền xanh */
+.avatar-container {
+	width: 150px; /* Đảm bảo khung tròn có kích thước phù hợp */
+	height: 150px;
+	border-radius: 50%;
+	background-color: #ffffff; /* Màu nền khung tròn */
+	border: 2px solid #28a745; /* Viền màu xanh */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	overflow: hidden; /* Đảm bảo không có phần dư thừa ra ngoài */
 }
 
-/* Phần thông tin cá nhân (35%) */
+/* Hiển thị ảnh trong khung avatar */
+.avatar-img {
+    width: 100%; /* Đảm bảo ảnh chiếm toàn bộ chiều rộng khung */
+    height: 100%; /* Đảm bảo ảnh chiếm toàn bộ chiều cao khung */
+    object-fit: cover; /* Cắt ảnh sao cho không bị biến dạng và giữ tỷ lệ */
+}
+
+
+
+/* Phần Thông tin cá nhân */
 .info-section {
-    flex: 0 0 35%;
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 12px;
+	grid-column: span 4; 
+	background-color: #ffffff;
+	padding: 20px;
+	border-radius: 12px;
 }
 
+/* Phần Thông tin liên hệ và bảo mật */
+.contact-section {
+	grid-column: span 4; 
+	background-color: #ffffff;
+	padding: 20px;
+	border-radius: 12px;
+}
+
+/* Các input với icon */
 .input-icon {
-    position: relative;
-    margin-bottom: 15px;
+	position: relative;
+	margin-bottom: 15px;
 }
 
 .input-icon i {
-    position: absolute;
-    top: 50%;
-    left: 10px;
-    transform: translateY(-50%);
-    color: #285944;
+	position: absolute;
+	top: 50%;
+	left: 10px;
+	transform: translateY(-50%);
+	color: #285944;
 }
 
 .input-icon input, .input-icon select {
-    padding-left: 2.5rem;
+	padding-left: 2.5rem;
 }
 
-/* Phần liên hệ và bảo mật (35%) */
-.contact-section {
-    flex: 0 0 35%;
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 12px;
-}
 
-.divider {
-    border-left: 3px solid #285944;
+.contact-section .btn {
+	border-radius: 20px;
 }
 
 .social-link-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
 
 .social-link-container .btn {
-    border-radius: 20px;
+	border-radius: 20px;
 }
 
 .info-header {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 20px;
+	font-size: 1.5rem;
+	font-weight: bold;
+	margin-bottom: 20px;
+}
+
+.avatar-section button:hover, .contact-section .btn:hover {
+	background-color: #285944;
+	color: white;
+}
+
+
+#saveChangesBtn {
+	width: auto;
+	margin-top: 30px;
+	text-align: center;
+}
+
+
+.d-flex.justify-content-center {
+	display: flex;
+	justify-content: center;
+}
+
+
+.contact-section .btn {
+	padding: 8px 12px;
+	font-size: 0.875rem; 
 }

@@ -100,8 +100,8 @@ public class CustomerServiceImpl implements CustomerService {
 		return customerRepository.findAllNotRetailCustomer(customerId, pageable);
 	}
 
-    public Customer findByAccountId(Integer accountId) {
-        return customerRepository.findByAccount_AccountId(accountId);
-    }
-
+	public Customer findByAccountId(Integer accountId) {
+		return customerRepository.findByAccount_AccountId(accountId);
+	}
+	
 }

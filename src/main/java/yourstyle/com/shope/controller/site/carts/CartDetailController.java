@@ -166,6 +166,7 @@ public class CartDetailController {
         Integer accountId = userDetails.getAccountId();
 
         Customer customer = customerRepository.findByAccount_AccountId(accountId);
+
         if (customer == null) {
             return "redirect:/site/accounts/login";
         }

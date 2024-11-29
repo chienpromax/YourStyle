@@ -99,11 +99,9 @@ public class Customer implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Customer{" +
-				"customerId=" + customerId +
-				", fullname='" + fullname + '\'' +
-				", phoneNumber='" + phoneNumber + '\'' +
-				'}';
+		return "Customer{" + "customerId=" + customerId + ", fullname='" + fullname + '\'' + ", phoneNumber='"
+				+ phoneNumber + '\'' + ", birthday=" + birthday + ", gender=" + gender + ", nationality='" + nationality
+				+ '\'' + '}';
 	}
 
 	public Address getDefaultAddress() {
@@ -113,5 +111,9 @@ public class Customer implements Serializable {
 		return addresses.stream().filter(Address::getIsDefault).findFirst().orElse(new Address());
 	}
 	
+	// new
+	@Column(nullable = true, length = 100) // Thêm trường nationality
+	private String nationality;
+
 	
 }

@@ -51,6 +51,7 @@ public class NavController {
             Integer accountId = userDetails.getAccountId();
     
             Customer customer = customerRepository.findByAccount_AccountId(accountId);
+
             Integer customerId = customer != null ? customer.getCustomerId() : null;
     
             if (customerId != null) {

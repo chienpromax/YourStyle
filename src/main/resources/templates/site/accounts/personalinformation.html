@@ -1,110 +1,130 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{site/index.html}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{site/index.html}">
 
 <head>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+	rel="stylesheet">
 </head>
 
 <body>
-    <section class="py-5 container" layout:fragment="main">
-        <section class="personal-info-section">
-            <div class="personal-info-container row mx-auto">
-                <!-- Ảnh đại diện (30%) -->
-                <div class="avatar-section col-md-4 d-flex flex-column align-items-center justify-content-center">
-                    <i class="bi bi-person-circle display-1"></i>
-                    <p class="mt-3">Ảnh đại diện</p>
-                    <button class="btn btn-primary">Tải lên hình ảnh</button>
-                </div>
+	<section class="py-5 container" layout:fragment="main">
+		<section class="personal-info-section">
+			<!-- Thêm action vào form -->
+			<form th:action="@{/yourstyle/accounts/}" method="POST"
+				enctype="multipart/form-data">
+				<div class="personal-info-container">
+					<!-- Phần Avatar -->
+					<div class="avatar-section">
+						<div class="avatar-container">
+							<!-- Khung hình đại diện (Avatar) -->
+							<img id="avatar-img" class="avatar-img" th:src="@{${avatar}}"
+								alt="Avatar" />
+						</div>
+						<input type="file" id="avatar-upload" class="d-none"
+							accept="image/*" onchange="previewAvatar(event)" />
+						<button type="button" class="btn btn-success upload-btn"
+							onclick="document.getElementById('avatar-upload').click();">Tải
+							lên hình ảnh</button>
+					</div>
 
-                <!-- Thông tin cá nhân (35%) -->
-                <div class="info-section col-md-4">
-                    <div class="info-header">Thông tin cá nhân</div>
+					<!-- Phần Thông tin cá nhân -->
+					<div class="info-section">
+						<div class="info-header">Thông tin cá nhân</div>
 
-                    <!-- Input tên người dùng với icon -->
-                    <div class="input-container input-icon">
-                        <input type="text" class="form-control" placeholder="Tên người dùng" required>
-                        <i class="bi bi-person-fill"></i>
-                    </div>
+						<!-- Trường Fullname -->
+						<div class="input-container input-icon flex-grow-1">
+							<input type="text" class="form-control" id="fullname"
+								name="fullname" placeholder="Họ và tên" th:value="${fullName}"
+								required> <i class="bi bi-person-fill"></i>
+						</div>
 
-                    <!-- Input ngày tháng với icon -->
-                    <div class="input-container input-icon">
-                        <input type="date" class="form-control" required>
-                        <i class="bi bi-calendar-date"></i>
-                    </div>
+						<!-- Trường Birthday -->
+						<div class="input-container input-icon flex-grow-1">
+							<input type="date" class="form-control" id="birthday"
+								name="birthday" placeholder="Ngày sinh" th:value="${birthday}"
+								required> <i class="bi bi-calendar-date"></i>
+						</div>
 
-                    <!-- Input giới tính với icon -->
-                    <div class="input-container input-icon">
-                        <select class="form-control" required>
-                            <option value="">Giới tính</option>
-                            <option value="male">Nam</option>
-                            <option value="female">Nữ</option>
-                            <option value="other">Khác</option>
-                        </select>
-                        <i class="bi bi-gender-ambiguous"></i>
-                    </div>
+						<!-- Trường Gender -->
+						<div class="input-container input-icon flex-grow-1">
+							<select class="form-control" id="gender" name="gender" required>
+								<option value="true" th:selected="${gender == true}">Nam</option>
+								<option value="false" th:selected="${gender == false}">Nữ</option>
+								<option value="" th:selected="${gender == null}">Khác</option>
+							</select> <i class="bi bi-gender-ambiguous"></i>
+						</div>
 
-                    <!-- Input quốc tịch với dropdown -->
-                    <div class="input-container">
-                        <select class="form-control" required>
-                            <option value="">Quốc tịch</option>
-                            <option value="vietnam">Việt Nam</option>
-                            <option value="usa">Mỹ</option>
-                            <option value="china">Trung Quốc</option>
-                        </select>
-                    </div>
-                </div>
 
-                <!-- Thông tin liên hệ và bảo mật (35%) -->
-                <div class="contact-section col-md-4">
-                    <!-- Input số điện thoại và nút cập nhật -->
-                    <div class="d-flex mb-3">
-                        <div class="input-container input-icon flex-grow-1">
-                            <input type="tel" class="form-control" placeholder="Số điện thoại" required>
-                            <i class="bi bi-telephone-fill"></i>
-                        </div>
-                        <button class="btn btn-success ms-3">Cập nhật</button>
-                    </div>
 
-                    <!-- Input email và nút cập nhật -->
-                    <div class="d-flex mb-3">
-                        <div class="input-container input-icon flex-grow-1">
-                            <input type="email" class="form-control" placeholder="Email" required>
-                            <i class="bi bi-envelope-fill"></i>
-                        </div>
-                        <button class="btn btn-success ms-3">Cập nhật</button>
-                    </div>
+						<!-- Trường Nationality -->
+						<div class="input-container input-icon flex-grow-1">
+							<select class="form-control" id="nationality" name="nationality"
+								required>
+								<option value="" th:selected="${nationality == null}">Quốc
+									tịch</option>
+								<option value="vietnam"
+									th:selected="${nationality == 'vietnam'}">Việt Nam</option>
+								<option value="usa" th:selected="${nationality == 'usa'}">Mỹ</option>
+								<option value="china" th:selected="${nationality == 'china'}">Trung
+									Quốc</option>
+							</select> <i class="bi bi-globe"></i>
+						</div>
+					</div>
 
-                    <!-- Đổi mật khẩu -->
-                    <div class="mb-3">
-                        <span>Đổi mật khẩu</span>
-                        <button class="btn btn-success ms-3">Cập nhật</button>
-                    </div>
 
-                    <!-- Yêu cầu xóa tài khoản -->
-                    <div class="mb-3">
-                        <span>Yêu cầu xóa tài khoản</span>
-                        <button class="btn btn-danger ms-3">Yêu cầu</button>
-                    </div>
+					<!-- Phần Thông tin liên hệ và bảo mật -->
+					<div class="contact-section" style="margin-top: 35px">
+						<div class="d-flex mb-3">
+							<div class="input-container input-icon flex-grow-1">
+								<input type="tel" class="form-control" id="phone"
+									placeholder="Số điện thoại" name="phone"
+									th:value="${phoneNumber}" required> <i
+									class="bi bi-telephone-fill"></i>
+							</div>
+							<button type="button" class="btn btn-success ms-3"
+								style="height: 40px !important; margin-top: 20px"
+								onclick="updatePhoneNumber()">Cập nhật</button>
+						</div>
 
-                    <!-- Liên kết mạng xã hội -->
-                    <div class="info-header">Liên kết mạng xã hội</div>
-                    <div class="social-link-container mb-3">
-                        <span><i class="bi bi-facebook"></i> Facebook</span>
-                        <button class="btn btn-outline-success">Đã liên kết</button>
-                    </div>
-                    <div class="social-link-container mb-3">
-                        <span><i class="bi bi-google"></i> Google</span>
-                        <button class="btn btn-outline-primary">Liên kết</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </section>
+						<input type="hidden" name="_csrf" value="${csrfToken}">
+						<!-- Các input khác của bạn -->
+						<div class="d-flex mb-3">
+							<div class="input-container input-icon flex-grow-1">
+								<input type="email" class="form-control" placeholder="Email"
+									name="email" id="email" th:value="${email}" required> <i
+									class="bi bi-envelope-fill"></i> <input type="hidden"
+									id="accountId" value="${accountId}">
+							</div>
+							<button type="button" class="btn btn-success ms-3"
+								style="height: 40px !important; margin-top: 20px"
+								onclick="updateEmail()">Cập nhật</button>
+						</div>
+						<div class="info-header">Liên kết mạng xã hội</div>
+						<div class="social-link-container mb-3">
+							<span><i class="bi bi-facebook"></i> Facebook</span>
+							<button class="btn btn-outline-success">Đã liên kết</button>
+						</div>
+						<div class="social-link-container mb-3">
+							<span><i class="bi bi-google"></i> Google</span>
+							<button class="btn btn-outline-primary">Liên kết</button>
+						</div>
+					</div>
+				</div>
+			</form>
 
-    <!-- Gọi Footer -->
-    <div th:replace="fragments/footer.html"></div>
+			<!-- Nút Lưu thông tin thay đổi -->
+			<div class="d-flex justify-content-center mt-4">
+				<input type="hidden" name="_csrf" value="${csrfToken}">
+				<button class="btn btn-success" id="saveChangesBtn"
+					onclick="updateProfile()">Lưu thông tin thay đổi</button>
+			</div>
+		</section>
+		<script src="/site/js/profile.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	</section>
 </body>
-
 </html>

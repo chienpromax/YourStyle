@@ -3,6 +3,7 @@ package yourstyle.com.shope.controller.site;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,30 +11,37 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import yourstyle.com.shope.model.Account;
-import yourstyle.com.shope.repository.CustomerRepository;
 import yourstyle.com.shope.service.AccountService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import yourstyle.com.shope.validation.site.AccountValidator;
 
 @Controller("siteAccountController")
 @RequestMapping("/yourstyle/accounts")
 public class AccountController {
-	@Autowired
-	private CustomerRepository customerRepository;
+
 	@Autowired
 	private AccountService accountService;
-	@Autowired
-	private BCryptPasswordEncoder passwordEncoder;
+		@Autowired
+	private AccountValidator accountValidator;
 
 	@GetMapping("/register")
 	public String showRegisterForm(Model model) {
 		model.addAttribute("account", new Account());
 		return "site/accounts/register";
 	}
-
-	@PostMapping("/register")
+@PostMapping("/register")
 	public String register(@ModelAttribute("account") Account newAccount, @RequestParam String confirmPassword,
-			Model model) {
+			BindingResult bindingResult, Model model) {
 
+		// Gọi validator để kiểm tra dữ liệu đầu vào
+		accountValidator.validate(newAccount, bindingResult);
+
+		// Kiểm tra nếu có lỗi
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("errorMessage", "Thông tin nhập vào không hợp lệ. Vui lòng kiểm tra lại!");
+			return "site/accounts/register";
+		}
+
+		// Xử lý đăng ký nếu không có lỗi
 		try {
 			accountService.register(newAccount, confirmPassword);
 			model.addAttribute("message", "Đăng ký thành công!");

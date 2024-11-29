@@ -34,29 +34,10 @@ public class AddressController {
     @GetMapping("listAddress/{customerId}")
     public ModelAndView editAddressCustomer(ModelMap model, @PathVariable("customerId") Integer customerId) {
 
-        // Lấy danh sách địa chỉ của khách hàng
         List<Address> addresses = addressService.findByCustomerId(customerId);
         model.addAttribute("address", new AddressDto());
         model.addAttribute("addresses", addresses);
         model.addAttribute("customerId", customerId);
-        return new ModelAndView("admin/customers/listAddress", model);
-    }
-
-    @GetMapping("edit/{addressId}")
-    public ModelAndView editAddress(@PathVariable("addressId") Integer addressId,
-            @RequestParam("customerId") Integer customerId,
-            ModelMap model) {
-
-        // Xóa địa chỉ dựa trên addressId
-        Address address = addressService.findById(addressId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid address ID"));
-
-        // Lấy lại danh sách địa chỉ sau khi xóa
-        List<Address> addresses = addressService.findByCustomerId(customerId);
-        model.addAttribute("addresses", addresses);
-        model.addAttribute("address", address); // Địa chỉ để chỉnh sửa
-        model.addAttribute("customerId", customerId);
-
         return new ModelAndView("admin/customers/listAddress", model);
     }
 
@@ -97,33 +78,19 @@ public class AddressController {
 
         // Tạo hoặc cập nhật địa chỉ
         Address address;
-        if (addressDto.getAddressId() != null) {
-            // Nếu địa chỉ đã tồn tại, tìm địa chỉ để cập nhật
-            address = addressService.findById(addressDto.getAddressId())
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid address ID"));
-            address.setStreet(addressDto.getStreet());
-            address.setCity(addressDto.getCity());
-            address.setDistrict(addressDto.getDistrict());
-            address.setWard(addressDto.getWard());
-            address.setIsDefault(addressDto.getIsDefault());
 
-            model.addAttribute("messageType", "success");
-            model.addAttribute("messageContent", "Cập nhật địa chỉ thành công!");
-        } else {
-            // Nếu địa chỉ chưa tồn tại, tạo mới
-            address = new Address();
-            address.setCustomer(customer);
-            address.setStreet(addressDto.getStreet());
-            address.setCity(addressDto.getCity());
-            address.setDistrict(addressDto.getDistrict());
-            address.setWard(addressDto.getWard());
-            address.setIsDefault(addressDto.getIsDefault());
+        // Nếu địa chỉ chưa tồn tại, tạo mới
+        address = new Address();
+        address.setCustomer(customer);
+        address.setStreet(addressDto.getStreet());
+        address.setCity(addressDto.getCity());
+        address.setDistrict(addressDto.getDistrict());
+        address.setWard(addressDto.getWard());
+        address.setIsDefault(addressDto.getIsDefault());
 
-            model.addAttribute("messageType", "success");
-            model.addAttribute("messageContent", "Thêm địa chỉ mới thành công!");
-        }
+        model.addAttribute("messageType", "success");
+        model.addAttribute("messageContent", "Thêm địa chỉ mới thành công!");
 
-        // Lưu địa chỉ
         addressService.save(address);
 
         // Lấy lại danh sách địa chỉ của khách hàng để cập nhật trên trang
@@ -168,7 +135,7 @@ public class AddressController {
 
         // Đặt địa chỉ được chọn làm mặc định
         Address address = addressService.findById(addressId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid address ID"));
+                .orElseThrow(() -> new IllegalArgumentException("Id dia chi khong dung"));
         address.setIsDefault(true);
         addressService.save(address);
 

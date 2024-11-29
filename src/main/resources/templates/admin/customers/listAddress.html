@@ -46,72 +46,80 @@
                                 <h6>Thêm địa chỉ mới</h6>
                                 <form th:action="@{/admin/addresses/saveOrUpdate}" th:object="${address}" method="post">
                                     <div class="row">
-                                        <input type="hidden" th:field="*{addressId}" />
                                         <input type="hidden" name="customerId" th:value="${customerId}" />
-
                                         <!-- Street -->
                                         <div class="col-md-6 mb-3">
                                             <div class="form-floating">
                                                 <input type="text" th:field="*{street}" class="form-control"
-                                                    th:classappend="${#fields.hasErrors('street')} ? 'is-invalid' : ''"
-                                                    id="floatingstreet" placeholder="Địa chỉ cụ thể" required />
+                                                    id="floatingstreet" placeholder="Địa chỉ cụ thể" />
                                                 <label for="floatingstreet"><span class="text-danger">*</span> Địa chỉ
                                                     cụ thể</label>
-
-                                                <!-- Hiển thị lỗi cho trường street -->
-                                                <div th:if="${#fields.hasErrors('street')}" class="invalid-feedback">
-                                                    <p th:errors="*{street}" class="mb-0"></p>
-                                                </div>
+                                                <div th:if="${#fields.hasErrors('street')}" class="text-danger"
+                                                    th:errors="*{street}">Địa chỉ cụ
+                                                    thể không hợp lệ</div>
                                             </div>
                                         </div>
+                                        <!-- End Street -->
+
                                         <!-- City -->
                                         <div class="col-md-6 mb-3">
                                             <div class="form-floating">
-                                                <input type="text" th:field="*{city}" class="form-control"
-                                                    th:classappend="${#fields.hasErrors('city')} ? 'is-invalid' : ''"
-                                                    id="floatingCity" placeholder="Tỉnh/thành phố" required />
-                                                <label for="floatingCity"><span class="text-danger">*</span> Tỉnh/Thành
-                                                    phố</label>
-
-                                                <div th:if="${#fields.hasErrors('city')}" class="invalid-feedback">
-                                                    <p th:errors="*{city}" class="mb-0"></p>
-                                                </div>
+                                                <select class="form-select floatingcity" id="city"
+                                                    onchange="updateCityName(this)">
+                                                    <option selected>Chọn Tỉnh/thành phố</option>
+                                                </select>
+                                                <label for="floatingCity">
+                                                    <span class="text-danger">*</span>
+                                                    Chọn Tỉnh/thành phố
+                                                </label>
+                                                <!-- Input ẩn để lưu tên thành phố -->
+                                                <div th:if="${#fields.hasErrors('city')}" class="text-danger"
+                                                    th:errors="*{city}">Thành phố
+                                                    không hợp lệ</div>
+                                                <input type="hidden" th:field="*{city}" id="cityName" />
                                             </div>
                                         </div>
-
+                                        <!-- City -->
                                         <!-- District -->
                                         <div class="col-md-6 mb-3">
                                             <div class="form-floating">
-                                                <input type="text" th:field="*{district}" class="form-control"
-                                                    th:classappend="${#fields.hasErrors('district')} ? 'is-invalid' : ''"
-                                                    id="floatingdistrict" placeholder="Quận/huyện" required />
-                                                <label for="floatingdistrict"><span class="text-danger">*</span>
-                                                    Quận/Huyện</label>
-
-                                                <div th:if="${#fields.hasErrors('district')}" class="invalid-feedback">
-                                                    <p th:errors="*{district}" class="mb-0"></p>
-                                                </div>
+                                                <select name="" id="district" class="form-select floatingdistrict"
+                                                    disabled onchange="updateDistrictName(this)">
+                                                    <option selected>Chọn Quận/huyện</option>
+                                                </select>
+                                                <label for="floatingdistrict">
+                                                    <span class="text-danger">*</span>
+                                                    Quận/huyện
+                                                </label>
+                                                <div th:if="${#fields.hasErrors('district')}" class="text-danger"
+                                                    th:errors="*{district}">
+                                                    Quận/huyện
+                                                    không hợp lệ</div>
+                                                <input type="hidden" th:field="*{district}" id="districtName" />
                                             </div>
                                         </div>
-
+                                        <!-- District -->
                                         <!-- Ward -->
                                         <div class="col-md-6 mb-3">
                                             <div class="form-floating">
-                                                <input type="text" th:field="*{ward}" class="form-control"
-                                                    th:classappend="${#fields.hasErrors('ward')} ? 'is-invalid' : ''"
-                                                    id="floatingward" placeholder="Xã/phường/thị trấn" required />
-                                                <label for="floatingward"><span class="text-danger">*</span>
-                                                    Xã/Phường/Thị trấn</label>
-
-                                                <div th:if="${#fields.hasErrors('ward')}" class="invalid-feedback">
-                                                    <p th:errors="*{ward}" class="mb-0"></p>
-                                                </div>
+                                                <select name="" id="ward" class="form-select floatingward" disabled
+                                                    onchange="updateWardName(this)">
+                                                    <option selected>Chọn Xã/phường/thị trấn</option>
+                                                </select>
+                                                <label for="floatingward">
+                                                    <span class="text-danger">*</span>
+                                                    Xã/phường/thị trấn
+                                                </label>
+                                                <div th:if="${#fields.hasErrors('ward')}" class="text-danger"
+                                                    th:errors="*{ward}">Xã/phường/thị
+                                                    trấn
+                                                    không hợp lệ</div>
+                                                <input type="hidden" th:field="*{ward}" id="wardName" />
                                             </div>
                                         </div>
-
+                                        <!-- Ward -->
                                         <div class="col-md-12">
-                                            <button type="submit" class="btn btn-outline-primary"
-                                                th:text="${address.addressId != null ? 'Cập nhật' : 'Thêm Địa chỉ'}"></button>
+                                            <button type="submit" class="btn btn-outline-primary">Thêm địa chỉ</button>
                                         </div>
                                     </div>
                                 </form>
@@ -142,14 +150,10 @@
                                                 <td th:text="${address.ward}"></td>
                                                 <td th:text="${address.isDefault ? 'Có' : 'Không'}"></td>
                                                 <td class="text-center">
-                                                    <!-- Thao tác chỉnh sửa và xóa địa chỉ -->
-                                                    <a style="cursor: pointer; font-size: 21px; color: green;"
-                                                        th:href="@{/admin/addresses/edit/{addressId}(addressId=${address.addressId}, customerId=${customerId})}">
-                                                        <i class="bi bi-pencil-square" title="Chỉnh sửa địa chỉ"></i>
-                                                    </a>
                                                     <!-- Liên kết xóa địa chỉ -->
                                                     <a style="cursor: pointer; font-size: 21px; color: red;"
-                                                        th:attr="onclick=|confirmDelete(${address.addressId}, ${customerId});|">
+                                                        th:attr="onclick=|confirmDelete(${address.addressId}, ${customerId});|"
+                                                        th:if="${!address.isDefault}">
                                                         <i class="bi bi-trash" title="Xóa"></i>
                                                     </a>
 
@@ -190,6 +194,9 @@
         </script>
 
         <script src="/admin/js/customer.js"></script>
+        <script src="/admin/js/addressAPI.js"></script>
+        <script src="/admin/js/addressCustomer.js"></script>
+
     </section>
 </body>
 

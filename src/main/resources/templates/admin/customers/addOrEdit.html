@@ -112,7 +112,7 @@
                   </fieldset>
 
                   <!-- Địa chỉ khách hàng -->
-                  <div class="row">
+                  <div class="row" th:classappend="${customer.district != null} ? 'd-none' : ''">
                     <!-- Street -->
                     <div class="col-md-6 mb-3">
                       <div class="form-floating">
@@ -125,41 +125,59 @@
                     </div>
                     <!-- End Street -->
 
-                    <!-- City (Tỉnh/Thành Phố) -->
+                    <!-- City -->
                     <div class="col-md-6 mb-3">
                       <div class="form-floating">
-                        <input type="text" th:field="*{city}" class="form-control" id="floatingCity"
-                          placeholder="Nhập Tỉnh/Thành phố" />
-                        <label for="floatingCity"><span class="text-danger">*</span> Tỉnh/Thành Phố</label>
-                        <div th:if="${#fields.hasErrors('city')}" class="text-danger" th:errors="*{city}">Tỉnh/Thành Phố
+                        <select class="form-select floatingcity" id="city" onchange="updateCityName(this)">
+                          <option selected>Chọn Tỉnh/thành phố</option>
+                        </select>
+                        <label for="floatingCity">
+                          <span class="text-danger">*</span>
+                          Chọn Tỉnh/thành phố
+                        </label>
+                        <!-- Input ẩn để lưu tên thành phố -->
+                        <div th:if="${#fields.hasErrors('city')}" class="text-danger" th:errors="*{city}">Thành phố
                           không hợp lệ</div>
+                        <input type="hidden" th:field="*{city}" id="cityName" />
                       </div>
                     </div>
-                    <!-- End City -->
-
-                    <!-- District (Quận/Huyện) -->
+                    <!-- City -->
+                    <!-- District -->
                     <div class="col-md-6 mb-3">
                       <div class="form-floating">
-                        <input type="text" th:field="*{district}" class="form-control" id="floatingdistrict"
-                          placeholder="Nhập Quận/Huyện" />
-                        <label for="floatingdistrict"><span class="text-danger">*</span> Quận/Huyện</label>
+                        <select name="" id="district" class="form-select floatingdistrict" disabled
+                          onchange="updateDistrictName(this)">
+                          <option selected>Chọn Quận/huyện</option>
+                        </select>
+                        <label for="floatingdistrict">
+                          <span class="text-danger">*</span>
+                          Quận/huyện
+                        </label>
                         <div th:if="${#fields.hasErrors('district')}" class="text-danger" th:errors="*{district}">
-                          Quận/Huyện không hợp lệ</div>
+                          Quận/huyện
+                          không hợp lệ</div>
+                        <input type="hidden" th:field="*{district}" id="districtName" />
                       </div>
                     </div>
-                    <!-- End District -->
-
-                    <!-- Ward (Xã/Phường/Thị Trấn) -->
+                    <!-- District -->
+                    <!-- Ward -->
                     <div class="col-md-6 mb-3">
                       <div class="form-floating">
-                        <input type="text" th:field="*{ward}" class="form-control" id="floatingward"
-                          placeholder="Nhập Xã/Phường/Thị Trấn" />
-                        <label for="floatingward"><span class="text-danger">*</span> Xã/Phường/Thị Trấn</label>
-                        <div th:if="${#fields.hasErrors('ward')}" class="text-danger" th:errors="*{ward}">Xã/Phường/Thị
-                          Trấn không hợp lệ</div>
+                        <select name="" id="ward" class="form-select floatingward" disabled
+                          onchange="updateWardName(this)">
+                          <option selected>Chọn Xã/phường/thị trấn</option>
+                        </select>
+                        <label for="floatingward">
+                          <span class="text-danger">*</span>
+                          Xã/phường/thị trấn
+                        </label>
+                        <div th:if="${#fields.hasErrors('ward')}" class="text-danger" th:errors="*{ward}">Xã/phường/thị
+                          trấn
+                          không hợp lệ</div>
+                        <input type="hidden" th:field="*{ward}" id="wardName" />
                       </div>
                     </div>
-                    <!-- End Ward -->
+                    <!-- Ward -->
                   </div>
                   <div class="text-center mt-3">
                     <button class="btn btn-primary rounded-pill py-2 px-4 me-3" th:if="*{isEdit}">
@@ -186,6 +204,8 @@
 
     <script src="/admin/js/customer.js"></script>
     <script src="/admin/js/addressAPI.js"></script>
+    <script src="/admin/js/addressCustomer.js"></script>
+
   </section>
 </body>
 

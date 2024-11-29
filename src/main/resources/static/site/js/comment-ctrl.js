@@ -1,10 +1,11 @@
 app.controller('comment-ctrl', function ($scope, $http, $location) {
+
     // Lấy productId từ URL
     const productId = $location.absUrl().split('/').pop();
 
     $scope.reviews = [];
     $scope.currentPage = 0;
-    $scope.totalPages = 0;  // Khởi tạo totalPages
+    $scope.totalPages = 0;
     $scope.newComment = '';
     $scope.rating = 0;
 
@@ -39,6 +40,7 @@ app.controller('comment-ctrl', function ($scope, $http, $location) {
             alert("Vui lòng nhập bình luận và chọn sao.");
             return;
         }
+
         const formData = new FormData();
         const review = {
             comment: $scope.newComment,

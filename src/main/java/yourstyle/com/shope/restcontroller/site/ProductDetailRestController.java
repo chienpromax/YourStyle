@@ -96,6 +96,7 @@ public class ProductDetailRestController {
 
     // Thêm đánh giá cho sản phẩm
     @PostMapping("/reviews/{productId}")
+
     public ResponseEntity<Review> submitReview(
             @PathVariable("productId") Integer productId,
             @RequestPart("review") String reviewJson,
@@ -105,6 +106,9 @@ public class ProductDetailRestController {
         Review review = mapper.readValue(reviewJson, Review.class);
 
         Optional<Product> product = productService.findById(productId);
+        if (product.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         review.setProduct(product.get());
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

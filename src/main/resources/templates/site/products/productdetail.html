@@ -3,100 +3,17 @@
     layout:decorate="~{site/index.html}">
 
 <head>
-    <style>
-        .price-discount {
-            font-size: 1.5em;
-            /* Tăng kích thước cho giá đã giảm */
-            color: #dc3545;
-            /* Màu đỏ */
-        }
-
-        .price-original {
-            font-size: 1em;
-            /* Kích thước nhỏ hơn cho giá gốc */
-            color: #6c757d;
-            /* Màu xám nhạt */
-            text-decoration: line-through;
-            /* Gạch ngang */
-        }
-
-        .price-similar-product,
-        .price-product {
-            font-size: 1.5em;
-            color: #dc3545;
-        }
-
-        /* Rating stars */
-        .rating {
-            font-size: 24px;
-            color: #ddd;
-            cursor: pointer;
-        }
-
-        .star {
-            transition: color 0.3s ease;
-        }
-
-        .star.filled {
-            color: #ffcc00;
-        }
-
-        .stars {
-            font-size: 18px;
-        }
-
-        .stars .star {
-            color: #ddd;
-        }
-
-        .stars .star.filled {
-            color: #ffcc00;
-        }
-
-        .hover-container {
-            position: relative;
-        }
-
-        .hover-container .btn-danger {
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-        }
-
-        .hover-container:hover .btn-danger {
-            opacity: 1;
-        }
-
-        /* Đảm bảo ảnh trong phần review có kích thước đồng đều */
-        .review-images {
-            display: flex;
-            flex-wrap: wrap;
-            /* Cho phép ảnh gói gọn và hiển thị trên nhiều dòng nếu cần */
-            gap: 10px;
-            /* Khoảng cách giữa các ảnh */
-        }
-
-        .comment-image {
-            max-width: 150px;
-            /* Giới hạn chiều rộng ảnh để ảnh không bị quá lớn */
-            max-height: 150px;
-            /* Giới hạn chiều cao ảnh */
-            object-fit: cover;
-            /* Đảm bảo ảnh sẽ được cắt phù hợp với khung */
-            border-radius: 5px;
-            /* Tạo hiệu ứng bo góc cho ảnh */
-            transition: transform 0.3s ease-in-out;
-            /* Hiệu ứng khi hover ảnh */
-        }
-
-        .comment-image:hover {
-            transform: scale(1.1);
-            /* Phóng to ảnh khi hover */
-        }
-    </style>
 </head>
 
 <body>
     <section class="py-5 container" layout:fragment="main" ng-controller="comment-ctrl">
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
         <div class="row">
             <!-- Phần ảnh sản phẩm -->
             <div class="col-md-1 border-end border-top">
@@ -250,6 +167,7 @@
 
             <!-- Thông tin sản phẩm -->
             <div class="col-md-4 border-start border-top py-4">
+
                 <h4 class="product-title">[[${product.name}]]</h4>
                 <div class="rating">
                     <span class="text-danger">
@@ -278,6 +196,66 @@
                     </span>
                 </div>
 
+                <button type="button" class="btn btn-primary bg-info mt-2" data-bs-toggle="modal"
+                    data-bs-target="#staticBackdrop">
+                    Chia sẻ sản phẩm tới email bạn bè!
+                </button>
+
+                <!-- Modal chia sẻ sản phẩm -->
+                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+                    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content position-relative">
+                            <!-- Overlay thành công -->
+                            <div id="successOverlay"
+                                class="d-none position-absolute w-100 h-100 top-0 start-0 d-flex justify-content-center align-items-center bg-white bg-opacity-75">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52" class="checkmark">
+                                    <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                                    <path class="checkmark__check" fill="none" d="M14 27l10 10L38 16" />
+                                </svg>
+                                <p class="mt-3 text-success fs-4">Chia sẻ sản phẩm thành công!</p>
+                            </div>
+
+                            <!-- Nội dung modal -->
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Chia sẻ sản phẩm</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form th:action="@{/yourstyle/product/share}" method="post" id="shareProductForm">
+                                <div class="modal-body">
+                                    <!-- Email của người gửi -->
+                                    <div class="mb-3">
+                                        <label for="senderEmailDisplay" class="form-label">Tài khoản của bạn
+
+                                        </label>
+                                        <input type="email" id="senderEmailDisplay" name="senderEmail"
+                                            class="form-control" th:value="${#authentication.name}" readonly />
+
+                                    </div>
+
+                                    <!-- Email người nhận -->
+                                    <div class="mb-3">
+                                        <label for="recipientEmail" class="form-label">Email người nhận</label>
+                                        <input type="email" id="recipientEmail" name="recipientEmail"
+                                            class="form-control" placeholder="Nhập email người nhận" required />
+                                    </div>
+
+                                    <!-- Sản phẩm ID (ẩn) -->
+                                    <input type="hidden" name="productId" th:value="${product.productId}" />
+                                </div>
+
+                                <div class="modal-footer">
+                                    <h6 class="text-danger">Quá trình chia sẻ sản phẩm có thể mất 5 - 10 giây! Vui lòng
+                                        chờ.</h6>
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Đóng</button>
+                                    <button type="submit" class="btn btn-primary">Chia sẻ</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
                 <hr>
                 <form id="addToCartForm" th:action="@{/yourstyle/carts/addtocart}" method="post"
                     onsubmit="return addToCart(event)">
@@ -348,6 +326,8 @@
                     </div>
                 </form>
 
+
+
                 <div class="py-4 text-center">
                     <p>96% Khách hàng cho rằng nó đúng với kích thước</p>
                     <!-- Button trigger modal -->
@@ -416,6 +396,7 @@
                 </div>
             </div>
         </div>
+        <script src="/site/js/productdetail.js"></script>
         <script src="/site/js/cartDetail.js"></script>
     </section>
 

@@ -54,10 +54,14 @@ public class ProductDetailRestController {
 
     // Thêm đánh giá cho sản phẩm
     @PostMapping("/reviews/{productId}")
+    @Transactional
     public ResponseEntity<Review> submitReview(@PathVariable("productId") Integer productId,
             @RequestBody Review review, @RequestParam(value = "image", required = false) MultipartFile image) {
         // Gán productId cho review
         Optional<Product> product = productService.findById(productId);
+        if (product.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         review.setProduct(product.get());
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

@@ -112,6 +112,5 @@ public class Customer implements Serializable {
 		}
 		return addresses.stream().filter(Address::getIsDefault).findFirst().orElse(new Address());
 	}
-	
-	
+
 }

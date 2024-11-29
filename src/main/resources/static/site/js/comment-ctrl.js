@@ -1,14 +1,11 @@
 app.controller('comment-ctrl', function ($scope, $http, $location) {
-    console.log('Comment controller initialized');
 
     // Lấy productId từ URL
     const productId = $location.absUrl().split('/').pop(); // Lấy giá trị productId từ URL
 
-    console.log('ProductID: ' + productId);
-
     $scope.reviews = [];
     $scope.currentPage = 0;
-    $scope.totalPages = 0;  // Khởi tạo totalPages
+    $scope.totalPages = 0;
     $scope.newComment = '';
     $scope.rating = 0;
 
@@ -39,7 +36,6 @@ app.controller('comment-ctrl', function ($scope, $http, $location) {
             return;
         }
         const commentData = {
-            productId: productId,
             comment: $scope.newComment,
             rating: $scope.rating
         };

@@ -3,20 +3,25 @@ package yourstyle.com.shope.controller.site;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-
 import yourstyle.com.shope.model.Category;
 import yourstyle.com.shope.model.Product;
 import yourstyle.com.shope.model.Slide;
+import yourstyle.com.shope.repository.ProductRepository;
 import yourstyle.com.shope.service.CategoryService;
 import yourstyle.com.shope.service.ProductService;
 import yourstyle.com.shope.service.SlideService;
 
 import org.springframework.security.core.Authentication;
+//
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @Controller
 @RequestMapping("/yourstyle")
@@ -29,9 +34,13 @@ public class HomeSiteController {
 	// new
 	@Autowired
 	private SlideService slideService;
+	
+	@Autowired
+	private ProductRepository productRepository;
 
-	@RequestMapping({"/home", "/discount/{discountId}"})
-	public String showHomePage(Model model, Authentication authentication, @PathVariable(value = "discountId", required = false) Integer discountId) {
+	@RequestMapping({ "/home", "/discount/{discountId}" })
+	public String showHomePage(Model model, Authentication authentication,
+			@PathVariable(value = "discountId", required = false) Integer discountId) {
 		List<Category> parentCategories = categoryService.findParentCategories();
 
 		model.addAttribute("parentCategories", parentCategories);
@@ -43,16 +52,15 @@ public class HomeSiteController {
 		List<Product> products = productService.getAllProducts();
 
 		model.addAttribute("products", products);
-    
-        // Lấy sản phẩm bán chạy
-        List<Product> bestSellers = productService.getBestSellingProducts();
-        model.addAttribute("bestSellers", bestSellers);
-     
-        // Lấy sản phẩm giảm giá theo discountId nếu có
-        List<Product> discountedProducts = (discountId != null) ? 
-                                            productService.getProductsByDiscountId(discountId) : 
-                                            productService.getDiscountedProducts();
-        model.addAttribute("discountedProducts", discountedProducts);
+
+		// Lấy sản phẩm bán chạy
+		List<Product> bestSellers = productService.getBestSellingProducts();
+		model.addAttribute("bestSellers", bestSellers);
+
+		// Lấy sản phẩm giảm giá theo discountId nếu có
+		List<Product> discountedProducts = (discountId != null) ? productService.getProductsByDiscountId(discountId)
+				: productService.getDiscountedProducts();
+		model.addAttribute("discountedProducts", discountedProducts);
 
 		// Lấy danh sách các slide và xử lý imagePaths
 		List<Slide> slides = slideService.getAllSlides();
@@ -66,6 +74,9 @@ public class HomeSiteController {
 			}
 		}
 		model.addAttribute("slides", slides);
+
+		Page<Product> topDealsPage = productRepository.findAllByOrderByPriceDesc(PageRequest.of(0, 6));
+		model.addAttribute("topDeals", topDealsPage.getContent());
 
 		return "site/pages/home";
 	}

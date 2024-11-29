@@ -18,7 +18,7 @@ import lombok.Data;
 public class SearchHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long searchId;
+    private Integer searchId;
 
     @ManyToOne
     @JoinColumn(name = "account_id")

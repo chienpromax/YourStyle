@@ -56,7 +56,7 @@ public class Account implements Serializable {
 	// @OneToMany(mappedBy = "account")
 	// private List<Voucher> vouchers;
 
-	@OneToMany(mappedBy = "account")
+	@OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
 	@JsonIgnore
 	private List<Voucher> vouchers;
 

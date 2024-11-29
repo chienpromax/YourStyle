@@ -6,6 +6,7 @@
 
 <body>
   <section layout:fragment="main">
+
     <div class="displayNotifications"></div>
     <main id="main" class="main">
       <div class="pagetitle">
@@ -13,7 +14,7 @@
         <nav>
           <ol class="breadcrumb">
             <li class="breadcrumb-item">
-              <a href="index.html">Trang chủ</a>
+              <a href="/admin/home">Trang chủ</a>
             </li>
             <li class="breadcrumb-item active">Khách hàng</li>
           </ol>
@@ -82,9 +83,10 @@
                     </td>
                     <td class="text-center">
                       <a style="cursor: pointer; font-size: 21px; color: green;"
-                        th:href="@{/admin/customers/edit/{id}(id=${customer.customerId})}">
+                        th:href="@{/admin/customers/edit(type='customer', id=${customer.customerId})}">
                         <i class="bi bi-eye"></i>
                       </a>
+
                       <button
                         style="border: 1px solid red; border-radius: 10%; padding: 5px; cursor: pointer; color: rgb(255, 0, 0); background: none; border: none;"
                         th:attr="onclick=|confirmDelete(${customer.customerId});|">
@@ -106,11 +108,10 @@
               <form action="">
                 <div class="form-inline">
                   <label for="size">Hiển thị:</label>
-                  <select class="px-lg-2 py-lg-1" name="size" id="size" onchange="this.form.submit()">
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="30">30</option>
+                  <select onchange="changePageSize(this.value)">
+                    <option value="5" th:selected="${size == 5}">5</option>
+                    <option value="10" th:selected="${size == 10}">10</option>
+                    <option value="20" th:selected="${size == 20}">20</option>
                   </select>
                 </div>
               </form>
@@ -146,18 +147,22 @@
       function confirmDelete(customerId) {
         Swal.fire({
           title: 'Bạn có chắc chắn muốn xóa?',
-          text: "Bạn sẽ không thể hoàn tác sau khi xóa!",
+          html: '<span style="color: red;">Tài khoản cũng sẽ bị xóa!</span><br>Bạn sẽ không thể hoàn tác sau khi xóa!',
           icon: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
-          confirmButtonText: 'xóa nó!',
+          confirmButtonText: 'Xóa nó!',
           cancelButtonText: 'Hủy'
         }).then((result) => {
           if (result.isConfirmed) {
             window.location.href = '/admin/customers/delete/' + customerId;
           }
         });
+      }
+
+      function changePageSize(size) {
+        window.location.href = "/admin/customers?page=0&size=" + size;
       }
     </script>
 

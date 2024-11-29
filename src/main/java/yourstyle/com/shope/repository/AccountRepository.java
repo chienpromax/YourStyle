@@ -1,5 +1,6 @@
 package yourstyle.com.shope.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import jakarta.transaction.Transactional;
 import yourstyle.com.shope.model.Account;
+import yourstyle.com.shope.model.Role;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Integer> {
@@ -23,6 +25,9 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
 
 	Optional<Account> findByUsername(String username);
 
+	@Query("SELECT a FROM Account a WHERE a.role.name = :roleName")
+	List<Account> findAccountsByRoleName(String roleName);
+
 	Optional<Account> findByEmail(String email);
 
 	Optional<Account> findByToken(String token);
@@ -33,7 +38,6 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
 
 	Account findByResetToken(String resetToken);
 
-	// nêw
 	@Modifying
 	@Transactional
 	@Query("UPDATE Account a SET a.email = ?2 WHERE a.username = ?1")

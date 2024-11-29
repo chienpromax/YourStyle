@@ -18,7 +18,7 @@
 			<div class="row">
 				<div class="col-md-3" th:each="product : ${favoriteProducts}">
 					<div class="card product-card">
-						<a th:href="@{/productdetail/{id}(id=${product.productId})}">
+						<a th:href="@{/yourstyle/product/detail/{productId}(productId=${product.productId})}">
 							<img th:src="@{/uploads/{image}(image=${product.image})}" class="card-img-top img-fluid"
 								alt="Hình ảnh sản phẩm">
 						</a>

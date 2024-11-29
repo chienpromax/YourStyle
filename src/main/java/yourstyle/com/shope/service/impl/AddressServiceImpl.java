@@ -21,6 +21,16 @@ public class AddressServiceImpl implements AddressService {
     @Autowired
 	private Converter<Address, AddressDto> addressToAddressDtoConverter;
 
+      @Override
+    public void updateDefaultAddress(Address address, Integer customerId) {
+        // Hủy cờ isDefault của tất cả địa chỉ thuộc customerId
+        addressRepository.updateDefaultStatus(false, customerId);
+
+        // Cập nhật địa chỉ được chọn làm mặc định
+        address.setIsDefault(true);
+        addressRepository.save(address);
+    }
+
     @Override
     public void save(Address address) {
         addressRepository.save(address);

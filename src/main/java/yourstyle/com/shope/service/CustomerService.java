@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 
 import yourstyle.com.shope.model.Customer;
 
+import yourstyle.com.shope.validation.admin.StaffDto;
+
 public interface CustomerService {
 
 	void deleteById(Integer id);
@@ -38,6 +40,12 @@ public interface CustomerService {
 
 	Customer findByAccountId(Integer accountId);
 
+
+	Page<StaffDto> getAllEmployees(Pageable pageable);
+
+	Page<Customer> searchByNameOrPhoneStaff(String value, Pageable pageable) ;
+	Page<Customer> findAllStaff( String role,Pageable pageable);
+
 	Page<Customer> findByFullnameContaining(
 			Integer customerId,
 			String fullname,
@@ -49,5 +57,6 @@ public interface CustomerService {
 			Pageable pageable);
 
 	Page<Customer> findAllNotRetailCustomer(Integer customerId, Pageable pageable);
+
 
 }

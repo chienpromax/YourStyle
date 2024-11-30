@@ -38,16 +38,15 @@ public interface CustomerService {
 
 	Customer findByAccountId(Integer accountId);
 
-	Page<Customer> findByFullnameContaining(
-			Integer customerId,
-			String fullname,
-			Pageable pageable);
+	Page<Customer> findByFullnameContaining(Integer customerId, String fullname, Pageable pageable);
 
-	Page<Customer> findByPhoneName(
-			Integer customerId,
-			String phoneNumber,
-			Pageable pageable);
+	Page<Customer> findByPhoneName(Integer customerId, String phoneNumber, Pageable pageable);
 
 	Page<Customer> findAllNotRetailCustomer(Integer customerId, Pageable pageable);
+
+	// Thêm phương thức này
+	String getEmailByUsername(String username);
+
+	Integer getAccountIdByUsername(String username);
 
 }

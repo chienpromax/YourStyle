@@ -10,13 +10,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import yourstyle.com.shope.model.Account;
 import yourstyle.com.shope.model.Customer;
+import yourstyle.com.shope.repository.AccountRepository;
 import yourstyle.com.shope.repository.CustomerRepository;
 import yourstyle.com.shope.service.CustomerService;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
-
+	@Autowired
+	private AccountRepository accountRepository;
 	@Autowired
 	CustomerRepository customerRepository;
 
@@ -84,7 +87,6 @@ public class CustomerServiceImpl implements CustomerService {
 		return customerRepository.existsByPhoneNumber(phoneNumber);
 	}
 
-
 	@Override
 	public Page<Customer> findByFullnameContaining(Integer customerId, String fullname, Pageable pageable) {
 		return customerRepository.findByFullnameContaining(customerId, fullname, pageable);
@@ -103,5 +105,23 @@ public class CustomerServiceImpl implements CustomerService {
 	public Customer findByAccountId(Integer accountId) {
 		return customerRepository.findByAccount_AccountId(accountId);
 	}
-	
+
+//update profile
+	@Override
+	public String getEmailByUsername(String username) {
+		Optional<Account> accountOptional = accountRepository.findByUsername(username);
+		if (accountOptional.isPresent()) {
+			return accountOptional.get().getEmail(); // Lấy email từ đối tượng Account
+		}
+		return null;
+	}
+
+	@Override
+	public Integer getAccountIdByUsername(String username) {
+		Optional<Account> accountOptional = accountRepository.findByUsername(username);
+		if (accountOptional.isPresent()) {
+			return accountOptional.get().getAccountId(); // Lấy accountId từ đối tượng Account
+		}
+		return null; // Trả về null nếu không tìm thấy tài khoản
+	}
 }

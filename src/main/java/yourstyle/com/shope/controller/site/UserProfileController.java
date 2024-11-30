@@ -16,7 +16,7 @@ import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.repository.AccountRepository;
 import yourstyle.com.shope.repository.CustomerRepository;
 import yourstyle.com.shope.service.AccountService;
-import yourstyle.com.shope.service.UserService;
+import yourstyle.com.shope.service.CustomerService;
 import java.util.Date;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserProfileController {
 
 	@Autowired
-	private UserService userService;
+	private CustomerService customerService;
 
 	@Autowired
 	private AccountService accountService;
@@ -41,8 +41,8 @@ public class UserProfileController {
 	public String profile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
 		if (userDetails != null) {
 			String username = userDetails.getUsername();
-			String email = userService.getEmailByUsername(username);
-			Integer accountId = userService.getAccountIdByUsername(username);
+			String email = customerService.getEmailByUsername(username);
+			Integer accountId =customerService.getAccountIdByUsername(username);
 			String phone = accountService.getPhoneNumberByUsername(username);
 
 			String fullName = accountService.getFullNameByUsername(username);

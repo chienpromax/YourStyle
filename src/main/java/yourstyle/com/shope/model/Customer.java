@@ -115,5 +115,9 @@ public class Customer implements Serializable {
 	@Column(nullable = true, length = 100) // Thêm trường nationality
 	private String nationality;
 
-	
+	// Lấy email từ account
+		public String getEmailFromUser(Customer customer) {
+			return customer.getAccount().getEmail(); // Lấy email từ đối tượng Account
+		}
+
 }

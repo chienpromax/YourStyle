@@ -7,6 +7,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
 
 import yourstyle.com.shope.model.Category;
 import yourstyle.com.shope.model.Color;
@@ -48,8 +49,14 @@ public interface ProductVariantService {
 
     List<ProductVariant> findBySize(Size size);
 
-	List<ProductVariant> findByColor(Color color);
+    List<ProductVariant> findByColor(Color color);
 
-	List<ProductVariant> findByProduct(Product product);
+    List<ProductVariant> findByProduct(Product product);
 
+    // lọc sản phẩm
+    List<ProductVariant> findBySize(Size size, Integer categoryId);
+
+    List<ProductVariant> findByColor(Color color, Integer categoryId);
+
+    List<ProductVariant> findBySizeAndColor(Size size, Color color, Integer categoryId);
 }

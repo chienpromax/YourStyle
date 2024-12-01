@@ -1,5 +1,6 @@
 package yourstyle.com.shope.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,11 +52,10 @@ public interface ProductService {
 
     List<Product> getProductsByDiscountId(Integer discountId);
 
-
     List<Product> findByCategory(Category category);    
     
     //6 sp cao price 1
     Page<Product> getTop6Products(Pageable pageable);
 
-
+    List<Product> findByPriceLessThanEqualAndCategoryId(BigDecimal price, Integer categoryId);
 }

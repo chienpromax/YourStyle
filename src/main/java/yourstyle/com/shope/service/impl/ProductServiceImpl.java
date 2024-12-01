@@ -36,16 +36,17 @@ public class ProductServiceImpl implements ProductService {
 
 	// @Override
 	// public List<Product> getDiscountedProducts() {
-	// 	List<Object[]> results = productRepository.findDiscountedProducts();
-	// 	return results.stream().map(result -> {
-	// 		Product product = new Product();
-	// 		product.setProductId((Integer) result[0]);
-	// 		product.setName((String) result[1]);
-	// 		product.setPrice((BigDecimal) result[2]);
-	// 		product.setImage((String) result[3]);
-	// 		product.setTotalQuantity(((Number) result[4]).intValue()); // Ánh xạ totalQuantity
-	// 		return product;
-	// 	}).collect(Collectors.toList());
+	// List<Object[]> results = productRepository.findDiscountedProducts();
+	// return results.stream().map(result -> {
+	// Product product = new Product();
+	// product.setProductId((Integer) result[0]);
+	// product.setName((String) result[1]);
+	// product.setPrice((BigDecimal) result[2]);
+	// product.setImage((String) result[3]);
+	// product.setTotalQuantity(((Number) result[4]).intValue()); // Ánh xạ
+	// totalQuantity
+	// return product;
+	// }).collect(Collectors.toList());
 	// }
 
 	// Sp bán chạy nhất
@@ -153,7 +154,12 @@ public class ProductServiceImpl implements ProductService {
 
 	// lấy 6 sp cao giá 1
 	public Page<Product> getTop6Products(Pageable pageable) {
-		return productRepository.findAllByOrderByPriceDesc(pageable); 
+		return productRepository.findAllByOrderByPriceDesc(pageable);
+	}
+
+	@Override
+	public List<Product> findByPriceLessThanEqualAndCategoryId(BigDecimal price, Integer categoryId) {
+		return productRepository.findByPriceLessThanEqualAndCategoryId(price, categoryId);
 	}
 
 }

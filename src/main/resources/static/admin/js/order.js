@@ -179,7 +179,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 }
             })
             .then((data) => {
-                const { statusTime, statusText, statusDesciption } = data;
+                const { statusTime, statusText, statusDesciption, username } = data;
                 let newStatusElementId;
                 switch (statusText) {
                     case "":
@@ -220,6 +220,23 @@ window.addEventListener("DOMContentLoaded", () => {
                 if (statusDesciption) {
                     const statusDesciptionElement = document.getElementById("statusDesciption");
                     statusDesciptionElement.textContent = statusDesciption;
+                }
+                // hiển thị thời gian trong lịch sử hóa Đơn
+                const statusHistoryElement = document.getElementById("statusHistory");
+                const tr = document.createElement("tr");
+                const statusTimeFormatted = statusTime ? format(new Date(statusTime), "dd-MM-yyyy HH:mm:ss") : "";
+                tr.innerHTML = `
+                    <td>${username}</td>
+                    <td>${statusTimeFormatted}</td>
+                    <td>${statusDesciption}</td>
+                `;
+                // Thêm vào đầu danh sách
+                if (statusHistoryElement.children.length > 0) {
+                    // Nếu có dòng con, chèn vào đầu
+                    statusHistoryElement.insertBefore(tr, statusHistoryElement.firstElementChild);
+                } else {
+                    // Nếu bảng trống, thêm vào cuối
+                    statusHistoryElement.appendChild(tr);
                 }
                 createToast("success", "fa-solid fa-circle-check", "thành công", "Cập nhật trạng thái thành công");
             })

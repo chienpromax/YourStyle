@@ -25,9 +25,9 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public List<Product> getProductsByDiscountId(Integer discountId) {
-		return productRepository.findByDiscount_discountId(discountId); 
+		return productRepository.findByDiscount_discountId(discountId);
 	}
-	
+
 	@Override
 	public List<Product> getDiscountedProducts() {
 		return productRepository.findDiscountedProducts(); // Sử dụng repository để tìm sản phẩm có giảm giá
@@ -63,9 +63,10 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-    public Page<Product> findByCategory_CategoryId(Integer categoryId, Pageable pageable) {
-        return productRepository.findByCategory_CategoryId(categoryId, pageable);
-    }
+	public Page<Product> findByCategory_CategoryId(Integer categoryId, Pageable pageable) {
+		return productRepository.findByCategory_CategoryId(categoryId, pageable);
+	}
+
 	@Override
 	public Product update(Product product) {
 		return productRepository.save(product);
@@ -129,10 +130,15 @@ public class ProductServiceImpl implements ProductService {
 	public List<Product> findSimilarProducts(Integer categoryId, Integer productId) {
 		return productRepository.findSimilarProducts(categoryId, productId);
 	}
-	
-    @Override
+
+	@Override
 	public List<Product> findByCategory(Category category) {
 		return productRepository.findByCategory(category);
+	}
+
+	@Override
+	public List<Product> findByPriceLessThanEqualAndCategoryId(BigDecimal price, Integer categoryId) {
+		return productRepository.findByPriceLessThanEqualAndCategoryId(price, categoryId);
 	}
 
 }

@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -75,23 +76,23 @@ public class Product implements Serializable {
     private Discount discount;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
     private List<ProductVariant> productVariants;
 
     public BigDecimal getDiscountedPrice() {
-    if (discount != null 
-        && discount.getDiscountPercent() != null 
-        && discount.getStartDate() != null 
-        && discount.getEndDate() != null) {
+        if (discount != null
+                && discount.getDiscountPercent() != null
+                && discount.getStartDate() != null
+                && discount.getEndDate() != null) {
 
-        LocalDateTime now = LocalDateTime.now();
+            LocalDateTime now = LocalDateTime.now();
 
-        if (now.isAfter(discount.getStartDate()) && now.isBefore(discount.getEndDate())) {
-            BigDecimal discountAmount = price.multiply(discount.getDiscountPercent()).divide(new BigDecimal("100"));
-            return price.subtract(discountAmount);
+            if (now.isAfter(discount.getStartDate()) && now.isBefore(discount.getEndDate())) {
+                BigDecimal discountAmount = price.multiply(discount.getDiscountPercent()).divide(new BigDecimal("100"));
+                return price.subtract(discountAmount);
+            }
         }
+        return price;
     }
-    return price;
-}
 
 }

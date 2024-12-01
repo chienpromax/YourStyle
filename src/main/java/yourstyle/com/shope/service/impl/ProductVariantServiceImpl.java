@@ -9,8 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import yourstyle.com.shope.model.Category;
 import yourstyle.com.shope.model.Color;
 import yourstyle.com.shope.model.Product;
 import yourstyle.com.shope.model.ProductVariant;
@@ -90,28 +88,43 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
-	public List<ProductVariant> findByProductVariantId(Integer productVariantId) {
-		return productVariantRepository.findByProductVariantId(productVariantId);
-	}
+    public List<ProductVariant> findByProductVariantId(Integer productVariantId) {
+        return productVariantRepository.findByProductVariantId(productVariantId);
+    }
 
     @Override
-	public List<ProductVariant> findByProductNameContaining(String name) {
-		return productVariantRepository.findByProductNameContaining(name);
-	}
+    public List<ProductVariant> findByProductNameContaining(String name) {
+        return productVariantRepository.findByProductNameContaining(name);
+    }
 
     @Override
-	public List<ProductVariant> findBySize(Size size) {
-		return productVariantRepository.findBySize(size);
-	}
+    public List<ProductVariant> findBySize(Size size) {
+        return productVariantRepository.findBySize(size);
+    }
 
-	@Override
-	public List<ProductVariant> findByColor(Color color) {
-		return productVariantRepository.findByColor(color);
-	}
+    @Override
+    public List<ProductVariant> findByColor(Color color) {
+        return productVariantRepository.findByColor(color);
+    }
 
-	@Override
-	public List<ProductVariant> findByProduct(Product product) {
-		return productVariantRepository.findByProduct(product);
-	}
+    @Override
+    public List<ProductVariant> findByProduct(Product product) {
+        return productVariantRepository.findByProduct(product);
+    }
+
+    @Override
+    public List<ProductVariant> findBySize(Size size, Integer categoryId) {
+        return productVariantRepository.findBySize(size, categoryId);
+    }
+
+    @Override
+    public List<ProductVariant> findByColor(Color color, Integer categoryId) {
+        return productVariantRepository.findByColor(color, categoryId);
+    }
+
+    @Override
+    public List<ProductVariant> findBySizeAndColor(Size size, Color color, Integer categoryId) {
+        return productVariantRepository.findBySizeAndColor(size, color, categoryId);
+    }
 
 }

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import yourstyle.com.shope.model.Category;
@@ -57,4 +58,14 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
     @Query("SELECT COUNT(pv) FROM ProductVariant pv WHERE YEAR(pv.createAt) = YEAR(CURRENT_DATE)")
     Long countByCreateDateThisYear();
 
+    // lọc sản phẩm
+    @Query("SELECT pv FROM ProductVariant pv WHERE pv.size = :size AND pv.product.category.categoryId = :categoryId")
+    List<ProductVariant> findBySize(@Param("size") Size size, @Param("categoryId") Integer categoryId);
+
+    @Query("SELECT pv FROM ProductVariant pv WHERE pv.color = :color AND pv.product.category.categoryId = :categoryId")
+    List<ProductVariant> findByColor(@Param("color") Color color, @Param("categoryId") Integer categoryId);
+
+    @Query("SELECT pv FROM ProductVariant pv WHERE pv.size = :size  AND pv.color = :color AND pv.product.category.categoryId = :categoryId")
+    List<ProductVariant> findBySizeAndColor(@Param("size") Size size, @Param("color") Color color,
+            @Param("categoryId") Integer categoryId);
 }

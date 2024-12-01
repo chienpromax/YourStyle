@@ -27,21 +27,21 @@ public class LoginController {
 		return "site/accounts/login";
 	}
 
-	@PostMapping("/login")
-	public String login(@RequestParam String username, @RequestParam String password, HttpSession session, Model model) {
-	    try {
-	        Account account = accountService.login(username, password);
-	        return "redirect:/yourstyle/home"; 
-	    } catch (IllegalArgumentException e) {
-	        model.addAttribute("errorMessage", e.getMessage());
-	        return "site/accounts/login"; 
-	    }
-	}
-
-
-	@GetMapping("/logout")
-	public String logout(HttpSession session) {
-		session.invalidate(); // Xóa session
-		return "yourstyle/accounts/login";
-	}
+//	@PostMapping("/login")
+//	public String login(@RequestParam String username, @RequestParam String password, HttpSession session, Model model) {
+//	    try {
+//	        Account account = accountService.login(username, password);
+//	        return "redirect:/yourstyle/home"; 
+//	    } catch (IllegalArgumentException e) {
+//	        model.addAttribute("errorMessage", e.getMessage());
+//	        return "site/accounts/login"; 
+//    }
+//	}
+//
+//
+//	@GetMapping("/logout")
+//	public String logout(HttpSession session) {
+//		session.invalidate(); // Xóa session
+//		return "yourstyle/accounts/login";
+//	}
 }

@@ -1,64 +1,114 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{site/index.html}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{site/index.html}">
 
-<head>  
+<head>
 </head>
 
 <body>
-    <section class="py-5 container" layout:fragment="main">
+	<section class="py-5 container" layout:fragment="main">
 		<section class="login-section">
 			<div class="login-container row mx-auto">
 				<!-- Form đăng nhập (bên trái) -->
 				<div class="login-form col-md-6">
 					<h1>Đăng Nhập</h1>
+
 					<!-- Thông báo lỗi -->
-					<div th:if="${errorMessage}" class="alert alert-danger"
-						role="alert">
-						<p th:text="${errorMessage}"></p>
+					<div th:if="${param.error}" class="alert-danger-register" role="alert">
+						<p>Sai tên người dùng hoặc mật khẩu. Vui lòng thử lại.</p>
 					</div>
-                    <div class="btn-container">
-                        <button class="btn btn-google btn-icon">
-                            <i class="bi bi-google"></i>
-                        </button>
-                        <button class="btn btn-facebook btn-icon">
-                            <i class="bi bi-facebook"></i>
-                        </button>
-                    </div>
-        
-                    <p class="mt-3 text-center">Sử dụng tài khoản của bạn</p>
-                    <div class="input-container">
-                        <form action="/yourstyle/accounts/login" method="post">
-                            <div class="form-outline py-2 my-3" data-mdb-input-init>
-                                <input type="text" id="username" name="username" class="form-control" required />
-                                <label class="form-label" for="username">Tên người dùng</label>
-                            </div>
-                            <div class="form-outline py-2 my-3" data-mdb-input-init>
-                                <input type="password" id="password" name="password" class="form-control" required />
-                                <label class="form-label" for="password">Mật khẩu</label>
-                            </div>
-                           <p class="text-center">
+
+					<!-- Nút đăng nhập bằng mạng xã hội -->
+					<div class="btn-container text-center my-3">
+						<button class="btn btn-google btn-icon">
+							<i class="bi bi-google"></i>
+						</button>
+						<button class="btn btn-facebook btn-icon">
+							<i class="bi bi-facebook"></i>
+						</button>
+					</div>
+					<!-- Form đăng nhập -->
+					<div class="input-container">
+						<form action="/yourstyle/accounts/login" method="post" novalidate>
+							<!-- Tên người dùng -->
+							<div class="form-outline py-2 my-3">
+								<input type="text" id="username" name="username"
+									class="form-control" required pattern="^[a-zA-Z0-9_]+$"
+									title="Tên đăng nhập chỉ chứa chữ cái, số và dấu gạch dưới." />
+								<label class="form-label" for="username">Tên người dùng</label>
+								<div class="invalid-feedback">Vui lòng nhập tên người dùng
+									hợp lệ.</div>
+							</div>
+
+							<!-- Mật khẩu -->
+							<div class="form-outline py-2 my-3">
+								<input type="password" id="password" name="password"
+									class="form-control" required minlength="6"
+									title="Mật khẩu phải có ít nhất 6 ký tự." /> <label
+									class="form-label" for="password">Mật khẩu</label>
+								<div class="invalid-feedback">Mật khẩu phải có ít nhất 6
+									ký tự.</div>
+							</div>
+
+							<p class="text-center">
 								<a th:href="@{/yourstyle/accounts/forgotpassword}"
 									style="text-decoration: none; color: black;">Quên mật khẩu</a>
 							</p>
-                            <button type="submit" class="btn btn-custom w-100">Đăng Nhập</button>                          
-                        </form>
-                    </div>
-                </div>
 
-               <!-- Thông tin đăng ký (bên phải) -->
+							<!-- Nút đăng nhập -->
+							<button type="submit" class="btn btn-custom w-100">Đăng
+								Nhập</button>
+						</form>
+					</div>
+				</div>
+
+				<!-- Thông tin đăng ký (bên phải) -->
 				<div class="register-info col-md-6">
 					<h2>Hello, Friend!</h2>
 					<p>Đăng ký với thông tin cá nhân của bạn để bắt đầu sử dụng
 						dịch vụ.</p>
-					<!-- Thẻ <a> để chuyển tới trang đăng ký -->
+
+					<!-- Nút chuyển tới trang đăng ký -->
 					<a th:href="@{/yourstyle/accounts/register}">
 						<button class="btn btn-light w-100">Đăng Ký</button>
 					</a>
 				</div>
-            </div>		
-        </section>
-    </section>
+			</div>
+		</section>
+		<script>
+		(function () {
+		    'use strict';
+		    const forms = document.querySelectorAll('form');
+		    Array.from(forms).forEach(form => {
+		        form.addEventListener('submit', event => {
+		            if (!form.checkValidity()) {
+		                event.preventDefault();
+		                event.stopPropagation();
+		            }
 
+		            const usernameField = form.querySelector('#username');
+		            const passwordField = form.querySelector('#password');
+
+		            if (usernameField && !usernameField.validity.valid) {
+		                usernameField.setCustomValidity('Tên người dùng không hợp lệ.');
+		            } else {
+		                usernameField.setCustomValidity('');
+		            }
+
+		            if (passwordField) {
+		                if (passwordField.value.length < 3) {
+		                    passwordField.setCustomValidity('Mật khẩu phải có ít nhất 3 ký tự.');
+		                } else {
+		                    passwordField.setCustomValidity('');
+		                }
+		            }
+
+		            form.classList.add('was-validated');
+		        }, false);
+		    });
+		})();
+</script>
+	</section>
 </body>
 </html>

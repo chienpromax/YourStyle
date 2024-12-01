@@ -92,12 +92,6 @@
                                 </a>
                                 <div class="p-2">
                                     <h5 th:text="${product.name}"></h5>
-                                    <th:block th:each="productVariant : ${product.productVariants}">
-                                        <h5 th:text="${productVariant.size.sizeName}"></h5>
-                                    </th:block>
-                                    <th:block th:each="productVariant : ${product.productVariants}">
-                                        <h5 th:text="${productVariant.color.colorName}"></h5>
-                                    </th:block>
                                     <div class="d-flex align-items-center justify-content-between">
                                         <!-- Kiểm tra nếu có discount thì hiển thị giá giảm và giá gốc -->
                                         <span class="price-discount text-danger fw-bold"

@@ -14,6 +14,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import yourstyle.com.shope.model.Role;
 import yourstyle.com.shope.model.Account;
 import yourstyle.com.shope.model.Customer;
@@ -24,14 +26,13 @@ import yourstyle.com.shope.repository.SearchHistoryRepository;
 import yourstyle.com.shope.service.AccountService;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.UUID;
 //new
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -52,6 +53,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Autowired
 	private SearchHistoryRepository searchHistoryRepository;
+
 	public AccountServiceImpl() {
 	}
 
@@ -137,13 +139,13 @@ public class AccountServiceImpl implements AccountService {
 		if (accountRepository.findByEmail(account.getEmail()).isPresent()) {
 			throw new IllegalArgumentException("Email đã tồn tại!");
 		}
-		
+
 		if (accountRepository.findByUsername(account.getUsername()).isPresent()) {
 			throw new IllegalArgumentException("Tên đăng nhập đã tồn tại!");
 		}
 
 		try {
-			
+
 			account.setPassword(passwordEncoder.encode(password)); // Mã hóa mật khẩu trước khi lưu
 			Account savedAccount = accountRepository.save(account);
 			Customer newCustomer = new Customer();
@@ -153,17 +155,18 @@ public class AccountServiceImpl implements AccountService {
 			throw new RuntimeException("Có lỗi xảy ra khi tạo tài khoản: " + e.getMessage());
 		}
 	}
+
 	@Override
 	public Account login(String username, String password) {
 		Account account = accountRepository.findByUsername(username)
 				.orElseThrow(() -> new IllegalArgumentException("Tên đăng nhập không tồn tại!"));
 
-	if (!passwordEncoder.matches(password, account.getPassword())) {
+		if (!passwordEncoder.matches(password, account.getPassword())) {
 			throw new IllegalArgumentException("Mật khẩu không đúng!");
 		}
 		return account;
 	}
-	
+
 	@Override
 	public boolean sendResetPasswordLink(String email) {
 		Optional<Account> accountOptional = accountRepository.findByEmail(email);
@@ -174,46 +177,52 @@ public class AccountServiceImpl implements AccountService {
 			account.setToken(token);
 			accountRepository.save(account);
 
-			sendEmailWithToken(email, token);
+			try {
+				sendEmailWithToken(email, token);
+			} catch (MessagingException e) {
+				e.printStackTrace();
+				return false;
+			}
 			return true;
 		}
 		return false;
 	}
 
-	private void sendEmailWithToken(String email, String token) {
-		SimpleMailMessage message = new SimpleMailMessage();
-		message.setTo(email);
-		message.setSubject("Liên kết đặt lại mật khẩu");
-		message.setText("Bạn đã yêu cầu đặt lại mật khẩu. Vui lòng nhấn vào liên kết sau để đặt lại mật khẩu: "
-				+ "http://localhost:8080/yourstyle/accounts/resetpassword?token=" + token);
+	private void sendEmailWithToken(String email, String token) throws MessagingException {
+		MimeMessage message = mailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+		helper.setTo(email);
+		helper.setSubject("Liên kết đặt lại mật khẩu");
+		helper.setText("Bạn đã yêu cầu đặt lại mật khẩu. Vui lòng nhấn vào liên kết sau để đặt lại mật khẩu: "
+				+ "http://localhost:8080/yourstyle/accounts/resetpassword?token=" + token, true);
+
 		mailSender.send(message);
 	}
 
 	@Override
 	public void resetPassword(String token, String newPassword, String confirmPassword) {
-		
-		System.out.println("new : " + newPassword);
-		System.out.println("confirm : "+confirmPassword);
-		
-		
-	    if (token == null || token.isEmpty()) {
-	        throw new IllegalArgumentException("Token không hợp lệ!");
-	    }
-	    
-	    Optional<Account> accountOptional = accountRepository.findByToken(token);
-	    if (accountOptional.isPresent()) {
-	        Account account = accountOptional.get();
-	        if (!newPassword.equals(confirmPassword)) {
-	            throw new IllegalArgumentException("Mật khẩu mới và mật khẩu xác nhận không khớp!");
-	        }
-	        account.setPassword(passwordEncoder.encode(newPassword)); 
-	        account.setToken(null); 
-	        accountRepository.save(account); 
-	    } else {
-	        throw new IllegalArgumentException("Token không hợp lệ hoặc đã hết hạn!");
-	    }
-	}
 
+		System.out.println("new : " + newPassword);
+		System.out.println("confirm : " + confirmPassword);
+
+		if (token == null || token.isEmpty()) {
+			throw new IllegalArgumentException("Token không hợp lệ!");
+		}
+
+		Optional<Account> accountOptional = accountRepository.findByToken(token);
+		if (accountOptional.isPresent()) {
+			Account account = accountOptional.get();
+			if (!newPassword.equals(confirmPassword)) {
+				throw new IllegalArgumentException("Mật khẩu mới và mật khẩu xác nhận không khớp!");
+			}
+			account.setPassword(passwordEncoder.encode(newPassword));
+			account.setToken(null);
+			accountRepository.save(account);
+		} else {
+			throw new IllegalArgumentException("Token không hợp lệ hoặc đã hết hạn!");
+		}
+	}
 
 	@Override
 	public Account findByUsername(String username) {
@@ -222,9 +231,9 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-    public Optional<Account> findByEmail(String email) {
-        return accountRepository.findByEmail(email);
-    }
+	public Optional<Account> findByEmail(String email) {
+		return accountRepository.findByEmail(email);
+	}
 
 	// new---------------------------------------------------------------------------
 	public boolean updateEmailByUsername(String username, String newEmail) {
@@ -260,7 +269,7 @@ public class AccountServiceImpl implements AccountService {
 		if (optionalAccount.isPresent()) {
 			Account account = optionalAccount.get();
 			Integer accountId = account.getAccountId();
-			Optional<Customer> optionalCustomer =customerRepository.findOptionalByAccount_AccountId(accountId);
+			Optional<Customer> optionalCustomer = customerRepository.findOptionalByAccount_AccountId(accountId);
 			if (optionalCustomer.isPresent()) {
 				return optionalCustomer.get().getPhoneNumber();
 			}
@@ -315,15 +324,15 @@ public class AccountServiceImpl implements AccountService {
 
 			if (gender != null) {
 				switch (gender.toLowerCase()) {
-				case "true":
-					customer.setGender(true);
-					break;
-				case "false":
-					customer.setGender(false);
-					break;
-				default:
-					customer.setGender(null);
-					break;
+					case "true":
+						customer.setGender(true);
+						break;
+					case "false":
+						customer.setGender(false);
+						break;
+					default:
+						customer.setGender(null);
+						break;
 				}
 			}
 			String existingAvatar = customer.getAvatar();
@@ -373,28 +382,26 @@ public class AccountServiceImpl implements AccountService {
 
 	public Date getBirthdayByUsername(String username) {
 
-	    Optional<Account> optionalAccount = accountRepository.findByUsername(username);
+		Optional<Account> optionalAccount = accountRepository.findByUsername(username);
 
-	    if (optionalAccount.isPresent()) {
-	        Account account = optionalAccount.get();
-	        Integer accountId = account.getAccountId();
-	        
-	        Optional<Customer> optionalCustomer = customerRepository.findOptionalByAccount_AccountId(accountId);
+		if (optionalAccount.isPresent()) {
+			Account account = optionalAccount.get();
+			Integer accountId = account.getAccountId();
 
-	        if (optionalCustomer.isPresent()) {
-	            java.util.Date birthdayUtil = optionalCustomer.get().getBirthday();
+			Optional<Customer> optionalCustomer = customerRepository.findOptionalByAccount_AccountId(accountId);
 
-	            if (birthdayUtil != null) {
-	                return birthdayUtil;
-	            }
-	        }
-	    }
+			if (optionalCustomer.isPresent()) {
+				java.util.Date birthdayUtil = optionalCustomer.get().getBirthday();
 
-	    return null;
+				if (birthdayUtil != null) {
+					return birthdayUtil;
+				}
+			}
+		}
+
+		return null;
 	}
 
-
-	
 	public Boolean getGenderByUsername(String username) {
 		Optional<Account> optionalAccount = accountRepository.findByUsername(username);
 
@@ -457,6 +464,5 @@ public class AccountServiceImpl implements AccountService {
 		// Trả về đường dẫn URL hợp lệ
 		return "/uploads/Avatar/" + avatarPath;
 	}
-
 
 }

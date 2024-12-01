@@ -20,8 +20,6 @@ import yourstyle.com.shope.service.SlideService;
 import org.springframework.security.core.Authentication;
 //
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 @Controller
 @RequestMapping("/yourstyle")

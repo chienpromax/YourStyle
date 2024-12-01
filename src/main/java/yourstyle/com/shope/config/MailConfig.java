@@ -41,6 +41,8 @@ public class MailConfig {
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", smtpAuth);
         props.put("mail.smtp.starttls.enable", startTls);
+        //thêm này định dạng chữ 
+        props.put("mail.smtp.charset", "UTF-8"); 
         // props.put("mail.debug", "true");
 
         return mailSender;

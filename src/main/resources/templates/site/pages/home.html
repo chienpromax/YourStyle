@@ -1,6 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{site/index.html}">
 
 <head>
@@ -13,19 +12,16 @@
 		<section class="">
 			<div class="row">
 				<div class="col-md-3">
-					<a href=""> <img src="/site/images/ao/slide/sell.webp"
-						class="img-fluid" alt="">
+					<a href=""> <img src="/site/images/ao/slide/sell.webp" class="img-fluid" alt="">
 					</a>
 				</div>
 				<!-- Slide -->
 				<div class="col-md-6">
-					<div id="carouselExampleIndicators" class="carousel slide"
-						data-bs-ride="carousel">
+					<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
 						<div class="carousel-indicators">
 							<!-- Tạo các nút chỉ số cho mỗi slide, có thể nhấn để chuyển đến slide tương ứng -->
 							<th:block th:each="slide, iterStat : ${slides}">
-								<button type="button"
-									data-bs-target="#carouselExampleIndicators"
+								<button type="button" data-bs-target="#carouselExampleIndicators"
 									th:data-bs-slide-to="${iterStat.index}"
 									th:class="${iterStat.index == 0 ? 'active' : ''}"
 									aria-current="${iterStat.index == 0 ? 'true' : 'false'}"
@@ -36,22 +32,17 @@
 							<!-- Hiển thị các hình ảnh của từng slide -->
 							<th:block th:each="slide, iterStat : ${slides}">
 								<!-- Ảnh đầu tiên -->
-								<div
-									th:class="'carousel-item ' + (${iterStat.index == 0 ? 'active' : ''})">
-									<img
-										th:src="'/uploads/slide/' + ${slide.imagePaths.split(',')[0]}"
-										class="d-block w-100"
-										th:alt="'Slide ' + (${iterStat.index + 1})"
+								<div th:class="'carousel-item ' + (${iterStat.index == 0 ? 'active' : ''})">
+									<img th:src="'/uploads/slide/' + ${slide.imagePaths.split(',')[0]}"
+										class="d-block w-100" th:alt="'Slide ' + (${iterStat.index + 1})"
 										style="height: 300px; object-fit: cover;">
 								</div>
 
 								<!-- Các ảnh bổ sung -->
-								<th:block
-									th:each="imagePath, imgStat : ${slide.getImagePathsArray()}"
+								<th:block th:each="imagePath, imgStat : ${slide.getImagePathsArray()}"
 									th:if="${imgStat.index != 0}">
 									<div class="carousel-item">
-										<img th:src="'/uploads/slide/' + ${imagePath}"
-											class="d-block w-100"
+										<img th:src="'/uploads/slide/' + ${imagePath}" class="d-block w-100"
 											th:alt="'Additional Image ' + (${iterStat.index + 1})"
 											style="height: 300px; object-fit: cover;">
 									</div>
@@ -62,15 +53,13 @@
 						<!-- Nút "Thêm" chỉ hiển thị khi người dùng có role admin hoặc staff -->
 						<div class="carousel-controls mt-3"
 							sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_EMPLOYEE')">
-							<a href="/admin/slide/add" class="btn btn-success"> <i
-								class="bi bi-plus-circle"></i>
+							<a href="/admin/slide/add" class="btn btn-success"> <i class="bi bi-plus-circle"></i>
 							</a>
 						</div>
 					</div>
 				</div>
 				<!-- Top deal -->
-				<div class="col-md-3"
-					style="background: linear-gradient(0, rgb(255, 255, 255), rgb(255, 219, 218));">
+				<div class="col-md-3" style="background: linear-gradient(0, rgb(255, 255, 255), rgb(255, 219, 218));">
 					<h6 class="text-danger py-2">
 						<i class="text-danger fa-solid fa-fire"></i> TOP DEAL
 					</h6>
@@ -78,11 +67,10 @@
 						<!-- Loop through the top deals product list -->
 						<div th:each="product : ${topDeals}" class="col-md-4">
 							<!-- Product link -->
-							<a
-								th:href="@{/yourstyle/product/detail/{productId}(productId=${product.productId})}">
+							<a th:href="@{/yourstyle/product/detail/{productId}(productId=${product.productId})}">
 								<!-- Product image --> <img
-								th:src="@{'/uploads/' + ${product.image} ?: '/images/default-product.png'}"
-								class="img-thumbnail" alt="Product">
+									th:src="@{'/uploads/' + ${product.image} ?: '/images/default-product.png'}"
+									class="img-thumbnail" alt="Product">
 							</a>
 							<!-- Product price -->
 							<h6 class="text-center text-danger fw-bolder fs-6"
@@ -97,23 +85,19 @@
 
 		<section class="pt-5">
 			<div class="row">
-				<a href=""> <img src="/site/images/ao/slide/main icon.webp"
-					class="img-fluid" alt="">
+				<a href=""> <img src="/site/images/ao/slide/main icon.webp" class="img-fluid" alt="">
 				</a>
 			</div>
 		</section>
 
 		<!-- SIÊU GIAO DỊCH -->
 		<section class="py-5">
-			<div class="row bg-danger"
-				style="background: linear-gradient(0, rgb(255, 255, 255), rgb(254, 210, 183));">
-				<div class="header py-3"
-					style="display: flex; justify-content: space-between;">
+			<div class="row bg-danger" style="background: linear-gradient(0, rgb(255, 255, 255), rgb(254, 210, 183));">
+				<div class="header py-3" style="display: flex; justify-content: space-between;">
 					<img src="/site/images/ao/slide/sieu-giao-dich.webp" alt="">
 					<button class="bg-transparent border border-0">
-						<a th:href="@{/allproduct(sort='best-sellers')}"
-							class="text-danger-emphasis">XEM THÊM <i
-							class="fa-solid fa-chevron-right"></i></a>
+						<a th:href="@{/allproduct(sort='best-sellers')}" class="text-danger-emphasis">XEM THÊM <i
+								class="fa-solid fa-chevron-right"></i></a>
 					</button>
 				</div>
 				<div class="best-seller">
@@ -123,16 +107,15 @@
 								<div class="card product-card" th:if="${iterStat.index < 6}">
 									<a
 										th:href="@{/yourstyle/product/detail/{productId}(productId=${product.productId})}">
-										<img th:src="@{'/uploads/' + ${product.image}}"
-										class="img-fluid" alt="Product Image">
+										<img th:src="@{'/uploads/' + ${product.image}}" class="img-fluid"
+											alt="Product Image">
 									</a>
 									<div class="card-body">
 										<p class="product-name" th:text="${product.name}"></p>
 										<p class="card-text text-center text-danger fw-bolder "
 											th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'">
 										</p>
-										<p
-											class="card-text position-absolute bottom-0 end-0 text-muted m-2 small">
+										<p class="card-text position-absolute bottom-0 end-0 text-muted m-2 small">
 											Đã bán: <span th:text="${product.totalQuantity}">0</span> sản
 											phẩm
 										</p>
@@ -158,17 +141,15 @@
 								các mã giảm giá khác</a>
 						</div>
 
-						<span th:each="product : ${discountedProducts}"> <a
-							class="text-dark fw-bolder pe-2"
-							th:href="@{/yourstyle/discount/{discountId}(discountId=${product.discount.discountId})}"
-							th:text="${product.discount.discountName}">Tên Giảm Giá</a> |
+						<span th:each="product : ${discountedProducts}"> <a class="text-dark fw-bolder pe-2"
+								th:href="@{/yourstyle/discount/{discountId}(discountId=${product.discount.discountId})}"
+								th:text="${product.discount.discountName}">Tên Giảm Giá</a> |
 						</span>
 					</div>
 
 					<button class="bg-transparent border border-0">
-						<a th:href="@{/allproduct(sort='discount')}"
-							class="text-danger-emphasis">XEM THÊM <i
-							class="fa-solid fa-chevron-right"></i></a>
+						<a th:href="@{/allproduct(sort='discount')}" class="text-danger-emphasis">XEM THÊM <i
+								class="fa-solid fa-chevron-right"></i></a>
 					</button>
 				</div>
 
@@ -224,43 +205,37 @@
 			<div class="row bg-secondary">
 				<div class="col-md-2 py-2">
 					<div class="card">
-						<a href=""> <img
-							src="/site/images/SFORTLIGHT/SPORTLINE-1.webp" class="img-fluid">
+						<a href=""> <img src="/site/images/SFORTLIGHT/SPORTLINE-1.webp" class="img-fluid">
 						</a>
 					</div>
 				</div>
 				<div class="col-md-2 py-2">
 					<div class="card">
-						<a href=""> <img
-							src="/site/images/SFORTLIGHT/SPORTLINE-2.webp" class="img-fluid">
+						<a href=""> <img src="/site/images/SFORTLIGHT/SPORTLINE-2.webp" class="img-fluid">
 						</a>
 					</div>
 				</div>
 				<div class="col-md-2 py-2">
 					<div class="card">
-						<a href=""> <img
-							src="/site/images/SFORTLIGHT/SPORTLINE-3.webp" class="img-fluid">
+						<a href=""> <img src="/site/images/SFORTLIGHT/SPORTLINE-3.webp" class="img-fluid">
 						</a>
 					</div>
 				</div>
 				<div class="col-md-2 py-2">
 					<div class="card">
-						<a href=""> <img
-							src="/site/images/SFORTLIGHT/SPORTLINE-4.webp" class="img-fluid">
+						<a href=""> <img src="/site/images/SFORTLIGHT/SPORTLINE-4.webp" class="img-fluid">
 						</a>
 					</div>
 				</div>
 				<div class="col-md-2 py-2">
 					<div class="card">
-						<a href=""> <img
-							src="/site/images/SFORTLIGHT/SPORTLINE-5.webp" class="img-fluid">
+						<a href=""> <img src="/site/images/SFORTLIGHT/SPORTLINE-5.webp" class="img-fluid">
 						</a>
 					</div>
 				</div>
 				<div class="col-md-2 py-2">
 					<div class="card">
-						<a href=""> <img
-							src="/site/images/SFORTLIGHT/SPORTLINE-1.webp" class="img-fluid">
+						<a href=""> <img src="/site/images/SFORTLIGHT/SPORTLINE-1.webp" class="img-fluid">
 						</a>
 					</div>
 				</div>
@@ -310,7 +285,7 @@
 		</section>
 		<script src="/site/js/home.js"></script>
 	</section>
-
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
 
 </html>

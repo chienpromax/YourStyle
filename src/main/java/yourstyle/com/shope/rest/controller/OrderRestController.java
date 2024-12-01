@@ -1,15 +1,14 @@
 package yourstyle.com.shope.rest.controller;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,9 +16,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import yourstyle.com.shope.model.Address;
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Order;
@@ -51,6 +47,14 @@ public class OrderRestController {
     @PutMapping("update-status")
     public ResponseEntity<OrderStatusHistoryDto> updateStatusOrder(@RequestBody Map<String, Integer> data,
             ModelMap model) {
+        // Lấy thông tin người dùng hiện tại
+        String username = null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
         Integer orderId = data.get("orderId");
         Integer newStatus = data.get("status");
         if (orderId != null && newStatus != null) {
@@ -104,7 +108,8 @@ public class OrderRestController {
                 OrderStatusHistoryDto orderStatusHistoryDto = new OrderStatusHistoryDto(
                         orderStatusHistoryRepository.getStatusTime(),
                         orderStatusHistoryRepository.getStatus(),
-                        order.getStatusDescription());
+                        order.getStatusDescription(),
+                        username);
                 return ResponseEntity.ok(orderStatusHistoryDto);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);

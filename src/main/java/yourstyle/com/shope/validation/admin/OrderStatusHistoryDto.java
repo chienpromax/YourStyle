@@ -13,10 +13,12 @@ public class OrderStatusHistoryDto {
     private String statusText;
     // trạng thái đơn hàng
     private String statusDesciption;
+    private String username;
 
-    public OrderStatusHistoryDto(Timestamp statusTime, String statusText, String statusDesciption) {
+    public OrderStatusHistoryDto(Timestamp statusTime, String statusText, String statusDesciption, String username) {
         this.statusTime = statusTime;
         this.statusText = statusText;
         this.statusDesciption = statusDesciption;
+        this.username = username;
     }
 }

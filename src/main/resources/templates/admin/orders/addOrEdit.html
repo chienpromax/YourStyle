@@ -1134,7 +1134,7 @@
                                 <th scope="col">Trạng thái đơn hàng</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="statusHistory">
                             <tr th:each="history : ${orderStatusHistories}">
                                 <td>[[${#authentication.principal.username}]]</td>
                                 <td>[[${#dates.format(history.statusTime,'dd-MM-yyyy HH:mm:ss')}]]</td>

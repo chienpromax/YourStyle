@@ -6,13 +6,14 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -66,6 +67,33 @@ public class SellRestController {
         @Autowired
         AddressService addressService;
 
+        public Map<Integer, Integer> totalQuantities(List<Order> list) {
+                Map<Integer, Integer> totalQuantitiesMap = new HashMap<>();
+                for (Order order : list) {
+                        List<OrderDetail> orderDetails = order.getOrderDetails();
+                        if (orderDetails != null) {
+                                // tính tổng số lượng trong đơn hàng chi tiết của mỗi đơn hàng
+                                int totalQuantity = orderDetails.stream().mapToInt((OrderDetail::getQuantity)).sum();
+                                totalQuantitiesMap.put(order.getOrderId(), totalQuantity);
+                        }
+                }
+                return totalQuantitiesMap;
+        }
+
+        public Map<Integer, String> totalAmounts(List<Order> list) {
+                Map<Integer, String> totalAmountMap = new HashMap<>();
+                DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
+                symbols.setGroupingSeparator('.'); // Dùng dấu '.' cho hàng nghìn
+                symbols.setDecimalSeparator(','); // Dùng dấu ',' cho phần thập phân
+                DecimalFormat formatter = new DecimalFormat("#,##0", symbols); // định dạng
+                for (Order order : list) {
+                        String totalAmount = formatter
+                                        .format(order.getTotalAmount().setScale(0, RoundingMode.DOWN)) + ".000 VND";
+                        totalAmountMap.put(order.getOrderId(), totalAmount);
+                }
+                return totalAmountMap;
+        }
+
         @GetMapping("saveOrUpdate")
         public ResponseEntity<List<OrderDto>> createOrderSellInStore() {
                 // khách hàng lẻ
@@ -86,13 +114,27 @@ public class SellRestController {
                 // tìm kiếm danh sách đơn hàng theo khách hàng lẻ
                 List<Order> orders = orderService.findByCustomer(customer);
                 List<OrderDto> orderDtos = new ArrayList<>();
+                // tổng số lượng
+                Map<Integer, Integer> totalQuantities = totalQuantities(orders);
+                // tổng số tiền
+                Map<Integer, String> totalAmounts = totalAmounts(orders);
                 for (Order orderList : orders) {
+                        String orderChanel = orderList.getOrderChannel().getValue();
+                        if (orderChanel.equalsIgnoreCase("IN_STORE")) {
+                                orderChanel = "Tại quầy";
+                        }
                         OrderDto orderDtosReponse = new OrderDto(
                                         orderList.getOrderId(),
-                                        orderList.getCustomer().getFullname(), orderList.getOrderDate(),
+                                        orderList.getCustomer().getFullname(),
+                                        totalQuantities,
+                                        totalAmounts,
+                                        orderList.getOrderDate(),
+                                        orderChanel,
                                         orderList.getStatus().getDescription());
                         orderDtos.add(orderDtosReponse);
                 }
+                // sắp xếp thời gian giảm dần
+                orderDtos.sort((o1, o2) -> o2.getOrderDate().compareTo(o1.getOrderDate()));
                 return ResponseEntity.ok(orderDtos);
         }
 
@@ -193,6 +235,7 @@ public class SellRestController {
                 Voucher voucher = getBestVoucherForOrder(vouchers, order.getTotalAmount(), 4);
                 order.setVoucher(voucher); // gán voucher cho đơn
                 VoucherDTO voucherDto = null;
+                String finalTotalAmount = formatter.format(order.getTotalAmount()) + ".000 VND";
                 if (order.getVoucher() != null) {
                         Byte type = order.getVoucher().getType();
                         BigDecimal discountAmount = order.getVoucher().getDiscountAmount();
@@ -201,6 +244,7 @@ public class SellRestController {
                                 case 1: // giảm giá trực tiếp
                                         order.setTotalAmount(order.getTotalAmount().subtract(discountAmount));
                                         formattedDiscount = formatter.format(discountAmount) + ".000 VND";
+                                        finalTotalAmount = formatter.format(order.getTotalAmount()) + ".000 VND";
                                         orderService.save(order); // Lưu lại sau khi trừ giảm giá
                                         break;
                                 case 2: // giảm giá theo phần trăm
@@ -215,11 +259,13 @@ public class SellRestController {
                                         // Trừ mức giảm từ tổng tiền đơn hàng
                                         order.setTotalAmount(order.getTotalAmount().subtract(percentageDiscount)); // VND
                                         formattedDiscount = formatter.format(discountAmount) + "%";
+                                        finalTotalAmount = formatter.format(order.getTotalAmount()) + ".000 VND";
                                         orderService.save(order);
                                         break;
                                 case 3: // giảm giá vận chuyển
                                         order.setTotalAmount(order.getTotalAmount().subtract(discountAmount));
                                         formattedDiscount = formatter.format(discountAmount) + ".000 VND";
+                                        finalTotalAmount = formatter.format(order.getTotalAmount()) + ".000 VND";
                                         orderService.save(order);
                                         break;
                                 // case 4: // giảm giá 100%
@@ -232,13 +278,15 @@ public class SellRestController {
                         voucherDto = new VoucherDTO(
                                         order.getVoucher().getVoucherCode(),
                                         type,
-                                        formattedDiscount);
+                                        formattedDiscount,
+                                        finalTotalAmount);
                 } else {
                         // Xử lý khi không có voucher
                         voucherDto = new VoucherDTO(
                                         "",
                                         null,
-                                        "0 VND");
+                                        "0 VND",
+                                        finalTotalAmount);
                 }
                 return new OrderDto(orderDetailDtos, voucherDto); // trả về danh sách
         }
@@ -433,8 +481,6 @@ public class SellRestController {
         @PutMapping("updateOrder/{orderId}/{status}")
         public ResponseEntity<String> updateOrderInStore(@PathVariable("orderId") Integer orderId,
                         @PathVariable("status") Integer status) {
-                System.out.println("mã đơn hàng: " + orderId);
-                System.out.println("mã trạng thái: " + status);
                 if (orderId != null && status != null) {
                         Order order = orderService.findById(orderId).get();
                         OrderStatus orderStatus = OrderStatus.fromCode(status);

@@ -16,7 +16,7 @@ import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.repository.AccountRepository;
 import yourstyle.com.shope.repository.CustomerRepository;
 import yourstyle.com.shope.service.AccountService;
-import yourstyle.com.shope.service.UserService;
+import yourstyle.com.shope.service.CustomerService;
 import java.util.Date;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,9 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 @RequestMapping("/yourstyle/accounts")
 public class UserProfileController {
-
-	@Autowired
-	private UserService userService;
 
 	@Autowired
 	private AccountService accountService;
@@ -37,12 +34,17 @@ public class UserProfileController {
 	@Autowired
 	private CustomerRepository customerRepository;
 
+	@Autowired
+	private CustomerService customerService;
+
 	@GetMapping("/profile")
 	public String profile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
 		if (userDetails != null) {
 			String username = userDetails.getUsername();
-			String email = userService.getEmailByUsername(username);
-			Integer accountId = userService.getAccountIdByUsername(username);
+			String email = customerService.getEmailByUsername(username);
+			Integer accountId = customerService.getAccountIdByUsername(username);
+			// String email = userService.getEmailByUsername(username);
+			// Integer accountId = userService.getAccountIdByUsername(username);
 			String phone = accountService.getPhoneNumberByUsername(username);
 
 			String fullName = accountService.getFullNameByUsername(username);
@@ -169,7 +171,7 @@ public class UserProfileController {
 			if (updateResult) {
 				String avatarUrl = customer.getAvatar();
 				response.put("message", "Cập nhật thông tin thành công");
-				response.put("avatar", avatarUrl); 
+				response.put("avatar", avatarUrl);
 				return ResponseEntity.ok(response);
 			} else {
 				response.put("message", "Không thể cập nhật thông tin");

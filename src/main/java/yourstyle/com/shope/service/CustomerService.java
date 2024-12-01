@@ -58,5 +58,8 @@ public interface CustomerService {
 
 	Page<Customer> findAllNotRetailCustomer(Integer customerId, Pageable pageable);
 
+	String getEmailByUsername(String username);
+
+	Integer getAccountIdByUsername(String username);
 
 }

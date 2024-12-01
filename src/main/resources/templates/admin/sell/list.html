@@ -32,7 +32,7 @@
                                 <div class="row mb-3">
                                     <!-- Ô tìm kiếm -->
                                     <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
-                                        <form th:action="@{/admin/sell/searchListOrderInStore}" method="get">
+                                        <form id="searchListOrderInStore">
                                             <div class="position-relative w-100">
                                                 <button
                                                     type="submit"
@@ -41,6 +41,7 @@
                                                     <i class="bi bi-search"></i>
                                                 </button>
                                                 <input
+                                                    id="value"
                                                     name="value"
                                                     class="form-control ps-3"
                                                     placeholder="Tìm kiếm hóa đơn ..."
@@ -69,9 +70,10 @@
                                                     <th>STT</th>
                                                     <th>Mã HĐ</th>
                                                     <th>Tên khách hàng</th>
-                                                    <!-- <th>Tổng SP</th>
-                                                    <th>Tổng số tiền</th> -->
+                                                    <th>Tổng SP</th>
+                                                    <th>Tổng số tiền</th>
                                                     <th>Ngày tạo</th>
+                                                    <th>Loại đơn</th>
                                                     <th>Trạng thái</th>
                                                     <th>Hành động</th>
                                                 </tr>
@@ -81,7 +83,30 @@
                                                     <td>[[${iStat.index + 1}]]</td>
                                                     <td>[[${order.orderId}]]</td>
                                                     <td>[[${order.customer.fullname}]]</td>
+                                                    <td>[[${totalQuantities[order.orderId]}]]</td>
+                                                    <td>[[${totalAmounts[order.orderId]}]]</td>
                                                     <td>[[${#dates.format(order.orderDate,'dd-MM-yyyy HH:mm:ss')}]]</td>
+                                                    <td
+                                                        th:if="${order.orderChannel != null and order.orderChannel.value == 'ONLINE'}"
+                                                    >
+                                                        <span class="badge bg-success">
+                                                            [[${order.orderChannel.name}]]
+                                                        </span>
+                                                    </td>
+                                                    <td
+                                                        th:if="${order.orderChannel != null and  order.orderChannel.value == 'DIRECT'}"
+                                                    >
+                                                        <span class="badge bg-warning">
+                                                            [[${order.orderChannel.name}]]
+                                                        </span>
+                                                    </td>
+                                                    <td
+                                                        th:if="${order.orderChannel != null and  order.orderChannel.value == 'IN_STORE'}"
+                                                    >
+                                                        <span class="badge bg-primary">
+                                                            [[${order.orderChannel.name}]]
+                                                        </span>
+                                                    </td>
                                                     <td>
                                                         <span class="badge bg-success">
                                                             [[${order.statusDescription}]]

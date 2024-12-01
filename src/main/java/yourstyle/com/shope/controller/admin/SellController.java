@@ -111,7 +111,6 @@ public class SellController {
             List<Integer> pageNumbers = IntStream.rangeClosed(start, end).boxed().collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        System.out.println("Danh sách khách hàng: " + list);
         model.addAttribute("Customers", list.getContent());
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", totalPages);
@@ -213,7 +212,6 @@ public class SellController {
             if (order.getVoucher() != null) {
                 // lấy kiểu giảm giá
                 int voucherType = order.getVoucher().getType();
-                System.out.println("kiểu voucher: " + voucherType);
                 BigDecimal voucherValue = order.getVoucher().getDiscountAmount().setScale(0, RoundingMode.FLOOR);
                 BigDecimal minTotalVoucher = order.getVoucher().getMinTotalAmount().setScale(0, RoundingMode.FLOOR);
                 switch (voucherType) {
@@ -223,7 +221,6 @@ public class SellController {
                                 .subtract(voucherValue);
                         // định dạng voucher giảm giá 50.000 VND
                         formattedVoucher = formatter.format(voucherValue) + ".000 VND";
-                        System.out.println("da vao case 1");
                         break;
                     case 2: // giảm giá tiền theo phần trăm
                         voucherTotalSum = totalSum.multiply(BigDecimal.ONE
@@ -256,6 +253,31 @@ public class SellController {
         return "admin/sell/list";
     }
 
+    // xử lý tính tổng số lượng của đơn hàng
+    Map<Integer, Integer> totalQuantities = new HashMap<>();
+    Map<Integer, String> totalAmounts = new HashMap<>();
+
+    public void totalQuantitiesAndTotalAmounts(Page<Order> list, Model model) {
+        // xử lý thông tin đơn hàng và format tổng tiền
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
+        symbols.setGroupingSeparator('.'); // Dùng dấu '.' cho hàng nghìn
+        symbols.setDecimalSeparator(','); // Dùng dấu ',' cho phần thập phân
+        DecimalFormat formatter = new DecimalFormat("#,##0", symbols); // định dạng tiền
+        for (Order order : list) {
+            // lấy đơn hàng vừa tìm được lấy danh sách đơn hàng chi tiết
+            List<OrderDetail> orderDetails = order.getOrderDetails();
+            // tính tổng số lượng trong đơn hàng chi tiết của mỗi đơn hàng
+            int totalQuantity = orderDetails.stream().mapToInt((OrderDetail::getQuantity)).sum();
+            // đưa tổng số lượng vào map
+            totalQuantities.put(order.getOrderId(), totalQuantity);
+            totalAmounts.put(order.getOrderId(),
+                    formatter.format(order.getTotalAmount().setScale(0, RoundingMode.FLOOR)) + ".000 VND");
+            // chia sẻ tổng số lượng và tổng tiền qua model để hiển thị trong view
+            model.addAttribute("totalQuantities", totalQuantities);
+            model.addAttribute("totalAmounts", totalAmounts);
+        }
+    }
+
     @GetMapping("")
     public String list(Model model, @RequestParam("page") Optional<Integer> page,
             @RequestParam("size") Optional<Integer> size) {
@@ -265,8 +287,9 @@ public class SellController {
         // Customer customer = customerService.findById(4).get();
         Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by(Sort.Direction.DESC, "orderDate"));
         Page<Order> orders = orderService.findByOrderChannelNotStatusComplete(OrderChannel.IN_STORE, 6, pageable);
-        model.addAttribute("orders", orders);
         paginationOrders(orders, currentPage, model);
+        totalQuantitiesAndTotalAmounts(orders, model);
+        model.addAttribute("orders", orders);
         return "admin/sell/list";
     }
 
@@ -305,10 +328,9 @@ public class SellController {
         } else {
             list = orderService.findByOrderChannelNotStatusComplete(OrderChannel.IN_STORE, 6, pageable);
         }
-        paginationOrders(list, currentPage, model);
-        // totalQuantitiesAndTotalAmounts(list, model);
+        totalQuantitiesAndTotalAmounts(list, model);
         model.addAttribute("orders", list);
-        return "admin/sell/list";
+        return "admin/sell/fragments/orderInStoreList ::orderInStoreRows";
     }
 
     @GetMapping("search")

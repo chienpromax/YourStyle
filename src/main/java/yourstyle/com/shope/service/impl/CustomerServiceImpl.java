@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import yourstyle.com.shope.model.Account;
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.repository.AccountRepository;
 import yourstyle.com.shope.repository.CustomerRepository;
@@ -164,6 +165,24 @@ public class CustomerServiceImpl implements CustomerService {
 
 	public Customer findByAccountId(Integer accountId) {
 		return customerRepository.findByAccount_AccountId(accountId);
+	}
+
+	@Override
+	public String getEmailByUsername(String username) {
+		Optional<Account> accountOptional = accountRepository.findByUsername(username);
+		if (accountOptional.isPresent()) {
+			return accountOptional.get().getEmail(); // Lấy email từ đối tượng Account
+		}
+		return null;
+	}
+
+	@Override
+	public Integer getAccountIdByUsername(String username) {
+		Optional<Account> accountOptional = accountRepository.findByUsername(username);
+		if (accountOptional.isPresent()) {
+			return accountOptional.get().getAccountId(); // Lấy accountId từ đối tượng Account
+		}
+		return null; // Trả về null nếu không tìm thấy tài khoản
 	}
 	
 }

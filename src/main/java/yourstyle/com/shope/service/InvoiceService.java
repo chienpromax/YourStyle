@@ -197,7 +197,7 @@ public class InvoiceService {
                                         .setFont(font).setBold());
                         paymentCell.setBorderRight(Border.NO_BORDER); // Bỏ viền
                         paymentCell.setBorderTop(Border.NO_BORDER);
-                        paymentCell.setHeight(430); // Đặt chiều cao cho ô, có thể điều chỉnh theo ý muốn
+                        paymentCell.setHeight(410); // Đặt chiều cao cho ô, có thể điều chỉnh theo ý muốn
                         paymentCell.setPadding(15);
                         paymentCell.setPaddingLeft(40);
                         paymentTable.addCell(paymentCell);
@@ -220,7 +220,7 @@ public class InvoiceService {
                         Cell signatureCell = new Cell().add(innerSignatureTable);
                         signatureCell.setBorderLeft(Border.NO_BORDER); // Bỏ viền trái của ô chữ ký
                         signatureCell.setBorderTop(Border.NO_BORDER);
-                        signatureCell.setHeight(430); // Đặt chiều cao cho ô chữ ký
+                        signatureCell.setHeight(410); // Đặt chiều cao cho ô chữ ký
                         signatureCell.setPadding(10);
                         paymentTable.addCell(signatureCell);
 

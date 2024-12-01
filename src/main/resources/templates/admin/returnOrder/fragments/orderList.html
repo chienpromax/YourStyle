@@ -1,0 +1,32 @@
+<tbody class="dsorder" th:fragment="orderRows">
+    <tr th:if="${error != null}" style="display: none">
+        <td>
+            <div class="alert alert-danger">[[${error}]]</div>
+        </td>
+    </tr>
+    <tr th:each="order,iterStat : ${orders}">
+        <td>[[${iterStat.index + 1}]]</td>
+        <td>[[${order.orderId}]]</td>
+        <td>[[${order.customer.fullname}]]</td>
+        <td>[[${totalQuantities[order.orderId]}]]</td>
+        <td>[[${totalAmounts[order.orderId]}]]</td>
+        <td>[[${#dates.format(order.orderDate,'dd-MM-yyyy HH:mm:ss')}]]</td>
+        <td th:if="${order.orderChannel != null and order.orderChannel.value == 'ONLINE'}">
+            <span class="badge bg-success" th:text="${order.orderChannel.name}"></span>
+        </td>
+        <td th:if="${order.orderChannel != null and order.orderChannel.value == 'DIRECT'}">
+            <span class="badge bg-warning" th:text="${order.orderChannel.name}"></span>
+        </td>
+        <td th:if="${order.orderChannel != null and order.orderChannel.value == 'IN_STORE'}">
+            <span class="badge bg-primary" th:text="${order.orderChannel.name}"></span>
+        </td>
+        <td>
+            <span class="badge bg-success">[[${order.statusDescription}]]</span>
+        </td>
+        <td>
+            <a th:href="@{/admin/orders/detail/{orderId}(orderId=${order.orderId})}">
+                <i class="bi bi-eye"></i>
+            </a>
+        </td>
+    </tr>
+</tbody>

@@ -410,7 +410,6 @@ public class SellController {
         Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by("fullname"));
         Page<Customer> customers;
         String searchValue = value.orElse("");
-        System.out.println("giá trị tham số tìm là: " + searchValue);
         if (checkPhoneNumber(searchValue)) {
             System.out.println("kiểm tra số: " + checkNumber(searchValue));
             customers = customerService.findByPhoneName(4, searchValue,

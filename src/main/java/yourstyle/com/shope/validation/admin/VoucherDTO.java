@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import yourstyle.com.shope.model.Account;
+import yourstyle.com.shope.model.ProductVariant;
 
 @Data
 @NoArgsConstructor
@@ -72,12 +73,17 @@ public class VoucherDTO {
     private String formattedDiscount;
 
     private String finalTotalAmount;
+    private Integer productVariantId;
+    private Integer inventoryQuantity;
 
-    public VoucherDTO(String voucherCode, Byte type, String formattedDiscount, String finalTotalAmount) {
+    public VoucherDTO(String voucherCode, Byte type, String formattedDiscount, String finalTotalAmount,
+            Integer productVariantId, Integer inventoryQuantity) {
         this.voucherCode = voucherCode;
         this.type = type;
         this.formattedDiscount = formattedDiscount;
         this.finalTotalAmount = finalTotalAmount;
+        this.productVariantId = productVariantId;
+        this.inventoryQuantity = inventoryQuantity;
     }
 
 }

@@ -1,6 +1,7 @@
 package yourstyle.com.shope.rest.controller;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -120,14 +121,17 @@ public class OrderRestController {
 
     // xác nhận lưu địa chỉ
     @PutMapping("submitAddress")
-    public ResponseEntity<AddressDto> setAddressDefault(@RequestBody AddressDto addressDto) {
+    public ResponseEntity<?> setAddressDefault(@RequestBody AddressDto addressDto) {
         if (addressDto != null) {
-            Customer customer = customerService.findById(addressDto.getCustomerId()).get();
+            Customer customer = customerService.findById(addressDto.getCustomer().getCustomerId()).get();
             // kiểm tra xem có thay đổi tên và sdt không nếu có thì cập nhật
             customer.setFullname(addressDto.getCustomer().getFullname());
             customer.setPhoneNumber(addressDto.getCustomer().getPhoneNumber());
             customerService.save(customer);
-
+            if (addressDto.getAddressId() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("message", "Vui lòng chọn địa chỉ mặc định!!!"));
+            }
             // Danh sách địa chỉ của khách hàng
             List<Address> listAddresses = addressService.findByAddressCustomerID(customer.getCustomerId());
             Address addressUpdate = addressService.findById(addressDto.getAddressId()).get();
@@ -145,23 +149,24 @@ public class OrderRestController {
                     addressUpdate.getWard(),
                     addressUpdate.getDistrict(),
                     addressUpdate.getCity());
-            return ResponseEntity.ok(addressDtoReponse);
+            return ResponseEntity.ok(Map.of("address", addressDtoReponse));
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
 
     // thêm địa chỉ mới trong modal
     @PostMapping("addAddress")
-    public ResponseEntity<List<AddressDto>> addAddress(@RequestBody AddressDto addressDto) {
+    public ResponseEntity<?> addAddress(@RequestBody AddressDto addressDto) {
         try {
             Optional<Customer> customerOptional = customerService.findById(addressDto.getCustomerId());
             if (!customerOptional.isPresent()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Khách hàng không tồn tại!"));
             }
             Customer customer = customerOptional.get();
             // kiểm tra địa chỉ vượt quá 3 thì không cho thêm
             if (customer.getAddresses().size() >= 3) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("message", "Khách hàng chỉ được thêm 3 địa chỉ!"));
             }
             Address address = new Address();
             address.setCustomer(customer);
@@ -173,10 +178,11 @@ public class OrderRestController {
             addressService.save(address);
 
             List<AddressDto> addressesDtos = addressService.findByAddressDtoCustomerID(customer.getCustomerId());
-            return ResponseEntity.ok(addressesDtos);
+            return ResponseEntity.ok(Map.of("data", addressesDtos));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Đã xảy ra lỗi khi thêm địa chỉ!"));
         }
     }
 

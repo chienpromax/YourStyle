@@ -209,7 +209,12 @@
                                                                             [[${productVariantFormatedPrices[iterStat.index]['discountedPrice']}]]
                                                                         </span>
                                                                     </td>
-                                                                    <td>[[${productVariant.quantity}]]</td>
+                                                                    <td
+                                                                        class="inventoryQuantity"
+                                                                        th:attr="data-id=${productVariant.productVariantId}"
+                                                                    >
+                                                                        [[${productVariant.quantity}]]
+                                                                    </td>
                                                                     <td class="text-end">
                                                                         <button
                                                                             class="btn btn-outline-primary btn-sm"
@@ -416,6 +421,7 @@
                                                                 id="floatinghovaten"
                                                                 placeholder="Họ và tên"
                                                                 th:value="${order.customer.fullname}"
+                                                                disabled
                                                             />
                                                             <label for="floatinghovaten">
                                                                 <span class="text-danger">*</span>
@@ -431,6 +437,7 @@
                                                                 id="floatingsodienthoai"
                                                                 placeholder="Số điện thoại"
                                                                 th:value="${order.customer.phoneNumber}"
+                                                                disabled
                                                             />
                                                             <label for="floatingsodienthoai">
                                                                 <span class="text-danger">*</span>
@@ -452,6 +459,7 @@
                                                                 id="floatingstreet"
                                                                 placeholder="Địa chị cụ thể"
                                                                 th:value="${address.street}"
+                                                                disabled
                                                             />
                                                             <label for="floatingstreet">
                                                                 <span class="text-danger">*</span>
@@ -466,6 +474,7 @@
                                                                 id="floatingcity"
                                                                 placeholder="Tỉnh/thành phố"
                                                                 th:value="${address.city}"
+                                                                disabled
                                                             />
                                                             <label for="floatingCity">
                                                                 <span class="text-danger">*</span>
@@ -481,6 +490,7 @@
                                                                 class="form-control"
                                                                 placeholder="Quận/huyện"
                                                                 th:value="${address.district}"
+                                                                disabled
                                                             />
                                                             <label for="floatingdistrict">
                                                                 <span class="text-danger">*</span>
@@ -496,6 +506,7 @@
                                                                 class="form-control"
                                                                 placeholder="Xã/phường/thị trấn"
                                                                 th:value="${address.ward}"
+                                                                disabled
                                                             />
 
                                                             <label for="floatingward">

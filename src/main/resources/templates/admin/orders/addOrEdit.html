@@ -442,6 +442,12 @@
                                         </div>
 
                                         <div class="row" th:each="address : *{addresses}" th:if="${address.isDefault}">
+                                            <input
+                                                type="hidden"
+                                                name=""
+                                                th:value="${address.addressId}"
+                                                class="addressIdDefault"
+                                            />
                                             <div class="col-md-6 mb-3">
                                                 <div class="form-floating">
                                                     <input
@@ -450,6 +456,7 @@
                                                         id="floatingstreet"
                                                         placeholder="Địa chị cụ thể"
                                                         th:value="${address.street}"
+                                                        disabled
                                                     />
                                                     <label for="floatingstreet">
                                                         <span class="text-danger">*</span>
@@ -464,6 +471,7 @@
                                                         id="floatingcity"
                                                         placeholder="Tỉnh/thành phố"
                                                         th:value="${address.city}"
+                                                        disabled
                                                     />
                                                     <label for="floatingCity">
                                                         <span class="text-danger">*</span>
@@ -479,6 +487,7 @@
                                                         class="form-control"
                                                         placeholder="Quận/huyện"
                                                         th:value="${address.district}"
+                                                        disabled
                                                     />
                                                     <label for="floatingdistrict">
                                                         <span class="text-danger">*</span>
@@ -494,6 +503,7 @@
                                                         class="form-control"
                                                         placeholder="Xã/phường/thị trấn"
                                                         th:value="${address.ward}"
+                                                        disabled
                                                     />
 
                                                     <label for="floatingward">
@@ -525,6 +535,7 @@
                                                         class="form-control"
                                                         id="floatingstreetNotDefault"
                                                         placeholder="Địa chị cụ thể"
+                                                        disabled
                                                     />
                                                     <label for="floatingstreet">
                                                         <span class="text-danger">*</span>
@@ -538,6 +549,7 @@
                                                         class="form-control"
                                                         id="floatingcityNotDefault"
                                                         placeholder="Tỉnh/thành phố"
+                                                        disabled
                                                     />
                                                     <label for="floatingCity">
                                                         <span class="text-danger">*</span>
@@ -552,6 +564,7 @@
                                                         id="floatingdistrictNotDefault"
                                                         class="form-control"
                                                         placeholder="Quận/huyện"
+                                                        disabled
                                                     />
                                                     <label for="floatingdistrict">
                                                         <span class="text-danger">*</span>
@@ -566,6 +579,7 @@
                                                         id="floatingwardNotDefault"
                                                         class="form-control"
                                                         placeholder="Xã/phường/thị trấn"
+                                                        disabled
                                                     />
 
                                                     <label for="floatingward">

@@ -19,5 +19,6 @@ public interface CategoryRepository extends JpaRepository <Category, Integer> {
     List<Category> findByParentCategoryNotNull();// lấy danh mục con
      // Phương thức lấy danh mục con dựa trên danh mục cha
      List<Category> findByParentCategory(Category parentCategory);
+     List<Category> findByStatusTrueAndParentCategoryIsNull();
 }
 

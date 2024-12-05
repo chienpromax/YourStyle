@@ -3,6 +3,7 @@ package yourstyle.com.shope.service.impl;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -22,14 +23,15 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @Override
-    public List<Category> findParentCategories() {
-        List<Category> parentCategories = categoryRepository.findByParentCategoryIsNull();
-        for (Category parent : parentCategories) {
-            parent.setChildCategories(categoryRepository.findByParentCategory(parent));
-        }
-        return parentCategories;
-    }
+    // @Override
+    // public List<Category> findParentCategories() {
+    // List<Category> parentCategories =
+    // categoryRepository.findByParentCategoryIsNull();
+    // for (Category parent : parentCategories) {
+    // parent.setChildCategories(categoryRepository.findByParentCategory(parent));
+    // }
+    // return parentCategories;
+    // }
 
     @Override
     public List<Category> findChildCategories(Integer parentId) {
@@ -209,6 +211,24 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<Category> findByParentCategoryIsNull() {
         return categoryRepository.findByParentCategoryIsNull();
+    }
+
+    @Override
+    public List<Category> findParentCategories() {
+        List<Category> parentCategories = categoryRepository.findByParentCategoryIsNull()
+                .stream()
+                .filter(Category::getStatus) 
+                .collect(Collectors.toList());
+
+        for (Category parent : parentCategories) {
+            List<Category> activeChildCategories = categoryRepository.findByParentCategory(parent)
+                    .stream()
+                    .filter(Category::getStatus)
+                    .collect(Collectors.toList());
+            parent.setChildCategories(activeChildCategories);
+        }
+
+        return parentCategories;
     }
 
 }

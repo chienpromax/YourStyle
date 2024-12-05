@@ -2,6 +2,7 @@ package yourstyle.com.shope.controller.site;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import yourstyle.com.shope.model.OrderDetail;
 import yourstyle.com.shope.repository.CustomerRepository;
 import yourstyle.com.shope.repository.OrderDetailRepository;
 import yourstyle.com.shope.service.CategoryService;
+import yourstyle.com.shope.service.CustomerService;
 import yourstyle.com.shope.service.OrderService;
 
 @ControllerAdvice
@@ -29,6 +31,8 @@ public class NavController {
     CategoryService categoryService;
     @Autowired
     OrderService orderService;
+    @Autowired
+    CustomerService customerService;
 
     @Autowired
     private OrderDetailRepository orderDetailRepository;
@@ -104,5 +108,22 @@ public class NavController {
         return totalAmount;
     }
     
-
+    @ModelAttribute("currentUser")
+    public Customer getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    
+        if (authentication != null && authentication.isAuthenticated() 
+                && authentication.getPrincipal() instanceof CustomUserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            Integer accountId = userDetails.getAccountId();
+            Customer customer = customerRepository.findByAccount_AccountId(accountId);
+    
+            if (customer != null) {
+                return customer;
+            }
+        }
+    
+        return null;
+    }
+    
 }

@@ -14,7 +14,7 @@
 </head>
 
 <body>
-    <section class="py-3 container-fluid" layout:fragment="main">
+    <section class="py-3 container" layout:fragment="main">
         <div class="row">
             <div class="col-md-3 py-3">
                 <form>
@@ -86,32 +86,29 @@
                     <div class="row">
                         <div th:each="product : ${products}" class="col-md-3 pt-5" data-aos="fade-up">
                             <div class="card product-card">
-                                <a th:href="@{/product/detail/{productId}(productId=${product.productId})}">
+                                <a th:href="@{yourstyle/product/detail/{productId}(productId=${product.productId})}">
                                     <img th:src="@{'/uploads/' + ${product.image}}" class="img-fluid product-image"
                                         alt="Product Image" />
                                 </a>
                                 <div class="p-2">
-                                    <h5 th:text="${product.name}"></h5>
+                                    <h5 class="product-name" th:text="${product.name}"></h5>
                                     <div class="d-flex align-items-center justify-content-between">
                                         <!-- Kiểm tra nếu có discount thì hiển thị giá giảm và giá gốc -->
-                                        <span class="price-discount text-danger fw-bold"
-                                            th:if="${product.discount != null}"
-                                            th:text="${#numbers.formatDecimal(product.price - product.price * product.discount.discountPercent / 100, 1, 'COMMA', 3, 'POINT') + ' VNĐ'}"></span>
-                                        <span class="price-original ms-2 text-muted"
-                                            th:if="${product.discount != null}">
-                                            <del
-                                                th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA',3,'POINT') + ' VNĐ'}"></del>
-                                        </span>
-                                        <span class="badge bg-danger ms-2" th:if="${product.discount != null}"
-                                            th:text="'-' + ${#numbers.formatDecimal(product.discount.discountPercent, 0, 0)} + '%'"></span>
-                                        <!-- Hiển thị giá gốc nếu không có discount -->
-                                        <span class="card-text text-danger fw-bolder fs-5 mb-0"
-                                            th:if="${product.discount == null}"
-                                            th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'"></span>
-
-                                        <a th:href="@{/yourstyle/productfavorites/add(productId=${product.productId})}">
-                                            <i class="fa-regular fa-heart"></i>
-                                        </a>
+                                        <div class="">
+                                            <span class="price text-danger fw-bold" th:if="${product.discount != null}"
+                                                th:text="${#numbers.formatDecimal(product.price - product.price * product.discount.discountPercent / 100, 1, 'COMMA', 3, 'POINT') + ' VNĐ'}">
+                                            </span>
+        
+                                            <!-- Phần trăm giảm giá -->
+                                            <span class="badge discount-badge bg-danger ms-2" th:if="${product.discount != null}"
+                                                th:text="'-' + ${#numbers.formatDecimal(product.discount.discountPercent, 0, 0)} + '%'">
+                                            </span>
+                                            <!-- Giá gốc khi không có giảm giá -->
+                                            <span class="price text-danger card-text fw-bolder m-2"
+                                                th:if="${product.discount == null}"
+                                                th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'">
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

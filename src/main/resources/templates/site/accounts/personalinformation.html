@@ -1,130 +1,176 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{site/index.html}">
 
 <head>
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-	rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
 </head>
 
 <body>
 	<section class="py-5 container" layout:fragment="main">
-		<section class="personal-info-section">
-			<!-- Thêm action vào form -->
-			<form th:action="@{/yourstyle/accounts/}" method="POST"
-				enctype="multipart/form-data">
-				<div class="personal-info-container">
-					<!-- Phần Avatar -->
-					<div class="avatar-section">
-						<div class="avatar-container">
-							<!-- Khung hình đại diện (Avatar) -->
-							<img id="avatar-img" class="avatar-img" th:src="@{${avatar}}"
-								alt="Avatar" />
-						</div>
-						<input type="file" id="avatar-upload" class="d-none"
-							accept="image/*" onchange="previewAvatar(event)" />
-						<button type="button" class="btn btn-success upload-btn"
-							onclick="document.getElementById('avatar-upload').click();">Tải
-							lên hình ảnh</button>
-					</div>
-
-					<!-- Phần Thông tin cá nhân -->
-					<div class="info-section">
-						<div class="info-header">Thông tin cá nhân</div>
-
-						<!-- Trường Fullname -->
-						<div class="input-container input-icon flex-grow-1">
-							<input type="text" class="form-control" id="fullname"
-								name="fullname" placeholder="Họ và tên" th:value="${fullName}"
-								required> <i class="bi bi-person-fill"></i>
-						</div>
-
-						<!-- Trường Birthday -->
-						<div class="input-container input-icon flex-grow-1">
-							<input type="date" class="form-control" id="birthday"
-								name="birthday" placeholder="Ngày sinh" th:value="${birthday}"
-								required> <i class="bi bi-calendar-date"></i>
-						</div>
-
-						<!-- Trường Gender -->
-						<div class="input-container input-icon flex-grow-1">
-							<select class="form-control" id="gender" name="gender" required>
-								<option value="true" th:selected="${gender == true}">Nam</option>
-								<option value="false" th:selected="${gender == false}">Nữ</option>
-								<option value="" th:selected="${gender == null}">Khác</option>
-							</select> <i class="bi bi-gender-ambiguous"></i>
-						</div>
-
-
-
-						<!-- Trường Nationality -->
-						<div class="input-container input-icon flex-grow-1">
-							<select class="form-control" id="nationality" name="nationality"
-								required>
-								<option value="" th:selected="${nationality == null}">Quốc
-									tịch</option>
-								<option value="vietnam"
-									th:selected="${nationality == 'vietnam'}">Việt Nam</option>
-								<option value="usa" th:selected="${nationality == 'usa'}">Mỹ</option>
-								<option value="china" th:selected="${nationality == 'china'}">Trung
-									Quốc</option>
-							</select> <i class="bi bi-globe"></i>
-						</div>
-					</div>
-
-
-					<!-- Phần Thông tin liên hệ và bảo mật -->
-					<div class="contact-section" style="margin-top: 35px">
-						<div class="d-flex mb-3">
-							<div class="input-container input-icon flex-grow-1">
-								<input type="tel" class="form-control" id="phone"
-									placeholder="Số điện thoại" name="phone"
-									th:value="${phoneNumber}" required> <i
-									class="bi bi-telephone-fill"></i>
+		<video autoplay muted loop playsinline src="/site/video/background-2.mp4"> </video>
+		<div class="video-controls">
+			<i id="playPauseIcon" class="fas fa-pause"></i>
+			<i id="muteUnmuteIcon" class="fas fa-volume-mute"></i>
+		</div>
+		<section class="row info-customer">
+			<div class="col-md-5"></div>
+			<div class="col-md-7 personal-info-section">
+				<form class="info-customer-form" th:action="@{/yourstyle/accounts/profile}" th:object="${customer}"
+					method="post" enctype="multipart/form-data">
+					<input type="hidden" name="type" value="${type}">
+					<div class="row mb-2">
+						<div class="col-md-6">
+							<div class="form-group">
+								<input type="hidden" th:field="*{avatar}" />
+								<label for="avatarInput" class="form-label ms-4" style="cursor: pointer">Ảnh đại
+									diện</label>
+								<input type="file" th:field="*{imageFile}" id="avatarInput" class="form-control d-none"
+									onchange="loadFile(event)" />
+								<div class="avatar_wrapper d-flex align-items-center justify-content-center">
+									<img id="avatarImage" th:src="@{${'/uploads/' + currentUser.avatar}}"
+										class="rounded-circle border border-dark border-1 img-fluid"
+										style="width: 200px; max-height: 200px; cursor: pointer;;" />
+								</div>
 							</div>
-							<button type="button" class="btn btn-success ms-3"
-								style="height: 40px !important; margin-top: 20px"
-								onclick="updatePhoneNumber()">Cập nhật</button>
 						</div>
+						<div class="col-md-6">
+							<label for="" class="form-label"><i class="fa-solid fa-envelope"></i></label>
+							<span th:text="${customer.account.email}"></span><br>
+							<label for="" class="form-label"><i class="fa-solid fa-location-dot"></i></label>
+							<span
+								th:text="${defaultAddress.street} + ', ' + ${defaultAddress.district} + ', ' + ${defaultAddress.city} + ', ' + ${defaultAddress.ward}"></span>
+							<fieldset class="row mb-3 mt-3">
+								<legend class="col-12 col-md-12 col-form-label pt-0" style="color: black;">
+									<span class="text-danger">*</span> Giới tính
+								</legend>
+								<div class="col-12 col-md-12 d-flex align-items-center">
+									<div class="form-check me-3">
+										<input required th:field="*{gender}" class="form-check-input" type="radio"
+											id="radionam" value="1" />
+										<label class="form-check-label" for="radionam">Nam</label>
+									</div>
+									<div class="form-check cursor-pointer">
+										<input required th:field="*{gender}" class="form-check-input" type="radio"
+											id="radionu" value="0" />
+										<label class="form-check-label" for="radionu">Nữ</label>
+									</div>
+								</div>
+							</fieldset>
 
-						<input type="hidden" name="_csrf" value="${csrfToken}">
-						<!-- Các input khác của bạn -->
-						<div class="d-flex mb-3">
-							<div class="input-container input-icon flex-grow-1">
-								<input type="email" class="form-control" placeholder="Email"
-									name="email" id="email" th:value="${email}" required> <i
-									class="bi bi-envelope-fill"></i> <input type="hidden"
-									id="accountId" value="${accountId}">
-							</div>
-							<button type="button" class="btn btn-success ms-3"
-								style="height: 40px !important; margin-top: 20px"
-								onclick="updateEmail()">Cập nhật</button>
-						</div>
-						<div class="info-header">Liên kết mạng xã hội</div>
-						<div class="social-link-container mb-3">
-							<span><i class="bi bi-facebook"></i> Facebook</span>
-							<button class="btn btn-outline-success">Đã liên kết</button>
-						</div>
-						<div class="social-link-container mb-3">
-							<span><i class="bi bi-google"></i> Google</span>
-							<button class="btn btn-outline-primary">Liên kết</button>
 						</div>
 					</div>
-				</div>
-			</form>
-
-			<!-- Nút Lưu thông tin thay đổi -->
-			<div class="d-flex justify-content-center mt-4">
-				<input type="hidden" name="_csrf" value="${csrfToken}">
-				<button class="btn btn-success" id="saveChangesBtn"
-					onclick="updateProfile()">Lưu thông tin thay đổi</button>
+					<div class="row py-3">
+						<div class="col-md-12">
+							<input type="hidden" th:field="*{customerId}" />
+							<input type="hidden" th:field="*{account.accountId}" />
+							<div class="form-outline py-2" data-mdb-input-init>
+								<input required th:field="*{fullname}" type="text" id="form12" class="form-control" />
+								<label class="form-label" for="form12" style="color: black;"><span
+										class="text-danger">*</span> Họ và
+									tên</label>
+								<div th:if="${#fields.hasErrors('fullname')}" class="text-danger">
+									<p th:errors="*{fullname}"></p>
+								</div>
+							</div>
+							<div class="form-outline my-5 py-2" data-mdb-input-init>
+								<input required th:field="*{phoneNumber}" type="text" id="form12"
+									class="form-control" />
+								<label class="form-label" for="form12" style="color: black;">
+									<span class="text-danger">*</span> Số điện thoại
+								</label>
+							</div>
+							<div class="form-outline my-5 py-2" data-mdb-input-init>
+								<input th:field="*{birthday}" type="date" id="form12" class="form-control" />
+								<label class="form-label" for="form12" style="color: black;"><span
+										class="text-danger">*</span> Ngày
+									sinh</label>
+							</div>
+						</div>
+					</div>
+					<div class="text-center mt-3">
+						<button class="custom-btn-main">
+							Cập nhật thông tin
+						</button>
+					</div>
+				</form>
 			</div>
 		</section>
-		<script src="/site/js/profile.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		<script src="/site/js/customer-info.js"></script>
+		<script>
+			document.addEventListener("DOMContentLoaded", function () {
+				const video = document.querySelector("video");
+				const playPauseIcon = document.getElementById("playPauseIcon");
+				const muteUnmuteIcon = document.getElementById("muteUnmuteIcon");
+
+				playPauseIcon.addEventListener("click", function () {
+					if (video.paused) {
+						video.play();
+						playPauseIcon.classList.remove("fa-play");
+						playPauseIcon.classList.add("fa-pause");
+					} else {
+						video.pause();
+						playPauseIcon.classList.remove("fa-pause");
+						playPauseIcon.classList.add("fa-play");
+					}
+				});
+
+				muteUnmuteIcon.addEventListener("click", function () {
+					video.muted = !video.muted;
+					if (video.muted) {
+						muteUnmuteIcon.classList.remove("fa-volume-up");
+						muteUnmuteIcon.classList.add("fa-volume-mute");
+					} else {
+						muteUnmuteIcon.classList.remove("fa-volume-mute");
+						muteUnmuteIcon.classList.add("fa-volume-up");
+					}
+				});
+			});
+
+			const form = document.querySelector('.info-customer-form');
+			form.addEventListener('submit', function (event) {
+				const phoneNumber = document.querySelector('input[name="phoneNumber"]').value;
+				const birthday = new Date(document.querySelector('input[name="birthday"]').value);
+				const fullname = document.querySelector('input[name="fullname"]').value;
+
+				const phoneRegex = /^(0[1-9][0-9]{8,9})$/;
+				if (!phoneRegex.test(phoneNumber)) {
+					Swal.fire({
+						icon: 'error',
+						title: 'Số điện thoại không hợp lệ',
+						text: 'Vui lòng nhập lại.',
+					});
+					event.preventDefault();
+					return;
+				}
+
+				const today = new Date();
+				const minDate = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
+				if (birthday > minDate) {
+					Swal.fire({
+						icon: 'error',
+						title: 'Ngày sinh không hợp lệ',
+						text: 'Ngày sinh phải lớn hơn 1 năm so với ngày hiện tại.',
+					});
+					event.preventDefault();
+					return;
+				}
+
+				if (fullname.length > 30) {
+					Swal.fire({
+						icon: 'error',
+						title: 'Độ dài họ và tên không hợp lệ',
+						text: 'Họ và tên không được vượt quá 50 ký tự.',
+					});
+					event.preventDefault(); 
+					return;
+				}
+			});
+		</script>
 
 	</section>
 </body>
+
 </html>

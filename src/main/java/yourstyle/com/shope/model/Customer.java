@@ -114,7 +114,7 @@ public class Customer implements Serializable {
 	}
 
 	// new
-	@Column(nullable = true, length = 100) // Thêm trường nationality
+	@Column(nullable = true, length = 100)
 	private String nationality;
 
 	// Lấy email từ account

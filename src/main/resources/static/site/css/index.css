@@ -457,41 +457,44 @@
     color: rgb(0, 0, 0);
     border: 1px solid rgb(255, 170, 0);
 }
+
 .text-pink {
-    color: pink; /* Hoặc bất kỳ mã màu nào bạn muốn */
+    color: pink;
+    /* Hoặc bất kỳ mã màu nào bạn muốn */
 }
+
 .alert {
-	position: relative;
-	top: 16px;
-	right: 16px;
+    position: relative;
+    top: 16px;
+    right: 16px;
 }
 
 /* ------slide-------*/
 .carousel-controls {
     display: flex;
-    justify-content: flex-end; /* Đảm bảo các nút được căn phải */
+    justify-content: flex-end;
     position: absolute;
-    bottom: 10px;  /* Khoảng cách từ đáy */
-    right: 10px;   /* Khoảng cách từ bên phải */
-    gap: 5px;      /* Khoảng cách giữa các nút */
+    bottom: 10px;
+    right: 10px;
+    gap: 5px;
 }
 
 .carousel-controls a {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    width: 40px; /* Kích thước nút */
-    height: 40px; /* Kích thước nút */
-    border-radius: 50%; /* Để các nút có dạng tròn */
-    font-size: 20px; /* Kích thước icon */
-    color: green; /* Màu sắc icon */
-    background-color: transparent; /* Không có background */
-    border: 1px solid transparent; /* Không có viền */
-    transition: background-color 0.3s; /* Hiệu ứng khi hover */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 20px;
+    color: green;
+    background-color: transparent;
+    border: 1px solid transparent;
+    transition: background-color 0.3s;
 }
 
 .carousel-controls a i {
-    font-size: 20px; 
+    font-size: 20px;
 
 }
 
@@ -500,7 +503,7 @@
 }
 
 .bg-image:hover img {
-    transform: scale(1.1); 
+    transform: scale(1.1);
 }
 
 /* cart */
@@ -508,6 +511,7 @@
     margin-bottom: 15px;
     padding: 10px;
 }
+
 .product-info {
     text-align: left;
     margin-left: 10px;
@@ -521,7 +525,7 @@
 
 @media (min-width: 768px) {
     .product-item {
-        margin-bottom: 20px; 
+        margin-bottom: 20px;
     }
 }
 
@@ -533,10 +537,12 @@
 }
 
 .product-name {
+    padding-top: 5px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     display: block;
+    font-size: 0.8rem;
 }
 
 .discount-price {
@@ -664,6 +670,56 @@
     font-weight: bold;
 }
 
+.personal-info-section {
+    min-height: 102vh;
+    background-color: hsla(0, 0%, 75%, 0.6);
+    /* background-color: #28a745; */
+    z-index: 1;
+    margin-top: -50px !important;
+    color: #000000;
+
+}
+.personal-info-section label,legend{
+    color: #000000;
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+.info-customer-form{
+    background-color: hsla(0, 0%, 100%, 0.7);
+    margin: 30px 10px 10px 10px;
+    padding: 20px 10px 20px 10px;
+    border-radius: 5px;
+}
+
+video {
+    object-fit: cover;
+    width: 100%;
+    height: 102vh;
+    position: absolute;
+    top: 175px;
+    left: 0;
+}
+.video-controls {
+    position: absolute;
+    top: 200px;
+    left: 20px;
+    z-index: 2;
+    display: flex;
+    gap: 10px;
+}
+
+.video-controls i {
+    font-size: 24px;
+    color: #fff;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.video-controls i:hover {
+    color: #ddd;
+}
+
 
 /* img,span,p {
 img,span,p,input,label,h1,h2,h3,h4,h5,p,ul,li,i,a,tr,td {
@@ -678,4 +734,3 @@ img,span,p,input,label,h1,h2,h3,h4,h5,p,ul,li,i,a,tr,td {
         transform: rotate(360deg);
     }
 } */
-

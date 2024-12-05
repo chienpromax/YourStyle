@@ -79,6 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const dropdown = document.getElementById('searchHistoryDropdown');
             dropdown.innerHTML = data.map(item => `
                 <li id="history-item-${item.searchId}">
+                    <i class="fas fa-history pe-3"></i>
                     <a href="/search?name=${encodeURIComponent(item.keyword)}">${item.keyword}</a>
                     <span onclick="deleteSearchHistory(${item.searchId})">X</span>
                 </li>

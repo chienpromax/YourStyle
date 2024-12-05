@@ -1,6 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{site/index.html}">
 
 <head>
@@ -13,22 +12,20 @@
 		<section class="">
 			<div class="row">
 				<div class="col-md-3">
-					<a href=""> <img src="/site/images/ao/slide/sell.webp"
-						class="img-fluid" alt="">
+					<a href=""> <img src="/site/images/ao/slide/sell.webp" class="img-fluid" alt="">
 					</a>
 				</div>
-				
+
 				<div class="col-md-6">
 					<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
 						<div class="carousel-indicators">
 							<!-- Tạo các nút chỉ số cho mỗi slide -->
 							<th:block th:each="slide, iterStat : ${slides}">
-								<button type="button" 
-										data-bs-target="#carouselExampleIndicators" 
-										th:data-bs-slide-to="${iterStat.index}" 
-										th:class="${iterStat.index == 0 ? 'active' : ''}" 
-										aria-current="${iterStat.index == 0 ? 'true' : 'false'}" 
-										th:aria-label="'Slide ' + (${iterStat.index + 1})">
+								<button type="button" data-bs-target="#carouselExampleIndicators"
+									th:data-bs-slide-to="${iterStat.index}"
+									th:class="${iterStat.index == 0 ? 'active' : ''}"
+									aria-current="${iterStat.index == 0 ? 'true' : 'false'}"
+									th:aria-label="'Slide ' + (${iterStat.index + 1})">
 								</button>
 							</th:block>
 						</div>
@@ -36,35 +33,36 @@
 							<!-- Hiển thị các hình ảnh của từng slide -->
 							<th:block th:each="slide, iterStat : ${slides}">
 								<div th:class="'carousel-item ' + (${iterStat.index == 0 ? 'active' : ''})">
-									<img th:src="'/uploads/slide/' + ${slide.imagePaths.split(',')[0]}" 
-										 class="d-block w-100" 
-										 th:alt="'Slide ' + (${iterStat.index + 1})" 
-										 style="height: 300px; object-fit: cover;">
+									<img th:src="'/uploads/slide/' + ${slide.imagePaths.split(',')[0]}"
+										class="d-block w-100" th:alt="'Slide ' + (${iterStat.index + 1})"
+										style="height: 300px; object-fit: cover;">
 								</div>
 							</th:block>
 						</div>
 						<!-- Nút điều hướng -->
-						<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+						<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+							data-bs-slide="prev">
 							<span class="carousel-control-prev-icon" aria-hidden="true"></span>
 							<span class="visually-hidden">Previous</span>
 						</button>
-						<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+						<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+							data-bs-slide="next">
 							<span class="carousel-control-next-icon" aria-hidden="true"></span>
 							<span class="visually-hidden">Next</span>
 						</button>
-						
+
 						<!-- Nút "Thêm" chỉ hiển thị khi người dùng có role admin hoặc staff -->
-						<div class="carousel-controls mt-3" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_EMPLOYEE')">
+						<div class="carousel-controls mt-3"
+							sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_EMPLOYEE')">
 							<a href="/admin/slide/add" class="btn btn-success">
 								<i class="bi bi-plus-circle"></i> Thêm Slide
 							</a>
 						</div>
 					</div>
 				</div>
-				
+
 				<!-- Top deal -->
-				<div class="col-md-3"
-					style="background: linear-gradient(0, rgb(255, 255, 255), rgb(255, 219, 218));">
+				<div class="col-md-3" style="background: linear-gradient(0, rgb(255, 255, 255), rgb(255, 219, 218));">
 					<h6 class="text-danger py-2">
 						<i class="text-danger fa-solid fa-fire"></i> TOP DEAL
 					</h6>
@@ -72,42 +70,36 @@
 						<!-- Loop through the top deals product list -->
 						<div th:each="product : ${topDeals}" class="col-md-4">
 							<!-- Product link -->
-							<a
-								th:href="@{/yourstyle/product/detail/{productId}(productId=${product.productId})}">
+							<a th:href="@{/yourstyle/product/detail/{productId}(productId=${product.productId})}">
 								<!-- Product image --> <img
-								th:src="@{'/uploads/' + ${product.image} ?: '/images/default-product.png'}"
-								class="img-thumbnail" alt="Product">
+									th:src="@{'/uploads/' + ${product.image} ?: '/images/default-product.png'}"
+									class="img-thumbnail" alt="Product">
 							</a>
 							<!-- Product price -->
-							<h6 class="text-center text-danger fw-bolder fs-6"
+							<p class="text-center text-danger fw-bolder" style="font-size: 0.8rem;"
 								th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 3, 'POINT')} + ' VNĐ'">
-							</h6>
+							</p>
 						</div>
 					</div>
 				</div>
-				<!-- --------------------------------------------------------- -->
 			</div>
 		</section>
 
 		<section class="pt-5">
 			<div class="row">
-				<a href=""> <img src="/site/images/ao/slide/main icon.webp"
-					class="img-fluid" alt="">
+				<a href=""> <img src="/site/images/ao/slide/main icon.webp" class="img-fluid" alt="">
 				</a>
 			</div>
 		</section>
 
 		<!-- SIÊU GIAO DỊCH -->
 		<section class="py-5">
-			<div class="row bg-danger"
-				style="background: linear-gradient(0, rgb(255, 255, 255), rgb(254, 210, 183));">
-				<div class="header py-3"
-					style="display: flex; justify-content: space-between;">
+			<div class="row bg-danger" style="background: linear-gradient(0, rgb(255, 255, 255), rgb(254, 210, 183));">
+				<div class="header py-4" style="display: flex; justify-content: space-between;">
 					<img src="/site/images/ao/slide/sieu-giao-dich.webp" alt="">
 					<button class="bg-transparent border border-0">
-						<a th:href="@{/allproduct(sort='best-sellers')}"
-							class="text-danger-emphasis">XEM THÊM <i
-							class="fa-solid fa-chevron-right"></i></a>
+						<a th:href="@{/allproduct(sort='best-sellers')}" class="text-danger-emphasis">XEM THÊM <i
+								class="fa-solid fa-chevron-right"></i></a>
 					</button>
 				</div>
 				<div class="best-seller">
@@ -117,19 +109,18 @@
 								<div class="card product-card" th:if="${iterStat.index < 6}">
 									<a
 										th:href="@{/yourstyle/product/detail/{productId}(productId=${product.productId})}">
-										<img th:src="@{'/uploads/' + ${product.image}}"
-										class="img-fluid" alt="Product Image">
+										<img th:src="@{'/uploads/' + ${product.image}}" class="img-fluid"
+											alt="Product Image">
 									</a>
-									<div class="card-body">
-										<p class="product-name" th:text="${product.name}"></p>
-										<p class="card-text text-center text-danger fw-bolder "
+									<div class="p-2">
+										<!-- <p class="product-name" th:text="${product.name}"></p> -->
+										<h5 class="card-text text-center text-danger fw-bolder"
 											th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'">
-										</p>
-										<p
-											class="card-text position-absolute bottom-0 end-0 text-muted m-2 small">
+										</h5>
+										<h6 class="card-text text-muted mt-2 small text-center">
 											Đã bán: <span th:text="${product.totalQuantity}">0</span> sản
 											phẩm
-										</p>
+										</h6>
 									</div>
 								</div>
 							</div>
@@ -138,7 +129,6 @@
 				</div>
 			</div>
 		</section>
-
 
 		<section class="py-5">
 			<div class="row">
@@ -152,55 +142,43 @@
 								các mã giảm giá khác</a>
 						</div>
 
-						<span th:each="product : ${discountedProducts}"> <a
-							class="text-dark fw-bolder pe-2"
-							th:href="@{/yourstyle/discount/{discountId}(discountId=${product.discount.discountId})}"
-							th:text="${product.discount.discountName}">Tên Giảm Giá</a> |
+						<span th:each="product : ${discountedProducts}"> <a class="text-dark fw-bolder pe-2"
+								th:href="@{/yourstyle/discount/{discountId}(discountId=${product.discount.discountId})}"
+								th:text="${product.discount.discountName}">Tên Giảm Giá</a> |
 						</span>
 					</div>
 
 					<button class="bg-transparent border border-0">
-						<a th:href="@{/allproduct(sort='discount')}"
-							class="text-danger-emphasis">XEM THÊM <i
-							class="fa-solid fa-chevron-right"></i></a>
+						<a th:href="@{/allproduct(sort='discount')}" class="text-danger-emphasis">XEM THÊM <i
+								class="fa-solid fa-chevron-right"></i></a>
 					</button>
 				</div>
 
 				<!-- Best-seller section hiển thị các sản phẩm giảm giá -->
-				<div class="discount">
+				<div class="discount pt-3">
 					<div class="row">
 						<div class="col-md-2" th:each="product,iterStat : ${discountedProducts}">
 							<div class="card product-card" th:if="${iterStat.index < 6}">
 								<a th:href="@{/yourstyle/product/detail/{productId}(productId=${product.productId})}">
 									<img th:src="'/uploads/' + ${product.image}" class="img-fluid">
 								</a>
-								<div class="card-body">
-									<p class="card-title product-name" th:text="${product.name}">Tên
+								<div class="pe-2 pb-2 ps-2">
+									<p class="product-name" style="font-size: 0.8rem;" th:text="${product.name}">Tên
 										Sản Phẩm</p>
-									<div class="price-info d-flex align-items-center">
-										<!-- Giá đã giảm -->
-										<div class="price-discount-container d-flex flex-column me-2">
+									<!-- Giá đã giảm -->
+									<div
+										class="price-discount-container d-flex justify-content-center align-items-center">
+										<div class="">
 											<span class="price-discount text-danger fw-bold"
 												th:if="${product.discount != null}"
 												th:text="${#numbers.formatDecimal(product.price - product.price * product.discount.discountPercent / 100, 1, 'COMMA', 3, 'POINT') + ' VNĐ'}">
-											</span> <span class="price-original text-muted"
-												th:if="${product.discount != null}"> <del
-													th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'"></del>
+											</span>
+											<!-- Phần trăm giảm giá -->
+											<span class="badge discount-badge bg-danger m-2"
+												th:if="${product.discount != null}"
+												th:text="'-' + ${#numbers.formatDecimal(product.discount.discountPercent, 0, 0)} + '%'">
 											</span>
 										</div>
-										<!-- Phần trăm giảm giá -->
-										<span class="badge discount-badge bg-danger m-2"
-											th:if="${product.discount != null}"
-											th:text="'-' + ${#numbers.formatDecimal(product.discount.discountPercent, 0, 0)} + '%'">
-										</span>
-										<!-- Giá gốc khi không có giảm giá -->
-										<span class="price text-danger card-text fw-bolder fs-5"
-											th:if="${product.discount == null}"
-											th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'">
-										</span>
-										<a th:href="@{/yourstyle/productfavorites/add(productId=${product.productId})}">
-											<i class="fa-regular fa-heart "></i>
-										</a>
 									</div>
 								</div>
 							</div>
@@ -218,83 +196,79 @@
 			<div class="row bg-secondary">
 				<div class="col-md-2 py-2">
 					<div class="card">
-						<a href=""> <img
-							src="/site/images/SFORTLIGHT/SPORTLINE-1.webp" class="img-fluid">
+						<a href=""> <img src="/site/images/SFORTLIGHT/SPORTLINE-1.webp" class="img-fluid">
 						</a>
 					</div>
 				</div>
 				<div class="col-md-2 py-2">
 					<div class="card">
-						<a href=""> <img
-							src="/site/images/SFORTLIGHT/SPORTLINE-2.webp" class="img-fluid">
+						<a href=""> <img src="/site/images/SFORTLIGHT/SPORTLINE-2.webp" class="img-fluid">
 						</a>
 					</div>
 				</div>
 				<div class="col-md-2 py-2">
 					<div class="card">
-						<a href=""> <img
-							src="/site/images/SFORTLIGHT/SPORTLINE-3.webp" class="img-fluid">
+						<a href=""> <img src="/site/images/SFORTLIGHT/SPORTLINE-3.webp" class="img-fluid">
 						</a>
 					</div>
 				</div>
 				<div class="col-md-2 py-2">
 					<div class="card">
-						<a href=""> <img
-							src="/site/images/SFORTLIGHT/SPORTLINE-4.webp" class="img-fluid">
+						<a href=""> <img src="/site/images/SFORTLIGHT/SPORTLINE-4.webp" class="img-fluid">
 						</a>
 					</div>
 				</div>
 				<div class="col-md-2 py-2">
 					<div class="card">
-						<a href=""> <img
-							src="/site/images/SFORTLIGHT/SPORTLINE-5.webp" class="img-fluid">
+						<a href=""> <img src="/site/images/SFORTLIGHT/SPORTLINE-5.webp" class="img-fluid">
 						</a>
 					</div>
 				</div>
 				<div class="col-md-2 py-2">
 					<div class="card">
-						<a href=""> <img
-							src="/site/images/SFORTLIGHT/SPORTLINE-1.webp" class="img-fluid">
+						<a href=""> <img src="/site/images/SFORTLIGHT/SPORTLINE-1.webp" class="img-fluid">
 						</a>
 					</div>
 				</div>
 			</div>
 		</section>
 		<hr class="separator" />
+
 		<section class="all-products py-5">
 			<div class="row text-center">
 				<h2 class="fw-bolder" style="margin-top: 7px">TẤT CẢ SẢN PHẨM</h2>
 			</div>
-			<div class="row py-5">
-				<div class="col-md-2 pt-5" th:each="product : ${products}">
-					<div class="card product-card ">
+			<div class="row py-3">
+				<div class="col-md-2 pt-2" th:each="product : ${products}" data-aos="fade-up">
+					<div class="product-card ">
 						<a th:href="@{/yourstyle/product/detail/{productId}(productId=${product.productId})}">
 							<img th:src="'/uploads/' + ${product.image}" class="img-fluid">
 						</a>
-						<div class="card-body ">
-							<p class="card-title product-name" th:text="${product.name}">Tên Sản Phẩm</p>
+						<div class="m-2">
+							<p class="card-title product-name py-2" th:text="${product.name}">Tên Sản Phẩm</p>
 							<div class="price-info d-flex align-items-center">
 								<!-- Giá đã giảm -->
-								<div class="price-discount-container d-flex flex-column me-2">
+								<div class="">
 									<span class="price-discount text-danger fw-bold" th:if="${product.discount != null}"
 										th:text="${#numbers.formatDecimal(product.price - product.price * product.discount.discountPercent / 100, 1, 'COMMA', 3, 'POINT') + ' VNĐ'}">
 									</span>
-									<span class="price-original text-muted" th:if="${product.discount != null}">
+									<!-- <span class="price-original text-muted" th:if="${product.discount != null}">
 										<del
 											th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'"></del>
+									</span> -->
+
+									<!-- Phần trăm giảm giá -->
+									<span class="badge discount-badge bg-danger m-2" th:if="${product.discount != null}"
+										th:text="'-' + ${#numbers.formatDecimal(product.discount.discountPercent, 0, 0)} + '%'">
+									</span>
+									<!-- Giá gốc khi không có giảm giá -->
+									<span class="price text-danger card-text fw-bolder m-2"
+										th:if="${product.discount == null}"
+										th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'">
 									</span>
 								</div>
-								<!-- Phần trăm giảm giá -->
-								<span class="badge discount-badge bg-danger m-2" th:if="${product.discount != null}"
-									th:text="'-' + ${#numbers.formatDecimal(product.discount.discountPercent, 0, 0)} + '%'">
-								</span>
-								<!-- Giá gốc khi không có giảm giá -->
-								<span class="price text-danger card-text fw-bolder m-2"
-									th:if="${product.discount == null}"
-									th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'">
-								</span>
-								<a th:href="@{/yourstyle/productfavorites/add(productId=${product.productId})}">
-									<i class="fa-regular fa-heart "></i>
+								<a class="ms-auto" th:href="@{/yourstyle/productfavorites/add(productId=${product.productId})}">
+									<i class="fa-regular fa-heart"></i>
 								</a>
 							</div>
 						</div>

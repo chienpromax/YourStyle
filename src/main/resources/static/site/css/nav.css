@@ -2,7 +2,6 @@
     #searchHistoryDropdown li,
     #suggestedProductsDropdown li {
         padding: 8px 16px;
-        color: black;
     }
 
     #searchHistoryDropdown li:hover,
@@ -14,6 +13,8 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        color: black ;
+        text-align: center;
     }
 
     #searchHistoryDropdown li span {
@@ -48,5 +49,16 @@
         color: gray;
     }
 
-
+    .btn-search {
+        width: 100px;
+        background: white;
+        margin-left: -10px;
+        border: 2px solid white;
+        font-weight: 600;
+        transition: 1s;
+    }
     
+    .btn-search:hover {
+        background-color: #000000;
+        color: rgb(255, 255, 255);
+    }

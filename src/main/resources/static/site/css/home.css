@@ -16,8 +16,7 @@
 }
 
 .price-discount {
-    font-size: 1rem;
-    /* Giá giảm nổi bật hơn */
+    font-size: 0.9rem;
     color: #dc3545;
 }
 
@@ -36,9 +35,3 @@
     color: white;
 }
 /*new*/
-.dropdown img {
-    object-fit: cover;
-    border-radius: 50%;
-    width: 25px;
-    height: 25px;
-}

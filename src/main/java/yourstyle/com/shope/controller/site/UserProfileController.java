@@ -1,25 +1,27 @@
 package yourstyle.com.shope.controller.site;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.ui.ModelMap;
+
+import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import yourstyle.com.shope.model.Account;
+import yourstyle.com.shope.model.Address;
 import yourstyle.com.shope.model.Customer;
-import yourstyle.com.shope.repository.AccountRepository;
-import yourstyle.com.shope.repository.CustomerRepository;
 import yourstyle.com.shope.service.AccountService;
+import yourstyle.com.shope.service.AddressService;
 import yourstyle.com.shope.service.CustomerService;
-import java.util.Date;
+import yourstyle.com.shope.utils.UploadUtils;
+import yourstyle.com.shope.validation.admin.CustomerDto;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/yourstyle/accounts")
@@ -27,160 +29,89 @@ public class UserProfileController {
 
 	@Autowired
 	private AccountService accountService;
-
 	@Autowired
-	private AccountRepository accountRepository;
-
+	AddressService addressService;
 	@Autowired
-	private CustomerRepository customerRepository;
+	CustomerService customerService;
 
-	@Autowired
-	private CustomerService customerService;
+	@GetMapping("profile")
+	public ModelAndView edit(ModelMap model,
+			@RequestParam("id") Integer customerId,
+			@RequestParam String type) {
+		CustomerDto customerDto = new CustomerDto();
+		Optional<Customer> optional = customerService.findById(customerId);
+		List<Account> accounts = accountService.findAll();
 
-	@GetMapping("/profile")
-	public String profile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-		if (userDetails != null) {
-			String username = userDetails.getUsername();
-			String email = customerService.getEmailByUsername(username);
-			Integer accountId = customerService.getAccountIdByUsername(username);
-			// String email = userService.getEmailByUsername(username);
-			// Integer accountId = userService.getAccountIdByUsername(username);
-			String phone = accountService.getPhoneNumberByUsername(username);
+		if (optional.isPresent()) {
+			Customer customer = optional.get();
+			BeanUtils.copyProperties(customer, customerDto);
+			customerDto.setEdit(true);
 
-			String fullName = accountService.getFullNameByUsername(username);
-			Date birthday = accountService.getBirthdayByUsername(username);
-			Boolean gender = accountService.getGenderByUsername(username);
+			// Lấy địa chỉ mặc định
+			Optional<Address> defaultAddressOpt = addressService.findDefaultByCustomerId(customerId);
+			Address defaultAddress = defaultAddressOpt.orElse(new Address());
 
-			String nationality = accountService.getNationalityByUsername(username);
+			// Thiết lập địa chỉ mặc định cho customerDto
+			customerDto.setStreet(defaultAddress.getStreet());
+			customerDto.setCity(defaultAddress.getCity());
+			customerDto.setDistrict(defaultAddress.getDistrict());
+			customerDto.setWard(defaultAddress.getWard());
 
-			String avatarUrl = accountService.getAvatarByUsername(username);
+			model.addAttribute("customer", customerDto);
+			model.addAttribute("accounts", accounts);
+			model.addAttribute("defaultAddress", defaultAddress);
+			model.addAttribute("type", type);
 
-			// debug
-			System.out.println("Avatar URL: " + accountService.getAvatarByUsername(username));
+			// Kiểm tra vai trò của tài khoản để thiết lập trang điều hướng
+			if (customer.getAccount() != null && customer.getAccount().getRole() != null) {
+				String roleName = customer.getAccount().getRole().getName();
+				model.addAttribute("redirectUrl", "/site/accounts/personalinformation.html");
+			}
 
-			model.addAttribute("email", email);
-			model.addAttribute("accountId", accountId);
-			model.addAttribute("phoneNumber", phone);
-			model.addAttribute("fullName", fullName);
-			model.addAttribute("birthday", birthday);
-			model.addAttribute("gender", gender);
-			model.addAttribute("nationality", nationality);
-			model.addAttribute("avatar", avatarUrl); // Truyền Base64 vào model
-			System.out.println(
-					"hello " + accountId + email + phone + fullName + birthday + gender + nationality + avatarUrl);
+			return new ModelAndView("/site/accounts/personalinformation.html", model);
 		}
-		return "site/accounts/personalinformation";
+
+		model.addAttribute("messageType", "warning");
+		model.addAttribute("messageContent", "Người dùng không tồn tại!");
+		return new ModelAndView("redirect:/site/accounts/personalinformation.html", model);
 	}
 
-	private boolean isValidEmail(String email) {
-		// Định dạng regex cho email hợp lệ
-		String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-		return email.matches(emailRegex); // Kiểm tra xem email có khớp với regex không
-	}
+	@PostMapping("profile")
+	public ModelAndView updateCustomerInfo(@ModelAttribute("customer") CustomerDto customerDto,
+			@RequestParam MultipartFile imageFile, Model model,
+			RedirectAttributes redirectAttributes) {
+		try {
+			Optional<Customer> optional = customerService.findById(customerDto.getCustomerId());
+			if (optional.isPresent()) {
+				Customer customer = optional.get();
+				BeanUtils.copyProperties(customerDto, customer);
+				if (imageFile != null && !imageFile.isEmpty()) {
+					try {
+						String uploadDir = "src/main/resources/static/uploads/";
+						String originalFilename = imageFile.getOriginalFilename();
+						String newFilename = UploadUtils.saveFile(uploadDir, originalFilename, imageFile);
+						customer.setAvatar(newFilename); // Gán tên tệp mới vào đối tượng customer
+					} catch (IOException e) {
+						model.addAttribute("messageType", "error");
+						model.addAttribute("messageContent", "Lỗi khi tải tệp: " + e.getMessage());
+					}
+				}
+				// Lưu thông tin mới
+				customerService.save(customer);
 
-	@PostMapping("/update-email")
-	@ResponseBody
-	public ResponseEntity<?> updateEmail(@AuthenticationPrincipal UserDetails userDetails,
-			@RequestParam String newEmail) {
-		Map<String, String> response = new HashMap<>();
-		System.out.println("hi " + newEmail);
-		if (userDetails != null) {
-			String username = userDetails.getUsername();
-			if (!isValidEmail(newEmail)) {
-				response.put("message", "Email không hợp lệ");
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-			}
-
-			if (accountService.isEmailExist(newEmail)) {
-				response.put("message", "Email này đã tồn tại trong hệ thống");
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-			}
-
-			// Thực hiện cập nhật email
-			boolean updateResult = accountService.updateEmailByUsername(username, newEmail);
-			if (updateResult) {
-				response.put("message", "Cập nhật email thành công");
-				return ResponseEntity.ok(response);
+				redirectAttributes.addFlashAttribute("messageType", "success");
+				redirectAttributes.addFlashAttribute("messageContent", "Cập nhật thông tin thành công!");
 			} else {
-				response.put("message", "Tài khoản không tồn tại hoặc không thể cập nhật email");
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+				redirectAttributes.addFlashAttribute("messageType", "error");
+				redirectAttributes.addFlashAttribute("messageContent", "Không tìm thấy khách hàng để cập nhật.");
 			}
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("messageType", "error");
+			redirectAttributes.addFlashAttribute("messageContent", "Đã xảy ra lỗi khi cập nhật thông tin.");
 		}
 
-		response.put("message", "Thông tin không hợp lệ");
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-	}
-
-	// Update SDT
-	@PostMapping("/update-phone")
-	public ResponseEntity<?> updatePhoneNumber(@AuthenticationPrincipal UserDetails userDetails,
-			@RequestParam String newPhone) {
-		Map<String, String> response = new HashMap<>();
-
-		if (userDetails != null) {
-			String username = userDetails.getUsername();
-			System.out.println("Hi" + username);
-			boolean updateResult = accountService.addOrUpdatePhoneNumber(username, newPhone);
-
-			if (updateResult) {
-				response.put("message", "Cập nhật số điện thoại thành công");
-				return ResponseEntity.ok(response);
-			} else {
-				response.put("message", "Không thể cập nhật số điện thoại");
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-			}
-		}
-
-		response.put("message", "Người dùng không hợp lệ");
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-	}
-
-	// update
-	@PostMapping("/update-profile")
-	public ResponseEntity<?> updateUserInfo(@AuthenticationPrincipal UserDetails userDetails,
-			@RequestParam String fullName, @RequestParam String birthday, @RequestParam String gender,
-			@RequestParam String nationality, @RequestParam(value = "avatar", required = false) MultipartFile avatar) {
-
-		Map<String, String> response = new HashMap<>();
-
-		if (userDetails != null) {
-			String username = userDetails.getUsername();
-			LocalDate localDateBirthday = LocalDate.parse(birthday);
-
-			Optional<Account> optionalAccount = accountRepository.findByUsername(username);
-			if (!optionalAccount.isPresent()) {
-				response.put("message", "Không tìm thấy tài khoản");
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-			}
-
-			Account account = optionalAccount.get();
-			Integer accountId = account.getAccountId();
-
-			Optional<Customer> optionalCustomer = customerRepository.findOptionalByAccount_AccountId(accountId);
-
-			if (!optionalCustomer.isPresent()) {
-				response.put("message", "Không tìm thấy thông tin người dùng");
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-			}
-
-			Customer customer = optionalCustomer.get();
-
-			boolean updateResult = accountService.updateUserInfo(username, fullName, localDateBirthday, gender,
-					nationality, avatar);
-
-			if (updateResult) {
-				String avatarUrl = customer.getAvatar();
-				response.put("message", "Cập nhật thông tin thành công");
-				response.put("avatar", avatarUrl);
-				return ResponseEntity.ok(response);
-			} else {
-				response.put("message", "Không thể cập nhật thông tin");
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-			}
-		}
-
-		response.put("message", "Người dùng không hợp lệ");
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+		return new ModelAndView(
+				"redirect:/yourstyle/accounts/profile?id=" + customerDto.getCustomerId() + "&type=customer");
 	}
 
 }

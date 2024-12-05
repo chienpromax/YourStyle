@@ -99,12 +99,6 @@ public class Customer implements Serializable {
 		return customerId != null ? customerId.hashCode() : 0;
 	}
 
-	@Override
-	public String toString() {
-		return "Customer{" + "customerId=" + customerId + ", fullname='" + fullname + '\'' + ", phoneNumber='"
-				+ phoneNumber + '\'' + ", birthday=" + birthday + ", gender=" + gender + ", nationality='" + nationality
-				+ '\'' + '}';
-	}
 
 	public Address getDefaultAddress() {
 		if (addresses == null || addresses.isEmpty()) {
@@ -112,10 +106,6 @@ public class Customer implements Serializable {
 		}
 		return addresses.stream().filter(Address::getIsDefault).findFirst().orElse(new Address());
 	}
-
-	// new
-	@Column(nullable = true, length = 100)
-	private String nationality;
 
 	// Lấy email từ account
 	public String getEmailFromUser(Customer customer) {

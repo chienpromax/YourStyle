@@ -73,4 +73,5 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
         Optional<Customer> findOptionalByAccount_AccountId(Integer accountId);
 
+        boolean existsByPhoneNumberAndCustomerIdNot(String phoneNumber, Integer customerId);
 }

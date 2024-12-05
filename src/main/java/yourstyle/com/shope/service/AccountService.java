@@ -51,29 +51,5 @@ public interface AccountService {
 
 	Optional<Account> findByEmail(String email);
 
-	// new
-
-	boolean updateEmailByUsername(String username, String newEmail);
-
-	boolean isEmailExist(String email);
-
-	boolean isValidEmail(String email);
-
-	String getPhoneNumberByUsername(String username);
-
-	boolean addOrUpdatePhoneNumber(String username, String newPhone);
-
-	boolean updateUserInfo(String username, String fullName, LocalDate birthday, String gender, String nationality,
-			MultipartFile avatar);
-
-	String getNationalityByUsername(String username);
-
-	Boolean getGenderByUsername(String username);
-
-	Date getBirthdayByUsername(String username);
-
-	String getFullNameByUsername(String username);
-
-	String getAvatarByUsername(String username);
 
 }

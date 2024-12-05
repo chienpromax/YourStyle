@@ -58,32 +58,42 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  const form = document.querySelector('.info-customer-form');
-  form.addEventListener('submit', function (event) {
+  const form = document.querySelector(".info-customer-form");
+  form.addEventListener("submit", function (event) {
     event.preventDefault(); // Ngăn gửi biểu mẫu mặc định
-    const phoneNumber = document.querySelector('input[name="phoneNumber"]').value;
-    const birthday = new Date(document.querySelector('input[name="birthday"]').value);
+    const phoneNumber = document.querySelector(
+      'input[name="phoneNumber"]'
+    ).value;
+    const customerId =
+      document.querySelector('input[name="customerId"]')?.value || null;
+    const birthday = new Date(
+      document.querySelector('input[name="birthday"]').value
+    );
     const fullname = document.querySelector('input[name="fullname"]').value;
 
     // Kiểm tra định dạng SĐT
     const phoneRegex = /^(0[1-9][0-9]{8,9})$/;
     if (!phoneRegex.test(phoneNumber)) {
       Swal.fire({
-        icon: 'error',
-        title: 'Số điện thoại không hợp lệ',
-        text: 'Vui lòng nhập lại.',
+        icon: "error",
+        title: "Số điện thoại không hợp lệ",
+        text: "Vui lòng nhập lại.",
       });
       return;
     }
 
     // Kiểm tra ngày sinh
     const today = new Date();
-    const minDate = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
+    const minDate = new Date(
+      today.getFullYear() - 1,
+      today.getMonth(),
+      today.getDate()
+    );
     if (birthday > minDate) {
       Swal.fire({
-        icon: 'error',
-        title: 'Ngày sinh không hợp lệ',
-        text: 'Ngày sinh phải lớn hơn 1 năm so với ngày hiện tại.',
+        icon: "error",
+        title: "Ngày sinh không hợp lệ",
+        text: "Ngày sinh phải lớn hơn 1 năm so với ngày hiện tại.",
       });
       return;
     }
@@ -91,22 +101,27 @@ document.addEventListener("DOMContentLoaded", function () {
     // Kiểm tra độ dài tên
     if (fullname.length > 50) {
       Swal.fire({
-        icon: 'error',
-        title: 'Độ dài họ và tên không hợp lệ',
-        text: 'Họ và tên không được vượt quá 50 ký tự.',
+        icon: "error",
+        title: "Độ dài họ và tên không hợp lệ",
+        text: "Họ và tên không được vượt quá 50 ký tự.",
       });
       return;
     }
 
     // Kiểm tra số điện thoại đã tồn tại
-    fetch(`/api/customers/check-phone?phoneNumber=${phoneNumber}`)
-      .then(response => response.json())
-      .then(data => {
+    fetch(
+      `/api/customers/check-phone?phoneNumber=${phoneNumber}&customerId=${
+        customerId || ""
+      }`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Response data:", data); // Kiểm tra phản hồi từ API
         if (data.exists) {
           Swal.fire({
-            icon: 'error',
-            title: 'Số điện thoại đã tồn tại',
-            text: 'Vui lòng sử dụng số điện thoại khác.',
+            icon: "error",
+            title: "Số điện thoại đã tồn tại",
+            text: "Vui lòng sử dụng số điện thoại khác.",
           }).then(() => {
             location.reload();
           });
@@ -114,12 +129,12 @@ document.addEventListener("DOMContentLoaded", function () {
           form.submit();
         }
       })
-      .catch(error => {
-        console.error('Lỗi kiểm tra số điện thoại:', error);
+      .catch((error) => {
+        console.error("Lỗi kiểm tra số điện thoại:", error);
         Swal.fire({
-          icon: 'error',
-          title: 'Lỗi hệ thống',
-          text: 'Không thể kiểm tra số điện thoại. Vui lòng thử lại sau.',
+          icon: "error",
+          title: "Lỗi hệ thống",
+          text: "Không thể kiểm tra số điện thoại. Vui lòng thử lại sau.",
         });
       });
   });

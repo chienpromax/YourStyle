@@ -1,6 +1,8 @@
 package yourstyle.com.shope.restcontroller.site;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,18 +11,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import yourstyle.com.shope.service.CustomerService;
+import yourstyle.com.shope.repository.CustomerRepository;
 
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerCheckPhoneController {
 
     @Autowired
-    private CustomerService customerService;
+    private CustomerRepository customerRepository;
 
     @GetMapping("/check-phone")
-    public ResponseEntity<?> checkPhoneNumber(@RequestParam String phoneNumber) {
-        boolean exists = customerService.existsByPhoneNumber(phoneNumber);
-        return ResponseEntity.ok(Collections.singletonMap("exists", exists));
+    public ResponseEntity<Map<String, Boolean>> checkPhone(
+        @RequestParam String phoneNumber,
+        @RequestParam(required = false) Integer customerId) {
+        System.out.println("phoneNumber: " + phoneNumber);
+        System.out.println("customerId: " + customerId);
+        boolean exists = customerRepository.existsByPhoneNumberAndCustomerIdNot(phoneNumber, customerId);
+        System.out.println("exists: " + exists);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("exists", exists);
+        return ResponseEntity.ok(response);
     }
+
 }

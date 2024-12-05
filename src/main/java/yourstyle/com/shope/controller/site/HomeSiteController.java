@@ -42,16 +42,14 @@ public class HomeSiteController {
 	public String showHomePage(Model model, Authentication authentication,
 			@PathVariable(value = "discountId", required = false) Integer discountId) {
 		List<Category> parentCategories = categoryService.findParentCategories();
-
 		model.addAttribute("parentCategories", parentCategories);
 
 		String userName = (authentication != null && authentication.isAuthenticated()) ? authentication.getName()
 				: null;
 		model.addAttribute("userName", userName);
 
-		List<Product> products = productService.getAllProducts();
-
-		model.addAttribute("products", products);
+		List<Product> activeProducts = productService.findProductsWithStatusTrue();
+		model.addAttribute("products", activeProducts);
 
 		// Lấy sản phẩm bán chạy
 		List<Product> bestSellers = productService.getBestSellingProducts();
@@ -75,8 +73,8 @@ public class HomeSiteController {
 		}
 		model.addAttribute("slides", slides);
 
-		Page<Product> topDealsPage = productRepository.findAllByOrderByPriceDesc(PageRequest.of(0, 6));
-		model.addAttribute("topDeals", topDealsPage.getContent());
+		List<Product> topExpensiveProducts = productService.getTop6ExpensiveProducts();
+        model.addAttribute("topDeals", topExpensiveProducts);
 
 		return "site/pages/home";
 	}

@@ -48,14 +48,16 @@ public interface ProductService {
 
     List<Product> getBestSellingProducts();
 
-    List<Product> getDiscountedProducts();
-
     List<Product> getProductsByDiscountId(Integer discountId);
+
+    List<Product> getDiscountedProducts();
 
     List<Product> findByCategory(Category category);    
     
-    //6 sp cao price 1
-    Page<Product> getTop6Products(Pageable pageable);
+    List<Product> getTop6ExpensiveProducts();
 
     List<Product> findByPriceLessThanEqualAndCategoryId(BigDecimal price, Integer categoryId);
+
+    List<Product> findProductsWithStatusTrue();
+
 }

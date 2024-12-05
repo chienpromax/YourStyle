@@ -24,19 +24,20 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	ProductRepository productRepository;
 
-	@Override
-	public List<Product> getProductsByDiscountId(Integer discountId) {
-		return productRepository.findByDiscount_discountId(discountId);
-	}
+    @Override
+    public List<Product> getProductsByDiscountId(Integer discountId) {
+        return productRepository.findDiscountedProductsByDiscountId(discountId);
+    }
 
-	@Override
-	public List<Product> getDiscountedProducts() {
-		return productRepository.findDiscountedProducts(); // Sử dụng repository để tìm sản phẩm có giảm giá
-	}
+    @Override
+    public List<Product> getDiscountedProducts() {
+        return productRepository.findDiscountedProducts(); // Lấy sản phẩm có giảm giá và status = true
+    }
 
+	// Sp bán chạy nhất
 	// @Override
-	// public List<Product> getDiscountedProducts() {
-	// List<Object[]> results = productRepository.findDiscountedProducts();
+	// public List<Product> getBestSellingProducts() {
+	// List<Object[]> results = productRepository.findBestSellingProducts();
 	// return results.stream().map(result -> {
 	// Product product = new Product();
 	// product.setProductId((Integer) result[0]);
@@ -48,8 +49,6 @@ public class ProductServiceImpl implements ProductService {
 	// return product;
 	// }).collect(Collectors.toList());
 	// }
-
-	// Sp bán chạy nhất
 	@Override
 	public List<Product> getBestSellingProducts() {
 		List<Object[]> results = productRepository.findBestSellingProducts();
@@ -59,7 +58,8 @@ public class ProductServiceImpl implements ProductService {
 			product.setName((String) result[1]);
 			product.setPrice((BigDecimal) result[2]);
 			product.setImage((String) result[3]);
-			product.setTotalQuantity(((Number) result[4]).intValue()); // Ánh xạ totalQuantity
+			product.setTotalQuantity(((Number) result[4]).intValue());
+			product.setStatus(true); // Có thể ánh xạ status nếu cần
 			return product;
 		}).collect(Collectors.toList());
 	}
@@ -151,15 +151,22 @@ public class ProductServiceImpl implements ProductService {
 	public List<Product> findByCategory(Category category) {
 		return productRepository.findByCategory(category);
 	}
-
-	// lấy 6 sp cao giá 1
-	public Page<Product> getTop6Products(Pageable pageable) {
-		return productRepository.findAllByOrderByPriceDesc(pageable);
-	}
+	
+    // Phương thức lấy top 6 sản phẩm cao giá nhất
+	@Override
+    public List<Product> getTop6ExpensiveProducts() {
+        Pageable pageable = PageRequest.of(0, 6); // Trang 0, số lượng 6
+        return productRepository.findTop6ByOrderByPriceDesc(pageable).getContent();
+    }
 
 	@Override
 	public List<Product> findByPriceLessThanEqualAndCategoryId(BigDecimal price, Integer categoryId) {
 		return productRepository.findByPriceLessThanEqualAndCategoryId(price, categoryId);
+	}
+
+	@Override
+	public List<Product> findProductsWithStatusTrue() {
+		return productRepository.findByStatusTrue();
 	}
 
 }

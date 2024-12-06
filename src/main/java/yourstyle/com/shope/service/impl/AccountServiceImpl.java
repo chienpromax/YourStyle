@@ -157,12 +157,16 @@ public class AccountServiceImpl implements AccountService {
 	public Account login(String username, String password) {
 		Account account = accountRepository.findByUsername(username)
 				.orElseThrow(() -> new IllegalArgumentException("Tên đăng nhập không tồn tại!"));
-
+	
+		if (!account.getStatus()) {
+			throw new IllegalArgumentException("Tài khoản của bạn đã bị khóa!");
+		}
 		if (!passwordEncoder.matches(password, account.getPassword())) {
 			throw new IllegalArgumentException("Mật khẩu không đúng!");
 		}
 		return account;
 	}
+	
 
 	@Override
 	public boolean sendResetPasswordLink(String email) {

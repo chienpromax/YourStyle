@@ -59,5 +59,9 @@ public class Account implements Serializable {
 	@OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
 	@JsonIgnore
 	private List<Voucher> vouchers;
-
+	
+	@JsonIgnore
+	public boolean isLocked() {
+        return status != null && !status;
+    }
 }

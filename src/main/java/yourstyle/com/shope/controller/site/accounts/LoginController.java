@@ -19,29 +19,38 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RequestMapping("/yourstyle/accounts")
 @Slf4j
 public class LoginController {
-	@Autowired
-	private AccountService accountService;
+    @Autowired
+    private AccountService accountService;
 
-	@GetMapping("/login")
-	public String loginPage() {
-		return "site/accounts/login";
-	}
+    @GetMapping("/login")
+    public String loginPage(@RequestParam(value = "error", required = false) String error,
+            @RequestParam(value = "locked", required = false) String locked,
+            Model model) {
+        if (error != null) {
+            model.addAttribute("errorMessage", "Tên đăng nhập hoặc mật khẩu không đúng.");
+        }
+        if (locked != null) {
+            model.addAttribute("errorMessage", "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.");
+        }
+        return "site/accounts/login";
+    }
 
-	@PostMapping("/login")
-	public String login(@RequestParam String username, @RequestParam String password, HttpSession session, Model model) {
-	    try {
-	        Account account = accountService.login(username, password);
-	        return "redirect:/yourstyle/home"; 
-	    } catch (IllegalArgumentException e) {
-	        model.addAttribute("errorMessage", e.getMessage());
-	        return "site/accounts/login"; 
-	    }
-	}
+    @PostMapping("/login")
+    public String login(@RequestParam String username, @RequestParam String password, HttpSession session,
+            Model model) {
+        try {
+            Account account = accountService.login(username, password);
+            session.setAttribute("loggedInUser", account);
+            return "redirect:/yourstyle/home";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "site/accounts/login";
+        }
+    }
 
-
-	@GetMapping("/logout")
-	public String logout(HttpSession session) {
-		session.invalidate(); // Xóa session
-		return "yourstyle/accounts/login";
-	}
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "yourstyle/accounts/login";
+    }
 }

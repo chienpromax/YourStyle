@@ -2,6 +2,7 @@ package yourstyle.com.shope.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,7 +24,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/*").permitAll()
                         .requestMatchers("/static/**", "/images/**", "/uploads/**", "/site/**").permitAll()
-                        .requestMatchers("/yourstyle/home","/yourstyle/discount/**").permitAll()
+                        .requestMatchers("/yourstyle/home", "/yourstyle/discount/**").permitAll()
                         .requestMatchers("/yourstyle/product/detail/**").permitAll()
                         .requestMatchers("/yourstyle/best-sellers**").permitAll()
                         .requestMatchers("/yourstyle/accounts/**").permitAll()
@@ -38,13 +39,21 @@ public class SecurityConfig {
                 .formLogin(login -> login
                         .loginPage("/yourstyle/accounts/login")
                         .loginProcessingUrl("/yourstyle/accounts/login")
-                        .failureUrl("/yourstyle/accounts/login?error=true")
+                        .failureHandler((request, response, exception) -> {
+                            if (exception instanceof LockedException) {
+                                response.sendRedirect("/yourstyle/accounts/login?locked=true");
+                            } else {
+                                response.sendRedirect("/yourstyle/accounts/login?error=true");
+                            }
+                        })
                         .usernameParameter("username")
                         .passwordParameter("password")
                         // .failureHandler((request, response, authenticationException) -> {
                         // System.out.println("Login failed: " + authenticationException.getMessage());
                         // })
                         .successHandler((request, response, authentication) -> {
+                            boolean rememberMe = request.getParameter("remember-me") != null;
+                            System.out.println("Remember Me: " + rememberMe);
                             boolean isAdmin = authentication.getAuthorities().stream()
                                     .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
                             if (isAdmin) {
@@ -57,14 +66,14 @@ public class SecurityConfig {
                         .logoutUrl("/yourstyle/accounts/logout")
                         .logoutSuccessUrl("/yourstyle/accounts/login")
                         .clearAuthentication(true)
-                        .deleteCookies("JSESSIONID", "loggedInUser")
+                        .deleteCookies("JSESSIONID", "remember-me")
                         .invalidateHttpSession(true))
                 .rememberMe(rememberMe -> rememberMe
                         .key("uniqueAndSecret")
                         .tokenValiditySeconds(86400)
                         .rememberMeParameter("remember-me")
-                        .useSecureCookie(true)
-                        .alwaysRemember(true));
+                        .useSecureCookie(false)
+                        .alwaysRemember(false));
         return http.build();
     }
 }

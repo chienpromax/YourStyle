@@ -24,10 +24,7 @@ public class CustomerCheckPhoneController {
     public ResponseEntity<Map<String, Boolean>> checkPhone(
         @RequestParam String phoneNumber,
         @RequestParam(required = false) Integer customerId) {
-        System.out.println("phoneNumber: " + phoneNumber);
-        System.out.println("customerId: " + customerId);
         boolean exists = customerRepository.existsByPhoneNumberAndCustomerIdNot(phoneNumber, customerId);
-        System.out.println("exists: " + exists);
         Map<String, Boolean> response = new HashMap<>();
         response.put("exists", exists);
         return ResponseEntity.ok(response);

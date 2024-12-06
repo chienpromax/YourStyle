@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const formData = new FormData(shareProductForm);
 
-            // Xóa các thông báo lỗi cũ
             const modalBody = modal.querySelector(".modal-body");
             modalBody.querySelectorAll(".text-danger").forEach(errorText => errorText.remove());
 

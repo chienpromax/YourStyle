@@ -67,7 +67,12 @@ public class ProductDetailController {
             Authentication authentication) {
 
         Map<String, Object> response = new HashMap<>();
-
+        if (productVariantId == null) {
+            response.put("success", false);
+            response.put("errorMessage", "Thiếu thông tin mã sản phẩm biến thể (productVariantId).");
+            return ResponseEntity.badRequest().body(response);
+        }
+        
         if (authentication == null || !authentication.isAuthenticated()) {
             response.put("success", false);
             response.put("errorMessage", "Bạn cần đăng nhập để thực hiện hành động này.");

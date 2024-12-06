@@ -53,7 +53,6 @@ public class SecurityConfig {
                         // })
                         .successHandler((request, response, authentication) -> {
                             boolean rememberMe = request.getParameter("remember-me") != null;
-                            System.out.println("Remember Me: " + rememberMe);
                             boolean isAdmin = authentication.getAuthorities().stream()
                                     .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
                             if (isAdmin) {

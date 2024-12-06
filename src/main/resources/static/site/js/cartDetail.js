@@ -5,16 +5,24 @@ document.addEventListener("DOMContentLoaded", function () {
   const colorIdInput = document.getElementById("selectedColorId");
   const sizeIdInput = document.getElementById("selectedSizeId");
 
+  // Hàm cập nhật Variant ID
   function updateVariantId() {
-    const selectedColorId = document
-      .querySelector('input[name="colorOptions"]:checked')
-      ?.getAttribute("data-color");
-    const selectedSizeId = document
-      .querySelector('input[name="sizeOptions"]:checked')
-      ?.getAttribute("data-size");
+    const selectedColorOption = document.querySelector(
+      'input[name="colorOptions"]:checked'
+    );
+    const selectedSizeOption = document.querySelector(
+      'input[name="sizeOptions"]:checked'
+    );
+
+    const selectedColorId =
+      selectedColorOption?.getAttribute("data-color") || "";
+    const selectedSizeId = selectedSizeOption?.getAttribute("data-size") || "";
+
+    // Cập nhật input ẩn
+    colorIdInput.value = selectedColorId;
+    sizeIdInput.value = selectedSizeId;
 
     if (selectedColorId && selectedSizeId) {
-      // Tìm productVariantId dựa trên màu sắc và kích thước đã chọn
       const matchingVariant = Array.from(
         document.querySelectorAll(".variant-option")
       ).find(
@@ -25,15 +33,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (matchingVariant) {
         variantIdInput.value = matchingVariant.getAttribute("data-variant-id");
-        colorIdInput.value = selectedColorId;
-        sizeIdInput.value = selectedSizeId;
         console.log("Selected Variant ID:", variantIdInput.value);
       } else {
         variantIdInput.value = "";
+        console.warn("Không tìm thấy variant phù hợp!");
       }
+    } else {
+      variantIdInput.value = "";
     }
   }
 
+  // Lắng nghe sự kiện thay đổi trên màu và kích thước
   colorOptions.forEach((option) =>
     option.addEventListener("change", updateVariantId)
   );
@@ -44,6 +54,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function addToCart(event) {
   event.preventDefault();
+
+  const selectedColorId = document.getElementById("selectedColorId").value;
+  const selectedSizeId = document.getElementById("selectedSizeId").value;
+
+  if (!selectedColorId || !selectedSizeId) {
+    Swal.fire({
+      icon: "warning",
+      title: "Bạn chưa chọn màu hoặc kích thước!",
+      text: "Vui lòng chọn đầy đủ màu và kích thước trước khi thêm vào giỏ hàng.",
+    });
+    return;
+  }
 
   const formData = new FormData(document.getElementById("addToCartForm"));
 
@@ -64,7 +86,11 @@ function addToCart(event) {
       if (data && data.success) {
         location.reload();
       } else if (data) {
-        alert(data.errorMessage);
+        Swal.fire({
+          icon: "warning",
+          title: "Màu hoặc size bạn chọn đã hết hàng",
+          text: "Vui lòng chọn màu hoặc size khác của sản phẩm.",
+        });
       }
     })
     .catch((error) => {

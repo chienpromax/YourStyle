@@ -3,6 +3,8 @@
     layout:decorate="~{site/index.html}">
 
 <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 </head>
 
 <body>
@@ -60,9 +62,7 @@
                         <button class="btn btn-light w-100">Đăng Ký</button>
                     </a>
                 </div>
-
             </div>
-
         </section>
         <script>
             const errorDiv = document.getElementById('loginError');
@@ -80,7 +80,6 @@
                 passwordField.type = passwordField.type === "password" ? "text" : "password";
             }
         </script>
-
     </section>
 </body>
 

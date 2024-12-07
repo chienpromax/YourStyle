@@ -18,7 +18,8 @@
         <div class="row py-2 mx-1">
             <div class="col-lg-8 bg-white border-end">
                 <h3 class="my-4">ĐỊA CHỈ GIAO HÀNG</h3>
-                <form class="info-customer-form" id="customerForm" action="/yourstyle/carts/save" method="post" th:object="${customer}">
+                <form class="info-customer-form" id="customerForm" action="/yourstyle/carts/save" method="post"
+                    th:object="${customer}">
                     <input type="hidden" name="account.accountId" th:value="${customer.account.accountId}" />
                     <input type="hidden" name="customerId" th:value="${customer.customerId}" />
 
@@ -150,7 +151,9 @@
                 <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Nhập Địa chỉ mới</h5>
+                            <div th:if="${#lists.size(customer.addresses) < 3}" class="text-center">
+                                <h5 class="modal-title" id="exampleModalLabel">Nhập Địa chỉ mới</h5>
+                            </div>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
@@ -159,71 +162,81 @@
                                 <input type="hidden" name="account.accountId"
                                     th:value="${customer.account.accountId}" />
                                 <input type="hidden" th:value="${customer.customerId}" />
+                                <div th:if="${#lists.size(customer.addresses) < 3}">
+                                    <div class="mb-3">
+                                        <label for="streetAddress" class="form-label">Địa chỉ cụ thể*</label>
+                                        <input type="text" class="form-control" id="streetAddress" name="street"
+                                            th:field="*{defaultAddress.street}" required>
+                                    </div>
 
-                                <div class="mb-3">
-                                    <label for="streetAddress" class="form-label">Địa chỉ cụ thể*</label>
-                                    <input type="text" class="form-control" id="streetAddress" name="street"
-                                        th:field="*{defaultAddress.street}" required>
-                                </div>
+                                    <!-- City -->
+                                    <div class="col-md-12 mb-3">
+                                        <div class="form-floating">
+                                            <select class="form-select floatingcity" id="city" name="city" required>
+                                                <option selected>Chọn Tỉnh/thành phố</option>
+                                                <!-- Các tùy chọn thành phố -->
+                                            </select>
+                                            <label for="floatingCity">
+                                                <span class="text-danger">*</span>
+                                                Chọn Tỉnh/thành phố
+                                            </label>
+                                            <div th:if="${#fields.hasErrors('defaultAddress.city')}" class="text-danger"
+                                                th:errors="*{defaultAddress.city}">Thành phố không hợp lệ</div>
+                                            <input type="hidden" th:field="*{defaultAddress.city}" id="cityName" />
+                                        </div>
+                                    </div>
 
-                                <!-- City -->
-                                <div class="col-md-12 mb-3">
-                                    <div class="form-floating">
-                                        <select class="form-select floatingcity" id="city" name="city" required>
-                                            <option selected>Chọn Tỉnh/thành phố</option>
-                                            <!-- Các tùy chọn thành phố -->
-                                        </select>
-                                        <label for="floatingCity">
-                                            <span class="text-danger">*</span>
-                                            Chọn Tỉnh/thành phố
-                                        </label>
-                                        <div th:if="${#fields.hasErrors('defaultAddress.city')}" class="text-danger"
-                                            th:errors="*{defaultAddress.city}">Thành phố không hợp lệ</div>
-                                        <input type="hidden" th:field="*{defaultAddress.city}" id="cityName" />
+                                    <div class="col-md-12 mb-3">
+                                        <div class="form-floating">
+                                            <select name="district" id="district" class="form-select floatingdistrict"
+                                                disabled onchange="updateDistrictName(this)" required>
+                                                <option selected>Chọn Quận/huyện</option>
+                                                <!-- Các tùy chọn quận -->
+                                            </select>
+                                            <label for="floatingdistrict">
+                                                <span class="text-danger">*</span>
+                                                Quận/huyện
+                                            </label>
+                                            <div th:if="${#fields.hasErrors('defaultAddress.district')}"
+                                                class="text-danger" th:errors="*{defaultAddress.district}">Quận/huyện
+                                                không hợp lệ</div>
+                                            <input type="hidden" th:field="*{defaultAddress.district}"
+                                                id="districtName" />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12 mb-3">
+                                        <div class="form-floating">
+                                            <select name="ward" id="ward" class="form-select floatingward" disabled
+                                                onchange="updateWardName(this)" required>
+                                                <option selected>Chọn Xã/phường/thị trấn</option>
+                                            </select>
+                                            <label for="floatingward">
+                                                <span class="text-danger">*</span>
+                                                Xã/phường/thị trấn
+                                            </label>
+                                            <div th:if="${#fields.hasErrors('defaultAddress.ward')}" class="text-danger"
+                                                th:errors="*{defaultAddress.ward}">Xã/phường/thị trấn không hợp lệ</div>
+                                            <input type="hidden" th:field="*{defaultAddress.ward}" id="wardName" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-check mb-3">
+                                        <input type="checkbox" class="form-check-input" id="defaultAddress"
+                                            name="isDefault" />
+                                        <label class="form-check-label" for="defaultAddress">Đặt địa chỉ mặc
+                                            định</label>
+                                    </div>
+
+                                    <div class="py-4 text-center">
+                                        <button type="submit" class="btn-order-save custom-btn-main">LƯU</button>
                                     </div>
                                 </div>
 
-                                <div class="col-md-12 mb-3">
-                                    <div class="form-floating">
-                                        <select name="district" id="district" class="form-select floatingdistrict"
-                                            disabled onchange="updateDistrictName(this)" required>
-                                            <option selected>Chọn Quận/huyện</option>
-                                            <!-- Các tùy chọn quận -->
-                                        </select>
-                                        <label for="floatingdistrict">
-                                            <span class="text-danger">*</span>
-                                            Quận/huyện
-                                        </label>
-                                        <div th:if="${#fields.hasErrors('defaultAddress.district')}" class="text-danger"
-                                            th:errors="*{defaultAddress.district}">Quận/huyện không hợp lệ</div>
-                                        <input type="hidden" th:field="*{defaultAddress.district}" id="districtName" />
-                                    </div>
-                                </div>
-
-                                <div class="col-md-12 mb-3">
-                                    <div class="form-floating">
-                                        <select name="ward" id="ward" class="form-select floatingward" disabled
-                                            onchange="updateWardName(this)" required>
-                                            <option selected>Chọn Xã/phường/thị trấn</option>
-                                        </select>
-                                        <label for="floatingward">
-                                            <span class="text-danger">*</span>
-                                            Xã/phường/thị trấn
-                                        </label>
-                                        <div th:if="${#fields.hasErrors('defaultAddress.ward')}" class="text-danger"
-                                            th:errors="*{defaultAddress.ward}">Xã/phường/thị trấn không hợp lệ</div>
-                                        <input type="hidden" th:field="*{defaultAddress.ward}" id="wardName" />
-                                    </div>
-                                </div>
-
-                                <div class="form-check mb-3">
-                                    <input type="checkbox" class="form-check-input" id="defaultAddress"
-                                        name="isDefault" />
-                                    <label class="form-check-label" for="defaultAddress">Đặt địa chỉ mặc định</label>
-                                </div>
-
-                                <div class="py-4 text-center">
-                                    <button type="submit" class="btn-order-save custom-btn-main">LƯU</button>
+                                <!-- Hiển thị thông báo khi có 3 địa chỉ -->
+                                <div th:if="${#lists.size(customer.addresses) >= 3}" class="text-center">
+                                    <h3 class="text-danger">Đã đạt tối đa 3 địa chỉ. Vui lòng quản lý các địa chỉ đã
+                                        lưu.</h3>
                                 </div>
                             </form>
 

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -45,8 +44,6 @@ public class OrderDetailController {
     OrderService orderService;
     @Autowired
     private VoucherService voucherService;
-    @Autowired
-    private VoucherServiceImpl voucherServiceImpl;
     @Autowired
     private CustomerService customerService;
     @Autowired
@@ -94,48 +91,30 @@ public class OrderDetailController {
     }
 
     @PostMapping("/save")
-    public String saveCustomerAndAddress(@ModelAttribute("customer") Customer customer,
-            @RequestParam("defaultAddress.street") String street,
-            @RequestParam("defaultAddress.ward") String ward,
-            @RequestParam("defaultAddress.district") String district,
-            @RequestParam("defaultAddress.city") String city,
-            @RequestParam(value = "isDefault", defaultValue = "true") boolean isDefault) {
-
+    public String saveCustomerAndAddress(
+            @ModelAttribute("customer") Customer customer,
+            @RequestParam(value = "defaultAddress.street", required = false) String street,
+            @RequestParam(value = "defaultAddress.ward", required = false) String ward,
+            @RequestParam(value = "defaultAddress.district", required = false) String district,
+            @RequestParam(value = "defaultAddress.city", required = false) String city,
+            @RequestParam(value = "isDefault", defaultValue = "false") boolean isDefault) {
+    
         if (customer.getAccount() == null || customer.getAccount().getAccountId() == null) {
             throw new IllegalStateException("Account information is missing.");
         }
-
+    
         Customer existingCustomer = customerService.findByAccountId(customer.getAccount().getAccountId());
+        
         if (existingCustomer == null) {
             customer.setAccount(customer.getAccount());
             existingCustomer = customerService.save(customer);
-        }
-
-        existingCustomer.setFullname(customer.getFullname());
-        existingCustomer.setPhoneNumber(customer.getPhoneNumber());
-        customerService.save(existingCustomer);
-
-        // Kiểm tra nếu danh sách địa chỉ không phải là null
-        if (existingCustomer.getAddresses() == null) {
-            existingCustomer.setAddresses(new ArrayList<>());
-        }
-
-        Address defaultAddress = customer.getDefaultAddress();
-        if (defaultAddress == null) {
-            throw new IllegalStateException("No default address found for the customer.");
-        }
-
-        Address existingAddress = existingCustomer.getAddresses().isEmpty() ? null
-                : existingCustomer.getAddresses().get(0);
-
-        if (existingAddress != null) {
-            existingAddress.setStreet(street);
-            existingAddress.setWard(ward);
-            existingAddress.setDistrict(district);
-            existingAddress.setCity(city);
-            existingAddress.setIsDefault(isDefault);
-            addressService.save(existingAddress);
         } else {
+            existingCustomer.setFullname(customer.getFullname());
+            existingCustomer.setPhoneNumber(customer.getPhoneNumber());
+            customerService.save(existingCustomer);
+        }
+    
+        if (street != null && ward != null && district != null && city != null) {
             Address newAddress = new Address();
             newAddress.setStreet(street);
             newAddress.setWard(ward);
@@ -143,58 +122,45 @@ public class OrderDetailController {
             newAddress.setCity(city);
             newAddress.setIsDefault(isDefault);
             newAddress.setCustomer(existingCustomer);
+    
             addressService.save(newAddress);
         }
-
+    
         return "redirect:/yourstyle/carts/orderdetail";
     }
 
     @PostMapping("/addAddress")
-    public String addNewAddress(@ModelAttribute("customer") Customer customer,
-            @RequestParam("newStreet") String street,
-            @RequestParam("newWard") String ward,
-            @RequestParam("newDistrict") String district,
-            @RequestParam("newCity") String city,
-            @RequestParam(value = "newIsDefault", defaultValue = "false") boolean isDefault,
-            RedirectAttributes redirectAttributes) {
-
-        if (customer.getAccount() == null || customer.getAccount().getAccountId() == null) {
-            throw new IllegalStateException("Account information is missing.");
+    public String addAddress(
+            @RequestParam(value = "defaultAddress.street") String street,
+            @RequestParam(value = "defaultAddress.ward") String ward,
+            @RequestParam(value = "defaultAddress.district") String district,
+            @RequestParam(value = "defaultAddress.city") String city,
+            @RequestParam(value = "isDefault", defaultValue = "false") boolean isDefault) {
+        
+        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Integer accountId = customUserDetails.getAccountId();
+        
+        Customer existingCustomer = customerService.findByAccountId(accountId);
+        
+        if (existingCustomer != null) {
+            saveAddress(existingCustomer, street, ward, district, city, isDefault);
         }
-
-        Customer existingCustomer = customerService.findByAccountId(customer.getAccount().getAccountId());
-
-        if (existingCustomer == null) {
-            customer.setAccount(customer.getAccount());
-            existingCustomer = customerService.save(customer);
-        }
-
-        // Kiểm tra nếu người dùng đã có 3 địa chỉ
-        if (existingCustomer.getAddresses().size() >= 3) {
-            redirectAttributes.addFlashAttribute("messageType", "error");
-            redirectAttributes.addFlashAttribute("messageContent", "Người dùng chỉ có thể có tối đa 3 địa chỉ.");
-            return "redirect:/yourstyle/carts/orderdetail";
-        }
-
+    
+        return "redirect:/yourstyle/carts/orderdetail";
+    }
+    
+    private void saveAddress(Customer existingCustomer, String street, String ward, String district, String city, boolean isDefault) {
         Address newAddress = new Address();
         newAddress.setStreet(street);
         newAddress.setWard(ward);
         newAddress.setDistrict(district);
         newAddress.setCity(city);
         newAddress.setIsDefault(isDefault);
-        newAddress.setCustomer(existingCustomer);
-
-        if (isDefault) {
-            existingCustomer.getAddresses().forEach(address -> address.setIsDefault(false));
-        }
-
+        newAddress.setCustomer(existingCustomer); 
+    
         addressService.save(newAddress);
-
-        redirectAttributes.addFlashAttribute("messageType", "success");
-        redirectAttributes.addFlashAttribute("messageContent", "Thêm địa chỉ thành công.");
-        return "redirect:/yourstyle/carts/orderdetail";
     }
-
+    
     @GetMapping("/orderDetail/deleteAddress/{addressId}")
     public String deleteAddress(@PathVariable("addressId") Integer addressId,
             @RequestParam(value = "customerId", required = false) String customerIdStr,

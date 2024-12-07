@@ -471,11 +471,9 @@
 
 /* ------slide-------*/
 .carousel-controls {
-    display: flex;
-    justify-content: flex-end;
     position: absolute;
-    bottom: 10px;
-    right: 10px;
+    top: -55px;
+    right: 25%;
     gap: 5px;
 }
 
@@ -483,18 +481,19 @@
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    width: 40px;
+    width: 280px;
     height: 40px;
-    border-radius: 50%;
+    border-radius: 5px;
     font-size: 20px;
-    color: green;
+    font-weight: 700;
+    color: rgb(0, 180, 0);
     background-color: transparent;
     border: 1px solid transparent;
     transition: background-color 0.3s;
 }
 
 .carousel-controls a i {
-    font-size: 20px;
+    font-size: 16px;
 
 }
 

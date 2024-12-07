@@ -24,10 +24,15 @@ public class CustomerCheckPhoneController {
     public ResponseEntity<Map<String, Boolean>> checkPhone(
         @RequestParam String phoneNumber,
         @RequestParam(required = false) Integer customerId) {
+        if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
+            throw new IllegalArgumentException("Số điện thoại không được để trống");
+        }
+    
         boolean exists = customerRepository.existsByPhoneNumberAndCustomerIdNot(phoneNumber, customerId);
         Map<String, Boolean> response = new HashMap<>();
         response.put("exists", exists);
         return ResponseEntity.ok(response);
     }
+    
 
 }

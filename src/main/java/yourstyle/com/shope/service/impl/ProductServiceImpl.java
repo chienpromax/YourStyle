@@ -24,15 +24,15 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	ProductRepository productRepository;
 
-    @Override
-    public List<Product> getProductsByDiscountId(Integer discountId) {
-        return productRepository.findDiscountedProductsByDiscountId(discountId);
-    }
+	@Override
+	public List<Product> getProductsByDiscountId(Integer discountId) {
+		return productRepository.findDiscountedProductsByDiscountId(discountId);
+	}
 
-    @Override
-    public List<Product> getDiscountedProducts() {
-        return productRepository.findDiscountedProducts(); // Lấy sản phẩm có giảm giá và status = true
-    }
+	@Override
+	public List<Product> getDiscountedProducts() {
+		return productRepository.findDiscountedProducts(); // Lấy sản phẩm có giảm giá và status = true
+	}
 
 	// Sp bán chạy nhất
 	// @Override
@@ -151,13 +151,13 @@ public class ProductServiceImpl implements ProductService {
 	public List<Product> findByCategory(Category category) {
 		return productRepository.findByCategory(category);
 	}
-	
-    // Phương thức lấy top 6 sản phẩm cao giá nhất
+
+	// Phương thức lấy top 6 sản phẩm cao giá nhất
 	@Override
-    public List<Product> getTop6ExpensiveProducts() {
-        Pageable pageable = PageRequest.of(0, 6); // Trang 0, số lượng 6
-        return productRepository.findTop6ByOrderByPriceDesc(pageable).getContent();
-    }
+	public List<Product> getTop6ExpensiveProducts() {
+		Pageable pageable = PageRequest.of(0, 6); // Trang 0, số lượng 6
+		return productRepository.findTop6ByOrderByPriceDesc(pageable).getContent();
+	}
 
 	@Override
 	public List<Product> findByPriceLessThanEqualAndCategoryId(BigDecimal price, Integer categoryId) {
@@ -167,6 +167,11 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public List<Product> findProductsWithStatusTrue() {
 		return productRepository.findByStatusTrue();
+	}
+
+	@Override
+	public Page<Product> findByStatusTrue(Pageable pageable) {
+		return productRepository.findByStatusTrue(pageable);
 	}
 
 }

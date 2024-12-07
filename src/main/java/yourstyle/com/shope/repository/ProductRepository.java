@@ -85,4 +85,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
         @Query("SELECT p FROM Product p WHERE p.discount.discountId = :discountId AND p.status = true")
         List<Product> findDiscountedProductsByDiscountId(@Param("discountId") Integer discountId);
 
+        @Query("SELECT p FROM Product p WHERE p.status = true")
+        Page<Product> findByStatusTrue(Pageable pageable);
+        
+            
 }

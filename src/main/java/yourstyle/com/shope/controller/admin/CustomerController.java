@@ -46,7 +46,7 @@ public class CustomerController {
 
 	@GetMapping("add")
 	public String add(String type, Model model) {
-		List<Account> accounts = accountService.findAll();
+		List<Account> accounts = accountService.findAccountsWithoutCustomer();
 		model.addAttribute("isEdit", false);
 		model.addAttribute("type", type);
 		model.addAttribute("accounts", accounts);

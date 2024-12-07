@@ -60,4 +60,6 @@ public interface ProductService {
 
     List<Product> findProductsWithStatusTrue();
 
+    Page<Product> findByStatusTrue(Pageable pageable);
+
 }

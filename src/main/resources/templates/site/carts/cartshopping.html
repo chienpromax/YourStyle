@@ -69,12 +69,6 @@
                                             style="min-height: 170px;">
                                             <!-- Action Icons -->
                                             <div class="d-flex gap-1">
-                                                <!-- <form action="/yourstyle/carts/removeProduct" method="post">
-                                                    <input type="hidden" name="orderDetailId" th:value="${orderDetail.orderDetailId}" />
-                                                    <button type="submit" class="icon-cartDetail-button">
-                                                        <i class="bi bi-trash icon-cartDetail-button px-1"></i>
-                                                    </button>
-                                                </form> -->
                                                 <button type="button" class="icon-cartDetail-button"
                                                     th:onclick="'removeProduct(' + ${orderDetail.orderDetailId} + ')'">
                                                     <i class="bi bi-trash icon-cartDetail-button px-1"></i>
@@ -125,11 +119,10 @@
                             // Kiểm tra nếu không còn sản phẩm thì hiển thị thông báo "Giỏ hàng trống"
                             const remainingItems = document.querySelectorAll('[data-order-detail-id]');
                             if (remainingItems.length === 0) {
-                                document.querySelector('.modal-body').innerHTML = `
-                        <div class="text-center py-4">
-                            <h5>Giỏ hàng của bạn hiện đang trống</h5>
-                        </div>
-                    `;
+                                document.querySelector('.modal-body').innerHTML =
+                                    `<div class="text-center py-4">
+                                        <h5>Giỏ hàng của bạn hiện đang trống</h5>
+                                    </div>`;
                             }
                         } else {
                             alert("Đã xảy ra lỗi không xác định!");

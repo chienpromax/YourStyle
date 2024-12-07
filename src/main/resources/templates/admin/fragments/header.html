@@ -156,15 +156,15 @@
 
         <li class="nav-item dropdown pe-3">
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <!-- avtar --> <img
-						th:src="${avatar}" alt="User Avatar" class="rounded-circle" />
-            <span class="d-none d-md-block dropdown-toggle ps-2" th:text="${#authentication.principal.username}">Văn
-              Tuấn</span> </a><!-- End Profile Iamge Icon -->
+            <!-- avtar --> 
+            <img th:src="@{${currentUser != null && currentUser.avatar != null ? '/uploads/' + currentUser.avatar : '/site/images/logo/user-icon.png'}}"
+            class="rounded-circle" width="25" height="25" alt="User Avatar" loading="lazy" />
+            <span class="d-none d-md-block dropdown-toggle ps-2" th:text="${currentUser.fullname ?: currentUser.account.email}"></span> </a><!-- End Profile Iamge Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
               <h6>
-                <span class="dropdown-item" th:text="${#authentication.principal.username}"></span>
+                <span class="dropdown-item" th:text="${currentUser.fullname ?: currentUser.account.email}"></span>
               </h6>
               <span>Admin</span>
             </li>

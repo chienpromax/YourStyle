@@ -51,5 +51,6 @@ public interface AccountService {
 
 	Optional<Account> findByEmail(String email);
 
+	List<Account> findAccountsWithoutCustomer();
 
 }

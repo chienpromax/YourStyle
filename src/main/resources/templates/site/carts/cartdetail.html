@@ -8,7 +8,8 @@
 <body>
     <!--===== main =======-->
     <section class="py-5 container" layout:fragment="main">
-        <div class="setepaction d-flex justify-content-center">
+        <div class="setepaction">
+            <a th:href="@{/yourstyle/home}" class="btn btn-link mb-3">← Trở Lại</a>
         </div>
         <div class="row py-5">
             <div class="col-md-8">
@@ -94,7 +95,8 @@
                                                 <div class="modal-dialog modal-dialog-centered modal-lg">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="staticBackdropLabel">Xem sản phẩm khác</h5>
+                                                            <h5 class="modal-title" id="staticBackdropLabel">Xem sản
+                                                                phẩm khác</h5>
                                                             <button type="button" class="btn-close"
                                                                 data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
@@ -103,7 +105,8 @@
                                                                 <div class="col-md-3 pt-3"
                                                                     th:each="product : ${products}" data-aos="fade-up">
                                                                     <div class="card product-card">
-                                                                        <a th:href="@{/product/detail/{id}(id=${product.productId})}">
+                                                                        <a
+                                                                            th:href="@{/product/detail/{id}(id=${product.productId})}">
                                                                             <img th:src="@{/uploads/} + ${product.image}"
                                                                                 class="img-fluid"
                                                                                 alt="Hình ảnh sản phẩm">
@@ -179,66 +182,33 @@
             </div>
         </div>
         <div class="row pt-5">
-            <h2 class="text-center">CÓ LẼ BẠN MUỐN THÊM VÀO</h2>
-
-            <div class="col-md-3 pt-5" data-aos="fade-up">
-                <div class="card product-card">
-                    <a href="/allproduct">
-                        <img src="/site/images/product/product-2.webp" class="img-fluid">
+            <h2 class="text-center py-3">CÓ LẼ BẠN MUỐN THÊM VÀO</h2>
+            <div class="col-md-2 pt-2" th:each="product, iterStat : ${products}" th:if="${iterStat.index < 12}"
+                data-aos="fade-up">
+                <div class="product-card ">
+                    <a th:href="@{/yourstyle/product/detail/{productId}(productId=${product.productId})}">
+                        <img th:src="'/uploads/' + ${product.image}" class="img-fluid">
                     </a>
-                    <div class="p-2">
-                        <h5>Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
-                            <a href="/productfavorites">
-                                <i class="fa-regular fa-heart"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 pt-5" data-aos="fade-up">
-                <div class="card product-card">
-                    <a href="/allproduct">
-                        <img src="/site/images/product/product-2.webp" class="img-fluid">
-                    </a>
-                    <div class="p-2">
-                        <h5>Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
-                            <a href="/productfavorites">
-                                <i class="fa-regular fa-heart"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 pt-5" data-aos="fade-up">
-                <div class="card product-card">
-                    <a href="/allproduct">
-                        <img src="/site/images/product/product-2.webp" class="img-fluid">
-                    </a>
-                    <div class="p-2">
-                        <h5>Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
-                            <a href="/productfavorites">
-                                <i class="fa-regular fa-heart"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 pt-5" data-aos="fade-up">
-                <div class="card product-card">
-                    <a href="/allproduct">
-                        <img src="/site/images/product/product-2.webp" class="img-fluid">
-                    </a>
-                    <div class="p-2">
-                        <h5>Dazy-Less Màu thuần Ngắn tay Áo thun</h5>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <p class="card-text text-danger fw-bolder fs-5 mb-0">114.800 Đ</p>
-                            <a href="/productfavorites">
+                    <div class="m-2">
+                        <p class="card-title product-name py-2" th:text="${product.name}">Tên Sản Phẩm</p>
+                        <div class="price-info d-flex align-items-center">
+                            <!-- Giá đã giảm -->
+                            <div class="">
+                                <span class="price-discount text-danger fw-bold" th:if="${product.discount != null}"
+                                    th:text="${#numbers.formatDecimal(product.price - product.price * product.discount.discountPercent / 100, 1, 'COMMA', 3, 'POINT') + ' VNĐ'}">
+                                </span>
+                                <!-- Phần trăm giảm giá -->
+                                <span class="badge discount-badge bg-danger m-2" th:if="${product.discount != null}"
+                                    th:text="'-' + ${#numbers.formatDecimal(product.discount.discountPercent, 0, 0)} + '%'">
+                                </span>
+                                <!-- Giá gốc khi không có giảm giá -->
+                                <span class="price text-danger card-text fw-bolder m-2"
+                                    th:if="${product.discount == null}"
+                                    th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'">
+                                </span>
+                            </div>
+                            <a class="ms-auto"
+                                th:href="@{/yourstyle/productfavorites/add(productId=${product.productId})}">
                                 <i class="fa-regular fa-heart"></i>
                             </a>
                         </div>

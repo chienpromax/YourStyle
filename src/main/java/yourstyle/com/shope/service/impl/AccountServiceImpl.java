@@ -26,6 +26,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.UUID;
+import java.util.stream.Collectors;
 //new
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -157,7 +158,7 @@ public class AccountServiceImpl implements AccountService {
 	public Account login(String username, String password) {
 		Account account = accountRepository.findByUsername(username)
 				.orElseThrow(() -> new IllegalArgumentException("Tên đăng nhập không tồn tại!"));
-	
+
 		if (!account.getStatus()) {
 			throw new IllegalArgumentException("Tài khoản của bạn đã bị khóa!");
 		}
@@ -166,7 +167,6 @@ public class AccountServiceImpl implements AccountService {
 		}
 		return account;
 	}
-	
 
 	@Override
 	public boolean sendResetPasswordLink(String email) {
@@ -228,4 +228,17 @@ public class AccountServiceImpl implements AccountService {
 		return accountRepository.findByEmail(email);
 	}
 
+	@Override
+	public List<Account> findAccountsWithoutCustomer() {
+		// Giả sử bạn có một repository để truy vấn
+		List<Account> allAccounts = accountRepository.findAll();
+		List<Integer> customerAccountIds = customerRepository.findAll()
+				.stream()
+				.map(customer -> customer.getAccount().getAccountId())
+				.collect(Collectors.toList());
+
+		return allAccounts.stream()
+				.filter(account -> !customerAccountIds.contains(account.getAccountId()))
+				.collect(Collectors.toList());
+	}
 }

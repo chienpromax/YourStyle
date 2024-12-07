@@ -1,6 +1,8 @@
 package yourstyle.com.shope.controller.site;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -34,7 +36,7 @@ public class HomeSiteController {
 	// new
 	@Autowired
 	private SlideService slideService;
-	
+
 	@Autowired
 	private ProductRepository productRepository;
 
@@ -48,8 +50,14 @@ public class HomeSiteController {
 				: null;
 		model.addAttribute("userName", userName);
 
+		// Lấy tất cả sản phẩm đang hoạt động
 		List<Product> activeProducts = productService.findProductsWithStatusTrue();
-		model.addAttribute("products", activeProducts);
+		Collections.shuffle(activeProducts); // Trộn danh sách sản phẩm
+
+		List<Product> randomProducts = activeProducts.stream()
+				// .limit(12)
+				.collect(Collectors.toList());
+		model.addAttribute("products", randomProducts);
 
 		// Lấy sản phẩm bán chạy
 		List<Product> bestSellers = productService.getBestSellingProducts();
@@ -74,7 +82,7 @@ public class HomeSiteController {
 		model.addAttribute("slides", slides);
 
 		List<Product> topExpensiveProducts = productService.getTop6ExpensiveProducts();
-        model.addAttribute("topDeals", topExpensiveProducts);
+		model.addAttribute("topDeals", topExpensiveProducts);
 
 		return "site/pages/home";
 	}

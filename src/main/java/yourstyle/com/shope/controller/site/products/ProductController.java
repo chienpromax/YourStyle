@@ -63,7 +63,7 @@ public class ProductController {
             products = productPage.getContent();
         } else {
             // Lấy tất cả sản phẩm nếu không có điều kiện sắp xếp
-            Page<Product> productPage = productService.findAll(pageable);
+            Page<Product> productPage = productService.findByStatusTrue(pageable);
             products = productPage.getContent();
         }
         model.addAttribute("products", products);

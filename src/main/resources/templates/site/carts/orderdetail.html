@@ -14,6 +14,7 @@
 <body>
     <!--===== main =======-->
     <section class="py-5 container bg-light-subtle" layout:fragment="main">
+        <a th:href="@{/yourstyle/carts/cartdetail}" class="btn btn-link mb-3">← Trở Lại</a>
         <div class="row py-2 mx-1">
             <div class="col-lg-8 bg-white border-end">
                 <h3 class="my-4">ĐỊA CHỈ GIAO HÀNG</h3>
@@ -282,7 +283,8 @@
                     </div>
                 </div>
             </div>
-
+            <script src="/admin/js/addressAPI.js"></script>
+            <script src="/admin/js/addressCustomer.js"></script>
             <script type="text/javascript">
 
                 function copyVoucherCode() {

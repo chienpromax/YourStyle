@@ -116,7 +116,7 @@ public class CartDetailController {
 
     @PostMapping("/updateQuantity")
     public String updateQuantity(@RequestParam("orderDetailId") Integer orderDetailId,
-            @RequestParam("quantity") Integer quantity,
+            @RequestParam("quantity") Integer quantity, Model model,
             Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return "redirect:/site/accounts/login";
@@ -133,14 +133,19 @@ public class CartDetailController {
         Optional<OrderDetail> orderDetailOptional = orderDetailRepository.findById(orderDetailId);
         if (orderDetailOptional.isPresent()) {
             OrderDetail orderDetail = orderDetailOptional.get();
+            ProductVariant productVariant = orderDetail.getProductVariant();
 
             int previousQuantity = orderDetail.getQuantity();
             int quantityDifference = quantity - previousQuantity;
 
+            if (quantityDifference > productVariant.getQuantity()) {
+                // Thông báo lỗi nếu vượt quá số lượng trong kho
+                model.addAttribute("error", "Số lượng bạn chọn vượt quá số lượng trong kho.");
+                return "site/carts/cartdetail";
+            }
+
             orderDetail.setQuantity(quantity);
             orderDetailRepository.save(orderDetail);
-
-            ProductVariant productVariant = orderDetail.getProductVariant();
 
             int newProductVariantQuantity = productVariant.getQuantity() - quantityDifference;
 

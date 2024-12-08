@@ -3,6 +3,12 @@
     layout:decorate="~{site/index.html}">
 
 <head>
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body>
@@ -55,6 +61,9 @@
                                         </div>
                                     </div>
                                 </td>
+                                <div th:if="${error}" class="alert alert-danger" role="alert">
+                                    <span th:text="${error}"></span>
+                                </div>
                                 <td class="text-center d-flex align-items-end justify-content-center"
                                     style="min-height: 163px;">
                                     <form action="/yourstyle/carts/updateQuantity" method="post" class="px-2">
@@ -68,13 +77,16 @@
                                             <option th:selected="${orderDetail.quantity == 3}" value="3">SL: 3</option>
                                             <option th:selected="${orderDetail.quantity == 4}" value="4">SL: 4</option>
                                             <option th:selected="${orderDetail.quantity == 5}" value="5">SL: 5</option>
-                                            <option th:selected="${orderDetail.quantity == 10}" value="5">SL: 10
+                                            <option th:selected="${orderDetail.quantity == 6}" value="6">SL: 6</option>
+                                            <option th:selected="${orderDetail.quantity == 7}" value="7">SL: 7</option>
+                                            <option th:selected="${orderDetail.quantity == 8}" value="8">SL: 8</option>
+                                            <option th:selected="${orderDetail.quantity == 9}" value="9">SL: 9</option>
+                                            <option th:selected="${orderDetail.quantity == 10}" value="10">SL: 10
                                             </option>
-                                            <option th:selected="${orderDetail.quantity == 15}" value="5">SL: 15
+                                            <option th:selected="${orderDetail.quantity == 15}" value="15">SL: 15
                                             </option>
                                         </select>
                                     </form>
-
 
                                     <!-- Action Icons -->
                                     <div class="d-flex gap-1">
@@ -217,6 +229,7 @@
             </div>
         </div>
         <script src="/site/js/cartDetail.js"></script>
+
     </section>
 </body>
 

@@ -176,7 +176,7 @@ public class SellRestController {
                                 .orElse(null); // Nếu không có voucher nào phù hợp
         }
 
-        public OrderDto listOrderDetailDto(Order order) {
+        public OrderDto listOrderDetailDto(Order order, ProductVariant productVariantUpdate) {
                 DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
                 symbols.setGroupingSeparator('.'); // Dùng dấu '.' cho hàng nghìn
                 symbols.setDecimalSeparator(','); // Dùng dấu ',' cho phần thập phân
@@ -275,18 +275,23 @@ public class SellRestController {
                                 default:
                                         break;
                         }
+
                         voucherDto = new VoucherDTO(
                                         order.getVoucher().getVoucherCode(),
                                         type,
                                         formattedDiscount,
-                                        finalTotalAmount);
+                                        finalTotalAmount,
+                                        productVariantUpdate.getProductVariantId(),
+                                        productVariantUpdate.getQuantity());
                 } else {
                         // Xử lý khi không có voucher
                         voucherDto = new VoucherDTO(
                                         "",
                                         null,
                                         "0 VND",
-                                        finalTotalAmount);
+                                        finalTotalAmount,
+                                        productVariantUpdate.getProductVariantId(),
+                                        productVariantUpdate.getQuantity());
                 }
                 return new OrderDto(orderDetailDtos, voucherDto); // trả về danh sách
         }
@@ -322,7 +327,7 @@ public class SellRestController {
                                 order.setTotalAmount(total);
                                 orderService.save(order);
                                 // hiển thị lại sản phẩm trong đơn
-                                orderDto = listOrderDetailDto(order);
+                                orderDto = listOrderDetailDto(order, productVariant);
                         }
                         return ResponseEntity.ok(orderDto);
                 } else {
@@ -356,7 +361,7 @@ public class SellRestController {
                                 orderDetailService.save(existingOrderDetail);
                                 // cập nhật số lượng
                                 productVariantUpdate.setQuantity(
-                                                productVariantUpdate.getQuantity() - existingOrderDetail.getQuantity());
+                                                productVariantUpdate.getQuantity() - orderDetailDto.getQuantity());
                         } else {
                                 // không trùng tạo mới orderDetail
                                 OrderDetail orderDetail = new OrderDetail();
@@ -367,11 +372,12 @@ public class SellRestController {
                                 orderDetailService.save(orderDetail);
                                 // cập nhật số lượng
                                 productVariantUpdate.setQuantity(
-                                                productVariantUpdate.getQuantity() - orderDetail.getQuantity());
+                                                productVariantUpdate.getQuantity() - orderDetailDto.getQuantity());
                         }
                         productVariantService.save(productVariantUpdate); // cập nhật số lượng
                         // xử lý thông tin đơn hàng và format tổng tiền
-                        OrderDto orderDto = listOrderDetailDto(order); // danh sách chi tiết và voucher
+                        OrderDto orderDto = listOrderDetailDto(order, productVariantUpdate); // danh sách chi tiết và
+                                                                                             // voucher
                         return ResponseEntity.ok(orderDto);
                 }
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -408,7 +414,7 @@ public class SellRestController {
                                 }
                         }
                         // xử lý thông tin đơn hàng và format tổng tiền
-                        OrderDto orderDto = listOrderDetailDto(order);
+                        OrderDto orderDto = listOrderDetailDto(order, productVariantUpdate);
                         return ResponseEntity.ok(orderDto);
                 }
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -443,7 +449,7 @@ public class SellRestController {
 
                         }
                         // xử lý thông tin đơn hàng và format tổng tiền
-                        OrderDto orderDto = listOrderDetailDto(order);
+                        OrderDto orderDto = listOrderDetailDto(order, productVariantUpdate);
                         return ResponseEntity.ok(orderDto);
                 }
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);

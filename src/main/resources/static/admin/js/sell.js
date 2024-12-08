@@ -273,7 +273,8 @@ window.addEventListener("DOMContentLoaded", function () {
         let rows = "";
         let formattedTotal;
         const { orderDetailDtos, voucherDto } = data;
-        const { voucherCode, discountType, formattedDiscount, finalTotalAmount } = voucherDto; // VOUCHER
+        const { voucherCode, discountType, formattedDiscount, finalTotalAmount, productVariantId, inventoryQuantity } =
+            voucherDto; // VOUCHER
         if (voucherCodeElement) {
             voucherCodeElement.value = voucherCode;
         }
@@ -286,6 +287,10 @@ window.addEventListener("DOMContentLoaded", function () {
             if (discountVoucherElement) {
                 discountVoucherElement.textContent = formattedDiscount;
             }
+        }
+        const inventoryQuantitiesElement = document.querySelector(`.inventoryQuantity[data-id="${productVariantId}"]`);
+        if (inventoryQuantitiesElement) {
+            inventoryQuantitiesElement.textContent = inventoryQuantity; // trả số lượng tồn kho hiển thị lên
         }
         orderDetailDtos.forEach((dto, index) => {
             const {

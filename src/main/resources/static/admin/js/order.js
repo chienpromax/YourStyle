@@ -281,7 +281,7 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     };
     // hàm chọn địa chỉ buộc dữ liệu lên form
-    let addressIdInput; // biến lưu addressid mặc đinh và không mặc định
+    let addressIdSelect; // biến lưu addressid mặc đinh và không mặc định
     const updateAddressButton = document.getElementById("updateAddress");
     window.selectAddress = function (button) {
         // lấy tr chứa các td
@@ -292,7 +292,7 @@ window.addEventListener("DOMContentLoaded", () => {
         let city = row.cells[6].textContent;
         const addressIdElement = row.querySelector(".inputAddressId");
         if (addressIdElement) {
-            addressIdInput = addressIdElement.value;
+            addressIdSelect = addressIdElement.value;
         }
         const floatingstreet = document.getElementById("floatingstreet");
         const floatingward = document.getElementById("floatingward");
@@ -319,11 +319,16 @@ window.addEventListener("DOMContentLoaded", () => {
     const phoneNumberElement = document.getElementById("phoneNumber");
     const setDefaultAddressElement = document.getElementById("setDefaultAddress");
     const setNotDefaultAddressElement = document.getElementById("setNotDefaultAddress");
+    const addressIdDefaultElement = document.querySelector(".addressIdDefault");
+    let addressIdDefault = null;
+    if (addressIdDefaultElement) {
+        addressIdDefault = addressIdDefaultElement.value;
+    }
     window.submitAddress = function () {
         const addressData = {
-            addressId: addressIdInput,
-            customerId: document.getElementById("inputCustomerId").value,
+            addressId: addressIdSelect ? addressIdSelect : addressIdDefault,
             customer: {
+                customerId: document.getElementById("inputCustomerId").value,
                 fullname: document.getElementById("floatinghovaten").value.trim(),
                 phoneNumber: document.getElementById("floatingsodienthoai").value.trim(),
             },
@@ -353,29 +358,38 @@ window.addEventListener("DOMContentLoaded", () => {
                         return response.json(); // Bạn có thể dùng response.text() nếu chỉ cần thông báo
                     })
                     .then((data) => {
-                        const { fullname, phoneNumber, street, ward, district, city } = data;
-                        if (fullnameElement && phoneNumberElement) {
-                            fullnameElement.textContent = fullname;
-                            phoneNumberElement.textContent = phoneNumber;
+                        if (data.address) {
+                            const { fullname, phoneNumber, street, ward, district, city } = data.address;
+                            if (fullnameElement && phoneNumberElement) {
+                                fullnameElement.textContent = fullname;
+                                phoneNumberElement.textContent = phoneNumber;
+                            }
+                            let spanAddressElement = `${street}, ${ward}, ${district}, ${city}`;
+                            if (setDefaultAddressElement) {
+                                setDefaultAddressElement.textContent = spanAddressElement;
+                            }
+                            if (setNotDefaultAddressElement) {
+                                setNotDefaultAddressElement.textContent = spanAddressElement;
+                            }
+                            if (updateAddressButton) {
+                                // ẩn nút cập nhật khi cập nhật xong
+                                updateAddressButton.style.visibility = "hidden";
+                            }
+                            // In ra thông báo từ server
+                            createToast(
+                                "success",
+                                "fa-solid fa-circle-check",
+                                "Thành công",
+                                "Cập nhật thông tin khách hàng thành công"
+                            );
+                            const modalElement = document.getElementById("modalIdUpdateOrder");
+                            const modalInstance = bootstrap.Modal.getInstance(modalElement); // Lấy instance của modal
+                            if (modalInstance) {
+                                modalInstance.hide(); // Ẩn modal
+                            }
+                        } else if (data.message) {
+                            createToast("error", "fa-solid fa-circle-exclamation", "Lỗi", data.message);
                         }
-                        let spanAddressElement = `${street}, ${ward}, ${district}, ${city}`;
-                        if (setDefaultAddressElement) {
-                            setDefaultAddressElement.textContent = spanAddressElement;
-                        }
-                        if (setNotDefaultAddressElement) {
-                            setNotDefaultAddressElement.textContent = spanAddressElement;
-                        }
-                        if (updateAddressButton) {
-                            // ẩn nút cập nhật khi cập nhật xong
-                            updateAddressButton.style.visibility = "hidden";
-                        }
-                        // In ra thông báo từ server
-                        createToast(
-                            "success",
-                            "fa-solid fa-circle-check",
-                            "Thành công",
-                            "Cập nhật thông tin khách hàng thành công"
-                        );
                     })
                     .catch((err) => {
                         createToast(
@@ -417,6 +431,9 @@ window.addEventListener("DOMContentLoaded", () => {
     buttonNewAddress.setAttribute("disabled", true);
     window.addAddress = function () {
         let streetInput = document.getElementById("street");
+        let cityInput = document.getElementById("city");
+        let districtInput = document.getElementById("district");
+        let wardInput = document.getElementById("ward");
         let inputCustomerId = document.getElementById("customerId");
         if (streetInput && streetInput.value.trim() === "") {
             createToast("warning", "fa-solid fa-triangle-exclamation", "Cảnh báo", "Vui lòng nhập địa chỉ cụ thể!");
@@ -451,26 +468,14 @@ window.addEventListener("DOMContentLoaded", () => {
                     return response.json();
                 })
                 .then((addresses) => {
-                    const filteredData = addresses.map((address) => ({
-                        // trả về đối tượng phải có (
-                        addressId: address.addressId,
-                        street: address.street,
-                        ward: address.ward,
-                        district: address.district,
-                        city: address.city,
-                        customer: {
-                            customerId: address.customer.customerId,
-                            fullname: address.customer.fullname,
-                            phoneNumber: address.customer.phoneNumber,
-                        },
-                    }));
+                    if (addresses.data) {
+                        const listAddressTable = document.querySelector(".listAddress");
+                        listAddressTable.innerHTML = "";
+                        let addressRows = "";
 
-                    const listAddressTable = document.querySelector(".listAddress");
-                    listAddressTable.innerHTML = "";
-                    let addressRows = "";
-
-                    filteredData.forEach((address, index) => {
-                        addressRows += `
+                        addresses.data.forEach((address, index) => {
+                            if (!address.isDefault) {
+                                addressRows += `
                             <tr>
                                 <td>${index + 1}</td>
                                 <td>${address.customer.fullname}</td>
@@ -495,12 +500,24 @@ window.addEventListener("DOMContentLoaded", () => {
                                                         id="inputCustomerId"
                                                     />
                             </tr>`;
-                    });
-                    listAddressTable.innerHTML = addressRows;
-                    // In ra thông báo từ server
-                    createToast("success", "fa-solid fa-circle-check", "Thành công", "Thêm mới địa chỉ thành công");
+                            }
+                        });
+                        listAddressTable.innerHTML = addressRows;
+                        streetInput.value = "";
+                        cityInput.selectedIndex = 0;
+                        districtInput.selectedIndex = 0;
+                        wardInput.selectedIndex = 0;
+                        // In ra thông báo từ server
+                        createToast("success", "fa-solid fa-circle-check", "Thành công", "Thêm mới địa chỉ thành công");
+                    } else if (addresses.message) {
+                        createToast("error", "fa-solid fa-circle-exclamation", "Lỗi", addresses.message);
+                    }
                 })
                 .catch((error) => {
+                    streetInput.value = "";
+                    cityInput.selectedIndex = 0;
+                    districtInput.selectedIndex = 0;
+                    wardInput.selectedIndex = 0;
                     console.error("Error:", error);
                     createToast("error", "fa-solid fa-circle-exclamation", "Lỗi", "Thêm mới địa chỉ thất bại!");
                 });

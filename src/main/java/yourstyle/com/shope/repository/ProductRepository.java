@@ -87,6 +87,5 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
         @Query("SELECT p FROM Product p WHERE p.status = true")
         Page<Product> findByStatusTrue(Pageable pageable);
-        
             
 }

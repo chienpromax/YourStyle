@@ -1,9 +1,12 @@
 package yourstyle.com.shope.controller.site.carts;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -49,6 +52,14 @@ public class OrderDetailController {
     @Autowired
     private CustomerRepository customerRepository;
 
+    private String formatDateTime(LocalDateTime dateTime) {
+        if (dateTime == null) {
+            return "";
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        return dateTime.format(formatter);
+    }
+
     @GetMapping("/orderdetail")
     public String showCartDetail(Model model) {
         CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
@@ -85,7 +96,31 @@ public class OrderDetailController {
         // Lọc voucher dựa trên tổng tiền
         List<Voucher> vouchers = voucherService.findVouchersByTotalAmount(totalAmount);
 
-        model.addAttribute("vouchers", vouchers);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+
+        // Định dạng ngày bắt đầu và kết thúc của voucher
+        List<Voucher> validVouchers = vouchers.stream()
+                .filter(voucher -> {
+                    LocalDateTime now = LocalDateTime.now();
+                    boolean isValid = (voucher.getStartDate() == null || !voucher.getStartDate().isAfter(now)) &&
+                            (voucher.getEndDate() == null || !voucher.getEndDate().isBefore(now));
+                    return isValid;
+                })
+                .collect(Collectors.toList());
+
+        // Định dạng ngày cho các voucher
+        validVouchers.forEach(voucher -> {
+            if (voucher.getStartDate() != null) {
+                String formattedStartDate = voucher.getStartDate().format(formatter);
+                model.addAttribute("formattedStartDate", formattedStartDate);
+            }
+            if (voucher.getEndDate() != null) {
+                String formattedEndDate = voucher.getEndDate().format(formatter);
+                model.addAttribute("formattedEndDate", formattedEndDate);
+            }
+        });
+
+        model.addAttribute("vouchers", validVouchers);
 
         return "site/carts/orderdetail";
     }
@@ -97,14 +132,14 @@ public class OrderDetailController {
             @RequestParam(value = "defaultAddress.ward", required = false) String ward,
             @RequestParam(value = "defaultAddress.district", required = false) String district,
             @RequestParam(value = "defaultAddress.city", required = false) String city,
-            @RequestParam(value = "isDefault", defaultValue = "false") boolean isDefault) {
-    
+            @RequestParam(value = "isDefault", defaultValue = "true") boolean isDefault) {
+
         if (customer.getAccount() == null || customer.getAccount().getAccountId() == null) {
             throw new IllegalStateException("Account information is missing.");
         }
-    
+
         Customer existingCustomer = customerService.findByAccountId(customer.getAccount().getAccountId());
-        
+
         if (existingCustomer == null) {
             customer.setAccount(customer.getAccount());
             existingCustomer = customerService.save(customer);
@@ -113,7 +148,7 @@ public class OrderDetailController {
             existingCustomer.setPhoneNumber(customer.getPhoneNumber());
             customerService.save(existingCustomer);
         }
-    
+
         if (street != null && ward != null && district != null && city != null) {
             Address newAddress = new Address();
             newAddress.setStreet(street);
@@ -122,10 +157,10 @@ public class OrderDetailController {
             newAddress.setCity(city);
             newAddress.setIsDefault(isDefault);
             newAddress.setCustomer(existingCustomer);
-    
+
             addressService.save(newAddress);
         }
-    
+
         return "redirect:/yourstyle/carts/orderdetail";
     }
 
@@ -136,31 +171,33 @@ public class OrderDetailController {
             @RequestParam(value = "defaultAddress.district") String district,
             @RequestParam(value = "defaultAddress.city") String city,
             @RequestParam(value = "isDefault", defaultValue = "false") boolean isDefault) {
-        
-        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
         Integer accountId = customUserDetails.getAccountId();
-        
+
         Customer existingCustomer = customerService.findByAccountId(accountId);
-        
+
         if (existingCustomer != null) {
             saveAddress(existingCustomer, street, ward, district, city, isDefault);
         }
-    
+
         return "redirect:/yourstyle/carts/orderdetail";
     }
-    
-    private void saveAddress(Customer existingCustomer, String street, String ward, String district, String city, boolean isDefault) {
+
+    private void saveAddress(Customer existingCustomer, String street, String ward, String district, String city,
+            boolean isDefault) {
         Address newAddress = new Address();
         newAddress.setStreet(street);
         newAddress.setWard(ward);
         newAddress.setDistrict(district);
         newAddress.setCity(city);
         newAddress.setIsDefault(isDefault);
-        newAddress.setCustomer(existingCustomer); 
-    
+        newAddress.setCustomer(existingCustomer);
+
         addressService.save(newAddress);
     }
-    
+
     @GetMapping("/orderDetail/deleteAddress/{addressId}")
     public String deleteAddress(@PathVariable("addressId") Integer addressId,
             @RequestParam(value = "customerId", required = false) String customerIdStr,

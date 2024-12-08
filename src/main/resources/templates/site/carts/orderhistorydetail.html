@@ -104,13 +104,22 @@
 <body>
     <!--===== main =======-->
     <section class="py-5 container bg-light" layout:fragment="main">
+        <div th:if="${order.getStatusCode() == 5}"class="float-end text-danger">
+            <form th:action="@{/yourstyle/order/complete/{id}(id=${order.orderId})}"
+                method="post" style="display:inline;">
+                <button type="submit" class="btn btn-link float-end mb-3 text-danger">
+                    <i class="bi bi-check2 fs-5"> HOÀN THÀNH</i>
+                </button>
+            </form>
+        </div>
+
+        <button th:if="${order.getStatusCode() == 6}" type="button" class="btn btn-link float-end mb-3 text-danger"
+            data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+            <i class="bi bi-exclamation-triangle fs-5"> TRẢ HÀNG</i>
+        </button>
+
         <div class="container my-5">
             <a th:href="@{/yourstyle/order/orderhistory}" class="btn btn-link mb-3">← Trở Lại</a>
-
-            <button th:if="${order.getStatusCode() == 6}" type="button" class="btn btn-link float-end mb-3 text-danger" data-bs-toggle="modal"
-                data-bs-target="#staticBackdrop">
-                <i class="bi bi-exclamation-triangle"></i> TRẢ HÀNG
-            </button>
 
             <h1 th:if="${order.getStatusCode() == 0}" class="text-center text-danger"
                 th:text="${order.transactionStatus ?: ''}"></h1>
@@ -129,42 +138,47 @@
                             <i class="bi bi-check2-square"></i><br>
                         </div>
                         <i class="bi bi-box-seam"></i><br>
-                        Đơn Hàng Đã Đặt <br><small th:text="${order.orderDate}"></small>
+                        Đơn Hàng Đã Đặt <br><small>[[${#dates.format(order.orderDate,'dd-MM-yyyy HH:mm:ss')}]]</small>
                     </div>
                     <div class="text-center icon-container">
                         <div class="icon-wrapper">
                             <i class="bi bi-check2-square"></i><br>
                         </div>
                         <i class="bi bi-house-door"></i><br>
-                        ĐANG ĐÓNG GÓI <br>
+                        ĐANG ĐÓNG GÓI <br><small>[[${#dates.format(latestStatusTime['PACKING'], 'dd-MM-yyyy
+                            HH:mm:ss')}]]</small>
                     </div>
                     <div class="text-center icon-container">
                         <div class="icon-wrapper">
                             <i class="bi bi-check2-square"></i><br>
                         </div>
                         <i class="bi bi-truck"></i><br>
-                        GIAO VẬN CHUYỂN <br>
+                        GIAO VẬN CHUYỂN <br><small>[[${#dates.format(latestStatusTime['SHIPPED'], 'dd-MM-yyyy
+                            HH:mm:ss')}]]</small>
                     </div>
                     <div class="text-center icon-container">
                         <div class="icon-wrapper">
                             <i class="bi bi-check2-square"></i><br>
                         </div>
                         <i class="bi bi-box-arrow-up"></i><br>
-                        ĐANG GIAO HÀNG <br>
+                        ĐANG GIAO HÀNG <br><small>[[${#dates.format(latestStatusTime['IN_TRANSIT'], 'dd-MM-yyyy
+                            HH:mm:ss')}]]</small>
                     </div>
                     <div class="text-center icon-container">
                         <div class="icon-wrapper">
                             <i class="bi bi-check2-square"></i><br>
                         </div>
                         <i class="bi bi-currency-dollar"></i><br>
-                        ĐÃ THANH TOÁN <br>
+                        ĐÃ THANH TOÁN <br><small>[[${#dates.format(latestStatusTime['PAID'], 'dd-MM-yyyy HH:mm:ss')
+                            }]]</small>
                     </div>
                     <div class="text-center icon-container">
                         <div class="icon-wrapper">
                             <i class="bi bi-check2-square"></i><br>
                         </div>
                         <i class="bi bi-star"></i><br>
-                        Hoàn Thành <br>
+                        Hoàn Thành <br><small>[[${#dates.format(latestStatusTime['COMPLETED'], 'dd-MM-yyyy
+                            HH:mm:ss')}]]</small>
                     </div>
                 </div>
             </div>
@@ -229,8 +243,9 @@
                                     <p>Khi bạn muốn trả hàng vui lòng liên hệ nhân viên hoạc nhắn tin trực tiếp, bạn
                                         phải cung cấp được lý do trả hàng và Mã hóa đơn, khi có xác nhận từ nhân viên
                                         bạn có thể trả lại hàng và sẽ được hoàn lại tiền trong thời gian cụ thể</p><br>
-                                    <h4>MÃ HÓA ĐƠN CỦA BẠN LÀ: 
-                                    <strong class="text-danger">HD <span th:text="${order.orderId}"></span></strong></h4><br>
+                                    <h4>MÃ HÓA ĐƠN CỦA BẠN LÀ:
+                                        <strong class="text-danger">HD <span th:text="${order.orderId}"></span></strong>
+                                    </h4><br>
                                     <h5>Bạn có thể liên hệ qua SDT: 0359690062</h5>
                                     <h5>Hoạc liên hệ qua dịch vụ tin nhắn có trên trang web</h5>
                                     <h5>Hoạc click vào đây

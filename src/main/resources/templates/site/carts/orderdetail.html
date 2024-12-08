@@ -48,7 +48,7 @@
 
                     <!-- Hiển thị địa chỉ mặc định nếu có -->
                     <div th:if="${#lists.size(customer.addresses) > 0}">
-                        <h3>Địa chỉ hiện tại của bạn </h3>
+                        <h3 class="pt-3">Địa chỉ hiện tại của bạn </h3>
                         <div class="mb-3">
                             <label for="streetAddress" class="form-label">Số nhà tên đường*</label>
                             <input type="text" class="form-control" id="streetAddress" name="addresses[0].street"
@@ -143,7 +143,6 @@
                     </div>
                 </form>
             </div>
-
 
             <!-- Modal Thêm Địa chỉ -->
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -303,7 +302,7 @@
                         <label for="discountCode" class="form-label float-end btn" data-bs-toggle="modal"
                             data-bs-target="#staticBackdrop">Xem Mã Giảm</label>
                         <!-- Modal -->
-                        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
+                        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="true" data-bs-keyboard="false"
                             tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered modal-lg">
                                 <div class="modal-content">
@@ -314,6 +313,10 @@
                                     </div>
                                     <div class="modal-body">
                                         <div class="row">
+                                            <div th:if="${#lists.isEmpty(vouchers)}">
+                                                <h4 style="color: red; font-weight: bold;">đơn hàng chưa đủ điều kiện.</h4>
+                                            </div>
+                                            
                                             <div class="col-md-12 pt-3" th:each="voucher : ${vouchers}"
                                                 data-aos="fade-up">
                                                 <div class="card">
@@ -323,20 +326,19 @@
                                                         <div class="product-info text-center pt-3">
                                                             <div class="clearfix" style="margin-right: 30px;">
                                                                 <button onclick="copyVoucherCode()"
-                                                                    class="btn btn-warning float-end mb-3">Copy
+                                                                    class="btn btn-warning float-end mb-3 fs-6">Copy
                                                                     Mã</button>
                                                             </div>
-                                                            <h5>
+                                                            <h5 style="color: black; font-size: 1.6rem; font-weight: 700;">
                                                                 Vé Giảm Giá: <span
                                                                     th:text="${voucher.voucherName}"></span>
-                                                                <br><br>
+                                                                <br>
                                                                 MÃ: <span id="voucherCode"
                                                                     th:text="${voucher.voucherCode}"></span>
                                                             </h5>
-                                                            <h5>Bắt đầu: <span th:text="${voucher.startDate}"></span>
-                                                            </h5>
-                                                            <h5>Kết Thúc: <span th:text="${voucher.endDate}"></span>
-                                                            </h5>
+                                                            <br>
+                                                            <h5 style="color: black; font-size: 1.2rem; font-weight: 700;">Bắt đầu: <span th:text="${formattedStartDate}"></span></h5>
+                                                            <h5 style="color: black; font-size: 1.2rem; font-weight: 700;">Kết Thúc: <span th:text="${formattedEndDate}"></span></h5>                                                            
                                                         </div>
                                                     </div>
                                                 </div>
@@ -377,7 +379,7 @@
                                 </div>
                             </form>
 
-                            <form th:action="@{/yourstyle/VNPays/vnPayMain}" method="get">
+                            <form id="paymentForm">
                                 <div class="payment-method-card">
                                     <button type="submit" class="btn">
                                         <img src="/site/images/logo/zalo.png" alt="ZaloPay">

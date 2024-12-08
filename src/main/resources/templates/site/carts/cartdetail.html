@@ -101,14 +101,13 @@
                                             </form>
 
                                             <!-- Modal -->
-                                            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static"
+                                            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="true"
                                                 data-bs-keyboard="false" tabindex="-1"
                                                 aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered modal-lg">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="staticBackdropLabel">Xem sản
-                                                                phẩm khác</h5>
+                                                            <h5 class="modal-title" id="staticBackdropLabel">Xem sản phẩm khác</h5>
                                                             <button type="button" class="btn-close"
                                                                 data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
@@ -117,8 +116,7 @@
                                                                 <div class="col-md-3 pt-3"
                                                                     th:each="product : ${products}" data-aos="fade-up">
                                                                     <div class="card product-card">
-                                                                        <a
-                                                                            th:href="@{/product/detail/{id}(id=${product.productId})}">
+                                                                        <a th:href="@{/product/detail/{id}(id=${product.productId})}">
                                                                             <img th:src="@{/uploads/} + ${product.image}"
                                                                                 class="img-fluid"
                                                                                 alt="Hình ảnh sản phẩm">
@@ -131,13 +129,14 @@
                                                 </div>
                                             </div>
 
-                                            <form action="" method="post">
+
+                                            <!-- <form action="" method="post">
                                                 <input type="hidden" name="orderDetailId"
                                                     th:value="${orderDetail.orderDetailId}" />
                                                 <button type="submit" class="icon-cartDetail-button">
                                                     <i class="bi bi-heart icon-cartDetail-button px-1"></i>
                                                 </button>
-                                            </form>
+                                            </form> -->
                                             <form action="/yourstyle/carts/removeProduct" method="post">
                                                 <input type="hidden" name="orderDetailId"
                                                     th:value="${orderDetail.orderDetailId}" />
@@ -229,7 +228,6 @@
             </div>
         </div>
         <script src="/site/js/cartDetail.js"></script>
-
     </section>
 </body>
 

@@ -65,7 +65,7 @@ public class OrderSiteController {
         if (customer.getAddresses() == null) {
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
-            response.put("message", "Vui lòng cập nhật địa chỉ.");
+            response.put("message", "Vui lòng cập nhập địa chỉ.");
             return ResponseEntity.badRequest().body(response);
         }
 

@@ -21,14 +21,31 @@ function placeOrder() {
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
-        alert("Đặt hàng thành công!");
-        window.location.href = "/yourstyle/order/orderhistory";
+        Swal.fire({
+          icon: "success",
+          title: "Đặt hàng thành công!",
+          text: "Bạn sẽ được chuyển đến lịch sử đơn hàng.",
+          confirmButtonText: "OK",
+        }).then(() => {
+          window.location.href = "/yourstyle/order/orderhistory";
+        });
       } else {
-        alert(data.message);
+        Swal.fire({
+          icon: "error",
+          title: "Có lỗi xảy ra!",
+          text: data.message,
+          confirmButtonText: "OK",
+        });
       }
     })
     .catch((error) => {
       console.error("Lỗi khi đặt hàng:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Có lỗi xảy ra!",
+        text: "Vui lòng thử lại sau.",
+        confirmButtonText: "OK",
+      });
     });
 }
 
@@ -151,5 +168,16 @@ document.addEventListener("DOMContentLoaded", function () {
           text: "Không thể kiểm tra số điện thoại. Vui lòng thử lại sau.",
         });
       });
+  });
+});
+
+document.getElementById("paymentForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  Swal.fire({
+      icon: 'info',
+      title: 'Đang phát triển',
+      text: 'Tính năng này hiện đang được phát triển. Vui lòng quay lại sau.',
+      confirmButtonText: 'OK'
   });
 });

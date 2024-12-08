@@ -173,5 +173,5 @@ public class ProductServiceImpl implements ProductService {
 	public Page<Product> findByStatusTrue(Pageable pageable) {
 		return productRepository.findByStatusTrue(pageable);
 	}
-
+	
 }

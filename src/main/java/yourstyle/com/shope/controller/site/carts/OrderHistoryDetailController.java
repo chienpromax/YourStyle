@@ -1,5 +1,6 @@
 package yourstyle.com.shope.controller.site.carts;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +31,7 @@ import yourstyle.com.shope.model.OrderStatus;
 import yourstyle.com.shope.repository.CustomerRepository;
 import yourstyle.com.shope.service.AccountService;
 import yourstyle.com.shope.service.OrderService;
+import yourstyle.com.shope.service.OrderStatusHistoryService;
 
 @Controller
 @RequestMapping("/yourstyle/order")
@@ -41,6 +43,21 @@ public class OrderHistoryDetailController {
         private CustomerRepository customerRepository;
         @Autowired
         private AccountService accountService;
+        @Autowired
+        OrderStatusHistoryService orderStatusHistoryService;
+
+        @PostMapping("/complete/{id}")
+        public String completeOrder(@PathVariable("id") Integer orderId, RedirectAttributes redirectAttributes) {
+                Order order = orderService.findById(orderId)
+                                .orElseThrow(() -> new NoSuchElementException("Order not found with ID: " + orderId));
+
+                order.setStatus(OrderStatus.COMPLETED);
+                order.setTransactionStatus("ĐÃ HOÀN THÀNH");
+                orderService.save(order);
+
+                redirectAttributes.addFlashAttribute("message", "Đơn hàng đã hoàn thành.");
+                return "redirect:/yourstyle/order/orderhistorydetail/" + orderId;
+        }
 
         @PostMapping("/cancel/{id}")
         public String cancelOrder(@PathVariable("id") Integer orderId, RedirectAttributes redirectAttributes) {
@@ -73,6 +90,9 @@ public class OrderHistoryDetailController {
                 Customer customer = customerRepository.findCustomerWithAddresses(account.getCustomer().getCustomerId())
                                 .orElse(null);
                 List<Address> addresses = customer != null ? customer.getAddresses() : new ArrayList<>();
+
+                Map<String, Timestamp> latestStatusTime = orderStatusHistoryService.getLatestStatusTime(orderId);
+                model.addAttribute("latestStatusTime", latestStatusTime);
 
                 model.addAttribute("customer", customer);
                 model.addAttribute("addresses", addresses);

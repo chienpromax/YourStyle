@@ -1,141 +1,17 @@
-
-.login-container {
-    display: flex;
-    flex-wrap: wrap;
-    /* Cho phép các phần tử con xếp thành hàng khi cần */
-    width: 800px;
-    max-width: 100%;
-    /* Đảm bảo form vừa với màn hình nhỏ */
-    height: auto;
-    background-color: #fff;
-    border-radius: 30px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
-
-.login-form {
-    padding: 40px;
-    flex: 1;
+.login-form{
     text-align: center;
-    min-width: 300px;
-    /* Đảm bảo form không bị quá nhỏ */
+    min-height: 102vh;
+    background-color: hsl(0, 0%, 100%, 0.9);
+    z-index: 1;
+    margin-top: -50px;
+    color: #000000;
+
+}
+.login-form-background{
+    padding: 15px;
+    background-color: hsl(0, 0%, 100%, 0.7);
 }
 
-.register-info {
-    background-color: #285944;
-    color: white;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 40px;
-    min-width: 300px;
-    border-top-left-radius: 110px;
-    border-bottom-left-radius: 110px;
-    border-top-right-radius: 30px;
-    border-bottom-right-radius: 30px;
-}
-
-.register-info h2 {
-    margin-bottom: 10px;
-}
-
-.btn-custom {
-    background-color: #285944;
-    color: white;
-    width: 100%;
-    padding: 10px;
-    border-radius: 30px;
-    border: none;
-    margin-top: 20px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
-.btn-custom:hover {
-    background-color: #1f4734;
-}
-
-.btn-icon {
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: background-color 0.3s ease;
-}
-
-.btn-icon:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-}
-.btn-icon i{
-    font-size: 1.2rem;
-}
-
-.btn-container {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.input-container {
-    margin-top: 20px;
-}
-
-.register-info button {
-    background-color: white;
-    color: #285944;
-    border: none;
-    padding: 10px 30px;
-    border-radius: 20px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
-.register-info button:hover {
-    background-color: #e2e6ea;
-    color: #285944;
-}
-
-.form-control-th {
-    background-color: rgba(175, 175, 175, 0.24);
-    border-radius: 12px !important;
-    padding: 10px;
-    border: none;
-    transition: background-color 0.3s ease;
-}
-
-.form-control-th:focus {
-    background-color: rgba(200, 200, 200, 0.5);
-    outline: none;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-.btn-light {
-    border: 1px solid #ffffff !important;
-    background-color: transparent !important;
-    color: white !important;
-}
-
-.btn-light:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    /* color: white !important; */
-}
-
-/* Đảm bảo responsive tốt hơn trên các màn hình nhỏ */
-@media (max-width: 768px) {
-    .login-container {
-        flex-direction: column;
-        border-radius: 15px;
-    }
-
-    .register-info {
-        border-radius: 0;
-        padding: 30px;
-        margin-top: 20px;
-    }
+.btn-container > button > i{
+    font-size: 1.6rem;
 }

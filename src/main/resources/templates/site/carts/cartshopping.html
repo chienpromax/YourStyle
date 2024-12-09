@@ -6,6 +6,13 @@
 
 <body>
     <section th:fragment="cartshopping">
+
+        <!-- Video Backdrop -->
+        <video class="custom-video-backdrop" autoplay muted loop>
+            <source src="/site/video/cart-snow.mp4" type="video/mp4">
+            Trình duyệt của bạn không hỗ trợ video.
+        </video>
+
         <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-cart">
                 <div class="modal-content"
@@ -17,13 +24,14 @@
                         </h3>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
+                    <img src="/site/images/logo/cart-shoping-5.png" class="img-fluid">
+                    <div class="modal-body" style="margin-top: -25px;">
                         <div th:if="${orderDetails.size() == 0}" class="text-center py-4">
                             <h5>Giỏ hàng của bạn hiện đang trống</h5>
                         </div>
-                        <div th:if="${orderDetails.size() > 0}" class="table-responsive bg-light">
-                            <table class="table bg-light">
-                                <tbody th:each="orderDetail : ${orderDetails}">
+                        <div th:if="${orderDetails.size() > 0}" class="table-responsive">
+                            <table class="table">
+                                <tbody th:each="orderDetail : ${orderDetails}" >
                                     <tr class="align-items-stretch" data-order-detail-id="${orderDetail.orderDetailId}">
                                         <td class="text-center" scope="row">
                                             <a
@@ -33,7 +41,7 @@
                                                     style="object-fit: cover; max-height: 150px;" class="img-fluid" />
                                             </a>
                                         </td>
-                                        <td>
+                                        <td  style="background-color: white; opacity: 0.9;">
                                             <span th:text="${orderDetail.productVariant.product.name}"
                                                 style="font-size: 0.9rem;"></span><br>
                                             <span th:text="${orderDetail.productVariant.color.colorName}"
@@ -100,6 +108,14 @@
             </div>
         </div>
         <script>
+            document.getElementById('cartModal').addEventListener('show.bs.modal', function () {
+                document.querySelector('.custom-video-backdrop').style.display = 'block'; // Hiển thị video
+            });
+
+            document.getElementById('cartModal').addEventListener('hide.bs.modal', function () {
+                document.querySelector('.custom-video-backdrop').style.display = 'none'; // Ẩn video
+            });
+
             function removeProduct(orderDetailId) {
                 fetch('/api/carts/removeProduct', {
                     method: 'POST',

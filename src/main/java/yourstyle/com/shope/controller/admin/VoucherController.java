@@ -508,7 +508,6 @@ public class VoucherController {
         headerRow.createCell(12).setCellValue("Create At");
         headerRow.createCell(13).setCellValue("Is Public");
 
-        // Lấy danh sách voucher
         List<Voucher> vouchers = voucherService.findAll();
 
         // Thêm dữ liệu vào sheet

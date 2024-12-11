@@ -65,10 +65,6 @@ public class Voucher implements Serializable {
 
     private Boolean isPublic;
 
-    // @ManyToOne
-    // @JoinColumn(name = "createBy", nullable = false)
-    // private Account account;
-
     @JsonIgnore
     @OneToMany(mappedBy = "voucher", fetch = FetchType.EAGER)
     List<VoucherCustomer> voucherCustomers;

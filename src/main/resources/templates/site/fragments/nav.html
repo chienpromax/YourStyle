@@ -93,10 +93,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
                                 <!-- Hiển thị tên người dùng nếu đã đăng nhập -->
-                                <li sec:authorize="isAuthenticated()">
-                                    <!-- <span class="dropdown-item" 
-                                          th:text="${currentUser != null && currentUser.fullname != null ? currentUser.fullname : currentUser.account.email}"></span> -->
-                                </li>
+
                                 <li sec:authorize="!isAuthenticated()">
                                     <a class="dropdown-item" th:href="@{/yourstyle/accounts/login}">ĐĂNG NHẬP</a>
                                 </li>
@@ -121,7 +118,7 @@
                                 </li>
                             </ul>
                         </div>
-
+                        
                     </div>
                 </div>
             </nav>

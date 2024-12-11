@@ -241,4 +241,10 @@ public class AccountServiceImpl implements AccountService {
 				.filter(account -> !customerAccountIds.contains(account.getAccountId()))
 				.collect(Collectors.toList());
 	}
+
+	@Override
+    public Customer saveCustomer(Customer customer) {
+        return customerRepository.save(customer);
+    }
+
 }

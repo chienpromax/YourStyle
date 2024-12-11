@@ -94,7 +94,7 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>5.2.3</version> 
+			<version>5.2.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -108,7 +108,7 @@
 		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>kernel</artifactId>
-			<version>7.2.6</version> 
+			<version>7.2.6</version>
 		</dependency>
 		<dependency>
 			<groupId>com.itextpdf</groupId>
@@ -121,7 +121,15 @@
 			<version>7.2.6</version>
 			<type>pom</type>
 		</dependency>
-		
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
+			<version>3.1.2.RELEASE</version>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
 
 import yourstyle.com.shope.model.Account;
+import yourstyle.com.shope.model.Customer;
 
 public interface AccountService {
 
@@ -52,5 +53,7 @@ public interface AccountService {
 	Optional<Account> findByEmail(String email);
 
 	List<Account> findAccountsWithoutCustomer();
+
+	Customer saveCustomer(Customer customer);
 
 }

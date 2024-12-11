@@ -1,5 +1,6 @@
 package yourstyle.com.shope.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.LockedException;
@@ -8,14 +9,17 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import yourstyle.com.shope.controller.site.accounts.LoginWithFBGGController;
+import yourstyle.com.shope.service.CustomOAuth2UserService;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    @Autowired
+    CustomOAuth2UserService customOAuth2UserService;
+    @Autowired
+    LoginWithFBGGController loginWithFBGGController;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -61,18 +65,26 @@ public class SecurityConfig {
                                 response.sendRedirect("/yourstyle/home");
                             }
                         }))
-                .logout(logout -> logout
-                        .logoutUrl("/yourstyle/accounts/logout")
-                        .logoutSuccessUrl("/yourstyle/accounts/login")
-                        .clearAuthentication(true)
-                        .deleteCookies("JSESSIONID", "remember-me")
-                        .invalidateHttpSession(true))
+                .oauth2Login(oauth2Login -> oauth2Login
+                        .loginPage("/yourstyle/accounts/login")
+                        .successHandler(loginWithFBGGController)
+                        .failureUrl("/yourstyle/accounts/login")
+                        .userInfoEndpoint()
+                        .userService(customOAuth2UserService)
+                        .and())                
                 .rememberMe(rememberMe -> rememberMe
                         .key("uniqueAndSecret")
                         .tokenValiditySeconds(86400)
                         .rememberMeParameter("remember-me")
                         .useSecureCookie(false)
-                        .alwaysRemember(false));
+                        .alwaysRemember(false))
+                .logout(logout -> logout
+                        .logoutUrl("/yourstyle/accounts/logout")
+                        .logoutSuccessUrl("/yourstyle/accounts/login")
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID", "remember-me")
+                        .invalidateHttpSession(true));
+
         return http.build();
     }
 }

@@ -22,10 +22,14 @@
                     <h1>Đăng Nhập</h1>
                     <div class="btn-container py-4">
                         <button class="btn btn-google btn-icon">
-                            <i class="bi bi-google"></i>
+                            <a href="/oauth2/authorization/google">
+                                <i class="bi bi-google"></i>
+                            </a>
                         </button>
                         <button class="btn btn-facebook btn-icon">
-                            <i class="bi bi-facebook"></i>
+                            <a href="/oauth2/authorization/facebook">
+                                <i class="bi bi-facebook"></i>
+                            </a>
                         </button>
                     </div>
                     <div id="loginError" th:attr="data-error=${errorMessage}" style="display: none;"></div>

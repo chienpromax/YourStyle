@@ -50,6 +50,8 @@ import yourstyle.com.shope.validation.admin.VoucherDTO;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Controller
 @RequestMapping("admin/vouchers")
@@ -86,6 +88,18 @@ public class VoucherController {
 
         if (optional.isPresent()) {
             Voucher voucher = optional.get(); // Lấy dữ liệu nếu tồn tại
+            voucher.setMinTotalAmount(
+                    voucher.getMinTotalAmount().setScale(0, RoundingMode.FLOOR).multiply(new BigDecimal(1000)));
+            voucher.setMaxTotalAmount(
+                    voucher.getMaxTotalAmount().setScale(0, RoundingMode.FLOOR).multiply(new BigDecimal(1000)));
+            if (voucher.getType() == 2) {
+                voucher.setDiscountAmount(
+                        voucher.getDiscountAmount().setScale(0, RoundingMode.FLOOR));
+            } else {
+                voucher.setDiscountAmount(
+                        voucher.getDiscountAmount().setScale(0, RoundingMode.FLOOR).multiply(new BigDecimal(1000)));
+            }
+
             model.addAttribute("voucher", voucher); // Thêm vào model với tên "voucher"
 
             return new ModelAndView("admin/vouchers/addOrEdit", model); // Trả về view để chỉnh sửa
@@ -203,166 +217,179 @@ public class VoucherController {
     }
 
     @PostMapping("saveOrUpdate")
-public ModelAndView saveOrUpdate(
-        @Valid @ModelAttribute("voucher") VoucherDTO voucherDto,
-        BindingResult result,
-        RedirectAttributes redirectAttributes,
-        ModelMap model) {
+    public ModelAndView saveOrUpdate(
+            @Valid @ModelAttribute("voucher") VoucherDTO voucherDto,
+            BindingResult result,
+            RedirectAttributes redirectAttributes,
+            ModelMap model) {
 
-    // Lấy thông tin người dùng hiện tại
-    String username = SecurityContextHolder.getContext().getAuthentication().getName();
-    Account account = accountService.findByUsername(username);
-    voucherDto.setAccount(account); // Thiết lập người tạo
+        // Lấy thông tin người dùng hiện tại
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account account = accountService.findByUsername(username);
+        voucherDto.setAccount(account); // Thiết lập người tạo
 
-    if (result.hasErrors()) {
-        // Nếu có lỗi, lấy danh sách khách hàng và trả về form
-        List<Customer> customers = customerService.findAll();
-        model.addAttribute("customers", customers);
-        model.addAttribute("voucher", voucherDto);
-        model.addAttribute("messageType", "error");
-        model.addAttribute("messageContent", "Lỗi! Vui lòng kiểm tra thông tin!");
-        return new ModelAndView("admin/vouchers/addOrEdit", model);
-    }
+        validationVoucher(voucherDto, result);
 
-    // Tạo hoặc cập nhật voucher
-    Voucher voucher = new Voucher();
-    if (voucherDto.getVoucherId() != null) {
-        // Nếu voucherId tồn tại, kiểm tra và cập nhật
-        Optional<Voucher> existingVoucherOpt = voucherService.findByVoucherId(voucherDto.getVoucherId());
-        if (existingVoucherOpt.isPresent()) {
-            Voucher existingVoucher = existingVoucherOpt.get();
-            BeanUtils.copyProperties(voucherDto, existingVoucher, "voucherId");
-            voucherService.save(existingVoucher); // Cập nhật voucher
-            redirectAttributes.addFlashAttribute("messageType", "success");
-            redirectAttributes.addFlashAttribute("messageContent", "Cập nhật voucher thành công!");
-        } else {
-            redirectAttributes.addFlashAttribute("messageType", "error");
-            redirectAttributes.addFlashAttribute("messageContent", "Voucher không tồn tại.");
+        if (result.hasErrors()) {
+            // Nếu có lỗi, lấy danh sách khách hàng và trả về form
+            List<Customer> customers = customerService.findAll();
+            model.addAttribute("customers", customers);
+            model.addAttribute("voucher", voucherDto);
+            model.addAttribute("messageType", "error");
+            model.addAttribute("messageContent", "Lỗi! Vui lòng kiểm tra thông tin!");
             return new ModelAndView("admin/vouchers/addOrEdit", model);
         }
-    } else {
-        // Nếu voucherId không tồn tại, thêm mới
-        BeanUtils.copyProperties(voucherDto, voucher);
-        voucherService.save(voucher);
-        redirectAttributes.addFlashAttribute("messageType", "success");
-        redirectAttributes.addFlashAttribute("messageContent", "Thêm voucher thành công!");
-    }
-
-    // Gửi email tới tất cả khách hàng với HTML
-    List<Customer> customers = customerService.findAll();
-    String subject = "🎉 Voucher mới từ YourStyle đến! 🎉";
-    String htmlBodyTemplate = """
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f7f7f7; }
-                .email-container { max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); overflow: hidden; }
-                .email-header { background-color: #4CAF50; color: white; text-align: center; padding: 20px 0; }
-                .email-content { padding: 20px; color: #333; }
-                .email-footer { background-color: #f1f1f1; text-align: center; padding: 10px; font-size: 12px; color: #777; }
-                .cta-button { display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; }
-                .cta-button:hover { background-color: #45a049; }
-            </style>
-        </head>
-        <body>
-            <div class="email-container">
-                <div class="email-header">
-                    <h1>🎉 Voucher Mới Từ YourStyle! 🎉</h1>
-                </div>
-                <div class="email-content">
-                    <p>Chào bạn,</p>
-                    <p>Chúng tôi rất vui mừng thông báo rằng bạn đã nhận được một voucher giảm giá hấp dẫn:</p>
-                    <ul>
-                        <li><strong>Tên giảm giá:</strong> %s</li>
-                        <li><strong>Mã giảm giá:</strong> %s</li>
-                        <li><strong>Giảm giá:</strong> %s%%</li>
-                        <li><strong>Hạn sử dụng:</strong> %s</li>
-                    </ul>
-                    <p>Hãy sử dụng voucher này ngay hôm nay để tận hưởng ưu đãi đặc biệt của chúng tôi!</p>
-                    <a href="http://localhost:8080/yourstyle/home" class="cta-button">Sử Dụng Ngay</a>
-                </div>
-                <div class="email-footer">
-                    <p>Cảm ơn bạn đã đồng hành cùng YourStyle!</p>
-                </div>
-            </div>
-        </body>
-        </html>
-    """;
-
-    for (Customer customer : customers) {
-        if (customer.getAccount() != null && customer.getAccount().getEmail() != null) {
-            // Chèn dữ liệu vào template HTML
-            String htmlBody = String.format(
-                htmlBodyTemplate,
-                voucher.getVoucherName(),
-                voucher.getVoucherCode(),
-                voucher.getDiscountAmount(),
-                voucher.getEndDate()
-            );
-            emailService.sendVoucherEmail(customer.getAccount().getEmail(), subject, htmlBody);
+        voucherDto.setMinTotalAmount(roundAndRemoveTrailingZeros(voucherDto.getMinTotalAmount()));
+        voucherDto.setMaxTotalAmount(roundAndRemoveTrailingZeros(voucherDto.getMaxTotalAmount()));
+        if (voucherDto.getType() != 2) {
+            voucherDto.setDiscountAmount(roundAndRemoveTrailingZeros(voucherDto.getDiscountAmount()));
         }
+
+        // Tạo hoặc cập nhật voucher
+        Voucher voucher = new Voucher();
+        if (voucherDto.getVoucherId() != null) {
+            // Nếu voucherId tồn tại, kiểm tra và cập nhật
+            Optional<Voucher> existingVoucherOpt = voucherService.findByVoucherId(voucherDto.getVoucherId());
+            if (existingVoucherOpt.isPresent()) {
+                Voucher existingVoucher = existingVoucherOpt.get();
+                BeanUtils.copyProperties(voucherDto, existingVoucher, "voucherId");
+                voucherService.save(existingVoucher); // Cập nhật voucher
+                redirectAttributes.addFlashAttribute("messageType", "success");
+                redirectAttributes.addFlashAttribute("messageContent", "Cập nhật voucher thành công!");
+            } else {
+                redirectAttributes.addFlashAttribute("messageType", "error");
+                redirectAttributes.addFlashAttribute("messageContent", "Voucher không tồn tại.");
+                return new ModelAndView("admin/vouchers/addOrEdit", model);
+            }
+        } else {
+            // Nếu voucherId không tồn tại, thêm mới
+            BeanUtils.copyProperties(voucherDto, voucher);
+            voucherService.save(voucher);
+            redirectAttributes.addFlashAttribute("messageType", "success");
+            redirectAttributes.addFlashAttribute("messageContent", "Thêm voucher thành công!");
+        }
+
+        // Gửi email tới tất cả khách hàng với HTML
+        List<Customer> customers = customerService.findAll();
+        String subject = "🎉 Voucher mới từ YourStyle đến! 🎉";
+        String htmlBodyTemplate = """
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f7f7f7; }
+                            .email-container { max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); overflow: hidden; }
+                            .email-header { background-color: #4CAF50; color: white; text-align: center; padding: 20px 0; }
+                            .email-content { padding: 20px; color: #333; }
+                            .email-footer { background-color: #f1f1f1; text-align: center; padding: 10px; font-size: 12px; color: #777; }
+                            .cta-button { display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; }
+                            .cta-button:hover { background-color: #45a049; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="email-container">
+                            <div class="email-header">
+                                <h1>🎉 Voucher Mới Từ YourStyle! 🎉</h1>
+                            </div>
+                            <div class="email-content">
+                                <p>Chào bạn,</p>
+                                <p>Chúng tôi rất vui mừng thông báo rằng bạn đã nhận được một voucher giảm giá hấp dẫn:</p>
+                                <ul>
+                                    <li><strong>Tên giảm giá:</strong> %s</li>
+                                    <li><strong>Mã giảm giá:</strong> %s</li>
+                                    <li><strong>Giảm giá:</strong> %s%%</li>
+                                    <li><strong>Hạn sử dụng:</strong> %s</li>
+                                </ul>
+                                <p>Hãy sử dụng voucher này ngay hôm nay để tận hưởng ưu đãi đặc biệt của chúng tôi!</p>
+                                <a href="http://localhost:8080/yourstyle/home" class="cta-button">Sử Dụng Ngay</a>
+                            </div>
+                            <div class="email-footer">
+                                <p>Cảm ơn bạn đã đồng hành cùng YourStyle!</p>
+                            </div>
+                        </div>
+                    </body>
+                    </html>
+                """;
+
+        for (Customer customer : customers) {
+            if (customer.getAccount() != null && customer.getAccount().getEmail() != null) {
+                // Chèn dữ liệu vào template HTML
+                String htmlBody = String.format(
+                        htmlBodyTemplate,
+                        voucher.getVoucherName(),
+                        voucher.getVoucherCode(),
+                        voucher.getDiscountAmount(),
+                        voucher.getEndDate());
+                emailService.sendVoucherEmail(customer.getAccount().getEmail(), subject,
+                        htmlBody);
+            }
+        }
+
+        redirectAttributes.addFlashAttribute("messageType", "success");
+        redirectAttributes.addFlashAttribute("messageContent", "Thêm/cập nhật voucher và gửi email thành công!");
+        return new ModelAndView("redirect:/admin/vouchers");
     }
 
-    redirectAttributes.addFlashAttribute("messageType", "success");
-    redirectAttributes.addFlashAttribute("messageContent", "Thêm/cập nhật voucher và gửi email thành công!");
-    return new ModelAndView("redirect:/admin/vouchers");
-}
+    public void validationVoucher(VoucherDTO voucherDto, BindingResult result) {
+        if (voucherDto.getVoucherCode() == null) {
+            if (voucherService.existsByVoucherCode(voucherDto.getVoucherCode())) {
+                result.rejectValue("voucherCode", "error.voucherCode", "Mã voucher đã tồn tại.");
+            }
+        }
 
+        if (voucherDto.getVoucherName() == null) {
+            if (voucherService.existsByVoucherName(voucherDto.getVoucherName())) {
+                result.rejectValue("voucherName", "error.voucherName", "Tên voucher đã tồn tại.");
+            }
+        }
 
-    // @PostMapping("saveOrUpdate")
-    // public ModelAndView saveOrUpdate(ModelMap model,
-    //         @Valid @ModelAttribute("voucher") VoucherDTO voucherDTO,
-    //         RedirectAttributes redirectAttributes,
-    //         BindingResult result) {
+        if (voucherDto.getMinTotalAmount() != null && voucherDto.getMaxTotalAmount() != null) {
+            if (voucherDto.getMinTotalAmount().compareTo(voucherDto.getMaxTotalAmount()) > 0) {
+                result.rejectValue("minTotalAmount", "error.minTotalAmount",
+                        "Giá trị nhỏ nhất không được lớn hơn giá trị lớn nhất.");
+            }
+        }
 
-    //     String username = SecurityContextHolder.getContext().getAuthentication().getName();
-    //     Account account = accountService.findByUsername(username);
+        if (voucherDto.getDiscountAmount() != null) {
+            BigDecimal maxAmount = voucherDto.getMaxTotalAmount();
 
-    //     voucherDTO.setAccount(account); // Thiết lập người tạo
+            if (maxAmount != null && voucherDto.getDiscountAmount().compareTo(maxAmount) > 0) {
+                result.rejectValue("discountAmount", "error.discountAmount",
+                        "Giảm giá không được lớn hơn giá trị tối đa.");
+            }
+        }
 
-    //     // Kiểm tra lỗi dữ liệu từ DTO
-    //     if (result.hasErrors()) {
-    //         // Nếu có lỗi, lấy danh sách khách hàng và thêm vào model
-    //         List<Customer> customers = customerService.findAll(); // Lấy danh sách khách hàng từ service
-    //         model.addAttribute("customers", customers); // Thêm danh sách khách hàng vào model
-    //         return new ModelAndView("admin/vouchers/addOrEdit", model);
-    //     }
-    //     // Khởi tạo đối tượng Voucher để lưu vào DB
-    //     Voucher voucher = new Voucher();
-    //     BeanUtils.copyProperties(voucherDTO, voucher); // Copy dữ liệu từ DTO sang entity
+        if (voucherDto.getType() == 2) {
+            if (voucherDto.getDiscountAmount() != null) {
+                BigDecimal minDiscount = new BigDecimal("1");
+                BigDecimal maxDiscount = new BigDecimal("100");
 
-    //     // Khởi tạo voucher cho vouchercustomer
-    //     Voucher voucherForCustomer = new Voucher();
+                if (voucherDto.getDiscountAmount().compareTo(minDiscount) < 0
+                        || voucherDto.getDiscountAmount().compareTo(maxDiscount) > 0) {
+                    result.rejectValue("discountAmount", "error.discountAmount",
+                            "Giảm giá phần trăm phải từ 1 đến 100.");
+                }
+            }
+        } else {
+            if (voucherDto.getDiscountAmount() != null) {
+                BigDecimal minAmount = new BigDecimal("1000");
+                if (voucherDto.getDiscountAmount().compareTo(minAmount) <= 0) {
+                    result.rejectValue("discountAmount", "error.discountAmount",
+                            "Số tiền tối thiều phải lớn hơn 1000.");
+                }
+            }
+        }
 
-    //     // Kiểm tra xem voucherId có null không
-    //     if (voucherDTO.getVoucherId() != null) {
-    //         // Nếu voucherId không null, kiểm tra voucher trong DB
-    //         Optional<Voucher> existingVoucherOpt = voucherService.findByVoucherId(voucherDTO.getVoucherId());
+    }
 
-    //         if (existingVoucherOpt.isPresent()) {
-    //             // Nếu đã tồn tại, cập nhật thông tin
-    //             Voucher existingVoucher = existingVoucherOpt.get();
-    //             BeanUtils.copyProperties(voucherDTO, existingVoucher, "voucherId"); // Bỏ qua voucherId khi copy
-
-    //             voucherForCustomer = voucherService.createVoucher(existingVoucher); // Cập nhật voucher
-    //             model.addAttribute("messageType", "success");
-    //             model.addAttribute("messageContent", "Cập nhật voucher thành công");
-    //         } else {
-    //             model.addAttribute("messageType", "error");
-    //             model.addAttribute("messageContent", "Voucher không tồn tại.");
-    //             return new ModelAndView("admin/vouchers/addOrEdit", model);
-    //         }
-    //     } else {
-    //         // Nếu voucherId là null, thêm mới voucher
-    //         voucherForCustomer = voucherService.createVoucher(voucher); // Thêm mới voucher
-    //         model.addAttribute("messageType", "success");
-    //         model.addAttribute("messageContent", "Thêm voucher thành công");
-    //     }
-
-    //     // Chuyển hướng về danh sách voucher
-    //     return new ModelAndView("redirect:/admin/vouchers", model);
-    // }
+    public static BigDecimal roundAndRemoveTrailingZeros(BigDecimal amount) {
+        if (amount == null) {
+            return BigDecimal.ZERO;
+        }
+        BigDecimal thousand = new BigDecimal(1000);
+        BigDecimal rounded = amount.divide(thousand, 0, RoundingMode.HALF_UP); // Làm tròn đến hàng nghìn
+        return rounded.stripTrailingZeros(); // Loại bỏ phần thập phân nếu có
+    }
 
     @GetMapping("")
     public String list(Model model,

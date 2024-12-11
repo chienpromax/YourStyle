@@ -39,6 +39,7 @@ public class VoucherDTO {
     @DecimalMin(value = "0.0", inclusive = false, message = "Giá trị thấp nhất phải lớn hơn 0")
     private BigDecimal minTotalAmount;
 
+    @NotNull(message = "Giá trị lớn nhất không được để trống")
     @DecimalMin(value = "0.0", message = "Giá trị lớn nhất phải lớn hơn hoặc bằng 0")
     private BigDecimal maxTotalAmount;
 
@@ -79,5 +80,4 @@ public class VoucherDTO {
         this.formattedDiscount = formattedDiscount;
         this.finalTotalAmount = finalTotalAmount;
     }
-
 }

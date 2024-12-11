@@ -71,6 +71,15 @@ public class VoucherServiceImpl implements VoucherService {
     public List<Voucher> findVouchersByTotalAmount(BigDecimal totalAmount) {
         return voucherRepository.findVouchersByTotalAmount(totalAmount);
     }
-    
+
+    @Override
+    public boolean existsByVoucherCode(String voucherCode) {
+        return voucherRepository.existsByVoucherCode(voucherCode);
+    }
+
+    @Override
+    public boolean existsByVoucherName(String voucherName) {
+        return voucherRepository.existsByVoucherName(voucherName);
+    }
 
 }

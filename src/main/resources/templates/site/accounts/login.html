@@ -9,7 +9,7 @@
 
 <body>
     <section class="py-5 container" layout:fragment="main">
-        <video autoplay muted loop playsinline src="/site/video/login.mp4"> </video>
+        <video id="video2" autoplay muted loop playsinline src="/site/video/login.mp4"> </video>
         <div class="video-controls">
             <i id="playPauseIcon2" class="fas fa-pause"></i>
             <i id="muteUnmuteIcon2" class="fas fa-volume-mute"></i>
@@ -81,41 +81,29 @@
             }
 
             document.addEventListener("DOMContentLoaded", function () {
-                const video = document.querySelector("video");
+                const video = document.getElementById("video2");
                 const playPauseIcon = document.getElementById("playPauseIcon2");
                 const muteUnmuteIcon = document.getElementById("muteUnmuteIcon2");
 
-                console.log(video, playPauseIcon, muteUnmuteIcon);
+                // Thêm sự kiện cho nút phát/tạm dừng
+                playPauseIcon.addEventListener("click", function () {
+                    if (video.paused) {
+                        video.play();
+                        playPauseIcon.classList.remove("fa-play");
+                        playPauseIcon.classList.add("fa-pause");
+                    } else {
+                        video.pause();
+                        playPauseIcon.classList.remove("fa-pause");
+                        playPauseIcon.classList.add("fa-play");
+                    }
+                });
 
-                if (playPauseIcon && muteUnmuteIcon && video) {
-                    playPauseIcon.addEventListener("click", function () {
-                        console.log("Video paused state before click:", video.paused);
-                        if (video.paused) {
-                            video.play();
-                            console.log("Video is now playing");
-                            playPauseIcon.classList.remove("fa-play");
-                            playPauseIcon.classList.add("fa-pause");
-                        } else {
-                            video.pause();
-                            console.log("Video is now paused");
-                            playPauseIcon.classList.remove("fa-pause");
-                            playPauseIcon.classList.add("fa-play");
-                        }
-                    });
-
-                    muteUnmuteIcon.addEventListener("click", function () {
-                        video.muted = !video.muted;
-                        if (video.muted) {
-                            muteUnmuteIcon.classList.remove("fa-volume-up");
-                            muteUnmuteIcon.classList.add("fa-volume-mute");
-                        } else {
-                            muteUnmuteIcon.classList.remove("fa-volume-mute");
-                            muteUnmuteIcon.classList.add("fa-volume-up");
-                        }
-                    });
-                } else {
-                    console.error("Các phần tử cần thiết không tồn tại.");
-                }
+                // Thêm sự kiện cho nút tắt/bật âm thanh
+                muteUnmuteIcon.addEventListener("click", function () {
+                    video.muted = !video.muted;
+                    muteUnmuteIcon.classList.toggle("fa-volume-mute", video.muted);
+                    muteUnmuteIcon.classList.toggle("fa-volume-up", !video.muted);
+                });
             });
 
         </script>

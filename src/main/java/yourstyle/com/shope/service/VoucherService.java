@@ -13,6 +13,7 @@ import yourstyle.com.shope.model.Voucher;
 
 public interface VoucherService {
     void save(Voucher voucher);
+
     // Thêm một voucher mới
     Voucher createVoucher(Voucher voucher);
 
@@ -28,9 +29,13 @@ public interface VoucherService {
             LocalDateTime toDate, Pageable pageable);
 
     List<Voucher> findAll();
-    
+
     Optional<Voucher> findByVoucherCode(String voucherCode);
 
     List<Voucher> findVouchersByTotalAmount(BigDecimal totalAmount);
+
+    boolean existsByVoucherCode(String voucherCode);
+
+    boolean existsByVoucherName(String voucherName);
 
 }

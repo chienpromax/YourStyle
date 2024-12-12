@@ -42,4 +42,10 @@ public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
         @Query("SELECT v FROM Voucher v WHERE :totalAmount >= v.minTotalAmount AND (:totalAmount <= v.maxTotalAmount OR v.maxTotalAmount IS NULL)")
         List<Voucher> findVouchersByTotalAmount(@Param("totalAmount") BigDecimal totalAmount);
 
+        @Query("SELECT COUNT(*) > 0 FROM Voucher v WHERE v.voucherCode = ?1")
+        boolean existsByVoucherCode(String voucherCode);
+
+        @Query("SELECT COUNT(*) > 0 FROM Voucher v WHERE v.voucherName = ?1")
+        boolean existsByVoucherName(String voucherName);
+
 }

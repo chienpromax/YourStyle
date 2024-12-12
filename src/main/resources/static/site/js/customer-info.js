@@ -28,34 +28,37 @@ document.addEventListener("click", function (event) {
   }
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-  const video = document.querySelector("video");
-  const playPauseIcon = document.getElementById("playPauseIcon");
-  const muteUnmuteIcon = document.getElementById("muteUnmuteIcon");
+document.querySelectorAll('.video-controls').forEach(control => {
+  const videoId = control.getAttribute('data-video');
+  const video = document.getElementById(videoId);
 
-  playPauseIcon.addEventListener("click", function () {
-    if (video.paused) {
-      video.play();
-      playPauseIcon.classList.remove("fa-play");
-      playPauseIcon.classList.add("fa-pause");
-    } else {
-      video.pause();
-      playPauseIcon.classList.remove("fa-pause");
-      playPauseIcon.classList.add("fa-play");
-    }
+  const playPauseIcon = control.querySelector('.fas.fa-pause, .fas.fa-play');
+  const muteUnmuteIcon = control.querySelector('.fas.fa-volume-mute, .fas.fa-volume-up');
+
+  playPauseIcon.addEventListener('click', () => {
+      if (video.paused) {
+          video.play();
+          playPauseIcon.classList.remove('fa-play');
+          playPauseIcon.classList.add('fa-pause');
+      } else {
+          video.pause();
+          playPauseIcon.classList.remove('fa-pause');
+          playPauseIcon.classList.add('fa-play');
+      }
   });
 
-  muteUnmuteIcon.addEventListener("click", function () {
-    video.muted = !video.muted;
-    if (video.muted) {
-      muteUnmuteIcon.classList.remove("fa-volume-up");
-      muteUnmuteIcon.classList.add("fa-volume-mute");
-    } else {
-      muteUnmuteIcon.classList.remove("fa-volume-mute");
-      muteUnmuteIcon.classList.add("fa-volume-up");
-    }
+  muteUnmuteIcon.addEventListener('click', () => {
+      video.muted = !video.muted;
+      if (video.muted) {
+          muteUnmuteIcon.classList.remove('fa-volume-up');
+          muteUnmuteIcon.classList.add('fa-volume-mute');
+      } else {
+          muteUnmuteIcon.classList.remove('fa-volume-mute');
+          muteUnmuteIcon.classList.add('fa-volume-up');
+      }
   });
 });
+
 
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.querySelector(".info-customer-form");

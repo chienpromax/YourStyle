@@ -11,8 +11,8 @@
     <section class="py-5 container" layout:fragment="main">
         <video autoplay muted loop playsinline src="/site/video/login.mp4"> </video>
         <div class="video-controls">
-            <i id="playPauseIcon" class="fas fa-pause"></i>
-            <i id="muteUnmuteIcon" class="fas fa-volume-mute"></i>
+            <i id="playPauseIcon2" class="fas fa-pause"></i>
+            <i id="muteUnmuteIcon2" class="fas fa-volume-mute"></i>
         </div>
         <div class="row">
             <!-- Form đăng nhập (bên trái) -->
@@ -21,16 +21,16 @@
                 <div class="login-form-background">
                     <h1>Đăng Nhập</h1>
                     <div class="btn-container py-4">
-                        <button class="btn btn-google btn-icon">
-                            <a href="/oauth2/authorization/google">
-                                <i class="bi bi-google"></i>
-                            </a>
-                        </button>
-                        <button class="btn btn-facebook btn-icon">
-                            <a href="/oauth2/authorization/facebook">
-                                <i class="bi bi-facebook"></i>
-                            </a>
-                        </button>
+                        <a href="/oauth2/authorization/google">
+                            <button class="btn btn-google btn-icon">
+                                <i class="bi bi-google fs-2"></i>
+                            </button>
+                        </a>
+                        <a href="/oauth2/authorization/facebook">
+                            <button class="btn btn-facebook btn-icon">
+                                <i class="bi bi-facebook fs-2"></i>
+                            </button>
+                        </a>
                     </div>
                     <div id="loginError" th:attr="data-error=${errorMessage}" style="display: none;"></div>
                     <h5 class="mt-3 text-center">Sử dụng tài khoản của bạn</h5>
@@ -82,19 +82,22 @@
 
             document.addEventListener("DOMContentLoaded", function () {
                 const video = document.querySelector("video");
-                const playPauseIcon = document.getElementById("playPauseIcon");
-                const muteUnmuteIcon = document.getElementById("muteUnmuteIcon");
+                const playPauseIcon = document.getElementById("playPauseIcon2");
+                const muteUnmuteIcon = document.getElementById("muteUnmuteIcon2");
 
                 console.log(video, playPauseIcon, muteUnmuteIcon);
 
                 if (playPauseIcon && muteUnmuteIcon && video) {
                     playPauseIcon.addEventListener("click", function () {
+                        console.log("Video paused state before click:", video.paused);
                         if (video.paused) {
                             video.play();
+                            console.log("Video is now playing");
                             playPauseIcon.classList.remove("fa-play");
                             playPauseIcon.classList.add("fa-pause");
                         } else {
                             video.pause();
+                            console.log("Video is now paused");
                             playPauseIcon.classList.remove("fa-pause");
                             playPauseIcon.classList.add("fa-play");
                         }

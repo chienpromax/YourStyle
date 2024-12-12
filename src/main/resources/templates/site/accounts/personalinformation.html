@@ -8,10 +8,10 @@
 
 <body>
 	<section class="py-5 container" layout:fragment="main">
-		<video autoplay muted loop playsinline src="/site/video/background-2.mp4"> </video>
-		<div class="video-controls">
-			<i id="playPauseIcon" class="fas fa-pause"></i>
-			<i id="muteUnmuteIcon" class="fas fa-volume-mute"></i>
+		<video id="video1" autoplay muted loop playsinline src="/site/video/background-2.mp4"> </video>
+		<div class="video-controls" data-video="video1">
+			<i id="playPauseIcon1" class="fas fa-pause"></i>
+			<i id="muteUnmuteIcon1" class="fas fa-volume-mute"></i>
 		</div>
 		<section class="row info-customer">
 			<div class="col-md-5"></div>
@@ -28,9 +28,10 @@
 								<input type="file" th:field="*{imageFile}" id="avatarInput" class="form-control d-none"
 									onchange="loadFile(event)" />
 								<div class="avatar_wrapper d-flex align-items-center justify-content-center">
-									<img id="avatarImage" th:src="@{${'/uploads/' + currentUser.avatar}}"
+									<img id="avatarImage"
+										th:src="${currentUser.avatar != null ? '/uploads/' + currentUser.avatar : '/site/images/logo/user-icon.png'}"
 										class="rounded-circle border border-dark border-1 img-fluid"
-										style="width: 200px; max-height: 200px; cursor: pointer;;" />
+										style="width: 200px; max-height: 200px; cursor: pointer;" />
 								</div>
 							</div>
 						</div>
@@ -38,10 +39,10 @@
 							<label for="" class="form-label"><i class="fa-solid fa-envelope"></i></label>
 							<span th:text="${customer.account.email}"></span><br>
 							<label for="" class="form-label"><i class="fa-solid fa-location-dot"></i></label>
-							<span
-								th:text="${defaultAddress.street} + ', ' + ${defaultAddress.district} + ', ' + ${defaultAddress.city} + ', ' + ${defaultAddress.ward}"></span>
+							<span th:text="${defaultAddress.street != null ? defaultAddress.street : 'Chưa có địa chỉ'}"></span>
 							<fieldset class="row mb-3 mt-3">
-								<legend class="col-12 col-md-12 col-form-label pt-0" style="color: black;">
+								<legend class="col-12 col-md-12 col-form-label pt-0"
+									style="color: black; font-size: 1.2rem;">
 									<span class="text-danger">*</span> Giới tính
 								</legend>
 								<div class="col-12 col-md-12 d-flex align-items-center">

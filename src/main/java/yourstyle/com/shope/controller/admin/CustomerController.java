@@ -219,26 +219,26 @@ public class CustomerController {
 	}
 
 	@GetMapping("delete/{customerId}")
-	public ModelAndView delete(ModelMap model, @PathVariable("customerId") Integer customerId,
-			RedirectAttributes redirectAttribute) {
+	public ModelAndView delete(@PathVariable("customerId") Integer customerId, RedirectAttributes redirectAttribute) {
 		Optional<Customer> customer = customerService.findById(customerId);
 		if (customer.isPresent()) {
 			try {
 				customerService.deleteById(customerId);
-				redirectAttribute.addFlashAttribute("messageType", "success");
-				redirectAttribute.addFlashAttribute("messageContent", "Xóa thành công");
+				redirectAttribute.addAttribute("messageType", "success");
+				redirectAttribute.addAttribute("messageContent", "Xóa thành công");
 			} catch (Exception e) {
 				// Lỗi khi không thể xóa do ràng buộc
-				model.addAttribute("messageType", "error");
-				model.addAttribute("messageContent", "Không thể xóa khách hàng vì có ràng buộc.");
+				redirectAttribute.addAttribute("messageType", "error");
+				redirectAttribute.addAttribute("messageContent", "Không thể xóa khách hàng vì có ràng buộc.");
 			}
 		} else {
 			// Trường hợp khách hàng không tồn tại
-			model.addAttribute("messageType", "error");
-			model.addAttribute("messageContent", "Khách hàng không tồn tại.");
+			redirectAttribute.addAttribute("messageType", "error");
+			redirectAttribute.addAttribute("messageContent", "Khách hàng không tồn tại.");
 		}
-		return new ModelAndView("redirect:/admin/customers", model);
+		return new ModelAndView("redirect:/admin/customers");
 	}
+	
 
 	// Định nghĩa phương thức chuyển đổi từ CustomerDto sang Customer
 	private Customer convertToCustomer(CustomerDto customerDto) {

@@ -1,63 +1,125 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{site/index.html}">
+
 <head>
-<title>Đăng Ký</title>
+	<title>Đăng Ký</title>
 </head>
 
 <body>
 	<section class="py-5 container" layout:fragment="main">
-		<section class="register">
-			<div class="register-container row mx-auto">
-				<div class="register-form">
+		<video id="video2" autoplay muted loop playsinline src="/site/video/login.mp4"> </video>
+		<div class="video-controls">
+			<i id="playPauseIcon2" class="fas fa-pause"></i>
+			<i id="muteUnmuteIcon2" class="fas fa-volume-mute"></i>
+		</div>
+		<div class="row">
+			<!-- Form đăng nhập (bên trái) -->
+			<div class="col-md-7"></div>
+			<div class="login-form col-md-5 pt-5">
+				<div class="login-form-background">
 					<h1>Đăng Ký</h1>
-					<form th:action="@{/yourstyle/accounts/register}"
-						th:object="${account}" method="post">
-						<div th:if="${errorMessage}" class="alert-danger-register" role="alert">
-							<p th:text="${errorMessage}"></p>
-						</div>						
-						<div class="input-container input-icon">
-							<input type="text" class="form-control" placeholder="Họ và Tên"
-								th:field="*{username}" /> <i class="bi bi-person-fill"></i>
-						</div>
-						<!--báo lỗi-->
-						<p class="text-danger" th:if="${#fields.hasErrors('username')}"
-								th:errors="*{username}"></p>
-						<div class="input-container input-icon">
-							<input type="email" class="form-control" placeholder="Email"
-								th:field="*{email}" /> <i class="bi bi-envelope"></i>
-						</div>
-						<!--báo lỗi-->
-						<p class="text-danger" th:if="${#fields.hasErrors('email')}"
-							th:errors="*{email}"></p>
-						<div class="input-container input-icon">
-							<input type="password" class="form-control"
-								placeholder="Mật khẩu" th:field="*{password}" /> <i
-								class="bi bi-lock-fill"></i>
-						</div>
-						<div class="input-container input-icon">
-							<input type="password" class="form-control"
-								placeholder="Nhập lại mật khẩu" name="confirmPassword" /> <i
-								class="bi bi-lock-fill"></i>
-						</div>
-						<button type="submit" class="btn btn-custom w-100">Đăng
-							Ký</button>
-					</form>
+					<div id="loginError" th:attr="data-error=${errorMessage}" style="display: none;"></div>
+					<h5 class="mt-3 text-center">Đăng ký tài khoản của bạn</h5>
+					<div class="input-container">
+						<form th:action="@{/yourstyle/accounts/register}" th:object="${account}" method="post">
+							<div th:if="${errorMessage}" class="alert-danger-register" role="alert">
+								<p th:text="${errorMessage}"></p>
+							</div>
+							<div class="form-outline py-2 my-3" data-mdb-input-init>
+								<input th:field="*{username}" type="text" id="username" name="username"
+									class="form-control" required />
+								<label class="form-label" for="username">Tên người dùng</label>
+							</div>
+							<div class="form-outline py-2 my-3" data-mdb-input-init>
+								<input th:field="*{email}" type="text" id="email" name="email" class="form-control"
+									required />
+								<label class="form-label" for="email">Email</label>
+							</div>
+
+							<div class="form-outline py-2 my-3" data-mdb-input-init>
+								<input th:field="*{password}" type="password" id="password" name="password"
+									class="form-control" required />
+								<label class="form-label" for="password">Mật khẩu</label>
+								<i onclick="togglePasswordVisibility()" class="fa-solid fa-eye"
+									style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+							</div>
+
+							<div class="form-outline py-2 my-3" data-mdb-input-init>
+								<input name="confirmPassword" type="password" class="form-control" id="password2" required />
+								<label class="form-label" for="password">Nhập lại mật khẩu</label>
+								<i onclick="togglePasswordVisibility2()" class="fa-solid fa-eye"
+									style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+							</div>
+
+							<div class="form-check py-2 my-3">
+								<input type="checkbox" id="remember-me" name="remember-me" />
+								<label class="form-check-label" for="remember-me">Nhớ tài khoản</label>
+							</div>
+
+							<button type="submit" class="custom-btn-main">Đăng Ký tài khoản</button>
+
+							<div class="d-flex align-items-center justify-content-between pt-3">
+								<a th:href="@{/yourstyle/accounts/forgotpassword}"
+									style="text-decoration: none; color: black;">Quên mật khẩu</a>
+
+								<a style="text-decoration: none; color: black;"
+									th:href="@{/yourstyle/accounts/login}">Đăng nhập</a>
+							</div>
+						</form>
+					</div>
 				</div>
-                <div class="login-info">
-                    <h2>Welcome Back!</h2>
-                    <p style="text-align: center;">Nếu bạn đã có tài khoản, hãy đăng nhập để tiếp tục sử dụng dịch vụ
-                        của chúng tôi.</p>
-                    <a th:href="@{/yourstyle/accounts/login}">
-                        <button class="btn btn-light">Đăng Nhập</button>
-                    </a>
-
-                </div>
 			</div>
-		</section>
-	</section>
+		</div>
 
-	
+		<script>
+			const errorDiv = document.getElementById('loginError');
+			const errorMessage = errorDiv.getAttribute('data-error');
+			if (errorMessage) {
+				Swal.fire({
+					icon: 'warning',
+					title: 'Lỗi đăng nhập',
+					text: errorMessage
+				});
+			}
+
+			function togglePasswordVisibility() {
+				const passwordField = document.getElementById("password");
+				passwordField.type = passwordField.type === "password" ? "text" : "password";
+			}
+			function togglePasswordVisibility2() {
+				const passwordField = document.getElementById("password2");
+				passwordField.type = passwordField.type === "password" ? "text" : "password";
+			}
+
+			document.addEventListener("DOMContentLoaded", function () {
+				const video = document.getElementById("video2");
+				const playPauseIcon = document.getElementById("playPauseIcon2");
+				const muteUnmuteIcon = document.getElementById("muteUnmuteIcon2");
+
+				// Thêm sự kiện cho nút phát/tạm dừng
+				playPauseIcon.addEventListener("click", function () {
+					if (video.paused) {
+						video.play();
+						playPauseIcon.classList.remove("fa-play");
+						playPauseIcon.classList.add("fa-pause");
+					} else {
+						video.pause();
+						playPauseIcon.classList.remove("fa-pause");
+						playPauseIcon.classList.add("fa-play");
+					}
+				});
+
+				// Thêm sự kiện cho nút tắt/bật âm thanh
+				muteUnmuteIcon.addEventListener("click", function () {
+					video.muted = !video.muted;
+					muteUnmuteIcon.classList.toggle("fa-volume-mute", video.muted);
+					muteUnmuteIcon.classList.toggle("fa-volume-up", !video.muted);
+				});
+			});
+
+		</script>
+	</section>
 </body>
+
 </html>

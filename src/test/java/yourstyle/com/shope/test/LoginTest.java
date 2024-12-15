@@ -11,31 +11,31 @@ public class LoginTest extends BaseTest {
 
     // test login success
     @Test
-    public static void loginByAdmin() {
+    public void loginByAdmin() {
         loginPage.login("guest", "123456");
     }
 
     // test login invalid user
     @Test
-    public static void loginInvalidUserName() {
+    public  void loginInvalidUserName() {
         loginPage.loginInvalid("Vothithan", "123456");
     }
 
     // test login invalid pass
     @Test
-    public static void loginInvalidPassWord() {
+    public void loginInvalidPassWord() {
         loginPage.loginInvalid("Vothithanh", "123479");
     }
 
     // test login empty username
     @Test
-    public static void loginEmptyUserName() {
+    public  void loginEmptyUserName() {
         loginPage.loginInvalidEmptyUserName("", "123456");
     }
 
     // test login empty password
     @Test
-    public static void loginEmptyPassWord() {
+    public void loginEmptyPassWord() {
         loginPage.loginInvalidEmptyPassWord("Vothithanh", "");
     }
 }

@@ -10,7 +10,7 @@ public class VoucherTest extends BaseTest {
     @Test(priority = 1)
     public void testInsertVoucherSuccess() throws Exception {
         LoginPage.login("guest", "123456");
-        Thread.sleep(5000);
+        Thread.sleep(500);
         VoucherPage.InsertVoucherSuccess("SALE1", "SALE 1/1", "12", "100000",
                 "10", "100000", "10", "Giảm giá phần trăm", "2024", "July",
                 "12", "2024", "July", "15", "isPublic", "Đã thành công");

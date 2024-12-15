@@ -25,7 +25,7 @@ public class LoginPage {
             WebElement ipPassWord = WaitFor.waitElementVisible(BaseSetup.driver, By.xpath(inputPassword));
             ipPassWord.sendKeys(password);
             ipPassWord.sendKeys(Keys.ENTER);
-            Thread.sleep(10000);
+            Thread.sleep(5000);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

@@ -826,6 +826,26 @@ video {
     color: green;
 }
 
+.navbar-nav {
+    display: flex;
+    overflow-x: auto;
+}
+
+.navbar-nav::-webkit-scrollbar {
+    height: 8px;
+}
+
+.navbar-nav::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.navbar-nav::-webkit-scrollbar-thumb:hover {
+    background: rgb(22, 183, 185);
+}
+
+
+
 
 /* img,span,p {
 img,span,p,input,label,h1,h2,h3,h4,h5,p,ul,li,i,a,tr,td {

@@ -5,7 +5,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import yourstyle.com.shope.untils.ReadConfig;
 
-
 public class BaseSetup {
     public static WebDriver driver;
 

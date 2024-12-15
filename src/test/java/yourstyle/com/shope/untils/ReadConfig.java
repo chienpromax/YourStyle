@@ -7,7 +7,6 @@ public class ReadConfig {
     static String localDir = System.getProperty("user.dir");
     static Properties properties = new Properties();
 
-
     public static Properties loadPropertices() {
         try {
             FileInputStream inputStream = new FileInputStream(localDir + "/src/test/java/resources/config/properties");
@@ -21,6 +20,5 @@ public class ReadConfig {
     public static String getProperty(String key) {
         return loadPropertices().getProperty(key);
     }
-
 
 }

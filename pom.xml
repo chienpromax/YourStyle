@@ -131,20 +131,20 @@
 			<version>3.1.2.RELEASE</version>
 		</dependency>
 		<!--Test-->
-		 <!-- Selenium dependency -->
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-java</artifactId>
-      <version>4.27.0</version>
-    </dependency>
+		<!-- Selenium dependency -->
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>4.27.0</version>
+		</dependency>
 
-    <!-- TestNG dependency -->
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>7.10.2</version>
-      <scope>tests</scope>
-    </dependency>
+		<!-- TestNG dependency -->
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>7.10.2</version>
+			<scope>tests</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

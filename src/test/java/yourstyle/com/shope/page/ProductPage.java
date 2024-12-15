@@ -9,8 +9,6 @@ import yourstyle.com.shope.untils.InputValidation;
 import yourstyle.com.shope.untils.ScrollTo;
 import yourstyle.com.shope.untils.WaitFor;
 
-import java.util.Base64;
-
 public class ProductPage {
     static String menuProduct = "//span[text()='Quản lý sản phẩm']";
     static String clickProduct = "//span[text()='Sản phẩm']";
@@ -21,10 +19,10 @@ public class ProductPage {
     static String inputProductDetail = "//textarea[@name='productDetail']";
     static String inputProductDescription = "//textarea[@name='description']";
 
-    static String btnCreate = "//button[@class=\"btn btn-primary rounded-pill py-2 px-4 me-3\"]";
+    static String btnCreate = "//button[@class='btn btn-primary rounded-pill py-2 px-4 me-3']";
 
-
-    public static void insertProductSuccess(String nameProduct, String priceProduct, int categoryProduct, String productDetail, String productDescription, String status) {
+    public static void insertProductSuccess(String nameProduct, String priceProduct, int categoryProduct,
+            String productDetail, String productDescription, String status) {
         Actions actions = new Actions(BaseSetup.driver);
         WebElement clickMenu = WaitFor.waitElementVisible(BaseSetup.driver, By.xpath(menuProduct));
         clickMenu.click();
@@ -45,12 +43,14 @@ public class ProductPage {
     }
 
     public static void checkStatusProduct(String status) {
-//        Actions actions= new Actions(BaseSetup.driver);
+        Actions actions = new Actions(BaseSetup.driver);
         String statusProduct = "//div[@class='row container']/div/input[@value='" + status + "']";
         WebElement element = WaitFor.waitElementVisible(BaseSetup.driver, By.xpath(statusProduct));
-        ScrollTo.element(element);
+        actions.moveToElement(BaseSetup.driver
+                .findElement(By.xpath("/html/body/section/main/section/div/div/div/div/div[2]/div[1]/form/h4"))).build()
+                .perform();
+        // ScrollTo.element(element);
         element.click();
-//        actions.moveToElement(element).build().perform();
 
     }
 

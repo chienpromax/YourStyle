@@ -42,7 +42,7 @@
                       <input type="hidden" th:field="*{productId}" />
                       <div class="form-floating mb-3">
                         <input type="text" th:field="*{name}" class="form-control" id="floatingName"
-                          placeholder="Tên sản phẩm" />
+                          placeholder="Tên sản phẩm" required />
                         <label for="floatingName"><span class="text-danger">*</span> Tên sản phẩm</label>
                         <div th:if="${#fields.hasErrors('name')}" class="text-danger" th:errors="*{name}">Tên sản phẩm
                           không hợp lệ</div>
@@ -50,7 +50,7 @@
 
                       <div class="form-floating mb-3">
                         <input type="number" th:field="*{price}" class="form-control" id="floatingPrice"
-                          placeholder="Giá" step="1" />
+                          placeholder="Giá" step="1" required />
                         <label for="floatingPrice"><span class="text-danger">*</span> Giá</label>
                         <div th:if="${#fields.hasErrors('price')}" class="text-danger" th:errors="*{price}">Giá sản phẩm
                           không hợp lệ</div>
@@ -84,20 +84,21 @@
 
                       <div class="mb-3">
                         <label class="form-label" for="productDetail">Chi tiết sản phẩm</label>
-                        <textarea class="form-control" th:field="*{productDetail}" id="productDetail"
-                          rows="4"></textarea>
+                        <textarea class="form-control" th:field="*{productDetail}" id="productDetail" rows="4"
+                          required></textarea>
                       </div>
 
                       <div class="mb-3">
                         <label for="description" class="form-label">Mô tả</label>
-                        <textarea class="form-control" th:field="*{description}" id="description" rows="4"></textarea>
+                        <textarea class="form-control" th:field="*{description}" id="description" rows="4"
+                          required></textarea>
                       </div>
 
                       <label class="form-label mb-3"><span class="text-danger">*</span> Trạng thái</label>
                       <div class="row container">
                         <div class="form-check mb-3 col-md-6">
                           <input checked class="form-check-input" type="radio" th:field="*{status}" value="true"
-                            id="statusActive" />
+                            id="statusActive" required />
                           <label class="form-check-label" for="statusActive"> Hoạt động </label>
                         </div>
                         <div class="form-check mb-3 col-md-6">
@@ -111,57 +112,58 @@
                     <!-- Cột bên trái -->
                     <div class="col-md-6">
                       <div class="form-group">
-                        <input type="hidden" th:field="*{image}" />
+                        <input type="hidden" th:field="*{image}" required />
                         <label for="avatarInput" class="form-label ms-4" style="cursor: pointer">Ảnh đại diện</label>
                         <input type="file" th:field="*{imageFile}" id="avatarInput" class="form-control d-none"
-                          onchange="loadFile(event)" />
+                          onchange="loadFile(event)" required />
                         <div class="avatar_wrapper d-flex align-items-center justify-content-center">
                           <img id="avatarImage" th:src="@{'/uploads/' + ${product.image}}"
                             class="border border-dark border-1"
                             style="width: 370px; height: 420px; cursor: pointer; object-fit: cover;" />
                         </div>
-                      </div>
-                      <div th:if="${#fields.hasErrors('imageFile')}" class="text-danger" th:errors="*{imageFile}">Chọn
-                        Ảnh
-                      </div>
+                        <!-- <div th:if="${#fields.hasErrors('imageFile')}" class="text-danger" th:errors="*{imageFile}">Chọn
+                          Ảnh
+                        </div> -->
 
-                      <!-- Khu vực thêm ảnh nhỏ -->
-                      <div th:if="${product.isEdit}"
-                        class="form-group mt-4 border border-dark border-1 p-3 rounded shadow bg-light">
-                        <button type="button" class="btn btn-primary" id="customFileButton">Chọn ảnh bổ sung</button>
-                        <button type="button" class="btn btn-success" id="saveImagesButton">Lưu ảnh</button>
-                        <input type="file" id="additionalImages" class="form-control d-none" multiple accept="image/*"
-                          onchange="previewImages(event)" />
-                        <!-- Hiển thị ảnh bổ sung -->
-                        <div id="additionalImagesPreview" class="mt-2"></div>
-                        <!-- Hiển thị ảnh bổ sung -->
-                        <h5>Danh sách ảnh sản phẩm</h5>
-                        <div id="additionalImagesPreview" class="mt-2">
-                          <div th:each="image : ${productImages}" class="img-container">
-                            <img th:src="@{/uploads/} + ${image.imageUrl}" class="preview-image" alt="Product Image" />
-                            <button type="button" class="delete-button"
-                              th:attr="onclick='confirmDeleteImage(' + ${image.imageId} + ')'">X</button>
+                        <!-- Khu vực thêm ảnh nhỏ -->
+                        <div th:if="${product.isEdit}"
+                          class="form-group mt-4 border border-dark border-1 p-3 rounded shadow bg-light">
+                          <button type="button" class="btn btn-primary" id="customFileButton">Chọn ảnh bổ sung</button>
+                          <button type="button" class="btn btn-success" id="saveImagesButton">Lưu ảnh</button>
+                          <input type="file" id="additionalImages" class="form-control d-none" multiple accept="image/*"
+                            onchange="previewImages(event)" />
+                          <!-- Hiển thị ảnh bổ sung -->
+                          <div id="additionalImagesPreview" class="mt-2"></div>
+                          <!-- Hiển thị ảnh bổ sung -->
+                          <h5>Danh sách ảnh sản phẩm</h5>
+                          <div id="additionalImagesPreview" class="mt-2">
+                            <div th:each="image : ${productImages}" class="img-container">
+                              <img th:src="@{/uploads/} + ${image.imageUrl}" class="preview-image"
+                                alt="Product Image" />
+                              <button type="button" class="delete-button"
+                                th:attr="onclick='confirmDeleteImage(' + ${image.imageId} + ')'">X</button>
+                            </div>
                           </div>
                         </div>
                       </div>
+                      <!-- Cột bên phải -->
                     </div>
-                    <!-- Cột bên phải -->
-                  </div>
-                  <div class="text-center mt-4">
-                    <button class="btn btn-primary rounded-pill py-2 px-4 me-3" th:if="*{isEdit}">
-                      Cập nhật
-                    </button>
-                    <button class="btn btn-primary rounded-pill py-2 px-4 me-3" th:unless="*{isEdit}">
-                      Thêm sản phẩm
-                    </button>
-                    <button type="reset" class="btn btn-secondary py-2 px-4 me-3 rounded-pill">
-                      Làm mới
-                    </button>
-                    <button type="button" class="btn btn-warning px-4 me-3 rounded-pill" data-bs-toggle="modal"
-                      data-bs-target="#exampleModal">
-                      Giảm giá sản phẩm
-                    </button>
-                  </div>
+                    <div class="text-center mt-4">
+                      <button class="btn btn-primary rounded-pill py-2 px-4 me-3" th:if="*{isEdit}">
+                        Cập nhật
+                      </button>
+                      <button onclick="validateImage()" class="btn btn-primary rounded-pill py-2 px-4 me-3"
+                        th:unless="*{isEdit}">
+                        Thêm sản phẩm
+                      </button>
+                      <button type="reset" class="btn btn-secondary py-2 px-4 me-3 rounded-pill">
+                        Làm mới
+                      </button>
+                      <button type="button" class="btn btn-warning px-4 me-3 rounded-pill" data-bs-toggle="modal"
+                        data-bs-target="#exampleModal">
+                        Giảm giá sản phẩm
+                      </button>
+                    </div>
                 </form>
 
                 <!-- Modal -->
@@ -394,6 +396,19 @@
             window.location.href = '/admin/discounts/delete/' + discountId;
           }
         });
+      }
+
+      function validateImage() {
+        const fileInput = document.getElementById('avatarInput');
+
+        if (!fileInput.value) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Chưa chọn ảnh',
+            text: 'Vui lòng chọn ảnh trước khi xác nhận!',
+            confirmButtonText: 'OK',
+          })
+        }
       }
 
     </script>

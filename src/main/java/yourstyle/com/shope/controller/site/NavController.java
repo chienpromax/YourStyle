@@ -90,22 +90,23 @@ public class NavController {
                     BigDecimal price = orderDetail.getProductVariant().getProduct().getPrice();
                     int quantity = orderDetail.getQuantity();
     
+                    // Kiểm tra giảm giá
                     Discount discount = orderDetail.getProductVariant().getProduct().getDiscount();
-                    if (discount != null) {
+                    if (discount != null && discount.isValid()) {
                         BigDecimal discountPercent = discount.getDiscountPercent().divide(BigDecimal.valueOf(100));
                         price = price.subtract(price.multiply(discountPercent));
                     }
     
-                    return price.multiply(BigDecimal.valueOf(quantity));
+                    return price.multiply(BigDecimal.valueOf(quantity)); // Tính tiền cho từng sản phẩm
                 })
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(BigDecimal.ZERO, BigDecimal::add); // Cộng tổng
     
-        if (order.getVoucher() != null) {
+        if (order.getVoucher() != null && order.getVoucher().getDiscountAmount() != null) {
             BigDecimal orderDiscountPercent = order.getVoucher().getDiscountAmount().divide(BigDecimal.valueOf(100));
             totalAmount = totalAmount.subtract(totalAmount.multiply(orderDiscountPercent));
         }
     
-        return totalAmount;
+        return totalAmount.max(BigDecimal.ZERO);
     }
     
     @ModelAttribute("currentUser")

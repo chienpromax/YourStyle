@@ -67,6 +67,13 @@ public class CartDetailController {
             List<OrderDetail> orderDetails = orderDetailRepository
                     .findByOrder_Customer_CustomerIdAndOrder_Status(customerId, 9);
 
+            orderDetails.forEach(orderDetail -> {
+                Discount discount = orderDetail.getProductVariant().getProduct().getDiscount();
+                if (discount != null && !discount.isValid()) {
+                    orderDetail.getProductVariant().getProduct().setDiscount(null); // Loại bỏ giảm giá hết hạn
+                }
+            });
+
             List<Order> orders = orderService.findByCustomerAndStatus(customer, 9);
             if (!orders.isEmpty()) {
                 Order order = orders.get(0); // Lấy Order đang xử lý (status = 9)
@@ -98,25 +105,26 @@ public class CartDetailController {
                 .map(orderDetail -> {
                     BigDecimal price = orderDetail.getProductVariant().getProduct().getPrice();
                     int quantity = orderDetail.getQuantity();
-
+    
+                    // Kiểm tra giảm giá
                     Discount discount = orderDetail.getProductVariant().getProduct().getDiscount();
-                    if (discount != null) {
+                    if (discount != null && discount.isValid()) {
                         BigDecimal discountPercent = discount.getDiscountPercent().divide(BigDecimal.valueOf(100));
                         price = price.subtract(price.multiply(discountPercent));
                     }
-
-                    return price.multiply(BigDecimal.valueOf(quantity));
+    
+                    return price.multiply(BigDecimal.valueOf(quantity)); // Tính tiền cho từng sản phẩm
                 })
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        if (order.getVoucher() != null) {
+                .reduce(BigDecimal.ZERO, BigDecimal::add); // Cộng tổng
+    
+        if (order.getVoucher() != null && order.getVoucher().getDiscountAmount() != null) {
             BigDecimal orderDiscountPercent = order.getVoucher().getDiscountAmount().divide(BigDecimal.valueOf(100));
             totalAmount = totalAmount.subtract(totalAmount.multiply(orderDiscountPercent));
         }
-
-        return totalAmount;
+    
+        return totalAmount.max(BigDecimal.ZERO);
     }
-
+    
     @PostMapping("/updateQuantity")
     public String updateQuantity(@RequestParam("orderDetailId") Integer orderDetailId,
             @RequestParam("quantity") Integer quantity, Model model,

@@ -181,24 +181,28 @@
                     </span>
                 </div>
                 <div class="price-section">
-                    <!-- Kiểm tra nếu có discount thì hiển thị giá giảm và giá gốc -->
+                    <!-- Kiểm tra nếu có discount và discount còn hợp lệ thì hiển thị giá giảm -->
                     <span style="font-size: 1.4rem;" class="price-discount text-danger fw-bold"
-                        th:if="${product.discount != null}"
-                        th:text="${#numbers.formatDecimal(product.price - product.price * product.discount.discountPercent / 100, 1, 'COMMA', 3, 'POINT') + ' VNĐ'}">
+                          th:if="${product.discount != null && product.discount.isValid()}"
+                          th:text="${#numbers.formatDecimal(product.price - product.price * product.discount.discountPercent / 100, 1, 'COMMA', 3, 'POINT') + ' VNĐ'}">
                     </span>
-                    <span class="price-original ms-2 text-muted" th:if="${product.discount != null}">
+                    
+                    <!-- Hiển thị giá gốc nếu có discount -->
+                    <span class="price-original ms-2 text-muted" th:if="${product.discount != null && product.discount.isValid()}">
                         <del style="font-size: 1rem;"
-                            th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT') + ' VNĐ'}"></del>
+                             th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT') + ' VNĐ'}"></del>
                     </span>
-                    <span style="font-size: 1rem;" class="badge bg-danger ms-2" th:if="${product.discount != null}"
-                        th:text="'-' + ${#numbers.formatDecimal(product.discount.discountPercent, 0, 0)} + '%'">
+                
+                    <!-- Hiển thị phần trăm giảm giá nếu có discount -->
+                    <span style="font-size: 1rem;" class="badge bg-danger ms-2" th:if="${product.discount != null && product.discount.isValid()}"
+                          th:text="'-' + ${#numbers.formatDecimal(product.discount.discountPercent, 0, 0)} + '%'">
                     </span>
-
-                    <!-- Hiển thị giá gốc nếu không có discount -->
-                    <span class="price-product fw-bold" th:if="${product.discount == null}"
-                        th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT') + ' VNĐ'}">
+                
+                    <!-- Hiển thị giá gốc nếu không có discount hoặc discount đã hết hạn -->
+                    <span class="price-product fw-bold" th:if="${product.discount == null || !product.discount.isValid()}"
+                          th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT') + ' VNĐ'}">
                     </span>
-                </div>
+                </div>                
 
                 <hr>
                 <form id="addToCartForm" th:action="@{/yourstyle/carts/addtocart}" method="post"

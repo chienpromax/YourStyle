@@ -1,6 +1,7 @@
 package yourstyle.com.shope.service.impl;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -173,5 +174,14 @@ public class ProductServiceImpl implements ProductService {
 	public Page<Product> findByStatusTrue(Pageable pageable) {
 		return productRepository.findByStatusTrue(pageable);
 	}
-	
+
+	@Override
+	public List<Product> getActiveDiscountedProducts() {
+		List<Product> products = productRepository.findAll();
+		return products.stream()
+				.filter(product -> product.getDiscount() != null &&
+						product.getDiscount().getEndDate().isAfter(LocalDateTime.now()))
+				.collect(Collectors.toList());
+	}
+
 }

@@ -62,4 +62,6 @@ public interface ProductService {
 
     Page<Product> findByStatusTrue(Pageable pageable);
 
+    List<Product> getActiveDiscountedProducts();
+    
 }

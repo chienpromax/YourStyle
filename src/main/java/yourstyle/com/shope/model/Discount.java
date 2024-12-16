@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -55,4 +57,10 @@ public class Discount {
     @EqualsAndHashCode.Exclude
     private Product product;
 
+    @JsonIgnore
+    public boolean isValid() {
+        LocalDateTime now = LocalDateTime.now();
+        return (startDate != null && endDate != null) && (now.isAfter(startDate) && now.isBefore(endDate));
+    }
+    
 }

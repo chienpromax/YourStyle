@@ -274,4 +274,9 @@ public class OrderServiceImpl implements OrderService {
 		return orderRepository.findByCustomerOrderByOrderDateDesc(customer);
 	}
 
+	@Override
+	public boolean existsByVoucherId(Integer voucherId) {
+		return orderRepository.existsByVoucherId(voucherId);
+	}
+
 }

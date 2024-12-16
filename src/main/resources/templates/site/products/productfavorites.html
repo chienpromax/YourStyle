@@ -7,7 +7,7 @@
 
 <body>
 	<section class="py-5 container" layout:fragment="main">
-		<h1 class="alert alert-success " th:if="${message}" th:text="${message}"></h1>
+		<h5 class="alert alert-success " th:if="${message}" th:text="${message}"></h5>
 
 		<!-- sản phẩm yêu thích -->
 		<hr class="separator" />
@@ -24,14 +24,35 @@
 						</a>
 						<div class="card-body text-center">
 							<div class="product-info">
-								<h5 class="card-title" th:text="${product.name}"></h5>
+								<h5 class="card-title product-name" th:text="${product.name}"></h5>
+								
+							</div>
+							<div class="price-info d-flex align-items-center">
+								<!-- Giá đã giảm -->
+								<div class="">
+									<span class="price-discount text-danger fw-bold" th:if="${product.discount != null}"
+										th:text="${#numbers.formatDecimal(product.price - product.price * product.discount.discountPercent / 100, 1, 'COMMA', 3, 'POINT') + ' VNĐ'}">
+									</span>
+									<!-- <span class="price-original text-muted" th:if="${product.discount != null}">
+										<del
+											th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'"></del>
+									</span> -->
+
+									<!-- Phần trăm giảm giá -->
+									<span class="badge discount-badge bg-danger m-2" th:if="${product.discount != null}"
+										th:text="'-' + ${#numbers.formatDecimal(product.discount.discountPercent, 0, 0)} + '%'">
+									</span>
+									<!-- Giá gốc khi không có giảm giá -->
+									<span class="price text-danger card-text fw-bolder m-2"
+										th:if="${product.discount == null}"
+										th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'">
+									</span>
+								</div>
 								<a th:href="@{/yourstyle/productfavorites/removefavorite/{id}(id=${product.productId})}"
-									aria-label="Xóa Khỏi Yêu Thích"> <i class="bi bi-heart-fill"
+									aria-label="Xóa Khỏi Yêu Thích"> <i class="bi bi-heart-fill text-danger"
 										id="heart-${product.productId}"></i>
 								</a>
 							</div>
-							<p class="text-danger fw-bolder"
-								th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'"></p>
 						</div>
 					</div>
 				</div>

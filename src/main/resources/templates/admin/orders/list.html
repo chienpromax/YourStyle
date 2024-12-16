@@ -129,20 +129,15 @@
                                                 </td>
                                                 <td>[[${totalAmounts[order.orderId]}]]</td>
                                                 <td>[[${#dates.format(order.orderDate,'dd-MM-yyyy HH:mm:ss')}]]</td>
-                                                <td
-                                                    th:if="${order.orderChannel != null and order.orderChannel.value == 'ONLINE'}"
-                                                >
-                                                    <span class="badge bg-success">[[${order.orderChannel.name}]]</span>
-                                                </td>
-                                                <td
-                                                    th:if="${order.orderChannel != null and  order.orderChannel.value == 'DIRECT'}"
-                                                >
-                                                    <span class="badge bg-warning">[[${order.orderChannel.name}]]</span>
-                                                </td>
-                                                <td
-                                                    th:if="${order.orderChannel != null and  order.orderChannel.value == 'IN_STORE'}"
-                                                >
-                                                    <span class="badge bg-primary">[[${order.orderChannel.name}]]</span>
+                                                <td>
+                                                    <span th:if="${order.orderChannel != null and order.orderChannel.value == 'ONLINE'}"
+                                                          class="badge bg-success">[[${order.orderChannel.name}]]</span>
+                                                    <span th:if="${order.orderChannel != null and order.orderChannel.value == 'DIRECT'}"
+                                                          class="badge bg-warning">[[${order.orderChannel.name}]]</span>
+                                                    <span th:if="${order.orderChannel != null and order.orderChannel.value == 'IN_STORE'}"
+                                                          class="badge bg-primary">[[${order.orderChannel.name}]]</span>
+                                                    <span th:if="${order.orderChannel == null}"
+                                                          class="badge bg-secondary">chưa có loại đơn</span>
                                                 </td>
                                                 <td>
                                                     <span class="badge bg-success">[[${order.statusDescription}]]</span>

@@ -21,7 +21,7 @@
 						<!-- Phần ảnh cũ  -->
 						<div th:each="slide, iterStat : ${slides}"
 							class="position-relative mt-2"
-							style="width: 150px; height: 150px">
+							style="width: 250px; height: 150px">
 							<img
 								th:src="'/uploads/slide/' + ${slide.imagePaths.split(',')[0]}"
 								class="img-thumbnail"

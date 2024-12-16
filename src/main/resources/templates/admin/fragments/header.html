@@ -28,15 +28,15 @@
             </span>
 
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-              <!-- <li class="dropdown-header">
+              <li class="dropdown-header">
                 <h6>
                     <span>xin chào: </span>
                     <span class="dropdown-item"
                       th:text="${currentUser != null ? (currentUser.fullname != null ? currentUser.fullname : (currentUser.account != null && currentUser.account.email != null ? currentUser.account.email : 'Admin')) : 'Admin'}">
                     </span>
                 </h6>
-                <span>Admin</span>
-              </li> -->
+                <span th:text="${currentUser.account.role}"></span>
+              </li>
               <li sec:authorize="isAuthenticated()">
                 <a class="dropdown-item d-flex align-items-center" th:href="@{/yourstyle/accounts/logout}">
                   <i class="bi bi-box-arrow-right"></i>

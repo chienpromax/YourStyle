@@ -35,7 +35,9 @@ public class SecurityConfig {
                         .requestMatchers("/yourstyle/product/**").permitAll()
                         .requestMatchers("/yourstyle/productfavorites/**").permitAll()
                         .requestMatchers("/yourstyle/product/detail/**").permitAll()
-                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/admin/orders/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE")
+                        .requestMatchers("/admin/home", "/admin/accounts", "/admin/staffs")
+                        .hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/yourstyle/carts/**", "/yourstyle/VNPays/**", "/yourstyle/order/**")
                         .hasAnyAuthority("ROLE_ADMIN", "ROLE_USER", "ROLE_EMPLOYEE")
                         .requestMatchers("/yourstyle/admin/slide/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_EMPLOYEE")
@@ -59,8 +61,13 @@ public class SecurityConfig {
                             boolean rememberMe = request.getParameter("remember-me") != null;
                             boolean isAdmin = authentication.getAuthorities().stream()
                                     .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+                            boolean isEmployee = authentication.getAuthorities().stream()
+                                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority()
+                                            .equals("ROLE_EMPLOYEE"));
                             if (isAdmin) {
                                 response.sendRedirect("/admin/home");
+                            } else if (isEmployee) {
+                                response.sendRedirect("/admin/orders");
                             } else {
                                 response.sendRedirect("/yourstyle/home");
                             }
@@ -71,13 +78,41 @@ public class SecurityConfig {
                         .failureUrl("/yourstyle/accounts/login")
                         .userInfoEndpoint()
                         .userService(customOAuth2UserService)
-                        .and())                
+                        .and())
                 .rememberMe(rememberMe -> rememberMe
                         .key("uniqueAndSecret")
                         .tokenValiditySeconds(86400)
                         .rememberMeParameter("remember-me")
                         .useSecureCookie(false)
                         .alwaysRemember(false))
+                        .exceptionHandling(exception -> exception
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setContentType("text/html;charset=UTF-8");
+                            String script = """
+                                        <!DOCTYPE html>
+                                        <html lang="en">
+                                        <head>
+                                            <meta charset="UTF-8">
+                                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                                        </head>
+                                        <body>
+                                            <script>
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'Không được truy cập',
+                                                    text: 'Bạn không có quyền truy cập vào trang này!',
+                                                    confirmButtonText: 'Quay lại'
+                                                }).then(() => {
+                                                    window.history.back(); // Quay lại trang trước đó
+                                                });
+                                            </script>
+                                        </body>
+                                        </html>
+                                    """;
+                            response.getWriter().write(script);
+                            response.getWriter().flush();
+                        }))
                 .logout(logout -> logout
                         .logoutUrl("/yourstyle/accounts/logout")
                         .logoutSuccessUrl("/yourstyle/accounts/login")

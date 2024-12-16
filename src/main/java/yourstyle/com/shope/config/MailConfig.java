@@ -41,24 +41,10 @@ public class MailConfig {
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", smtpAuth);
         props.put("mail.smtp.starttls.enable", startTls);
-        // props.put("mail.debug", "true");
+        // thêm này định dạng chữ
+        props.put("mail.smtp.charset", "UTF-8");
 
         return mailSender;
     }
 
-//     @Bean
-//     public JavaMailSender getJavaMailSender() {
-//         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-//         mailSender.setHost("smtp.gmail.com");
-//         mailSender.setPort(587);
-//         mailSender.setUsername("Thanhvtpd09222@fpt.edu.vn"); 
-//         mailSender.setPassword("qnbo mfok hbac xpyj"); 
-//         Properties props = mailSender.getJavaMailProperties();
-//         props.put("mail.transport.protocol", "smtp");
-//         props.put("mail.smtp.auth", "true");
-//         props.put("mail.smtp.starttls.enable", "true");
-//         props.put("mail.debug", "true");
-
-//         return mailSender;
-//     }
 }

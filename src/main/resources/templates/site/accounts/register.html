@@ -19,7 +19,7 @@
 			<div class="login-form col-md-5 pt-5">
 				<div class="login-form-background">
 					<h1>Đăng Ký</h1>
-					<div id="loginError" th:attr="data-error=${errorMessage}" style="display: none;"></div>
+					<div id="loginError" th:attr="data-error=${errorMessage}" style="display: none; width: 80%; padding: 10px; border: 1px solid red; background-color: #f8d7da; color: #721c24;"></div>
 					<h5 class="mt-3 text-center">Đăng ký tài khoản của bạn</h5>
 					<div class="input-container">
 						<form th:action="@{/yourstyle/accounts/register}" th:object="${account}" method="post">

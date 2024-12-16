@@ -103,7 +103,8 @@
 					</button>
 				</div>
 				<div class="best-seller">
-					<div class="row">
+					<!-- Kiểm tra nếu có sản phẩm bán chạy -->
+					<div th:if="${bestSellers != null and !bestSellers.isEmpty()}" class="row">
 						<th:block th:each="product, iterStat : ${bestSellers}">
 							<div class="col-md-2">
 								<div class="card product-card" th:if="${iterStat.index < 6}">
@@ -126,6 +127,10 @@
 							</div>
 						</th:block>
 					</div>
+					<!-- Thông báo nếu không có sản phẩm bán chạy -->
+					<div th:if="${bestSellers == null or bestSellers.isEmpty()}" class="text-center py-4">
+						<p class="text-danger fw-bold">Chưa có giao dịch nào</p>
+					</div>
 				</div>
 			</div>
 		</section>
@@ -136,16 +141,17 @@
 				<div class="header py-3 my-2"
 					style="display: flex; justify-content: space-between; background: linear-gradient(0, rgb(254, 175, 175), rgb(254, 210, 183));">
 					<div class="menu__main mx-auto text-center">
+						<h3 class="text-danger fw-bold">Các Sản Phẩm Giảm Sốc!</h3>
 						<!-- Kiểm tra nếu có discountId thì hiển thị tùy chọn "Xem các mã giảm giá khác" -->
 						<div class="col-12 text-center my-2" th:if="${discountId != null}">
 							<a href="/yourstyle/home" class="text-primary fw-bold">Xem
 								các mã giảm giá khác</a>
 						</div>
-
-						<span th:each="product : ${discountedProducts}"> <a class="text-dark fw-bolder pe-2"
-								th:href="@{/yourstyle/discount/{discountId}(discountId=${product.discount.discountId})}"
-								th:text="${product.discount.discountName}">Tên Giảm Giá</a> |
-						</span>
+						<div>
+							<span th:each="discountName : ${uniqueDiscountNames}">
+								<a class="text-dark fw-bolder pe-2" th:text="${discountName}">Tên Giảm Giá</a>
+							</span>
+						</div>
 					</div>
 
 					<button class="bg-transparent border border-0">
@@ -156,7 +162,7 @@
 
 				<!-- Best-seller section hiển thị các sản phẩm giảm giá -->
 				<div class="discount pt-3">
-					<div class="row">
+					<div class="row" th:if="${discountedProducts !=null and !discountedProducts.isEmpty()}">
 						<div class="col-md-2" th:each="product,iterStat : ${discountedProducts}">
 							<div class="card product-card" th:if="${iterStat.index < 6}">
 								<a th:href="@{/yourstyle/product/detail/{productId}(productId=${product.productId})}">
@@ -183,6 +189,10 @@
 								</div>
 							</div>
 						</div>
+					</div>
+					<!-- Thông báo nếu không có sản phẩm giảm giá -->
+					<div th:if="${discountedProducts == null or discountedProducts.isEmpty()}" class="text-center py-4">
+						<p class="text-danger fw-bold">Chưa có sản phẩm nào giảm giá</p>
 					</div>
 				</div>
 			</div>
@@ -267,7 +277,8 @@
 										th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'">
 									</span>
 								</div>
-								<a class="ms-auto" th:href="@{/yourstyle/productfavorites/add(productId=${product.productId})}">
+								<a class="ms-auto"
+									th:href="@{/yourstyle/productfavorites/add(productId=${product.productId})}">
 									<i class="fa-regular fa-heart"></i>
 								</a>
 							</div>

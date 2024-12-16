@@ -134,7 +134,7 @@
 
                             <div class="dropdown-menu w-100 mt-0 rounded-0">
                                 <div class="container">
-                                    <div class="row my-4 flex-row">
+                                    <div class="row my-4 flex-row" th:if="${parentCategory.childCategories != null and !parentCategory.childCategories.isEmpty()}">
                                         <div th:each="childCategory : ${parentCategory.childCategories}"
                                             class="col-6 col-sm-4 col-md-2 mb-3 text-center d-flex flex-column align-items-center">
 
@@ -150,6 +150,11 @@
                                             </a>
                                         </div>
                                     </div>
+                                     <!-- Thông báo nếu không có danh mục con -->
+                                     <div th:if="${parentCategory.childCategories == null or parentCategory.childCategories.isEmpty()}"
+                                     class="my-4 text-center">
+                                     <p class="text-danger fw-bold" th:text="'Không có danh mục con của ' + ${parentCategory.name} +'. Bạn vui lòng xem các mục khác nhé!'"></p>
+                                 </div>
                                 </div>
                             </div>
                         </li>

@@ -1,6 +1,7 @@
 package yourstyle.com.shope.controller.site;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -62,10 +63,18 @@ public class HomeSiteController {
 		List<Product> bestSellers = productService.getBestSellingProducts();
 		model.addAttribute("bestSellers", bestSellers);
 
-		// Lấy sản phẩm giảm giá theo discountId nếu có
-		List<Product> discountedProducts = (discountId != null) ? productService.getProductsByDiscountId(discountId)
+		// Lấy các sản phẩm đang hoạt động có mã giảm giá và còn hạn
+		List<Product> discountedProducts = (discountId != null)
+				? productService.getProductsByDiscountId(discountId)
 				: productService.getDiscountedProducts();
 		model.addAttribute("discountedProducts", discountedProducts);
+
+		// Lấy danh sách tên giảm giá không trùng lặp
+		List<String> uniqueDiscountNames = discountedProducts.stream()
+				.map(product -> product.getDiscount().getDiscountName()) // Lấy tên giảm giá
+				.distinct() // Loại bỏ trùng lặp
+				.collect(Collectors.toList());
+		model.addAttribute("uniqueDiscountNames", uniqueDiscountNames);
 
 		// Lấy danh sách các slide và xử lý imagePaths
 		List<Slide> slides = slideService.getAllSlides();

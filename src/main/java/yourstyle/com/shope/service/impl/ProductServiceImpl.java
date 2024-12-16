@@ -26,30 +26,16 @@ public class ProductServiceImpl implements ProductService {
 	ProductRepository productRepository;
 
 	@Override
-	public List<Product> getProductsByDiscountId(Integer discountId) {
-		return productRepository.findDiscountedProductsByDiscountId(discountId);
-	}
+    public List<Product> getProductsByDiscountId(Integer discountId) {
+        return productRepository.findDiscountedProductsByDiscountId(discountId);
+    }
 
-	@Override
-	public List<Product> getDiscountedProducts() {
-		return productRepository.findDiscountedProducts(); // Lấy sản phẩm có giảm giá và status = true
-	}
+    @Override
+    public List<Product> getDiscountedProducts() {
+        return productRepository.findValidDiscountedProducts(); // Chỉ lấy mã giảm giá còn hạn
+    }
 
-	// Sp bán chạy nhất
-	// @Override
-	// public List<Product> getBestSellingProducts() {
-	// List<Object[]> results = productRepository.findBestSellingProducts();
-	// return results.stream().map(result -> {
-	// Product product = new Product();
-	// product.setProductId((Integer) result[0]);
-	// product.setName((String) result[1]);
-	// product.setPrice((BigDecimal) result[2]);
-	// product.setImage((String) result[3]);
-	// product.setTotalQuantity(((Number) result[4]).intValue()); // Ánh xạ
-	// totalQuantity
-	// return product;
-	// }).collect(Collectors.toList());
-	// }
+	
 	@Override
 	public List<Product> getBestSellingProducts() {
 		List<Object[]> results = productRepository.findBestSellingProducts();

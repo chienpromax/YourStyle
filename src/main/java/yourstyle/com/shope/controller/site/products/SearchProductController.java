@@ -42,6 +42,11 @@ public class SearchProductController {
         model.addAttribute("products", products);
         model.addAttribute("searchTerm", name);
 
+        // Kiểm tra nếu không có sản phẩm nào
+        if (products.isEmpty()) {
+            model.addAttribute("noResults", true); // Thêm thuộc tính noResults nếu không có kết quả
+        }
+
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
             Optional<Account> accountOptional = accountRepository.findByUsername(username);

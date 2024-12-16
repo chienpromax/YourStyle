@@ -31,18 +31,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
         @Query("SELECT p FROM Product p WHERE p.category.categoryId = ?1 AND p.productId != ?2")
         List<Product> findSimilarProducts(Integer categoryId, Integer productId);
 
-        // Lấy Sp bán chạy nhất
-        // @Query(value = """
-        // SELECT p.productId, p.name, p.price, p.image, SUM(od.quantity) AS
-        // totalQuantity
-        // FROM orderDetails od
-        // JOIN productVariants pv ON od.productVariantId = pv.productVariantId
-        // JOIN products p ON pv.productId = p.productId
-        // GROUP BY p.productId, p.name, p.price, p.image
-        // ORDER BY totalQuantity DESC
-        // """, nativeQuery = true)
-
-        // List<Object[]> findBestSellingProducts();
         @Query(value = """
                             SELECT p.productId, p.name, p.price, p.image, SUM(od.quantity) AS totalQuantity
                             FROM orderDetails od
@@ -53,10 +41,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                             ORDER BY totalQuantity DESC
                         """, nativeQuery = true)
         List<Object[]> findBestSellingProducts();
-
-        // Lấy sản phẩm có mã giảm giá và status = true
-        @Query("SELECT p FROM Product p WHERE p.discount IS NOT NULL AND p.status = true")
-        List<Product> findDiscountedProducts();
 
         List<Product> findByDiscount_discountId(Integer discountId);
 
@@ -82,10 +66,13 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
         @Query("SELECT p FROM Product p WHERE p.status = true")
         List<Product> findByStatusTrue();
 
-        @Query("SELECT p FROM Product p WHERE p.discount.discountId = :discountId AND p.status = true")
-        List<Product> findDiscountedProductsByDiscountId(@Param("discountId") Integer discountId);
-
         @Query("SELECT p FROM Product p WHERE p.status = true")
         Page<Product> findByStatusTrue(Pageable pageable);
-            
+
+        @Query("SELECT p FROM Product p WHERE p.discount.discountId = :discountId AND p.status = true ")
+        List<Product> findDiscountedProductsByDiscountId(@Param("discountId") Integer discountId);
+         // Lấy sản phẩm có mã giảm giá và status = true
+         @Query("SELECT p FROM Product p WHERE p.discount IS NOT NULL AND p.status = true AND p.discount.endDate >= CURRENT_DATE")
+         List<Product> findValidDiscountedProducts();
+
 }

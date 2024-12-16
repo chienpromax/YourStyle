@@ -55,8 +55,8 @@ public class AccountController {
 
             // Nối tất cả các lỗi lại với nhau nếu có nhiều lỗi, sau đó truyền vào model
             String errorMessage = bindingResult.getAllErrors().stream()
-                    .map(error -> error.getDefaultMessage()) // Lấy thông báo lỗi
-                    .collect(Collectors.joining(", ")); // Nối các lỗi với dấu phẩy
+                    .map(error -> error.getDefaultMessage()) 
+                    .collect(Collectors.joining("\n")); 
             model.addAttribute("errorMessage", errorMessage);  // Truyền thông báo lỗi vào model
             return "site/accounts/register";
         }
@@ -207,17 +207,16 @@ public class AccountController {
     // Trang nhập mật khẩu mới
     @GetMapping("/resetpassword")
     public String showResetPasswordForm(Model model) {
-        // Lấy email từ session
+    
         String email = (String) session.getAttribute("email");
 
-        // Kiểm tra xem email có hợp lệ không
         if (email == null || email.isEmpty()) {
             model.addAttribute("error", "Email không hợp lệ.");
-            return "error"; // Nếu không hợp lệ, hiển thị trang lỗi
+            return "error"; 
         }
 
         model.addAttribute("email", email);
-        return "site/accounts/resetpassword";  // Trang nhập mật khẩu mới
+        return "site/accounts/resetpassword";  
     }
 
     // Xử lý reset mật khẩu
@@ -229,26 +228,20 @@ public class AccountController {
         try {
             if (!newPassword.equals(confirmPassword)) {
                 model.addAttribute("error", "Mật khẩu xác nhận không khớp.");
-                return "site/accounts/resetpassword"; // Quay lại form reset mật khẩu
+                return "site/accounts/resetpassword"; 
             }
 
-            // Lấy email từ session
             String email = (String) session.getAttribute("email");
 
             if (email == null || email.isEmpty()) {
                 model.addAttribute("error", "Không tìm thấy email.");
-                return "error"; // Hiển thị trang lỗi nếu không có email
+                return "error"; 
             }
-
-            // Gọi service để reset mật khẩu
             accountService.resetPasswordByEmail(email, newPassword);
-
-            // Xóa email khỏi session sau khi reset thành công
             session.removeAttribute("email");
 
-            // Thêm thông báo thành công
             redirectAttributes.addFlashAttribute("message", "Đặt lại mật khẩu thành công!");
-            return "redirect:/yourstyle/accounts/login"; // Redirect đến trang đăng nhập
+            return "redirect:/yourstyle/accounts/login"; 
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             return "site/accounts/resetpassword"; // Quay lại form reset mật khẩu

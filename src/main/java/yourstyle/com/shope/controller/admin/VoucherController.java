@@ -44,6 +44,7 @@ import yourstyle.com.shope.model.VoucherCustomer;
 import yourstyle.com.shope.service.AccountService;
 import yourstyle.com.shope.service.CustomerService;
 import yourstyle.com.shope.service.EmailService;
+import yourstyle.com.shope.service.OrderService;
 import yourstyle.com.shope.service.VoucherCustomerService;
 import yourstyle.com.shope.service.VoucherService;
 import yourstyle.com.shope.validation.admin.VoucherDTO;
@@ -70,6 +71,9 @@ public class VoucherController {
 
     @Autowired
     EmailService emailService;
+
+    @Autowired
+    OrderService orderService;
 
     @GetMapping("add")
     public String add(Model model) {
@@ -311,19 +315,20 @@ public class VoucherController {
                     </html>
                 """;
 
-        for (Customer customer : customers) {
-            if (customer.getAccount() != null && customer.getAccount().getEmail() != null) {
-                // Chèn dữ liệu vào template HTML
-                String htmlBody = String.format(
-                        htmlBodyTemplate,
-                        voucher.getVoucherName(),
-                        voucher.getVoucherCode(),
-                        voucher.getDiscountAmount(),
-                        voucher.getEndDate());
-                emailService.sendVoucherEmail(customer.getAccount().getEmail(), subject,
-                        htmlBody);
-            }
-        }
+        // for (Customer customer : customers) {
+        // if (customer.getAccount() != null && customer.getAccount().getEmail() !=
+        // null) {
+        // // Chèn dữ liệu vào template HTML
+        // String htmlBody = String.format(
+        // htmlBodyTemplate,
+        // voucher.getVoucherName(),
+        // voucher.getVoucherCode(),
+        // voucher.getDiscountAmount(),
+        // voucher.getEndDate());
+        // emailService.sendVoucherEmail(customer.getAccount().getEmail(), subject,
+        // htmlBody);
+        // }
+        // }
 
         redirectAttributes.addFlashAttribute("messageType", "success");
         redirectAttributes.addFlashAttribute("messageContent", "Thêm/cập nhật voucher và gửi email thành công!");
@@ -331,16 +336,12 @@ public class VoucherController {
     }
 
     public void validationVoucher(VoucherDTO voucherDto, BindingResult result) {
-        if (voucherDto.getVoucherCode() == null) {
-            if (voucherService.existsByVoucherCode(voucherDto.getVoucherCode())) {
-                result.rejectValue("voucherCode", "error.voucherCode", "Mã voucher đã tồn tại.");
-            }
+        if (voucherDto.getVoucherCode() != null && voucherService.existsByVoucherCode(voucherDto.getVoucherCode())) {
+            result.rejectValue("voucherCode", "error.voucherCode", "Mã voucher đã tồn tại.");
         }
 
-        if (voucherDto.getVoucherName() == null) {
-            if (voucherService.existsByVoucherName(voucherDto.getVoucherName())) {
-                result.rejectValue("voucherName", "error.voucherName", "Tên voucher đã tồn tại.");
-            }
+        if (voucherDto.getVoucherName() != null && voucherService.existsByVoucherName(voucherDto.getVoucherName())) {
+            result.rejectValue("voucherName", "error.voucherName", "Tên voucher đã tồn tại.");
         }
 
         if (voucherDto.getMinTotalAmount() != null && voucherDto.getMaxTotalAmount() != null) {
@@ -351,11 +352,11 @@ public class VoucherController {
         }
 
         if (voucherDto.getDiscountAmount() != null) {
-            BigDecimal maxAmount = voucherDto.getMaxTotalAmount();
+            BigDecimal minAmount = voucherDto.getMinTotalAmount();
 
-            if (maxAmount != null && voucherDto.getDiscountAmount().compareTo(maxAmount) > 0) {
+            if (minAmount != null && voucherDto.getDiscountAmount().compareTo(minAmount) > 0) {
                 result.rejectValue("discountAmount", "error.discountAmount",
-                        "Giảm giá không được lớn hơn giá trị tối đa.");
+                        "Giảm giá không được lớn hơn giá trị tối thiểu.");
             }
         }
 
@@ -473,11 +474,18 @@ public class VoucherController {
     public ModelAndView getMethodName(ModelMap model, @PathVariable("voucherId") Integer voucherId) {
 
         if (voucherId != null) {
-            // Xóa tất cả các bản ghi liên quan trong VoucherCustomer trước
-            voucherCustomerService.deleteByVoucherId(voucherId);
-            voucherService.deleteByVoucherId(voucherId);
-            model.addAttribute("messageType", "success");
-            model.addAttribute("messageContent", "Xóa thành công");
+            boolean isUsedInOrders = orderService.existsByVoucherId(voucherId);
+
+            if (isUsedInOrders) {
+                model.addAttribute("messageType", "error");
+                model.addAttribute("messageContent", "Không thể xóa. Voucher đang được sử dụng trong các đơn hàng.");
+            } else {
+                // Xóa tất cả các bản ghi liên quan trong VoucherCustomer trước
+                voucherCustomerService.deleteByVoucherId(voucherId);
+                voucherService.deleteByVoucherId(voucherId);
+                model.addAttribute("messageType", "success");
+                model.addAttribute("messageContent", "Xóa thành công");
+            }
         } else {
             model.addAttribute("messageType", "error");
             model.addAttribute("messageContent", "Khách hàng không tồn tại");

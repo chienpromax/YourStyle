@@ -81,4 +81,6 @@ public interface OrderService {
 	BigDecimal calculateDiscountedTotal(BigDecimal totalAmount, BigDecimal discountAmount);
 
 	List<Order> findByCustomerOrderByOrderDateDesc(Customer customer);
+
+	boolean existsByVoucherId(Integer voucherId);
 }

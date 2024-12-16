@@ -6,6 +6,17 @@
 
 <body>
     <section layout:fragment="main">
+        <div class="displayNotifications">
+            <div th:if="${messageType == 'success'}" class="alert alert-success alert-dismissible fade show"
+                role="alert">
+                <span th:text="${messageContent}">Thành công!</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${messageType == 'error'}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${messageContent}">Đã xảy ra lỗi, vui lòng thử lại!</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
         <main id="main" class="main">
 
             <div class="pagetitle">

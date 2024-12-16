@@ -35,6 +35,7 @@ public class SecurityConfig {
                         .requestMatchers("/yourstyle/product/**").permitAll()
                         .requestMatchers("/yourstyle/productfavorites/**").permitAll()
                         .requestMatchers("/yourstyle/product/detail/**").permitAll()
+                        .requestMatchers("/yourstyle/allproduct/**").permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/yourstyle/carts/**", "/yourstyle/VNPays/**", "/yourstyle/order/**")
                         .hasAnyAuthority("ROLE_ADMIN", "ROLE_USER", "ROLE_EMPLOYEE")
@@ -71,7 +72,7 @@ public class SecurityConfig {
                         .failureUrl("/yourstyle/accounts/login")
                         .userInfoEndpoint()
                         .userService(customOAuth2UserService)
-                        .and())                
+                        .and())
                 .rememberMe(rememberMe -> rememberMe
                         .key("uniqueAndSecret")
                         .tokenValiditySeconds(86400)

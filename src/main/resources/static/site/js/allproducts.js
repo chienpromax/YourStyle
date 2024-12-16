@@ -24,7 +24,7 @@ window.addEventListener("DOMContentLoaded", function () {
         const minPriceValue = parseFloat(minPrice.value.replace(/\D/g, "")) / 1000;
         const maxPriceValue = parseFloat(maxPrice.value.replace(/\D/g, "")) / 1000;
         fetch(
-            `/allproduct/filterMinPriceAndMaxPrice?minPrice=${minPriceValue}&maxPrice=${maxPriceValue}&categoryId=${categoryId}`,
+            `/yourstyle/allproduct/filterMinPriceAndMaxPrice?minPrice=${minPriceValue}&maxPrice=${maxPriceValue}&categoryId=${categoryId}`,
             {
                 method: "GET",
                 headers: {
@@ -76,7 +76,7 @@ window.addEventListener("DOMContentLoaded", function () {
 
             const formattedValue = value.replace(/\D/g, "");
             const filterPrice = Math.floor(formattedValue / 1000);
-            fetch(`/allproduct/filterRangePrice?price=${filterPrice}&categoryId=${categoryId}`, {
+            fetch(`/yourstyle/allproduct/filterRangePrice?price=${filterPrice}&categoryId=${categoryId}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -98,7 +98,7 @@ window.addEventListener("DOMContentLoaded", function () {
         });
     }
     function getFilterUrl(sizeId, colorId, categoryId) {
-        let url = `/allproduct/filterProduct?categoryId=${categoryId}`;
+        let url = `/yourstyle/allproduct/filterProduct?categoryId=${categoryId}`;
         if (sizeId) {
             url += `&sizeId=${sizeId}`;
         }
@@ -164,10 +164,10 @@ window.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
-    // sắp xếp sản phẩm theo giá
+    // lọc sẩn phẩm theo combobox
     document.getElementById("selectSort").addEventListener("change", function () {
         const selectedValue = this.value;
-        fetch(`/allproduct/sortProduct?typeSort=${selectedValue}&categoryId=${categoryId}`, {
+        fetch(`/yourstyle/allproduct/sortProduct?typeSort=${selectedValue}&categoryId=${categoryId}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

@@ -74,13 +74,13 @@ public class VoucherPage {
             selectDay(yearStart, monthStart, dayStart);
             Thread.sleep(2000);
             WebElement clickEndDay = WaitFor.waitElementVisible(BaseSetup.driver, By.xpath(endVoucher));
-          actions.moveToElement(clickEndDay).click().build().perform();
+            actions.moveToElement(clickEndDay).click().build().perform();
             selectDay(yearEnd, monthEnd, dayEnd);
             Thread.sleep(2000);
             String radioStatus = "//input[@name='" + status + "']";
-        WebElement clickStatus = WaitFor.waitElementVisible(BaseSetup.driver, By.xpath(radioStatus));
-        ScrollTo.scrollMultipleTimesToElement(clickStatus, 3);
-        clickStatus.click();
+            WebElement clickStatus = WaitFor.waitElementVisible(BaseSetup.driver, By.xpath(radioStatus));
+            ScrollTo.scrollMultipleTimesToElement(clickStatus, 3);
+            clickStatus.click();
             checkRadioStatus(status);
             InputValidation.clearInput(BaseSetup.driver, descriptionn, By.xpath(description));
             WebElement clickSave = WaitFor.waitElementVisible(BaseSetup.driver, By.xpath(btnSave));

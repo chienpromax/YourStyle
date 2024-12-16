@@ -17,13 +17,13 @@ public class UserProfilePage {
     static String btnUpdate = "//button[contains(text(),'Cập nhật thông tin')]";
 
     public static void UserProfileDetailInsertSuccess(String filePath, String gender, String fullName, String PhoneNumber) {
+        String workingDir= System.getProperty("user.dir");
             WebElement clickPro = WaitFor.waitElementVisible(BaseSetup.driver, By.xpath(clickProfile));
             clickPro.click();
             WebElement clickUserName = WaitFor.waitElementVisible(BaseSetup.driver, By.xpath(clickUsertoPage));
             clickUserName.click();
             WebElement clickAvatar = WaitFor.waitElementVisible(BaseSetup.driver, By.xpath(choiceImage));
-//            String filePath = "Downloads\\anh-cua-shin-1.jpg";
-            clickAvatar.sendKeys(filePath);
+            clickAvatar.sendKeys(workingDir+filePath);
             checkGender(gender);
             InputValidation.clearInput(BaseSetup.driver, fullName, By.xpath(inputFullName));
             InputValidation.clearInput(BaseSetup.driver, PhoneNumber, By.xpath(inputPhoneNumber));

@@ -11,7 +11,7 @@ public class UserProfileTest extends BaseTest {
     public void testInsertInformationUser() {
         try {
             LoginPage.login("Vothithanh", "123456");
-            UserProfilePage.UserProfileDetailInsertSuccess("Downloads//anh-cua-shin-1.jpg", "0", "VT Thanh",
+            UserProfilePage.UserProfileDetailInsertSuccess("src/main/resources/static/uploads/Avatar/1_anh-cua-shin-1", "0", "VT Thanh",
                     "0349226904");
         } catch (Exception ex) {
             System.out.println("hi" + ex);

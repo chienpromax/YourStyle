@@ -2,12 +2,10 @@ package yourstyle.com.shope.page;
 
 import java.io.File;
 import java.time.Duration;
-import java.util.NoSuchElementException;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import org.openqa.selenium.interactions.Actions;
@@ -65,13 +63,7 @@ public class CategoryPage {
         String actualDeleteSucess = actualDelete.getText();
         Assert.assertEquals(actualDeleteSucess, "Xóa danh mục thành công",
                 "Kết quả mong đợi và kết quả thực tết không giống nhau");
-        // try {
-        //     BaseSetup.driver.findElement(By.xpath(checkDeleteSucces));
-        //     System.out.println("Danh mục vẫn còn tồn tại!");
-        // } catch (NoSuchElementException ex) {
-        //     System.out.println("Danh mục đã được xóa");
-        // }
-
+     
     }
 
     public static void selectCategory(String value) {
@@ -90,10 +82,7 @@ public class CategoryPage {
         InputValidation.clearInput(BaseSetup.driver, name, By.id("name"));
         Thread.sleep(5000);
         selectCategory(parentCategory);
-        // Select parentCategorySelect = new
-        // Select(BaseSetup.driver.findElement(By.id("categoryParent")));
-        // parentCategorySelect.selectByVisibleText(parentCategory);
-        // Thread.sleep(10000);
+        
         if (imagePath != null && !imagePath.trim().isEmpty()) {
             File imageFile = new File(imagePath);
             if (!imageFile.exists()) {
@@ -110,37 +99,6 @@ public class CategoryPage {
                 ScrollTo.element(addButton);
         addButton.click();
      
-        // // Chờ nút "Thêm" có thể nhấp
-        // WebDriverWait wait = new WebDriverWait(BaseSetup.driver,
-        // Duration.ofSeconds(10));
-        // WebElement addButton = wait
-        // .until(ExpectedConditions.elementToBeClickable(By.xpath("//button[contains(text(),
-        // 'Thêm')]")));
-        // Cuộn vào vị trí nút (nếu cần)
-        // ((JavascriptExecutor)
-        // BaseSetup.driver).executeScript("arguments[0].scrollIntoView(true);",
-        // addButton);
-        // // Nhấp nút bằng JavaScript
-        // ((JavascriptExecutor)
-        // BaseSetup.driver).executeScript("arguments[0].click();", addButton);
-
-        // Kiểm tra trường hợp để trống tên danh mục
-        // if (name == null || name.trim().isEmpty()) {
-        // WebElement nameFieldError = WaitFor.waitElementVisible(BaseSetup.driver,
-        // By.id("name"));
-        // String validationMessage = nameFieldError.getAttribute("validationMessage");
-        // Assert.assertEquals(validationMessage, "Please fill out this field.",
-        // "Không có thông báo lỗi khi để trống tên danh mục.");
-        // return; // Kết thúc nếu có lỗi
-        // }
-        // // Kiểm tra thông báo lỗi nếu không chọn ảnh
-        // try {
-        // WebElement errorMessage = WaitFor.waitElementVisible(BaseSetup.driver,
-        // By.id("error-message"));
-        // String errorText = errorMessage.getText();
-        // Assert.assertTrue(errorText.contains("Vui lòng chọn ảnh cho danh mục."),
-        // "Không có thông báo lỗi phù hợp khi không chọn ảnh.");
-        // } catch (TimeoutException e) {
         WebElement successToast = WaitFor.waitElementVisible(BaseSetup.driver, By.xpath(
                 "//div[@class='toast success']/div[@class='content']/span[text()='Thêm mới danh mục thành công']"));
         String successMessage = successToast.getText();

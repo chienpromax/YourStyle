@@ -336,12 +336,18 @@ public class VoucherController {
     }
 
     public void validationVoucher(VoucherDTO voucherDto, BindingResult result) {
-        if (voucherDto.getVoucherCode() != null && voucherService.existsByVoucherCode(voucherDto.getVoucherCode())) {
-            result.rejectValue("voucherCode", "error.voucherCode", "Mã voucher đã tồn tại.");
+        if (voucherDto.getVoucherId() == null) {
+            if (voucherDto.getVoucherCode() != null
+                    && voucherService.existsByVoucherCode(voucherDto.getVoucherCode())) {
+                result.rejectValue("voucherCode", "error.voucherCode", "Mã voucher đã tồn tại.");
+            }
         }
 
-        if (voucherDto.getVoucherName() != null && voucherService.existsByVoucherName(voucherDto.getVoucherName())) {
-            result.rejectValue("voucherName", "error.voucherName", "Tên voucher đã tồn tại.");
+        if (voucherDto.getVoucherId() == null) {
+            if (voucherDto.getVoucherName() != null
+                    && voucherService.existsByVoucherName(voucherDto.getVoucherName())) {
+                result.rejectValue("voucherName", "error.voucherName", "Tên voucher đã tồn tại.");
+            }
         }
 
         if (voucherDto.getMinTotalAmount() != null && voucherDto.getMaxTotalAmount() != null) {

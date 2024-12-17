@@ -35,8 +35,8 @@
                     th:text="${currentUser != null ? (currentUser.fullname != null ? currentUser.fullname : (currentUser.account != null && currentUser.account.email != null ? currentUser.account.email : 'Admin')) : 'Admin'}">
                   </span>
                 </span>
-                <span th:if="${currentUser.account.role.name == 'ROLE_EMPLOYEE'}">Nhân viên</span>
-                <span th:if="${currentUser.account.role.name == 'ROLE_ADMIN'}">Quản lý</span>
+                <!-- <span th:if="${currentUser.account.role.name == 'ROLE_EMPLOYEE'}">Nhân viên</span> -->
+                <!-- <span th:if="${currentUser.account.role.name == 'ROLE_ADMIN'}">Quản lý</span> -->
               </li>
               <li sec:authorize="isAuthenticated()">
                 <a class="dropdown-item d-flex align-items-center" th:href="@{/yourstyle/accounts/logout}">

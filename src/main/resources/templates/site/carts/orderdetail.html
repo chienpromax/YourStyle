@@ -293,7 +293,7 @@
                     <div class="pt-4 order-total row d-flex align-items-center justify-content-between">
                         <p>TỔNG TIỀN:
                             <span class="float-end"
-                                th:text="${#numbers.formatDecimal(totalAmount, 1, 'COMMA', 3, 'POINT')+ ' Đ'}">
+                                th:text="${#numbers.formatDecimal(totalAmount, 1, 'COMMA', 3, 'POINT')+ ' VNĐ'}">
                             </span>
                         </p>
                     </div>
@@ -314,7 +314,7 @@
                                     <div class="modal-body">
                                         <div class="row">
                                             <div th:if="${#lists.isEmpty(vouchers)}">
-                                                <h4 style="color: red; font-weight: bold;">đơn hàng chưa đủ điều kiện.</h4>
+                                                <h4 style="color: rgb(0, 0, 0); font-weight: bold; text-align: center;">đơn hàng chưa đủ điều kiện.</h4>
                                             </div>
                                             
                                             <div class="col-md-12 pt-3" th:each="voucher : ${vouchers}"
@@ -329,7 +329,7 @@
                                                                     class="btn btn-warning float-end mb-3 fs-6">Copy
                                                                     Mã</button>
                                                             </div>
-                                                            <h5 style="color: black; font-size: 1.6rem; font-weight: 700;">
+                                                            <h5 style="color: rgb(9, 9, 9); font-size: 1.6rem; font-weight: 700;">
                                                                 Vé Giảm Giá: <span
                                                                     th:text="${voucher.voucherName}"></span>
                                                                 <br>

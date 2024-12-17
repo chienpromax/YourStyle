@@ -62,24 +62,31 @@ function applyDiscount() {
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
-        const formattedTotalAmount = new Intl.NumberFormat("vi-VN", {
-          minimumFractionDigits: 3,
-          maximumFractionDigits: 3,
-        }).format(data.newTotalAmount);
-
-        const totalElement = document.querySelector(".order-total span");
-        totalElement.textContent = `${formattedTotalAmount} Đ`;
-        totalElement.style.color = "red";
-        totalElement.style.fontWeight = "bold";
-
-        // Lưu lại voucherId (nếu cần dùng sau)
-        console.log("Applied Voucher ID: ", data.voucherId);
+        Swal.fire({
+          icon: "success",
+          title: "Thành công!",
+          text: "Mã giảm giá đã được áp dụng.",
+          confirmButtonText: "OK",
+        });
+        location.reload();
       } else {
-        alert("Mã giảm giá không hợp lệ hoặc đã hết hạn hoạc đã được sử dụng.");
+        // Hiển thị thông báo lỗi từ server
+        Swal.fire({
+          icon: "error",
+          title: "Lỗi!",
+          text: data.message || "Có lỗi xảy ra khi áp dụng mã giảm giá.",
+          confirmButtonText: "OK",
+        });
       }
     })
     .catch((error) => {
       console.error("Lỗi khi áp dụng mã giảm giá:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi hệ thống!",
+        text: "Vui lòng thử lại sau.",
+        confirmButtonText: "OK",
+      });
     });
 }
 

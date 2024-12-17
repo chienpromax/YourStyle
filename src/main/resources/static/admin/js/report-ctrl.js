@@ -110,7 +110,7 @@ app.controller('reportCtrl', function ($scope, $http) {
     //San pham khong ban chay
     $scope.productWithoutOrders = [];
     $scope.currentPage = 0;
-    $scope.pageSize = 3;
+    $scope.pageSize = 10;
 
     function loadProductWithoutOrders(page = 0) {
         let url = `/rest/reports/product/withoutOrders?page=${page}&size=${$scope.pageSize}`;

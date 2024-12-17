@@ -355,11 +355,27 @@
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
-          confirmButtonText: 'xóa nó!',
+          confirmButtonText: 'Xóa nó!',
           cancelButtonText: 'Hủy'
         }).then((result) => {
           if (result.isConfirmed) {
-            window.location.href = '/admin/colors/delete/' + colorId;
+            fetch('/admin/colors/delete/' + colorId, { method: 'DELETE' })
+              .then(response => {
+                if (response.ok) {
+                  return response.text(); // Lấy thông điệp từ server
+                } else {
+                  return response.text().then(errMsg => {
+                    throw new Error(errMsg);
+                  });
+                }
+              })
+              .then(message => {
+                Swal.fire(message, '', 'success')
+                  .then(() => location.reload());
+              })
+              .catch(err => {
+                Swal.fire('Không thể xóa!', err.message, 'error');
+              });
           }
         });
       }
@@ -370,16 +386,33 @@
           text: "Bạn sẽ không thể hoàn tác sau khi xóa!",
           icon: 'warning',
           showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'xóa nó!',
+          confirmButtonSize: '#3085d6',
+          cancelButtonSize: '#d33',
+          confirmButtonText: 'Xóa nó!',
           cancelButtonText: 'Hủy'
         }).then((result) => {
           if (result.isConfirmed) {
-            window.location.href = '/admin/sizes/delete/' + sizeId;
+            fetch('/admin/sizes/delete/' + sizeId, { method: 'DELETE' })
+              .then(response => {
+                if (response.ok) {
+                  return response.text(); // Lấy thông điệp từ server
+                } else {
+                  return response.text().then(errMsg => {
+                    throw new Error(errMsg);
+                  });
+                }
+              })
+              .then(message => {
+                Swal.fire(message, '', 'success')
+                  .then(() => location.reload());
+              })
+              .catch(err => {
+                Swal.fire('Không thể xóa!', err.message, 'error');
+              });
           }
         });
       }
+
 
       function confirmDeleteDiscount(discountId) {
         Swal.fire({

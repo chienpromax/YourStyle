@@ -27,7 +27,7 @@ import yourstyle.com.shope.service.ProductVariantService;
 import yourstyle.com.shope.service.SizeService;
 
 @Controller
-@RequestMapping("/allproduct")
+@RequestMapping("/yourstyle/allproduct")
 public class ProductController {
 
     @Autowired

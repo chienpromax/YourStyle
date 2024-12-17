@@ -28,7 +28,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/*").permitAll()
                         .requestMatchers("/static/**", "/images/**", "/uploads/**", "/site/**").permitAll()
-                        .requestMatchers("/yourstyle/home", "/yourstyle/discount/**").permitAll()
+                        .requestMatchers("/yourstyle/home", "/yourstyle/discount/**", "/yourstyle/allproduct/**").permitAll()
                         .requestMatchers("/yourstyle/product/detail/**").permitAll()
                         .requestMatchers("/yourstyle/best-sellers**").permitAll()
                         .requestMatchers("/yourstyle/accounts/**").permitAll()

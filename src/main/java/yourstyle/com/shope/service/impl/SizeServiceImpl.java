@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import yourstyle.com.shope.model.Size;
+import yourstyle.com.shope.repository.ProductVariantRepository;
 import yourstyle.com.shope.repository.SizeRepository;
 import yourstyle.com.shope.service.SizeService;
 
@@ -19,10 +20,21 @@ public class SizeServiceImpl implements SizeService{
     
     @Autowired
     private SizeRepository sizeRepository;
+    @Autowired
+    private ProductVariantRepository productVariantRepository;
+
+    public boolean isSizeInUse(Integer sizeId) {
+        boolean exists = productVariantRepository.existsBysize_sizeId(sizeId);
+        return exists;
+    }    
 
     @Override
-    public void deleteById(Integer id) {
-        sizeRepository.deleteById(id);
+    public void deleteById(Integer sizeId) {
+        if (isSizeInUse(sizeId)) {
+            throw new IllegalArgumentException("Màu đang được sử dụng, không thể xóa!");
+        }
+        // Nếu không có sản phẩm nào sử dụng màu này, tiến hành xóa màu
+        sizeRepository.deleteById(sizeId);
     }
 
     @Override

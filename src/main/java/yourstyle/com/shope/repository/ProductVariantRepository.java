@@ -68,4 +68,8 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
     @Query("SELECT pv FROM ProductVariant pv WHERE pv.size = :size  AND pv.color = :color AND pv.product.category.categoryId = :categoryId")
     List<ProductVariant> findBySizeAndColor(@Param("size") Size size, @Param("color") Color color,
             @Param("categoryId") Integer categoryId);
+
+    boolean existsByColor_ColorId(Integer colorId);
+    boolean existsBysize_sizeId(Integer sizerId);
+
 }

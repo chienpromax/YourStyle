@@ -123,14 +123,14 @@
                                     <ul class="pagination">
                                         <li th:classappend="${currentPage == 0} ? 'disabled' : ''" class="page-item">
                                             <a class="page-link"
-                                                th:href="@{/allproduct(page=${currentPage - 1}, size=${size})}"
+                                                th:href="@{/yourstyle/allproduct(page=${currentPage - 1}, size=${size})}"
                                                 aria-label="Previous">
                                                 <span aria-hidden="true">&laquo;</span>
                                             </a>
                                         </li>
                                         <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                                             th:classappend="${i == currentPage} ? 'active' : ''" class="page-item">
-                                            <a class="page-link" th:href="@{/allproduct(page=${i}, size=${size})}"
+                                            <a class="page-link" th:href="@{/yourstyle/allproduct(page=${i}, size=${size})}"
                                                 th:text="${i + 1}">
                                                 1
                                             </a>
@@ -138,7 +138,7 @@
                                         <li th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''"
                                             class="page-item">
                                             <a class="page-link"
-                                                th:href="@{/allproduct(page=${currentPage + 1}, size=${size})}"
+                                                th:href="@{/yourstyle/allproduct(page=${currentPage + 1}, size=${size})}"
                                                 aria-label="Next">
                                                 <span aria-hidden="true">&raquo;</span>
                                             </a>
@@ -150,7 +150,7 @@
                     </div>
                     <!-- Hiển thị thông báo nếu không có sản phẩm -->
                     <div th:if="${#lists.isEmpty(products)}" class="alert alert-warning position-static" role="alert">
-                        Không có sản phẩm nào. <a href="/allproduct" target="_blank"
+                        Không có sản phẩm nào. <a href="/yourstyle/allproduct" target="_blank"
                             rel="noopener noreferrer">Xem các sản phẩm khác</a>
                     </div>
                 </div>

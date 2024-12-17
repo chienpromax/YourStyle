@@ -374,7 +374,7 @@
             <h2 class="text-center">SẢN PHẨM TƯƠNG TỰ</h2>
             <div th:each="p : ${similarProducts}" class="col-md-3 pt-5" data-aos="fade-up">
                 <div class="card product-card">
-                    <a th:href="@{/allproduct}">
+                    <a th:href="@{/yourstyle/allproduct}">
                         <img th:src="@{/uploads/} + ${p.image}" class="img-fluid">
                     </a>
                     <div class="p-2">

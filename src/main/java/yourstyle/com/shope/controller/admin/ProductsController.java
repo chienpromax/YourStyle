@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -155,9 +156,15 @@ public class ProductsController {
 	public ModelAndView delete(ModelMap model, @PathVariable("productId") Integer productId) {
 		Optional<Product> product = productService.findById(productId);
 		if (product.isPresent()) {
-			productService.deleteById(productId);
-			model.addAttribute("messageType", "success");
-			model.addAttribute("messageContent", "Xóa thành công");
+			try {
+				productService.deleteById(productId);
+				model.addAttribute("messageType", "success");
+				model.addAttribute("messageContent", "Xóa thành công");
+			} catch (DataIntegrityViolationException e) {
+				// Xử lý lỗi khi vi phạm ràng buộc dữ liệu
+				model.addAttribute("messageType", "error");
+				model.addAttribute("messageContent", "Không thể xóa sản phẩm vì có ràng buộc dữ liệu.");
+			}
 		} else {
 			model.addAttribute("messageType", "error");
 			model.addAttribute("messageContent", "Sản phẩm không tồn tại");

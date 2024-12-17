@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -71,15 +72,15 @@ public class ProductVariantController {
 
     @GetMapping("/search")
     public String searchProductVariants(@RequestParam("value") String value,
-                                        @RequestParam("page") Optional<Integer> page,
-                                        @RequestParam("size") Optional<Integer> size,
-                                        Model model) {
+            @RequestParam("page") Optional<Integer> page,
+            @RequestParam("size") Optional<Integer> size,
+            Model model) {
         int currentPage = page.orElse(0);
         int pageSize = size.orElse(5);
         Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by("product.name")); // Sắp xếp theo tên sản phẩm
-    
+
         Page<ProductVariant> productVariants = productVariantService.searchByProductName(value, pageable);
-    
+
         int totalPages = productVariants.getTotalPages();
         if (totalPages > 0) {
             int start = Math.max(1, currentPage + 1 - 2);
@@ -94,12 +95,12 @@ public class ProductVariantController {
             List<Integer> pageNumbers = IntStream.rangeClosed(start, end).boxed().collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-    
+
         model.addAttribute("productVariants", productVariants.getContent());
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("size", pageSize);
         model.addAttribute("value", value);
-    
+
         return "admin/productVariants/list";
     }
 
@@ -108,45 +109,53 @@ public class ProductVariantController {
         Optional<ProductVariant> optional = productVariantService.findById(variantId);
         List<Color> colors = colorService.findAll();
         List<Size> sizes = sizeService.findAll();
-    
+
         if (optional.isPresent()) {
             ProductVariant productVariant = optional.get();
             model.addAttribute("productVariant", productVariant);
             model.addAttribute("productName", productVariant.getProduct().getName());
             model.addAttribute("categoryName", productVariant.getProduct().getCategory().getName());
-            
+
             model.addAttribute("colors", colors);
             model.addAttribute("sizes", sizes);
             productVariant.setEdit(true);
             return new ModelAndView("admin/productVariants/addOrEdit");
         }
-    
+
         model.addAttribute("messageType", "warning");
         model.addAttribute("messageContent", "Sản phẩm không tồn tại!");
         return new ModelAndView("redirect:/admin/productVariants", model);
     }
-    
-    @GetMapping("delete/{id}")
-    public String deleteProductVariant(@PathVariable("id") Integer id, Model model) {
-        if (productVariantService.existsById(id)) {
-            productVariantService.deleteById(id);
 
-            model.addAttribute("messageType", "success");
-            model.addAttribute("messageContent", "Xóa thành công");
+    @GetMapping("delete/{id}")
+    public ModelAndView deleteProductVariant(@PathVariable("id") Integer id) {
+        ModelAndView modelAndView = new ModelAndView("redirect:/admin/productVariants");
+
+        if (productVariantService.existsById(id)) {
+            try {
+                productVariantService.deleteById(id);
+                modelAndView.addObject("messageType", "success");
+                modelAndView.addObject("messageContent", "Xóa thành công");
+            } catch (DataIntegrityViolationException e) {
+                // Xử lý lỗi khi vi phạm ràng buộc dữ liệu
+                modelAndView.addObject("messageType", "error");
+                modelAndView.addObject("messageContent",
+                        "Không thể xóa biến thể sản phẩm vì nó đang được sử dụng trong một số đơn hàng.");
+            }
         } else {
-            model.addAttribute("messageType", "error");
-            model.addAttribute("messageContent", "Sản phẩm không tồn tại");
+            modelAndView.addObject("messageType", "error");
+            modelAndView.addObject("messageContent", "Biến thể sản phẩm không tồn tại");
         }
 
-        return "redirect:/admin/productVariants";
+        return modelAndView;
     }
 
     @PostMapping("saveOrUpdate")
     public ModelAndView saveOrUpdate(ModelMap model, @ModelAttribute("productVariant") ProductVariant productVariant,
-                                      BindingResult result) {
+            BindingResult result) {
         List<Product> products = productService.findAll();
         model.addAttribute("products", products);
-    
+
         // Kiểm tra lỗi đầu vào
         if (result.hasErrors()) {
             model.addAttribute("productVariant", productVariant);
@@ -154,9 +163,10 @@ public class ProductVariantController {
             model.addAttribute("messageContent", "Lỗi! Vui lòng kiểm tra lại thông tin.");
             return new ModelAndView("admin/productVariants/addOrEdit", model);
         }
-    
+
         // Kiểm tra sản phẩm đã tồn tại chưa nếu là sửa
-        if (productVariant.getProductVariantId() != null && productVariantService.findById(productVariant.getProductVariantId()).isPresent()) {
+        if (productVariant.getProductVariantId() != null
+                && productVariantService.findById(productVariant.getProductVariantId()).isPresent()) {
             productVariantService.update(productVariant);
             model.addAttribute("messageType", "success");
             model.addAttribute("messageContent", "Cập nhật sản phẩm biến thể thành công.");
@@ -165,10 +175,10 @@ public class ProductVariantController {
             model.addAttribute("messageType", "success");
             model.addAttribute("messageContent", "Thêm sản phẩm biến thể thành công.");
         }
-    
+
         return new ModelAndView("redirect:/admin/productVariants", model);
     }
-    
+
     @GetMapping("")
     public String list(Model model, @RequestParam("page") Optional<Integer> page,
             @RequestParam("size") Optional<Integer> size) {

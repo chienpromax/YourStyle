@@ -148,7 +148,7 @@
                       </div>
                       <!-- Cột bên phải -->
                     </div>
-                    <div class="text-center mt-4">
+                    <div class="text-center mt-4 py-2">
                       <button class="btn btn-primary rounded-pill py-2 px-4 me-3" th:if="*{isEdit}">
                         Cập nhật
                       </button>
@@ -250,7 +250,7 @@
                 </div>
                 <hr>
                 <!-- End floating Labels Form -->
-                <div class="row py-4 justify-content-center bg-secondary text-center rounded">
+                <div class="row py-4 justify-content-center bg-secondary text-center rounded pt-3">
                   <!-- Form quản lý Màu sắc -->
                   <div class="col-md-5 bg-dark py-3 text-white rounded mx-3">
                     <form method="POST" action="/admin/colors/save" th:object="${color}">
@@ -412,7 +412,6 @@
           }
         });
       }
-
 
       function confirmDeleteDiscount(discountId) {
         Swal.fire({

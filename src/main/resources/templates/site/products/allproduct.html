@@ -87,7 +87,7 @@
                             <div th:each="product : ${products}" class="col-md-3 pt-5" data-aos="fade-up">
                                 <div class="card product-card">
                                     <a
-                                        th:href="@{yourstyle/product/detail/{productId}(productId=${product.productId})}">
+                                        th:href="@{product/detail/{productId}(productId=${product.productId})}">
                                         <img th:src="@{'/uploads/' + ${product.image}}" class="img-fluid product-image"
                                             alt="Product Image" />
                                     </a>

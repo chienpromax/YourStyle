@@ -3,7 +3,7 @@
     min-height: 102vh;
     background-color: hsl(0, 0%, 100%, 0.6);
     z-index: 1;
-    margin-top: -50px;
+    /* margin-top: -50px; */
     color: #000000;
 
 }

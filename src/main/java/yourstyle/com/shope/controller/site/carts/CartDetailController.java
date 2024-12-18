@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.transaction.Transactional;
 import yourstyle.com.shope.model.CustomUserDetails;
 import yourstyle.com.shope.model.Customer;
 import yourstyle.com.shope.model.Discount;
@@ -30,12 +31,14 @@ import yourstyle.com.shope.model.Order;
 import yourstyle.com.shope.model.OrderDetail;
 import yourstyle.com.shope.model.Product;
 import yourstyle.com.shope.model.ProductVariant;
+import yourstyle.com.shope.model.Voucher;
 import yourstyle.com.shope.repository.CustomerRepository;
 import yourstyle.com.shope.repository.OrderDetailRepository;
 import yourstyle.com.shope.repository.OrderRepository;
 import yourstyle.com.shope.repository.ProductVariantRepository;
 import yourstyle.com.shope.service.OrderService;
 import yourstyle.com.shope.service.ProductService;
+import yourstyle.com.shope.service.VoucherService;
 
 @Controller
 @RequestMapping("/yourstyle/carts")
@@ -53,6 +56,8 @@ public class CartDetailController {
     private ProductVariantRepository productVariantRepository;
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private VoucherService voucherService;
 
     @GetMapping("cartdetail")
     public String add(Model model) {
@@ -172,33 +177,59 @@ public class CartDetailController {
     }
 
     @PostMapping("/removeProduct")
+    @Transactional
     public String removeProductFromCart(@RequestParam("orderDetailId") Integer orderDetailId,
-            Authentication authentication) {
+                                         Authentication authentication) {
+        // Kiểm tra xem người dùng đã đăng nhập hay chưa
         if (authentication == null || !authentication.isAuthenticated()) {
             return "redirect:/site/accounts/login";
         }
-
+    
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Integer accountId = userDetails.getAccountId();
-
+    
+        // Lấy thông tin khách hàng
         Customer customer = customerRepository.findByAccount_AccountId(accountId);
-
         if (customer == null) {
             return "redirect:/site/accounts/login";
         }
-
+    
+        // Lấy đơn hàng của khách hàng với trạng thái đang chờ xử lý
+        Optional<Order> orderOptional = orderRepository.findByCustomerAndStatus(customer, 9).stream().findFirst();
+        if (orderOptional.isEmpty()) {
+            return "redirect:/yourstyle/carts/cartdetail"; // Nếu không tìm thấy đơn hàng, quay về trang giỏ hàng
+        }
+    
+        Order order = orderOptional.get();
+    
+        // Lấy thông tin chi tiết đơn hàng
         Optional<OrderDetail> orderDetailOptional = orderDetailRepository.findById(orderDetailId);
         if (orderDetailOptional.isPresent()) {
             OrderDetail orderDetail = orderDetailOptional.get();
-
+    
+            // Cập nhật lại số lượng sản phẩm
             ProductVariant productVariant = orderDetail.getProductVariant();
             productVariant.setQuantity(productVariant.getQuantity() + orderDetail.getQuantity());
             productVariantRepository.save(productVariant);
-
+    
+            // Xóa sản phẩm khỏi giỏ hàng
             orderDetailRepository.delete(orderDetail);
+    
+            // Xóa voucher nếu tồn tại
+            if (order.getVoucher() != null) {
+                Voucher voucher = order.getVoucher();
+    
+                // Tăng số lần sử dụng của voucher
+                voucher.setMaxUses(voucher.getMaxUses() + 1);
+                voucherService.save(voucher);
+    
+                // Gỡ voucher khỏi đơn hàng
+                order.setVoucher(null);
+                orderRepository.save(order);
+            }
         }
-
-        return "redirect:/yourstyle/carts/cartdetail";
+    
+        return "redirect:/yourstyle/carts/cartdetail"; // Quay lại trang chi tiết giỏ hàng
     }
-
+    
 }

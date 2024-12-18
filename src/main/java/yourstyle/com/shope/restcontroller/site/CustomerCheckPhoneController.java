@@ -27,12 +27,19 @@ public class CustomerCheckPhoneController {
         if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
             throw new IllegalArgumentException("Số điện thoại không được để trống");
         }
-    
-        boolean exists = customerRepository.existsByPhoneNumberAndCustomerIdNot(phoneNumber, customerId);
+
+        boolean exists;
+        if (customerId == null) {
+            // Trường hợp thêm mới: chỉ kiểm tra số điện thoại đã tồn tại
+            exists = customerRepository.existsByPhoneNumber(phoneNumber);
+        } else {
+            // Trường hợp cập nhật: kiểm tra số điện thoại khác với customerId hiện tại
+            exists = customerRepository.existsByPhoneNumberAndCustomerIdNot(phoneNumber, customerId);
+        }
+
         Map<String, Boolean> response = new HashMap<>();
         response.put("exists", exists);
         return ResponseEntity.ok(response);
     }
-    
-
 }
+

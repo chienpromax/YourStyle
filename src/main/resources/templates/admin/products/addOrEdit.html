@@ -112,12 +112,13 @@
                     <!-- Cột bên trái -->
                     <div class="col-md-6">
                       <div class="form-group">
-                        <input type="hidden" th:field="*{image}" required />
+                        <input type="hidden" th:field="*{image}" />
                         <label for="avatarInput" class="form-label ms-4" style="cursor: pointer">Ảnh đại diện</label>
                         <input type="file" th:field="*{imageFile}" id="avatarInput" class="form-control d-none"
-                          onchange="loadFile(event)" required />
+                          onchange="loadFile(event)" />
                         <div class="avatar_wrapper d-flex align-items-center justify-content-center">
-                          <img id="avatarImage" th:src="@{'/uploads/' + ${product.image}}"
+                          <img id="avatarImage"
+                            th:src="${product.image != null ? '/uploads/' + product.image : '/site/images/computer-mouse-click-transparent-free-png.webp'}"
                             class="border border-dark border-1"
                             style="width: 370px; height: 420px; cursor: pointer; object-fit: cover;" />
                         </div>
@@ -149,10 +150,11 @@
                       <!-- Cột bên phải -->
                     </div>
                     <div class="text-center mt-4 py-2">
-                      <button class="btn btn-primary rounded-pill py-2 px-4 me-3" th:if="*{isEdit}">
+                      <button onclick="return validateImage()" class="btn btn-primary rounded-pill py-2 px-4 me-3"
+                        th:if="*{isEdit}">
                         Cập nhật
                       </button>
-                      <button onclick="validateImage()" class="btn btn-primary rounded-pill py-2 px-4 me-3"
+                      <button onclick="return validateImage()" class="btn btn-primary rounded-pill py-2 px-4 me-3"
                         th:unless="*{isEdit}">
                         Thêm sản phẩm
                       </button>
@@ -430,17 +432,36 @@
         });
       }
 
+      // function validateImage() {
+      //   const fileInput = document.getElementById('avatarInput');
+
+      //   if (!fileInput.value) {
+      //     Swal.fire({
+      //       icon: 'warning',
+      //       title: 'Chưa chọn ảnh',
+      //       text: 'Vui lòng chọn ảnh trước khi xác nhận!',
+      //       confirmButtonText: 'OK',
+      //     })
+      //   }
+      // }
+
       function validateImage() {
         const fileInput = document.getElementById('avatarInput');
+        const avatarImage = document.getElementById('avatarImage');
 
-        if (!fileInput.value) {
+        const isDefaultImage = avatarImage.src.includes('computer-mouse-click-transparent-free-png.webp');
+
+        // Nếu không chọn file mới và ảnh hiện tại là mặc định
+        if (!fileInput.value && isDefaultImage) {
           Swal.fire({
             icon: 'warning',
             title: 'Chưa chọn ảnh',
             text: 'Vui lòng chọn ảnh trước khi xác nhận!',
             confirmButtonText: 'OK',
-          })
+          });
+          return false; // Ngăn submit form
         }
+        return true; // Cho phép submit form
       }
 
     </script>

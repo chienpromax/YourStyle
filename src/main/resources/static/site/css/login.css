@@ -1,7 +1,7 @@
 .login-form{
     text-align: center;
     min-height: 102vh;
-    background-color: hsl(0, 0%, 100%, 0.9);
+    background-color: hsl(0, 0%, 100%, 0.6);
     z-index: 1;
     margin-top: -50px;
     color: #000000;
@@ -9,7 +9,7 @@
 }
 .login-form-background{
     padding: 15px;
-    background-color: hsl(0, 0%, 100%, 0.7);
+    background-color: hsl(0, 0%, 100%, 0.9);
 }
 
 .btn-container > button > i{

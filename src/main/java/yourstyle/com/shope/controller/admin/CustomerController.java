@@ -56,7 +56,7 @@ public class CustomerController {
 
 	@PostMapping("saveOrUpdate")
 	public ModelAndView saveOrUpdate(ModelMap model,
-			@Validated @ModelAttribute("customer") CustomerDto customerDto,
+			@ModelAttribute("customer") CustomerDto customerDto,
 			BindingResult result,
 			@RequestParam MultipartFile imageFile,
 			@RequestParam(required = false, defaultValue = "customer") String type,

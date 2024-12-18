@@ -39,7 +39,14 @@
 							<label for="" class="form-label"><i class="fa-solid fa-envelope"></i></label>
 							<span th:text="${customer.account.email}"></span><br>
 							<label for="" class="form-label"><i class="fa-solid fa-location-dot"></i></label>
-							<span th:text="${defaultAddress.street != null ? defaultAddress.street : 'Chưa có địa chỉ'}"></span>
+							<span class="py-3" th:text="
+   								${defaultAddress.street != null ? defaultAddress.street : 'Chưa có địa chỉ'} + 
+   								(${defaultAddress.district != null ? ', ' + defaultAddress.district : ''}) + 
+   								(${defaultAddress.city != null ? ', ' + defaultAddress.city : ''}) + 
+   								(${defaultAddress.ward != null ? ', ' + defaultAddress.ward : ''})">
+							</span>
+
+							<!-- <span th:text="${defaultAddress.street} + ', ' + ${defaultAddress.district} + ', ' + ${defaultAddress.city} + ', ' + ${defaultAddress.ward}"></span> -->
 							<fieldset class="row mb-3 mt-3">
 								<legend class="col-12 col-md-12 col-form-label pt-0"
 									style="color: black; font-size: 1.2rem;">
@@ -58,7 +65,6 @@
 									</div>
 								</div>
 							</fieldset>
-
 						</div>
 					</div>
 					<div class="row py-3">
@@ -90,7 +96,7 @@
 						</div>
 					</div>
 					<div class="text-center mt-3">
-						<button class="custom-btn-main">
+						<button onclick="return validateImage()" class="custom-btn-main">
 							Cập nhật thông tin
 						</button>
 					</div>

@@ -34,45 +34,44 @@ document.addEventListener("DOMContentLoaded", function () {
   const muteUnmuteIcon = document.getElementById("muteUnmuteIcon1");
 
   playPauseIcon.addEventListener("click", function () {
-      if (video.paused) {
-          video.play();
-          playPauseIcon.classList.remove("fa-play");
-          playPauseIcon.classList.add("fa-pause");
-      } else {
-          video.pause();
-          playPauseIcon.classList.remove("fa-pause");
-          playPauseIcon.classList.add("fa-play");
-      }
+    if (video.paused) {
+      video.play();
+      playPauseIcon.classList.remove("fa-play");
+      playPauseIcon.classList.add("fa-pause");
+    } else {
+      video.pause();
+      playPauseIcon.classList.remove("fa-pause");
+      playPauseIcon.classList.add("fa-play");
+    }
   });
 
   muteUnmuteIcon.addEventListener("click", function () {
-      video.muted = !video.muted;
-      if (video.muted) {
-          muteUnmuteIcon.classList.remove("fa-volume-up");
-          muteUnmuteIcon.classList.add("fa-volume-mute");
-      } else {
-          muteUnmuteIcon.classList.remove("fa-volume-mute");
-          muteUnmuteIcon.classList.add("fa-volume-up");
-      }
+    video.muted = !video.muted;
+    if (video.muted) {
+      muteUnmuteIcon.classList.remove("fa-volume-up");
+      muteUnmuteIcon.classList.add("fa-volume-mute");
+    } else {
+      muteUnmuteIcon.classList.remove("fa-volume-mute");
+      muteUnmuteIcon.classList.add("fa-volume-up");
+    }
   });
 });
 
-
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.querySelector(".info-customer-form");
-  form.addEventListener("submit", function (event) {
+
+  form.addEventListener("submit", async function (event) {
     event.preventDefault(); // Ngăn gửi biểu mẫu mặc định
-    const phoneNumber = document.querySelector(
-      'input[name="phoneNumber"]'
-    ).value;
+
+    const phoneInput = document.getElementById("floatingsodienthoai");
+    const phoneNumber = phoneInput.value;
     const customerId =
       document.querySelector('input[name="customerId"]')?.value || null;
-    const birthday = new Date(
-      document.querySelector('input[name="birthday"]').value
-    );
+    const birthdayInput = document.querySelector('input[name="birthday"]');
+    const birthday = new Date(birthdayInput.value);
     const fullname = document.querySelector('input[name="fullname"]').value;
 
-    // Kiểm tra định dạng SĐT
+    // Kiểm tra định dạng số điện thoại
     const phoneRegex = /^(0[1-9][0-9]{8,9})$/;
     if (!phoneRegex.test(phoneNumber)) {
       Swal.fire({
@@ -109,34 +108,53 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // Kiểm tra số điện thoại đã tồn tại
-    fetch(
-      `/api/customers/check-phone?phoneNumber=${phoneNumber}&customerId=${
-        customerId || ""
-      }`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Response data:", data); // Kiểm tra phản hồi từ API
-        if (data.exists) {
-          Swal.fire({
-            icon: "error",
-            title: "Số điện thoại đã tồn tại",
-            text: "Vui lòng sử dụng số điện thoại khác.",
-          }).then(() => {
-            location.reload();
-          });
-        } else {
-          form.submit();
-        }
-      })
-      .catch((error) => {
-        console.error("Lỗi kiểm tra số điện thoại:", error);
+    // Kiểm tra số điện thoại đã tồn tại qua API
+    try {
+      const response = await fetch(
+        `/api/customers/check-phone?phoneNumber=${phoneNumber}&customerId=${
+          customerId || ""
+        }`
+      );
+      const data = await response.json();
+
+      if (data.exists) {
         Swal.fire({
           icon: "error",
-          title: "Lỗi hệ thống",
-          text: "Không thể kiểm tra số điện thoại. Vui lòng thử lại sau.",
+          title: "Số điện thoại đã tồn tại",
+          text: "Vui lòng sử dụng số điện thoại khác.",
         });
+        return;
+      }
+
+      // Nếu không có lỗi, gửi biểu mẫu
+      form.submit();
+    } catch (error) {
+      console.error("Lỗi kiểm tra số điện thoại:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi hệ thống",
+        text: "Không thể kiểm tra số điện thoại. Vui lòng thử lại sau.",
       });
+    }
   });
 });
+
+function validateImage() {
+  const fileInput = document.getElementById("avatarInput");
+  const avatarImage = document.getElementById("avatarImage");
+
+  const isAvatarPresent =
+    avatarImage.src && !avatarImage.src.includes("user-icon.png"); // Kiểm tra nếu avatar khác ảnh mặc định
+
+  if (!fileInput.value && !isAvatarPresent) {
+    Swal.fire({
+      icon: "warning",
+      title: "Chưa chọn ảnh",
+      text: "Vui lòng chọn ảnh trước khi xác nhận!",
+      confirmButtonText: "OK",
+    });
+    return false; // Ngăn submit form
+  }
+
+  return true;
+}

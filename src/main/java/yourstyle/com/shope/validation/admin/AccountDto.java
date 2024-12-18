@@ -5,8 +5,6 @@ import java.io.Serializable;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +17,7 @@ public class AccountDto implements Serializable {
     private Integer accountId;
     @NotBlank(message = "Vui lòng nhập tên tài khoản!")
     private String username;
-    // @NotBlank(message = "Vui lòng nhập mật khẩu!")
+    @NotBlank(message = "Vui lòng nhập mật khẩu!")
     // @Size(min = 8, message = "Mật khẩu ít nhất phải có 8 ký tự!")
     // @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,}$", message = "Mật khẩu phải chứa ít nhất một chữ số, một ký tự thường, một ký tự in hoa và một ký tự đặc biệt")
     private String password;

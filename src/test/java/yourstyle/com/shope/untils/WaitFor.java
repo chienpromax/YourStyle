@@ -22,4 +22,10 @@ public class WaitFor {
         return wait.until(ExpectedConditions.elementToBeClickable(locator));
     }
 
+    // Optional: Wait until an element is invisible
+    public static boolean waitElementInvisible(WebDriver driver, By locator) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        return wait.until(ExpectedConditions.invisibilityOfElementLocated(locator));
+    }
+
 }

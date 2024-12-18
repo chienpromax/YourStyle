@@ -55,7 +55,7 @@
 
 
                     <div class="d-flex align-items-center pt-3">
-                        <a class="link-secondary me-3" data-bs-toggle="modal" data-bs-target="#cartModal"
+                        <a th:if="${isCheckoutPage == null}" class="link-secondary me-3" data-bs-toggle="modal" data-bs-target="#cartModal"
                             style="cursor: pointer;">
                             <i class="fas fa-shopping-cart"></i>
                             <span class="badge rounded-pill badge-notification bg-danger"

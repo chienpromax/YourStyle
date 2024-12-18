@@ -121,7 +121,7 @@ public class OrderDetailController {
         });
 
         model.addAttribute("vouchers", validVouchers);
-
+        model.addAttribute("isCheckoutPage", true);
         return "site/carts/orderdetail";
     }
 

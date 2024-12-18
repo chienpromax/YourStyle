@@ -314,9 +314,10 @@
                                     <div class="modal-body">
                                         <div class="row">
                                             <div th:if="${#lists.isEmpty(vouchers)}">
-                                                <h4 style="color: rgb(0, 0, 0); font-weight: bold; text-align: center;">đơn hàng chưa đủ điều kiện.</h4>
+                                                <h4 style="color: rgb(0, 0, 0); font-weight: bold; text-align: center;">
+                                                    đơn hàng chưa đủ điều kiện.</h4>
                                             </div>
-                                            
+
                                             <div class="col-md-12 pt-3" th:each="voucher : ${vouchers}"
                                                 data-aos="fade-up">
                                                 <div class="card">
@@ -325,11 +326,13 @@
 
                                                         <div class="product-info text-center pt-3">
                                                             <div class="clearfix" style="margin-right: 30px;">
-                                                                <button onclick="copyVoucherCode()"
+                                                                <button onclick="copyVoucherCode(this)"
+                                                                    th:attr="data-code=${voucher.voucherCode}"
                                                                     class="btn btn-warning float-end mb-3 fs-6">Copy
                                                                     Mã</button>
                                                             </div>
-                                                            <h5 style="color: rgb(9, 9, 9); font-size: 1.6rem; font-weight: 700;">
+                                                            <h5
+                                                                style="font-family: 'Dancing Script', cursive; color: rgb(9, 9, 9); font-size: 1.6rem; font-weight: 700;">
                                                                 Vé Giảm Giá: <span
                                                                     th:text="${voucher.voucherName}"></span>
                                                                 <br>
@@ -337,8 +340,14 @@
                                                                     th:text="${voucher.voucherCode}"></span>
                                                             </h5>
                                                             <br>
-                                                            <h5 style="color: black; font-size: 1.2rem; font-weight: 700;">Bắt đầu: <span th:text="${formattedStartDate}"></span></h5>
-                                                            <h5 style="color: black; font-size: 1.2rem; font-weight: 700;">Kết Thúc: <span th:text="${formattedEndDate}"></span></h5>                                                            
+                                                            <h5
+                                                                style="color: black; font-size: 1.2rem; font-weight: 700;">
+                                                                Bắt đầu: <span th:text="${formattedStartDate}"></span>
+                                                            </h5>
+                                                            <h5
+                                                                style="color: black; font-size: 1.2rem; font-weight: 700;">
+                                                                Kết Thúc: <span th:text="${formattedEndDate}"></span>
+                                                            </h5>
                                                         </div>
                                                     </div>
                                                 </div>

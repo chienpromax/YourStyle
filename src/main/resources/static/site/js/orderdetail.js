@@ -1,10 +1,18 @@
-function copyVoucherCode() {
-  const voucherCode = document.getElementById("voucherCode").textContent;
+function copyVoucherCode(buttonElement) {
+  const voucherCode = buttonElement.getAttribute("data-code");
 
-  navigator.clipboard.writeText(voucherCode).catch((err) => {
+  navigator.clipboard.writeText(voucherCode).then(() => {
+    Swal.fire({
+      icon: "success",
+      title: "Thành công!",
+      text: "Đã sao chép mã: " + voucherCode,
+      confirmButtonText: "OK",
+    });
+  }).catch((err) => {
     console.error("Lỗi sao chép:", err);
   });
 }
+
 
 function placeOrder() {
   const paymentMethod = document.querySelector(

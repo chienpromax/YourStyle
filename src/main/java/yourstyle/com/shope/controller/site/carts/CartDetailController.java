@@ -101,7 +101,7 @@ public class CartDetailController {
         List<Product> products = productService.getAllProducts();
         Collections.shuffle(products);
         model.addAttribute("products", products);
-
+        model.addAttribute("isCheckoutPage", true);
         return "site/carts/cartdetail";
     }
 

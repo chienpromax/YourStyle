@@ -123,4 +123,6 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
         @Query("SELECT COUNT(o) > 0 FROM Order o WHERE o.voucher.voucherId = ?1")
         boolean existsByVoucherId(Integer voucherId);
 
+        @Query("SELECT o FROM Order o WHERE o.customer.customerId = :customerId AND o.status IN (9)") 
+        Order findCurrentOrderByCustomerId(@Param("customerId") Integer customerId);
 }

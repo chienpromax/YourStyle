@@ -43,12 +43,12 @@
                                         <div style="margin-top: 10px;">
                                             <span class="text-danger fw-bold"
                                                 th:if="${orderDetail.productVariant.product.discount != null}"
-                                                th:text="${#numbers.formatDecimal(orderDetail.productVariant.product.price - orderDetail.productVariant.product.price * orderDetail.productVariant.product.discount.discountPercent / 100, 1, 'COMMA', 3, 'POINT') + ' Đ'}">
+                                                th:text="${#numbers.formatDecimal(orderDetail.productVariant.product.price - orderDetail.productVariant.product.price * orderDetail.productVariant.product.discount.discountPercent / 100, 1, 'COMMA', 3, 'POINT') + ' VNĐ'}">
                                             </span>
                                             <span class="text-muted ms-2"
                                                 th:if="${orderDetail.productVariant.product.discount != null}">
                                                 <del
-                                                    th:text="${#numbers.formatDecimal(orderDetail.productVariant.product.price, 1, 'COMMA', 3, 'POINT') + ' Đ'}"></del>
+                                                    th:text="${#numbers.formatDecimal(orderDetail.productVariant.product.price, 1, 'COMMA', 3, 'POINT') + ' VNĐ'}"></del>
                                             </span>
                                             <span class="badge bg-danger ms-2"
                                                 th:if="${orderDetail.productVariant.product.discount != null}"
@@ -56,7 +56,7 @@
                                             </span>
 
                                             <span th:if="${orderDetail.productVariant.product.discount == null}"
-                                                th:text="${#numbers.formatDecimal(orderDetail.productVariant.product.price, 1, 'COMMA', 3, 'POINT') + ' Đ'}">
+                                                th:text="${#numbers.formatDecimal(orderDetail.productVariant.product.price, 1, 'COMMA', 3, 'POINT') + ' VNĐ'}">
                                             </span>
                                         </div>
                                     </div>
@@ -157,7 +157,7 @@
                     <h3 class="p-2">Tóm Tắt Đơn Hàng</h3>
                     <div class="card-body">
                         <h5 class="card-title pb-3">Giá ước tính: <strong><span class="float-end"
-                                    th:text="${#numbers.formatDecimal(totalAmount, 1, 'COMMA', 3, 'POINT')+ ' Đ'}"></span></strong>
+                                    th:text="${#numbers.formatDecimal(totalAmount, 1, 'COMMA', 3, 'POINT')+ ' VNĐ'}"></span></strong>
                         </h5>
 
                         <div class="text-center">

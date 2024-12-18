@@ -132,50 +132,63 @@ public class CartDetailController {
     
     @PostMapping("/updateQuantity")
     public String updateQuantity(@RequestParam("orderDetailId") Integer orderDetailId,
-            @RequestParam("quantity") Integer quantity, Model model,
-            Authentication authentication) {
+                                 @RequestParam("quantity") Integer quantity, 
+                                 Model model,
+                                 Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return "redirect:/site/accounts/login";
         }
-
+    
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Integer accountId = userDetails.getAccountId();
-
+    
         Customer customer = customerRepository.findByAccount_AccountId(accountId);
         if (customer == null) {
             return "redirect:/site/accounts/login";
         }
-
+    
         Optional<OrderDetail> orderDetailOptional = orderDetailRepository.findById(orderDetailId);
         if (orderDetailOptional.isPresent()) {
             OrderDetail orderDetail = orderDetailOptional.get();
             ProductVariant productVariant = orderDetail.getProductVariant();
-
+    
             int previousQuantity = orderDetail.getQuantity();
             int quantityDifference = quantity - previousQuantity;
-
+    
             if (quantityDifference > productVariant.getQuantity()) {
                 // Thông báo lỗi nếu vượt quá số lượng trong kho
                 model.addAttribute("error", "Số lượng bạn chọn vượt quá số lượng trong kho.");
                 return "site/carts/cartdetail";
             }
-
+    
+            // Cập nhật số lượng sản phẩm trong OrderDetail
             orderDetail.setQuantity(quantity);
             orderDetailRepository.save(orderDetail);
-
+    
+            // Cập nhật số lượng sản phẩm trong kho
             int newProductVariantQuantity = productVariant.getQuantity() - quantityDifference;
-
-            if (newProductVariantQuantity >= 0) {
-                productVariant.setQuantity(newProductVariantQuantity);
-                productVariantRepository.save(productVariant);
-            } else {
+            if (newProductVariantQuantity < 0) {
                 return "redirect:/yourstyle/carts/cartdetail?error=notEnoughStock";
             }
+            productVariant.setQuantity(newProductVariantQuantity);
+            productVariantRepository.save(productVariant);
+    
+            // Xóa voucher nếu có
+            Order order = orderDetail.getOrder(); // Lấy đơn hàng từ OrderDetail
+            if (order.getVoucher() != null) {
+                Voucher voucher = order.getVoucher();
+                // Tăng số lần sử dụng lại của voucher
+                voucher.setMaxUses(voucher.getMaxUses() + 1);
+                voucherService.save(voucher);
+                // Xóa voucher khỏi đơn hàng
+                order.setVoucher(null);
+                orderRepository.save(order);
+            }
         }
-
+    
         return "redirect:/yourstyle/carts/cartdetail";
     }
-
+    
     @PostMapping("/removeProduct")
     @Transactional
     public String removeProductFromCart(@RequestParam("orderDetailId") Integer orderDetailId,

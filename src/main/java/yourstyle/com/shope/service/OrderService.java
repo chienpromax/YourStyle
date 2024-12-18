@@ -83,4 +83,6 @@ public interface OrderService {
 	List<Order> findByCustomerOrderByOrderDateDesc(Customer customer);
 
 	boolean existsByVoucherId(Integer voucherId);
+
+	void removeVoucherFromOrder(Integer customerId);
 }

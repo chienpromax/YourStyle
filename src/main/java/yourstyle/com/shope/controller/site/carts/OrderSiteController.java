@@ -166,7 +166,15 @@ public class OrderSiteController {
             if (newVoucher.getEndDate() != null && now.isAfter(newVoucher.getEndDate())) {
                 return createErrorResponse("Voucher đã hết hạn");
             }
-    
+            // Kiểm tra giá trị đơn hàng với voucher
+            BigDecimal orderTotal = order.getTotalAmount(); // Giả định bạn đã có giá trị tổng của đơn hàng
+            if (orderTotal.compareTo(newVoucher.getMinTotalAmount()) < 0) {
+                return createErrorResponse("Giá trị đơn hàng chưa đủ để áp dụng voucher này");
+            }
+            if (newVoucher.getMaxTotalAmount() != null && orderTotal.compareTo(newVoucher.getMaxTotalAmount()) > 0) {
+                return createErrorResponse("Giá trị đơn hàng vượt quá giá trị áp dụng của voucher này");
+            }
+            
             // Kiểm tra nếu voucher đã được áp dụng trước đó
             if (order.getVoucher() != null && order.getVoucher().getVoucherCode().equals(vouchercode)) {
                 return createErrorResponse("Voucher đã được áp dụng vào đơn hàng này");

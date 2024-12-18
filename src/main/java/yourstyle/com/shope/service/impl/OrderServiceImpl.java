@@ -278,5 +278,13 @@ public class OrderServiceImpl implements OrderService {
 	public boolean existsByVoucherId(Integer voucherId) {
 		return orderRepository.existsByVoucherId(voucherId);
 	}
-
+	
+	@Override
+	public void removeVoucherFromOrder(Integer customerId) {
+        Order currentOrder = orderRepository.findCurrentOrderByCustomerId(customerId);
+        if (currentOrder != null && currentOrder.getVoucher() != null) {
+            currentOrder.setVoucher(null);
+            orderRepository.save(currentOrder);
+        }
+    }
 }

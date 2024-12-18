@@ -26,18 +26,22 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import yourstyle.com.shope.model.Color;
 import yourstyle.com.shope.model.CustomUserDetails;
 import yourstyle.com.shope.model.Customer;
+import yourstyle.com.shope.model.Order;
 import yourstyle.com.shope.model.Product;
 import yourstyle.com.shope.model.ProductImage;
 import yourstyle.com.shope.model.ProductVariant;
 import yourstyle.com.shope.model.Review;
 import yourstyle.com.shope.model.Size;
+import yourstyle.com.shope.model.Voucher;
 import yourstyle.com.shope.repository.CustomerRepository;
+import yourstyle.com.shope.repository.OrderRepository;
 import yourstyle.com.shope.service.EmailService;
 import yourstyle.com.shope.service.OrderService;
 import yourstyle.com.shope.service.ProductImageService;
 import yourstyle.com.shope.service.ProductService;
 import yourstyle.com.shope.service.ProductVariantService;
 import yourstyle.com.shope.service.ReviewService;
+import yourstyle.com.shope.service.VoucherService;
 
 @Controller
 public class ProductDetailController {
@@ -54,7 +58,10 @@ public class ProductDetailController {
     private OrderService orderService;
     @Autowired
     private CustomerRepository customerRepository;
-
+    @Autowired
+    private OrderRepository orderRepository;
+    @Autowired
+    private VoucherService voucherService;
     @Autowired
     private EmailService emailService;
 
@@ -65,42 +72,46 @@ public class ProductDetailController {
             @RequestParam("sizeId") Integer sizeId,
             @RequestParam("quantity") Integer quantity,
             Authentication authentication) {
-
+    
         Map<String, Object> response = new HashMap<>();
         if (productVariantId == null) {
             response.put("success", false);
             response.put("errorMessage", "Thiếu thông tin mã sản phẩm biến thể (productVariantId).");
             return ResponseEntity.badRequest().body(response);
         }
-        
+    
         if (authentication == null || !authentication.isAuthenticated()) {
             response.put("success", false);
             response.put("errorMessage", "Bạn cần đăng nhập để thực hiện hành động này.");
             response.put("redirectUrl", "/yourstyle/accounts/login");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-
+    
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Integer accountId = userDetails.getAccountId();
         Customer customer = customerRepository.findByAccount_AccountId(accountId);
-
+    
         if (customer == null) {
             response.put("success", false);
             response.put("errorMessage", "Không tìm thấy khách hàng.");
             return ResponseEntity.badRequest().body(response);
         }
-
+    
         try {
+            // Gọi phương thức xóa voucher trước khi thêm sản phẩm
+            orderService.removeVoucherFromOrder(customer.getCustomerId());
+    
+            // Thêm sản phẩm vào giỏ hàng
             orderService.addProductToCart(customer.getCustomerId(), productVariantId, colorId, sizeId, quantity);
             response.put("success", true);
         } catch (RuntimeException e) {
             response.put("success", false);
             response.put("errorMessage", e.getMessage());
         }
-
+    
         return ResponseEntity.ok(response);
     }
-
+    
     @GetMapping("yourstyle/product/detail/{productId}")
     public String productDetail(@PathVariable("productId") Integer productId,
             @RequestParam("page") Optional<Integer> page, Model model) {
@@ -164,10 +175,10 @@ public class ProductDetailController {
             @RequestParam("senderEmail") String senderEmail,
             @RequestParam("productId") Integer productId,
             Authentication authentication) {
-    
+
         Map<String, Object> response = new HashMap<>();
         Map<String, String> fieldErrors = new HashMap<>(); // Lưu lỗi từng trường
-    
+
         // Kiểm tra đăng nhập
         if (authentication == null || !authentication.isAuthenticated()) {
             response.put("success", false);
@@ -175,25 +186,25 @@ public class ProductDetailController {
             response.put("redirectUrl", "/yourstyle/accounts/login");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-    
+
         // Kiểm tra sản phẩm tồn tại
         Optional<Product> productOptional = productService.findById(productId);
         if (productOptional.isEmpty()) {
             fieldErrors.put("productId", "Sản phẩm không tồn tại.");
         }
-    
+
         // Kiểm tra email người nhận hợp lệ
         if (!recipientEmail.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
             fieldErrors.put("recipientEmail", "Email người nhận không hợp lệ.");
         }
-    
+
         // Nếu có lỗi thì trả về lỗi
         if (!fieldErrors.isEmpty()) {
             response.put("success", false);
             response.put("fieldErrors", fieldErrors); // Trả về lỗi theo từng trường
             return ResponseEntity.badRequest().body(response);
         }
-    
+
         try {
             // Gửi email
             Product product = productOptional.get();
@@ -205,8 +216,8 @@ public class ProductDetailController {
             response.put("success", false);
             response.put("errorMessage", "Đã xảy ra lỗi khi gửi email: " + e.getMessage());
         }
-    
+
         return ResponseEntity.ok(response);
     }
-    
+
 }

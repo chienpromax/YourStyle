@@ -336,12 +336,40 @@ public class VoucherController {
     }
 
     public void validationVoucher(VoucherDTO voucherDto, BindingResult result) {
-        if (voucherDto.getVoucherCode() != null && voucherService.existsByVoucherCode(voucherDto.getVoucherCode())) {
-            result.rejectValue("voucherCode", "error.voucherCode", "Mã voucher đã tồn tại.");
+        if (voucherDto.getVoucherId() == null) {
+            if (voucherDto.getVoucherCode() != null
+                    && voucherService.existsByVoucherCode(voucherDto.getVoucherCode())) {
+                result.rejectValue("voucherCode", "error.voucherCode", "Mã voucher đã tồn tại.");
+            }
+        } else {
+            // CẬP NHẬT: Kiểm tra voucherCode không trùng với các voucher khác
+            Optional<Voucher> existingVoucher = voucherService.findByVoucherId(voucherDto.getVoucherId());
+            if (existingVoucher.isPresent()) {
+                if (!existingVoucher.get().getVoucherCode().equals(voucherDto.getVoucherCode())
+                        && voucherService.existsByVoucherCode(voucherDto.getVoucherCode())) {
+                    result.rejectValue("voucherCode", "error.voucherCode", "Mã voucher đã tồn tại.");
+                }
+            } else {
+                result.rejectValue("voucherCode", "error.voucherCode", "Voucher không tồn tại.");
+            }
         }
 
-        if (voucherDto.getVoucherName() != null && voucherService.existsByVoucherName(voucherDto.getVoucherName())) {
-            result.rejectValue("voucherName", "error.voucherName", "Tên voucher đã tồn tại.");
+        if (voucherDto.getVoucherId() == null) {
+            if (voucherDto.getVoucherName() != null
+                    && voucherService.existsByVoucherName(voucherDto.getVoucherName())) {
+                result.rejectValue("voucherName", "error.voucherName", "Tên voucher đã tồn tại.");
+            }
+        } else {
+            // CẬP NHẬT: Kiểm tra voucherName không trùng với các voucher khác
+            Optional<Voucher> existingVoucher = voucherService.findByVoucherId(voucherDto.getVoucherId());
+            if (existingVoucher.isPresent()) {
+                if (!existingVoucher.get().getVoucherName().equals(voucherDto.getVoucherName())
+                        && voucherService.existsByVoucherName(voucherDto.getVoucherName())) {
+                    result.rejectValue("voucherName", "error.voucherName", "Tên voucher đã tồn tại.");
+                }
+            } else {
+                result.rejectValue("voucherName", "error.voucherName", "Voucher không tồn tại.");
+            }
         }
 
         if (voucherDto.getMinTotalAmount() != null && voucherDto.getMaxTotalAmount() != null) {
@@ -378,6 +406,14 @@ public class VoucherController {
                     result.rejectValue("discountAmount", "error.discountAmount",
                             "Số tiền tối thiều phải lớn hơn 1000.");
                 }
+            }
+        }
+
+        if (voucherDto.getStartDate() != null && voucherDto.getEndDate() != null) {
+            if (voucherDto.getEndDate().isBefore(voucherDto.getStartDate())
+                    || voucherDto.getEndDate().isEqual(voucherDto.getStartDate())) {
+                result.rejectValue("endDate", "error.endDate",
+                        "Ngày kết thúc phải lớn hơn ngày bắt đầu.");
             }
         }
 

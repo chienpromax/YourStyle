@@ -18,7 +18,7 @@
 			<div class="col-md-7 personal-info-section">
 				<form class="info-customer-form" th:action="@{/yourstyle/accounts/profile}" th:object="${customer}"
 					method="post" enctype="multipart/form-data">
-					<input type="hidden" name="type" value="${type}">
+					<input type="hidden" name="customerId" id="customerId" value="${customerId}" th:field="*{customerId}">
 					<div class="row mb-2">
 						<div class="col-md-6">
 							<div class="form-group">
@@ -81,7 +81,7 @@
 								</div>
 							</div>
 							<div class="form-outline my-5 py-2" data-mdb-input-init>
-								<input required th:field="*{phoneNumber}" type="text" id="form12"
+								<input required th:field="*{phoneNumber}" type="text" id="floatingsodienthoai" name="floatingsodienthoai"
 									class="form-control" />
 								<label class="form-label" for="form12" style="color: black;">
 									<span class="text-danger">*</span> Số điện thoại

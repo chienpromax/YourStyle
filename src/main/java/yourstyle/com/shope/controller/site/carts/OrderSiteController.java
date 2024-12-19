@@ -63,7 +63,7 @@ public class OrderSiteController {
             return ResponseEntity.badRequest().body(response);
         }
 
-        if (customer.getAddresses() == null) {
+        if (customer.getAddresses() == null || customer.getAddresses().isEmpty()) {
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("message", "Vui lòng cập nhập địa chỉ.");
@@ -114,51 +114,51 @@ public class OrderSiteController {
                 .map(orderDetail -> {
                     BigDecimal price = orderDetail.getProductVariant().getProduct().getPrice();
                     int quantity = orderDetail.getQuantity();
-    
+
                     // Kiểm tra giảm giá
                     Discount discount = orderDetail.getProductVariant().getProduct().getDiscount();
                     if (discount != null && discount.isValid()) {
                         BigDecimal discountPercent = discount.getDiscountPercent().divide(BigDecimal.valueOf(100));
                         price = price.subtract(price.multiply(discountPercent));
                     }
-    
+
                     return price.multiply(BigDecimal.valueOf(quantity)); // Tính tiền cho từng sản phẩm
                 })
                 .reduce(BigDecimal.ZERO, BigDecimal::add); // Cộng tổng
-    
+
         if (order.getVoucher() != null && order.getVoucher().getDiscountAmount() != null) {
             BigDecimal orderDiscountPercent = order.getVoucher().getDiscountAmount().divide(BigDecimal.valueOf(100));
             totalAmount = totalAmount.subtract(totalAmount.multiply(orderDiscountPercent));
         }
-    
+
         return totalAmount.max(BigDecimal.ZERO);
     }
 
     @PostMapping("/apply-voucher")
     public ResponseEntity<Map<String, Object>> applyDiscount(@RequestBody Map<String, String> payload) {
         String vouchercode = payload.get("vouchercode").trim().toUpperCase();
-    
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Integer accountId = userDetails.getAccountId();
-    
+
         Customer customer = customerService.findByAccountId(accountId);
         if (customer == null) {
             return createErrorResponse("Customer not found");
         }
-    
+
         Order order = orderService.findByCustomerAndStatus(customer, 9).get(0);
-    
+
         try {
             // Lấy voucher mới
             Optional<Voucher> voucherOpt = voucherService.findByVoucherCode(vouchercode);
             if (voucherOpt.isEmpty()) {
                 return createErrorResponse("Voucher không tồn tại");
             }
-    
+
             Voucher newVoucher = voucherOpt.get();
             LocalDateTime now = LocalDateTime.now();
-    
+
             // Kiểm tra ngày hết hạn và bắt đầu
             if (newVoucher.getStartDate() != null && now.isBefore(newVoucher.getStartDate())) {
                 return createErrorResponse("Voucher chưa đến thời gian sử dụng");
@@ -174,12 +174,12 @@ public class OrderSiteController {
             if (newVoucher.getMaxTotalAmount() != null && orderTotal.compareTo(newVoucher.getMaxTotalAmount()) > 0) {
                 return createErrorResponse("Giá trị đơn hàng vượt quá giá trị áp dụng của voucher này");
             }
-            
+
             // Kiểm tra nếu voucher đã được áp dụng trước đó
             if (order.getVoucher() != null && order.getVoucher().getVoucherCode().equals(vouchercode)) {
                 return createErrorResponse("Voucher đã được áp dụng vào đơn hàng này");
             }
-    
+
             // Kiểm tra nếu đã áp dụng voucher khác trước đó
             if (order.getVoucher() != null && !order.getVoucher().getVoucherCode().equals(vouchercode)) {
                 // Hủy voucher cũ
@@ -187,22 +187,22 @@ public class OrderSiteController {
                 oldVoucher.setMaxUses(oldVoucher.getMaxUses() + 1);
                 voucherService.save(oldVoucher);
             }
-    
+
             // Trừ số lượng voucher mới khi áp dụng
             if (newVoucher.getMaxUses() <= 0) {
                 return createErrorResponse("Voucher đã hết số lượt sử dụng");
             }
             newVoucher.setMaxUses(newVoucher.getMaxUses() - 1);
             voucherService.save(newVoucher);
-    
+
             // Áp dụng voucher mới vào đơn hàng
             order.setVoucher(newVoucher);
-            
+
             // Tính toán lại tổng tiền đơn hàng với voucher
             BigDecimal newTotalAmount = calculateTotalAmountWithOrderDiscount(order, order.getOrderDetails());
             order.setTotalAmount(newTotalAmount);
             orderRepository.save(order);
-    
+
             // Trả về phản hồi thành công
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
@@ -210,17 +210,42 @@ public class OrderSiteController {
             response.put("voucherId", newVoucher.getVoucherId());
             response.put("remainingUses", newVoucher.getMaxUses());
             return ResponseEntity.ok(response);
-    
+
         } catch (Exception e) {
             return createErrorResponse("Có lỗi xảy ra: " + e.getMessage());
         }
     }
-    
+
     private ResponseEntity<Map<String, Object>> createErrorResponse(String message) {
         Map<String, Object> response = new HashMap<>();
         response.put("success", false);
         response.put("message", message);
         return ResponseEntity.badRequest().body(response);
+    }
+
+    @PostMapping("/check-info")
+    public ResponseEntity<Map<String, Object>> checkInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Integer accountId = userDetails.getAccountId();
+
+        Customer customer = customerService.findByAccountId(accountId);
+        Map<String, Object> response = new HashMap<>();
+
+        // Kiểm tra thông tin cá nhân
+        if (customer == null || customer.getFullname() == null || customer.getPhoneNumber() == null) {
+            response.put("success", false);
+            response.put("message", "Vui lòng cập nhật đầy đủ thông tin cá nhân.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if (customer.getAddresses() == null || customer.getAddresses().isEmpty()) {
+            response.put("success", false);
+            response.put("message", "Vui lòng cập nhật địa chỉ.");
+            return ResponseEntity.badRequest().body(response);
+        }
+        response.put("success", true);
+        return ResponseEntity.ok(response);
     }
 
 }

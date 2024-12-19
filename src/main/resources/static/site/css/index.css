@@ -1,10 +1,3 @@
-.navbar {
-    background-color: rgb(232, 235, 240);
-}
-
-.navbar-brand {
-    cursor: pointer;
-}
 
 .nav-item {
     cursor: pointer;
@@ -700,8 +693,8 @@ video {
     left: 0;
 }
 .video-controls {
+    padding-top: 10px;
     position: absolute;
-    top: 200px;
     left: 20px;
     z-index: 2;
     display: flex;
@@ -709,7 +702,7 @@ video {
 }
 
 .video-controls i {
-    font-size: 24px;
+    font-size: 26px;
     color: #fff;
     cursor: pointer;
     transition: color 0.3s;
@@ -826,9 +819,19 @@ video {
     color: green;
 }
 
-.navbar-nav {
+/* .navbar-nav {
     display: flex;
+    flex-wrap: nowrap;
     overflow-x: auto;
+    white-space: nowrap;
+}
+
+.navbar {
+    background-color: rgb(232, 235, 240);
+}
+
+.navbar-brand {
+    cursor: pointer;
 }
 
 .navbar-nav::-webkit-scrollbar {
@@ -842,7 +845,7 @@ video {
 
 .navbar-nav::-webkit-scrollbar-thumb:hover {
     background: rgb(22, 183, 185);
-}
+} */
 
 
 

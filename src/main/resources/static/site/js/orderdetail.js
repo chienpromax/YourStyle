@@ -1,18 +1,20 @@
 function copyVoucherCode(buttonElement) {
   const voucherCode = buttonElement.getAttribute("data-code");
 
-  navigator.clipboard.writeText(voucherCode).then(() => {
-    Swal.fire({
-      icon: "success",
-      title: "Thành công!",
-      text: "Đã sao chép mã: " + voucherCode,
-      confirmButtonText: "OK",
+  navigator.clipboard
+    .writeText(voucherCode)
+    .then(() => {
+      Swal.fire({
+        icon: "success",
+        title: "Thành công!",
+        text: "Đã sao chép mã: " + voucherCode,
+        confirmButtonText: "OK",
+      });
+    })
+    .catch((err) => {
+      console.error("Lỗi sao chép:", err);
     });
-  }).catch((err) => {
-    console.error("Lỗi sao chép:", err);
-  });
 }
-
 
 function placeOrder() {
   const paymentMethod = document.querySelector(
@@ -154,6 +156,11 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    // Kiểm tra địa chỉ
+    if (!validateAddress()) {
+      return; // Ngăn gửi biểu mẫu nếu có lỗi ở địa chỉ
+    }
+
     // Kiểm tra số điện thoại đã tồn tại
     fetch(
       `/api/customers/check-phone?phoneNumber=${phoneNumber}&customerId=${
@@ -186,13 +193,89 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-document.getElementById("paymentForm").addEventListener("submit", function(event) {
-  event.preventDefault();
+document
+  .getElementById("paymentForm")
+  .addEventListener("submit", function (event) {
+    event.preventDefault();
 
-  Swal.fire({
-      icon: 'info',
-      title: 'Đang phát triển',
-      text: 'Tính năng này hiện đang được phát triển. Vui lòng quay lại sau.',
-      confirmButtonText: 'OK'
+    Swal.fire({
+      icon: "info",
+      title: "Đang phát triển",
+      text: "Tính năng này hiện đang được phát triển. Vui lòng quay lại sau.",
+      confirmButtonText: "OK",
+    });
   });
-});
+
+function validateAddress() {
+  const city = document.getElementById("city").value;
+  const district = document.getElementById("district").value;
+  const ward = document.getElementById("ward").value;
+
+  // Biến để kiểm tra lỗi
+  let errors = [];
+
+  // Kiểm tra các trường địa chỉ
+  if (city === "" || city === "Chọn Tỉnh/thành phố") {
+    alert("Bạn cần chọn Tỉnh/thành phố!");
+    return false;
+  }
+
+  if (district === "" || district === "Chọn Quận/huyện") {
+    alert("Bạn cần chọn Quận/huyện!");
+    return false;
+  }
+
+  if (ward === "" || ward === "Chọn Xã/phường/thị trấn") {
+    alert("Bạn cần chọn Xã/phường/thị trấn!");
+    return false;
+  }
+
+  return true; // Cho phép gửi biểu mẫu nếu không có lỗi
+}
+
+function checkAndRedirectToVNPay() {
+  const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+
+  // Kiểm tra xem phương thức thanh toán đã được chọn chưa
+  if (!paymentMethod) {
+      Swal.fire({
+          icon: "error",
+          title: "Có lỗi xảy ra!",
+          text: "Vui lòng chọn phương thức thanh toán.",
+          confirmButtonText: "OK",
+      });
+      return; // Ngừng thực hiện nếu chưa chọn phương thức thanh toán
+  }
+
+  // Kiểm tra thông tin cá nhân (có thể tùy chỉnh theo yêu cầu)
+  fetch("/yourstyle/order/check-info", {
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ paymentMethod: paymentMethod.value }),
+  })
+  .then((response) => response.json())
+  .then((data) => {
+      if (data.success) {
+          // Nếu thông tin hợp lệ, chuyển hướng đến trang VNPay
+          window.location.href = "/vnPayMain";
+      } else {
+          Swal.fire({
+              icon: "error",
+              title: "Có lỗi xảy ra!",
+              text: data.message,
+              confirmButtonText: "OK",
+          });
+      }
+  })
+  .catch((error) => {
+      console.error("Lỗi khi kiểm tra thông tin:", error);
+      Swal.fire({
+          icon: "error",
+          title: "Có lỗi xảy ra!",
+          text: "Vui lòng thử lại sau.",
+          confirmButtonText: "OK",
+      });
+  });
+}

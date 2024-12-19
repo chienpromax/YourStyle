@@ -18,8 +18,8 @@
         <div class="row py-2 mx-1">
             <div class="col-lg-8 bg-white border-end">
                 <h3 class="my-4">ĐỊA CHỈ GIAO HÀNG</h3>
-                <form class="info-customer-form" id="customerForm" action="/yourstyle/carts/save" method="post"
-                    th:object="${customer}">
+                <form onsubmit="return validateAddress()" class="info-customer-form" id="customerForm" action="/yourstyle/carts/save" method="post"
+                th:object="${customer}">
                     <input type="hidden" name="account.accountId" th:value="${customer.account.accountId}" />
                     <input type="hidden" name="customerId" th:value="${customer.customerId}" />
 
@@ -81,7 +81,7 @@
                             <input type="text" class="form-control" id="streetAddress" name="addresses[0].street"
                                 th:field="*{defaultAddress.street}" required>
                         </div>
-
+                
                         <!-- City -->
                         <div class="col-md-12 mb-3">
                             <div class="form-floating">
@@ -97,7 +97,7 @@
                                 <input type="hidden" th:field="*{defaultAddress.city}" id="cityName" />
                             </div>
                         </div>
-
+                
                         <div class="col-md-12 mb-3">
                             <div class="form-floating">
                                 <select name="" id="district" class="form-select floatingdistrict" disabled
@@ -114,7 +114,7 @@
                                 <input type="hidden" th:field="*{defaultAddress.district}" id="districtName" />
                             </div>
                         </div>
-
+                
                         <div class="col-md-12 mb-3">
                             <div class="form-floating">
                                 <select name="" id="ward" class="form-select floatingward" disabled
@@ -131,7 +131,7 @@
                                 <input type="hidden" th:field="*{defaultAddress.ward}" id="wardName" />
                             </div>
                         </div>
-                    </div>
+                    </div>                
 
                     <div class="py-3 text-center">
                         <button type="submit" class="btn-order-save custom-btn-main">LƯU</button>
@@ -206,19 +206,16 @@
 
                                     <div class="col-md-12 mb-3">
                                         <div class="form-floating">
-                                            <select name="ward" id="ward" class="form-select floatingward" disabled
-                                                onchange="updateWardName(this)" required>
+                                            <select name="" id="ward" class="form-select floatingward" onchange="updateWardName(this)">
                                                 <option selected>Chọn Xã/phường/thị trấn</option>
+                                                <!-- Các tùy chọn khác -->
                                             </select>
                                             <label for="floatingward">
                                                 <span class="text-danger">*</span>
                                                 Xã/phường/thị trấn
                                             </label>
-                                            <div th:if="${#fields.hasErrors('defaultAddress.ward')}" class="text-danger"
-                                                th:errors="*{defaultAddress.ward}">Xã/phường/thị trấn không hợp lệ</div>
-                                            <input type="hidden" th:field="*{defaultAddress.ward}" id="wardName" />
                                         </div>
-                                    </div>
+                                    </div>                                    
 
                                     <div class="form-check mb-3">
                                         <input type="checkbox" class="form-check-input" id="defaultAddress"
@@ -260,6 +257,7 @@
                                         <td class="text-center">
                                             <!-- Liên kết xóa địa chỉ -->
                                             <a style="cursor: pointer; font-size: 21px; color: red;"
+                                                th:if="${!address.isDefault}"
                                                 th:attr="onclick=|confirmDelete(${address.addressId}, ${customerId});|">
                                                 <i class="bi bi-trash" title="Xóa"></i>
                                             </a>
@@ -380,13 +378,11 @@
                     <div class="payment">
                         <h5>THANH TOÁN NGAY</h5>
                         <div class="payment-method-radio">
-                            <form th:action="@{/vnPayMain}" method="get">
-                                <div class="payment-method-card">
-                                    <button type="submit" class="btn">
-                                        <img src="/site/images/logo/vnpay.png" alt="VNPay">
-                                    </button>
-                                </div>
-                            </form>
+                            <div class="payment-method-card">
+                                <button type="button" class="btn" onclick="checkAndRedirectToVNPay()">
+                                    <img src="/site/images/logo/vnpay.png" alt="VNPay">
+                                </button>
+                            </div>
 
                             <form id="paymentForm">
                                 <div class="payment-method-card">

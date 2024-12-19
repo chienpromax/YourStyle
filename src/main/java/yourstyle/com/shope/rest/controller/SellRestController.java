@@ -2,6 +2,7 @@ package yourstyle.com.shope.rest.controller;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
@@ -31,6 +32,7 @@ import yourstyle.com.shope.model.Order;
 import yourstyle.com.shope.model.OrderChannel;
 import yourstyle.com.shope.model.OrderDetail;
 import yourstyle.com.shope.model.OrderStatus;
+import yourstyle.com.shope.model.OrderStatusHistory;
 import yourstyle.com.shope.model.ProductVariant;
 import yourstyle.com.shope.model.Voucher;
 import yourstyle.com.shope.service.AddressService;
@@ -38,6 +40,7 @@ import yourstyle.com.shope.service.ColorService;
 import yourstyle.com.shope.service.CustomerService;
 import yourstyle.com.shope.service.OrderDetailService;
 import yourstyle.com.shope.service.OrderService;
+import yourstyle.com.shope.service.OrderStatusHistoryService;
 import yourstyle.com.shope.service.ProductVariantService;
 import yourstyle.com.shope.service.SizeService;
 import yourstyle.com.shope.service.VoucherService;
@@ -66,6 +69,8 @@ public class SellRestController {
         VoucherService voucherService;
         @Autowired
         AddressService addressService;
+        @Autowired
+        OrderStatusHistoryService orderStatusHistoryService;
 
         public Map<Integer, Integer> totalQuantities(List<Order> list) {
                 Map<Integer, Integer> totalQuantitiesMap = new HashMap<>();
@@ -460,16 +465,20 @@ public class SellRestController {
                 Optional<Order> orderOptional = orderService.findById(orderDto.getOrderId());
                 if (orderOptional.isPresent()) {
                         Order order = orderOptional.get();
-                        Customer customer = customerService.findById(orderDto.getCustomerId()).get();
-                        order.setCustomer(customer); // cập nhật khách hàng
-                        orderService.save(order);
-                        List<Address> address = addressService
+                        Optional<Customer> customerOptional = customerService.findById(orderDto.getCustomerId());
+                        if (customerOptional.isPresent()) {
+                                order.setCustomer(customerOptional.get()); // cập nhật khách hàng
+                                orderService.save(order);
+                        }
+                        List<Address> addresses = addressService
                                         .findByAddressCustomerID(order.getCustomer().getCustomerId());
-                        Address addressDefault = new Address();
-                        for (Address checkAddress : address) {
-                                if (checkAddress.getIsDefault() == true) {
-                                        addressDefault = checkAddress;
-                                }
+                        Address addressDefault = addresses.stream()
+                                        .filter(Address::getIsDefault)
+                                        .findFirst()
+                                        .orElse(null);
+                        if (addressDefault == null) {
+                                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                                .body(null); // Không tìm thấy địa chỉ mặc định
                         }
                         AddressDto addressDtoReponse = new AddressDto(
                                         order.getCustomer().getFullname(),
@@ -489,10 +498,22 @@ public class SellRestController {
                         @PathVariable("status") Integer status) {
                 if (orderId != null && status != null) {
                         Order order = orderService.findById(orderId).get();
-                        OrderStatus orderStatus = OrderStatus.fromCode(status);
-                        order.setStatus(orderStatus);
-                        orderService.save(order);
-                        return ResponseEntity.ok("Đặt hàng thành công");
+                        if (order.getTransactionType() != null) {
+                                OrderStatus orderStatus = OrderStatus.fromCode(status);
+                                order.setStatus(orderStatus);
+                                orderService.save(order);
+                                OrderStatusHistory orderStatusHistory = new OrderStatusHistory();
+                                orderStatusHistory.setOrder(order);
+                                orderStatusHistory.setStatus("COMPLETED");
+                                orderStatusHistory.setStatusTime(new Timestamp(System.currentTimeMillis()));
+                                orderStatusHistoryService.save(orderStatusHistory);
+                                return ResponseEntity.ok("Đặt hàng thành công");
+                        } else {
+                                return ResponseEntity
+                                                .status(HttpStatus.BAD_REQUEST)
+                                                .body("Đặt hàng thất bại! Đơn hàng chưa thanh toán! Vui lòng thanh toán");
+                        }
+
                 }
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
@@ -507,7 +528,11 @@ public class SellRestController {
                         if (isShipping == true) {
                                 order.setTotalAmount(order.getTotalAmount().add(feeShipDecimal));
                         } else {
-                                order.setTotalAmount(order.getTotalAmount().subtract(feeShipDecimal));
+                                if (order.getTotalAmount().compareTo(BigDecimal.ZERO) <= 0) {
+                                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+                                } else {
+                                        order.setTotalAmount(order.getTotalAmount().subtract(feeShipDecimal));
+                                }
                         }
                         orderService.save(order);
                         OrderDto orderDto = new OrderDto(order.getTotalAmount());

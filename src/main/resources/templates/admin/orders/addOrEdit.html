@@ -999,13 +999,16 @@
                                             <tr th:each="orderDetail,iterStat : ${orderDetails}" class="align-middle">
                                                 <td scope="row" class="position-relative">
                                                     <img
-                                                        th:src="@{'/admin/img/'+${orderDetail.productVariant.product.image}}"
+                                                        th:src="@{'/uploads/' + ${orderDetail.productVariant.product.image} ?: '/images/default-product.png'}"
                                                         alt=""
                                                         class="img-fluid rounded-circle object-cover w-100 h-100"
                                                     />
                                                     <span
+                                                        th:if="${orderDetailFormattedPrices[iterStat.index]['isDiscountActive'] == 'false'}"
+                                                    ></span>
+                                                    <span
                                                         class="badge bg-success badge-custom position-absolute top-0 right-0"
-                                                        th:if="${orderDetail.productVariant.product.discount}"
+                                                        th:if="${orderDetailFormattedPrices[iterStat.index]['isDiscountActive'] == 'true'}"
                                                     >
                                                         [[${#numbers.formatDecimal(orderDetail.productVariant.product.discount.discountPercent,0,'POINT',0,'COMMA')}]]
                                                         %
@@ -1015,7 +1018,30 @@
                                                 <td>[[${orderDetail.productVariant.color.colorName}]]</td>
                                                 <td>[[${orderDetail.productVariant.size.sizeName}]]</td>
                                                 <td>
-                                                    <span th:unless="${orderDetail.productVariant.product.discount}">
+                                                    <!-- Hiển thị giá cũ khi không có giảm giá hoặc đã hết hạn -->
+                                                    <!-- <span
+                                                        th:unless="${orderDetail.productVariant.product.discount != null || 
+                                                        #dates.format(orderDetail.productVariant.product.discount.endDate, 'yyyy-MM-dd') 
+                                                        lt #dates.format(T(java.time.LocalDateTime).now(), 'yyyy-MM-dd')}"
+                                                    >
+                                                        [[${orderDetailFormattedPrices[iterStat.index]['oldPrice']}]]
+                                                    </span> -->
+                                                    <span
+                                                        th:if="${orderDetailFormattedPrices[iterStat.index]['isDiscountActive'] == 'true'}"
+                                                    >
+                                                        <span class="text-decoration-line-through d-block">
+                                                            [[${orderDetailFormattedPrices[iterStat.index]['oldPrice']}]]
+                                                        </span>
+                                                        <span class="text-danger fw-bold">
+                                                            [[${orderDetailFormattedPrices[iterStat.index]['discountedPrice']}]]
+                                                        </span>
+                                                    </span>
+                                                    <span
+                                                        th:if="${orderDetailFormattedPrices[iterStat.index]['isDiscountActive'] == 'false'}"
+                                                    >
+                                                        [[${orderDetailFormattedPrices[iterStat.index]['oldPrice']}]]
+                                                    </span>
+                                                    <!-- <span th:if="${orderDetail.productVariant.product.discount}">
                                                         [[${orderDetailFormattedPrices[iterStat.index]['oldPrice']}]]
                                                     </span>
                                                     <span
@@ -1029,12 +1055,15 @@
                                                         class="text-danger fw-bold"
                                                     >
                                                         [[${orderDetailFormattedPrices[iterStat.index]['discountedPrice']}]]
-                                                    </span>
+                                                    </span> -->
                                                 </td>
                                                 <td>[[${orderDetail.quantity}]]</td>
                                                 <td class="text-danger fw-bold">
                                                     <span th:if="${orderDetail.productVariant.product.discount}">
                                                         [[${orderDetailFormattedPrices[iterStat.index]['discountIntoMoney']}]]
+                                                    </span>
+                                                    <span th:if="${orderDetail.productVariant.product.discount}">
+                                                        [[${orderDetailFormattedPrices[iterStat.index]['intoMoney']}]]
                                                     </span>
                                                     <span th:unless="${orderDetail.productVariant.product.discount}">
                                                         [[${orderDetailFormattedPrices[iterStat.index]['intoMoney']}]]

@@ -101,26 +101,45 @@ public class OrderController {
                 priceMap.put("oldPrice",
                         formatter.format(oldPrice.setScale(0, RoundingMode.FLOOR)) + ".000 VND");
                 if (orderDetail.getProductVariant().getProduct().getDiscount() != null) {
-                    // lấy phần trăm giảm giá
-                    BigDecimal discountPercent = orderDetail.getProductVariant().getProduct().getDiscount()
-                            .getDiscountPercent();
-                    // lấy giá cũ * phần trăm giảm giá -> giá mới
-                    BigDecimal discountedPrice = oldPrice
-                            .multiply(BigDecimal.ONE.subtract(discountPercent.divide(BigDecimal.valueOf(100))));
-                    orderDetail.setPrice(discountedPrice.setScale(0, RoundingMode.FLOOR)); // cập nhật giá giảm
-                    orderDetailService.save(orderDetail);
-                    // tính cột thành tiền (giá mới đã giảm * số lượng)
-                    // Làm tròn xuống bỏ phần thập phân
-                    BigDecimal discountIntoMoney = discountedPrice.setScale(0, RoundingMode.FLOOR)
-                            .multiply(BigDecimal.valueOf(orderDetail.getQuantity()));
-                    // đưa giá sau giảm vào map
-                    priceMap.put("discountedPrice",
-                            formatter.format(discountedPrice.setScale(0, RoundingMode.FLOOR)) + ".000 VND");
-                    // đưa vào map để hiển thị thành tiền
-                    priceMap.put("discountIntoMoney",
-                            formatter.format(discountIntoMoney) + ".000 VND");
-                    // cộng dồn thành tiền đã giảm (hiển thị tổng tiền)
-                    totalSum = totalSum.add(discountIntoMoney);
+                    LocalDateTime currentDateTime = LocalDateTime.now();
+                    LocalDateTime startDateTime = orderDetail.getProductVariant().getProduct().getDiscount()
+                            .getStartDate();
+                    LocalDateTime endDateTime = orderDetail.getProductVariant().getProduct().getDiscount().getEndDate();
+                    if (currentDateTime.isAfter(startDateTime) && currentDateTime.isBefore(endDateTime)) {
+                        // lấy phần trăm giảm giá
+                        BigDecimal discountPercent = orderDetail.getProductVariant().getProduct().getDiscount()
+                                .getDiscountPercent();
+                        // lấy giá cũ * phần trăm giảm giá -> giá mới
+                        BigDecimal discountedPrice = oldPrice
+                                .multiply(BigDecimal.ONE.subtract(discountPercent.divide(BigDecimal.valueOf(100))));
+                        orderDetail.setPrice(discountedPrice.setScale(0, RoundingMode.FLOOR)); // cập nhật giá giảm
+                        orderDetailService.save(orderDetail);
+                        // tính cột thành tiền (giá mới đã giảm * số lượng)
+                        // Làm tròn xuống bỏ phần thập phân
+                        BigDecimal discountIntoMoney = discountedPrice.setScale(0, RoundingMode.FLOOR)
+                                .multiply(BigDecimal.valueOf(orderDetail.getQuantity()));
+                        // đưa giá sau giảm vào map
+                        priceMap.put("discountedPrice",
+                                formatter.format(discountedPrice.setScale(0, RoundingMode.FLOOR)) + ".000 VND");
+                        // đưa vào map để hiển thị thành tiền
+                        priceMap.put("discountIntoMoney",
+                                formatter.format(discountIntoMoney) + ".000 VND");
+                        priceMap.put("isDiscountActive", "true");
+                        // cộng dồn thành tiền đã giảm (hiển thị tổng tiền)
+                        totalSum = totalSum.add(discountIntoMoney);
+                    } else {
+                        // cập nhật giá cũ nếu ko có giảm giá
+                        orderDetail.setPrice(oldPrice.setScale(0, RoundingMode.FLOOR));
+                        orderDetailService.save(orderDetail);
+                        // Tính thành tiền không giảm giá (số lượng * giá cũ)
+                        BigDecimal intoMoney = oldPrice.setScale(0, RoundingMode.FLOOR) // Làm tròn xuống bỏ phần thập
+                                                                                        // phân
+                                .multiply(BigDecimal.valueOf(orderDetail.getQuantity()));
+                        priceMap.put("intoMoney", formatter.format(intoMoney) + ".000 VND");
+                        priceMap.put("isDiscountActive", "false");
+                        // cộng dồn thành tiền không giảm (hiển thị tổng tiền)
+                        totalSum = totalSum.add(intoMoney);
+                    }
                 } else {
                     // cập nhật giá cũ nếu ko có giảm giá
                     orderDetail.setPrice(oldPrice.setScale(0, RoundingMode.FLOOR));
@@ -129,6 +148,7 @@ public class OrderController {
                     BigDecimal intoMoney = oldPrice.setScale(0, RoundingMode.FLOOR) // Làm tròn xuống bỏ phần thập phân
                             .multiply(BigDecimal.valueOf(orderDetail.getQuantity()));
                     priceMap.put("intoMoney", formatter.format(intoMoney) + ".000 VND");
+                    priceMap.put("isDiscountActive", "false");
                     // cộng dồn thành tiền không giảm (hiển thị tổng tiền)
                     totalSum = totalSum.add(intoMoney);
                 }

@@ -122,8 +122,8 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public Page<Order> findByOrderId(Integer orderId, Pageable pageable) {
-		return orderRepository.findByOrderId(orderId, pageable);
+	public Page<Order> findByOrderId(Integer orderId, List<OrderChannel> orderChannels, Pageable pageable) {
+		return orderRepository.findByOrderId(orderId, orderChannels, pageable);
 	}
 
 	@Override
@@ -167,9 +167,9 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public Page<Order> findByOrderChannelNotStatusComplete(OrderChannel orderChannel, Integer status,
+	public Page<Order> findByOrderChannelNotStatusComplete(OrderChannel orderChannel, List<Integer> statuses,
 			Pageable pageable) {
-		return orderRepository.findByOrderChannelNotStatusComplete(orderChannel, status, pageable);
+		return orderRepository.findByOrderChannelNotStatusComplete(orderChannel, statuses, pageable);
 	}
 
 	@Override
@@ -278,13 +278,18 @@ public class OrderServiceImpl implements OrderService {
 	public boolean existsByVoucherId(Integer voucherId) {
 		return orderRepository.existsByVoucherId(voucherId);
 	}
-	
+
 	@Override
 	public void removeVoucherFromOrder(Integer customerId) {
-        Order currentOrder = orderRepository.findCurrentOrderByCustomerId(customerId);
-        if (currentOrder != null && currentOrder.getVoucher() != null) {
-            currentOrder.setVoucher(null);
-            orderRepository.save(currentOrder);
-        }
-    }
+		Order currentOrder = orderRepository.findCurrentOrderByCustomerId(customerId);
+		if (currentOrder != null && currentOrder.getVoucher() != null) {
+			currentOrder.setVoucher(null);
+			orderRepository.save(currentOrder);
+		}
+	}
+
+	@Override
+	public Page<Order> findByOrderId(Integer orderId, Pageable pageable) {
+		return orderRepository.findByOrderId(orderId, pageable);
+	}
 }

@@ -31,6 +31,7 @@ import yourstyle.com.shope.model.OrderChannel;
 import yourstyle.com.shope.model.OrderDetail;
 import yourstyle.com.shope.model.Product;
 import yourstyle.com.shope.model.ProductVariant;
+import yourstyle.com.shope.model.Role;
 import yourstyle.com.shope.model.Size;
 import yourstyle.com.shope.service.AccountService;
 import yourstyle.com.shope.service.AddressService;
@@ -41,6 +42,7 @@ import yourstyle.com.shope.service.OrderDetailService;
 import yourstyle.com.shope.service.OrderService;
 import yourstyle.com.shope.service.ProductService;
 import yourstyle.com.shope.service.ProductVariantService;
+import yourstyle.com.shope.service.RoleService;
 import yourstyle.com.shope.service.SizeService;
 import yourstyle.com.shope.validation.admin.AddressDto;
 
@@ -67,7 +69,8 @@ public class SellController {
     AddressService addressService;
     @Autowired
     AccountService accountService;
-
+    @Autowired
+    RoleService roleService;
     List<Integer> statuses = Arrays.asList(0, 2, 3, 4, 5, 6, 8);
 
     private void formatProductVariant(List<ProductVariant> productVariants, Model model) {
@@ -432,13 +435,27 @@ public class SellController {
     @RequestMapping(value = "/addCustomer", method = RequestMethod.POST)
     public String addCustomer(@RequestBody AddressDto addressDto, Model model) {
         // tài khoản nhân viên vai trò khách
-        Account account = accountService.findById(2).get();
+        // Account account = accountService.findById(2).get();
+
+        // Tạo ngẫu nhiên bằng thời gian và số ngẫu nhiên
+        String randomUsername = "user_" + System.currentTimeMillis() + "_" + new Random().nextInt(1000);
+        String randomPassword = "pass_" + System.currentTimeMillis() + "_" + new Random().nextInt(1000);
+        String randomUUID = UUID.randomUUID().toString().substring(0, 4); // 4 ký tự ngẫu nhiên
+        String fakeEmail = randomPassword + randomUUID + "@gmail.com";
+        Role role = roleService.findById(1).get();
+        Account newAccount = new Account();
+        newAccount.setUsername(randomUsername);
+        newAccount.setPassword(randomPassword);
+        newAccount.setEmail(fakeEmail);
+        newAccount.setRole(role); // Đặt vai trò khách hàng
+        newAccount.setStatus(true);
+        accountService.save(newAccount);
         // tạo khách hàng
         Customer customer = new Customer();
         customer.setFullname(addressDto.getFullname());
         customer.setPhoneNumber(addressDto.getPhoneNumber());
         customer.setGender(addressDto.isGender());
-        customer.setAccount(account);
+        customer.setAccount(newAccount);
         customerService.save(customer);
         // tạo địa chỉ
         Address address = new Address();

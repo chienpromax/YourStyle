@@ -68,6 +68,8 @@ public class SellController {
     @Autowired
     AccountService accountService;
 
+    List<Integer> statuses = Arrays.asList(0, 2, 3, 4, 5, 6, 8);
+
     private void formatProductVariant(List<ProductVariant> productVariants, Model model) {
         // xử lý thông tin đơn hàng và format tổng tiền
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
@@ -286,7 +288,8 @@ public class SellController {
         // khách hàng lẻ
         // Customer customer = customerService.findById(4).get();
         Pageable pageable = PageRequest.of(currentPage, pageSize, Sort.by(Sort.Direction.DESC, "orderDate"));
-        Page<Order> orders = orderService.findByOrderChannelNotStatusComplete(OrderChannel.IN_STORE, 6, pageable);
+        Page<Order> orders = orderService.findByOrderChannelNotStatusComplete(OrderChannel.IN_STORE, statuses,
+                pageable);
         paginationOrders(orders, currentPage, model);
         totalQuantitiesAndTotalAmounts(orders, model);
         model.addAttribute("orders", orders);
@@ -321,12 +324,13 @@ public class SellController {
         if (StringUtils.hasText(value)) { // kiểm tra có giá trị hay không
             if (checkNumber(value)) {
                 Integer orderId = Integer.valueOf(value);
-                list = orderService.findByOrderId(orderId, pageable);
+                List<OrderChannel> orderChannels = Arrays.asList(OrderChannel.ONLINE, OrderChannel.DIRECT);
+                list = orderService.findByOrderId(orderId, orderChannels, pageable);
             } else {
-                list = orderService.findByCustomerFullname(value, pageable);
+                list = orderService.findByOrderChannelNotStatusComplete(OrderChannel.IN_STORE, statuses, pageable);
             }
         } else {
-            list = orderService.findByOrderChannelNotStatusComplete(OrderChannel.IN_STORE, 6, pageable);
+            list = orderService.findByOrderChannelNotStatusComplete(OrderChannel.IN_STORE, statuses, pageable);
         }
         totalQuantitiesAndTotalAmounts(list, model);
         model.addAttribute("orders", list);

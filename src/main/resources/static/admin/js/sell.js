@@ -533,6 +533,46 @@ window.addEventListener("DOMContentLoaded", function () {
                 console.error("Lỗi: " + err);
             });
     }
+    // hàm tính toán tiền khách đưa
+    const customerGiveAtInStoreElement = document.getElementById("customerGiveAtInStore");
+    const buttonPayment = document.getElementById("confirmPayment");
+    if (customerGiveAtInStoreElement) {
+        customerGiveAtInStoreElement.addEventListener("input", function () {
+            let voucherTotalSum = document.getElementById("TotalAmount").textContent.trim();
+
+            // Xóa VND nếu có và định dạng lại giá trị
+            let voucherTotalSumMoney = voucherTotalSum.replace("VND", "").replace(/\./g, "");
+            let voucherTotalSumMoneyFormat = parseInt(voucherTotalSumMoney, 10); // Chuyển đổi thành số nguyên
+
+            const customerGive = document.getElementById("customerGiveAtInStore").value.trim();
+            const tienthua = document.getElementById("tienthua");
+
+            // Xóa dấu chấm khi nhập vào và tính toán số tiền đã đưa
+            let customerGiveFormatted = customerGive.replace(/\./g, ""); // Loại bỏ dấu chấm
+            let customerGiveMoney = parseInt(customerGiveFormatted, 10); // Chuyển thành số
+
+            // Thêm dấu chấm vào số tiền đã nhập
+            let customerGiveWithComma = customerGiveFormatted.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+            // Cập nhật lại giá trị ô input tiền khách đưa
+            document.getElementById("customerGiveAtInStore").value = customerGiveWithComma;
+
+            // Tính số tiền thừa và thêm dấu .
+            let tienthuaValue = customerGiveMoney - voucherTotalSumMoneyFormat;
+            tienthua.value = tienthuaValue >= 0 ? tienthuaValue.toLocaleString() + " VND" : "0 VND";
+
+            if (customerGiveMoney >= voucherTotalSumMoneyFormat) {
+                if (buttonPayment) {
+                    buttonPayment.removeAttribute("disabled");
+                }
+            } else {
+                if (buttonPayment) {
+                    buttonPayment.setAttribute("disabled", true);
+                }
+            }
+        });
+    }
+
     // hàm xác nhận đặt hàng
     window.confirmOrderInStore = function () {
         if (shipping.checked) {
@@ -564,13 +604,18 @@ window.addEventListener("DOMContentLoaded", function () {
                 })
                     .then((reponse) => {
                         if (!reponse.ok) {
-                            throw new Error("Lỗi server không trả dữ liệu về!");
+                            return reponse.text().then((message) => {
+                                createToast("error", "fa-solid fa-circle-exclamation", "Lỗi", message);
+                                throw new Error(message);
+                            });
                         }
                         return reponse.text();
                     })
                     .then((message) => {
-                        console.log(message);
-                        window.location.href = "/admin/sell?page=0&size=10";
+                        createToast("success", "fa-solid fa-check-circle", "Thành công", message);
+                        setTimeout(() => {
+                            window.location.href = "/admin/sell?page=0&size=10";
+                        }, 2000);
                     })
                     .catch((err) => {
                         console.error("Lỗi: " + err);
@@ -581,8 +626,12 @@ window.addEventListener("DOMContentLoaded", function () {
     // Chọn khách hàng cho đơn vận Chuyển
     window.selectCustomerForOrder = function (button) {
         const rows = button.closest("tr");
-        const fullname = rows.cells[2].textContent.trim();
-        const customerId = rows.cells[1].textContent.trim();
+        const fullname = rows.cells[2]?.textContent.trim();
+        const customerId = rows.cells[1]?.textContent.trim();
+        if (!fullname || !customerId) {
+            createToast("error", "fa-solid fa-circle-exclamation", "Lỗi", "Không tìm thấy thông tin khách hàng!");
+            return;
+        }
         const orderData = {
             orderId: orderId,
             customerId: customerId,
@@ -621,13 +670,13 @@ window.addEventListener("DOMContentLoaded", function () {
                         const cityInput = document.getElementById("floatingcity");
                         const districtInput = document.getElementById("floatingdistrict");
                         const wardInput = document.getElementById("floatingward");
-                        fullnameLabel.textContent = fullname;
-                        fullnameInput.value = fullname;
-                        phoneNumberInput.value = phoneNumber;
-                        streetInput.value = street;
-                        cityInput.value = city;
-                        districtInput.value = district;
-                        wardInput.value = ward;
+                        fullnameLabel.textContent = fullname || "";
+                        fullnameInput.value = fullname || "";
+                        phoneNumberInput.value = phoneNumber || "";
+                        streetInput.value = street || "";
+                        cityInput.value = city || "";
+                        districtInput.value = district || "";
+                        wardInput.value = ward || "";
                         createToast(
                             "success",
                             "fa-solid fa-circle-check",

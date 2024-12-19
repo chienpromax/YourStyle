@@ -645,42 +645,45 @@ window.addEventListener("DOMContentLoaded", () => {
         document.getElementById("tienthua").value = "0 VND";
     };
     // hàm tính toán tiền khách đưa
-    document.getElementById("customerGive").addEventListener("input", function () {
-        let voucherTotalSum = document.getElementById("voucherTotalSum").value.trim();
-        console.log(voucherTotalSum);
+    const customerGiveElement = document.getElementById("customerGive");
+    if (customerGiveElement) {
+        customerGiveElement.addEventListener("input", function () {
+            let voucherTotalSum = document.getElementById("voucherTotalSum").value.trim();
 
-        // Xóa VND nếu có và định dạng lại giá trị
-        let voucherTotalSumMoney = voucherTotalSum.replace("VND", "").replace(/\./g, "");
-        let voucherTotalSumMoneyFormat = parseInt(voucherTotalSumMoney, 10); // Chuyển đổi thành số nguyên
-        console.log(voucherTotalSumMoneyFormat);
+            // Xóa VND nếu có và định dạng lại giá trị
+            let voucherTotalSumMoney = voucherTotalSum.replace("VND", "").replace(/\./g, "");
+            let voucherTotalSumMoneyFormat = parseInt(voucherTotalSumMoney, 10); // Chuyển đổi thành số nguyên
+            console.log(voucherTotalSumMoneyFormat);
 
-        const customerGive = document.getElementById("customerGive").value.trim();
-        const tienthua = document.getElementById("tienthua");
+            const customerGive = document.getElementById("customerGive").value.trim();
+            const tienthua = document.getElementById("tienthua");
 
-        // Xóa dấu chấm khi nhập vào và tính toán số tiền đã đưa
-        let customerGiveFormatted = customerGive.replace(/\./g, ""); // Loại bỏ dấu chấm
-        let customerGiveMoney = parseInt(customerGiveFormatted, 10); // Chuyển thành số
-        console.log("Tiền khách đưa ", customerGiveMoney);
-        // Thêm dấu chấm vào số tiền đã nhập
-        let customerGiveWithComma = customerGiveFormatted.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            // Xóa dấu chấm khi nhập vào và tính toán số tiền đã đưa
+            let customerGiveFormatted = customerGive.replace(/\./g, ""); // Loại bỏ dấu chấm
+            let customerGiveMoney = parseInt(customerGiveFormatted, 10); // Chuyển thành số
+            console.log("Tiền khách đưa ", customerGiveMoney);
+            // Thêm dấu chấm vào số tiền đã nhập
+            let customerGiveWithComma = customerGiveFormatted.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
-        // Cập nhật lại giá trị ô input tiền khách đưa
-        document.getElementById("customerGive").value = customerGiveWithComma;
+            // Cập nhật lại giá trị ô input tiền khách đưa
+            document.getElementById("customerGive").value = customerGiveWithComma;
 
-        // Tính số tiền thừa và thêm dấu .
-        let tienthuaValue = customerGiveMoney - voucherTotalSumMoneyFormat;
-        tienthua.value = tienthuaValue >= 0 ? tienthuaValue.toLocaleString() + " VND" : "0 VND";
+            // Tính số tiền thừa và thêm dấu .
+            let tienthuaValue = customerGiveMoney - voucherTotalSumMoneyFormat;
+            tienthua.value = tienthuaValue >= 0 ? tienthuaValue.toLocaleString() + " VND" : "0 VND";
 
-        if (customerGiveMoney >= voucherTotalSumMoneyFormat) {
-            if (buttonPayment) {
-                buttonPayment.removeAttribute("disabled");
+            if (customerGiveMoney >= voucherTotalSumMoneyFormat) {
+                if (buttonPayment) {
+                    buttonPayment.removeAttribute("disabled");
+                }
+            } else {
+                if (buttonPayment) {
+                    buttonPayment.setAttribute("disabled", true);
+                }
             }
-        } else {
-            if (buttonPayment) {
-                buttonPayment.setAttribute("disabled", true);
-            }
-        }
-    });
+        });
+    }
+
     function createToast(type, icon, title, text) {
         const newToast = document.createElement("div");
         newToast.innerHTML = `<div class="toast ${type}">

@@ -1,163 +1,197 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-    layout:decorate="~{site/index.html}">
+<html
+    lang="en"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{site/index.html}"
+>
+    <head>
+        <style>
+            .price-discount {
+                font-size: 1.5em;
+                /* Tăng kích thước cho giá đã giảm */
+                color: #dc3545;
+                /* Màu đỏ */
+            }
+        </style>
+    </head>
 
-<head>
-    <style>
-        .price-discount {
-            font-size: 1.5em;
-            /* Tăng kích thước cho giá đã giảm */
-            color: #dc3545;
-            /* Màu đỏ */
-        }
-    </style>
-</head>
-
-<body>
-    <section class="py-3 container" layout:fragment="main">
-        <div class="row">
-            <div class="col-md-3 py-3">
-                <form>
-                    <h4 class="text-center py-3">Lọc theo khoảng giá</h4>
-                    <div class="mb-3">
-                        <label for="minPrice" class="form-label">GIÁ THẤP NHẤT</label>
-                        <input type="text" class="form-control" id="minPrice" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="maxPrice" class="form-label">GIÁ CAO NHẤT</label>
-                        <input type="text" class="form-control" id="maxPrice" />
-                    </div>
-                    <div class="d-flex justify-content-center">
-                        <button type="button" class="btn btn-primary" onclick="filterMinPriceAndMaxPrice()">
-                            Lọc
-                        </button>
-                    </div>
-                </form>
-                <hr />
-                <div class="pt-3">
-                    <label for="customRange1" class="form-label">lọc khoảng giá</label>
-                    <input type="range" class="form-range" id="customRange1" min="0" max="10000000" />
-                    <div class="text-end">
-                        <span id="rangeValue">0</span>
-                        VNĐ
-                    </div>
-                </div>
-                <hr />
-                <div class="row">
-                    <h4 class="py-3">Kích thước</h4>
-                    <div class="col-md-6" th:each="size : ${sizes}">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" th:value="${size.sizeId}" name="size"
-                                th:attr="id=${size.sizeName}" />
-                            <label class="form-check-label" th:attr="for=${size.sizeName}">
-                                [[${size.sizeName}]]
-                            </label>
+    <body>
+        <section class="py-3 container" layout:fragment="main">
+            <div class="row">
+                <div class="col-md-3 py-3">
+                    <form>
+                        <h4 class="text-center py-3">Lọc theo khoảng giá</h4>
+                        <div class="mb-3">
+                            <label for="minPrice" class="form-label">GIÁ THẤP NHẤT</label>
+                            <input type="text" class="form-control" id="minPrice" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="maxPrice" class="form-label">GIÁ CAO NHẤT</label>
+                            <input type="text" class="form-control" id="maxPrice" />
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <button type="button" class="btn btn-primary" onclick="filterMinPriceAndMaxPrice()">
+                                Lọc
+                            </button>
+                        </div>
+                    </form>
+                    <hr />
+                    <div class="pt-3">
+                        <label for="customRange1" class="form-label">lọc khoảng giá</label>
+                        <input type="range" class="form-range" id="customRange1" min="0" max="10000000" />
+                        <div class="text-end">
+                            <span id="rangeValue">0</span>
+                            VNĐ
                         </div>
                     </div>
-                </div>
-                <hr />
-                <div class="row">
-                    <h4 class="py-3">Màu sắc</h4>
-                    <div class="col-md-6" th:each="color : ${colors}">
-                        <div class="form-check">
-                            <input class="form-check-input colorRadio" type="radio" th:value="${color.colorId}"
-                                name="color" th:attr="id=${color.colorName}" />
-                            <label class="form-check-label" th:attr="for=${color.colorName}">
-                                [[${color.colorName}]]
-                            </label>
+                    <hr />
+                    <div class="row">
+                        <h4 class="py-3">Kích thước</h4>
+                        <div class="col-md-6" th:each="size : ${sizes}">
+                            <div class="form-check">
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    th:value="${size.sizeId}"
+                                    name="size"
+                                    th:attr="id=${size.sizeName}"
+                                />
+                                <label class="form-check-label" th:attr="for=${size.sizeName}">
+                                    [[${size.sizeName}]]
+                                </label>
+                            </div>
                         </div>
                     </div>
+                    <hr />
+                    <div class="row">
+                        <h4 class="py-3">Màu sắc</h4>
+                        <div class="col-md-6" th:each="color : ${colors}">
+                            <div class="form-check">
+                                <input
+                                    class="form-check-input colorRadio"
+                                    type="radio"
+                                    th:value="${color.colorId}"
+                                    name="color"
+                                    th:attr="id=${color.colorName}"
+                                />
+                                <label class="form-check-label" th:attr="for=${color.colorName}">
+                                    [[${color.colorName}]]
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
                 </div>
-                <hr />
-            </div>
-            <div class="col-md-9 border-start py-3">
-                <div class="col-md-3">
-                    <select class="form-select" id="selectSort">
-                        <option selected disabled>SẮP XẾP THEO</option>
-                        <option value="4">TẤT CẢ</option>
-                        <option value="3">MỚI NHẤT</option>
-                        <option value="1">CAO ĐẾN THẤP</option>
-                        <option value="2">THẤP ĐẾN CAO</option>
-                    </select>
-                </div>
-                <hr />
-                <div th:if="${products != Null}" class="dsProductByCategory">
-                    <div th:if="${not #lists.isEmpty(products)}">
-                        <div class="row">
-                            <div th:each="product : ${products}" class="col-md-3 pt-5" data-aos="fade-up">
-                                <div class="card product-card">
-                                    <a
-                                        th:href="@{product/detail/{productId}(productId=${product.productId})}">
-                                        <img th:src="@{'/uploads/' + ${product.image}}" class="img-fluid product-image"
-                                            alt="Product Image" />
-                                    </a>
-                                    <div class="p-2">
-                                        <h5 class="product-name" th:text="${product.name}"></h5>
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <!-- Kiểm tra nếu có discount thì hiển thị giá giảm và giá gốc -->
-                                            <div class="">
-                                                <span class="price text-danger fw-bold"
-                                                    th:if="${product.discount != null}"
-                                                    th:text="${#numbers.formatDecimal(product.price - product.price * product.discount.discountPercent / 100, 1, 'COMMA', 3, 'POINT') + ' VNĐ'}">
-                                                </span>
+                <div class="col-md-9 border-start py-3">
+                    <div class="col-md-3">
+                        <select class="form-select" id="selectSort">
+                            <option selected disabled>SẮP XẾP THEO</option>
+                            <option value="4">TẤT CẢ</option>
+                            <option value="3">MỚI NHẤT</option>
+                            <option value="1">CAO ĐẾN THẤP</option>
+                            <option value="2">THẤP ĐẾN CAO</option>
+                        </select>
+                    </div>
+                    <hr />
+                    <div th:if="${products != Null}" class="dsProductByCategory">
+                        <div th:if="${not #lists.isEmpty(products)}">
+                            <div class="row">
+                                <div th:each="product : ${products}" class="col-md-3 pt-5" data-aos="fade-up">
+                                    <div class="card product-card">
+                                        <a th:href="@{product/detail/{productId}(productId=${product.productId})}">
+                                            <img
+                                                th:src="@{'/uploads/' + ${product.image}}"
+                                                class="img-fluid product-image"
+                                                alt="Product Image"
+                                            />
+                                        </a>
+                                        <div class="p-2">
+                                            <h5 class="product-name" th:text="${product.name}"></h5>
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <!-- Kiểm tra nếu có discount thì hiển thị giá giảm và giá gốc -->
+                                                <div class="">
+                                                    <span
+                                                        class="price text-danger fw-bold"
+                                                        th:if="${product.discount != null}"
+                                                        th:text="${#numbers.formatDecimal(product.price - product.price * product.discount.discountPercent / 100, 1, 'COMMA', 3, 'POINT') + ' VNĐ'}"
+                                                    ></span>
 
-                                                <!-- Phần trăm giảm giá -->
-                                                <span class="badge discount-badge bg-danger ms-2"
-                                                    th:if="${product.discount != null}"
-                                                    th:text="'-' + ${#numbers.formatDecimal(product.discount.discountPercent, 0, 0)} + '%'">
-                                                </span>
-                                                <!-- Giá gốc khi không có giảm giá -->
-                                                <span class="price text-danger card-text fw-bolder m-2"
-                                                    th:if="${product.discount == null}"
-                                                    th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'">
-                                                </span>
+                                                    <!-- Phần trăm giảm giá -->
+                                                    <span
+                                                        class="badge discount-badge bg-danger ms-2"
+                                                        th:if="${product.discount != null}"
+                                                        th:text="'-' + ${#numbers.formatDecimal(product.discount.discountPercent, 0, 0)} + '%'"
+                                                    ></span>
+                                                    <!-- Giá gốc khi không có giảm giá -->
+                                                    <span
+                                                        class="price text-danger card-text fw-bolder m-2"
+                                                        th:if="${product.discount == null}"
+                                                        th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 3, 'POINT')} + ' VNĐ'"
+                                                    ></span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div th:if="${totalPages > 1}"
-                                class="pt-5 d-flex align-items-center justify-content-center">
-                                <nav aria-label="Page navigation">
-                                    <ul class="pagination">
-                                        <li th:classappend="${currentPage == 0} ? 'disabled' : ''" class="page-item">
-                                            <a class="page-link"
-                                                th:href="@{/yourstyle/allproduct(page=${currentPage - 1}, size=${size})}"
-                                                aria-label="Previous">
-                                                <span aria-hidden="true">&laquo;</span>
-                                            </a>
-                                        </li>
-                                        <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-                                            th:classappend="${i == currentPage} ? 'active' : ''" class="page-item">
-                                            <a class="page-link" th:href="@{/yourstyle/allproduct(page=${i}, size=${size})}"
-                                                th:text="${i + 1}">
-                                                1
-                                            </a>
-                                        </li>
-                                        <li th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''"
-                                            class="page-item">
-                                            <a class="page-link"
-                                                th:href="@{/yourstyle/allproduct(page=${currentPage + 1}, size=${size})}"
-                                                aria-label="Next">
-                                                <span aria-hidden="true">&raquo;</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </nav>
+                                <div class="pt-5 d-flex align-items-center justify-content-center">
+                                    <nav aria-label="Page navigation">
+                                        <ul class="pagination" th:if="${productPages.totalPages > 0}">
+                                            <li
+                                                class="page-item"
+                                                th:classappend="${productPages.number == 0} ? 'disabled' : ''"
+                                            >
+                                                <a
+                                                    class="page-link"
+                                                    th:href="@{/yourstyle/allproduct(categoryId=${categoryId},size=${productPages.size}, page=${0})}"
+                                                >
+                                                    <i class="bi bi-chevron-double-left"></i>
+                                                </a>
+                                            </li>
+                                            <li
+                                                th:each="pageNumber : ${pageNumbers}"
+                                                th:classappend="${pageNumber == productPages.number + 1} ? ' active' : ''"
+                                                class="page-item"
+                                            >
+                                                <a
+                                                    th:href="@{/yourstyle/allproduct(categoryId=${categoryId},size=${productPages.size}, page=${pageNumber - 1})}"
+                                                    class="page-link"
+                                                    th:text="${pageNumber}"
+                                                ></a>
+                                            </li>
+                                            <li
+                                                th:classappend="${productPages.number + 1 == productPages.totalPages} ? ' disabled' : ''"
+                                                class="page-item"
+                                            >
+                                                <a
+                                                    th:href="@{/yourstyle/allproduct(categoryId=${categoryId},size=${productPages.size}, page=${productPages.totalPages - 1})}"
+                                                    class="page-link"
+                                                >
+                                                    <i class="bi bi-chevron-double-right"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                                <!-- end pagination -->
                             </div>
                         </div>
-                    </div>
-                    <!-- Hiển thị thông báo nếu không có sản phẩm -->
-                    <div th:if="${#lists.isEmpty(products)}" class="alert alert-warning position-static" role="alert">
-                        Không có sản phẩm nào. <a href="/yourstyle/allproduct" target="_blank"
-                            rel="noopener noreferrer">Xem các sản phẩm khác</a>
+                        <!-- Hiển thị thông báo nếu không có sản phẩm -->
+                        <div
+                            th:if="${#lists.isEmpty(products)}"
+                            class="alert alert-warning position-static"
+                            role="alert"
+                        >
+                            Không có sản phẩm nào.
+                            <a href="/yourstyle/allproduct" target="_blank" rel="noopener noreferrer">
+                                Xem các sản phẩm khác
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <script src="/site/js/allproducts.js"></script>
-    </section>
-</body>
-
+            <script src="/site/js/allproducts.js"></script>
+        </section>
+    </body>
 </html>

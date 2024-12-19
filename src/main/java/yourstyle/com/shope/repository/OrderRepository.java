@@ -16,6 +16,11 @@ import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Integer> {
+        @Query("SELECT o FROM Order o JOIN o.customer c WHERE o.orderId = :orderId AND o.orderChannel NOT IN (:orderChannels)")
+        Page<Order> findByOrderId(@Param("orderId") Integer orderId,
+                        @Param("orderChannels") List<OrderChannel> orderChannel,
+                        Pageable pageable);
+
         @Query("SELECT o FROM Order o JOIN o.customer c WHERE o.orderId = ?1")
         Page<Order> findByOrderId(Integer orderId, Pageable pageable);
 
@@ -50,9 +55,9 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
         Integer countVoucherUsed(@Param("voucherId") Integer voucherId);
 
         // danh sách đơn tại quầy
-        @Query("SELECT o FROM Order o WHERE o.orderChannel LIKE :orderChannel AND NOT o.status = :status")
+        @Query("SELECT o FROM Order o WHERE o.orderChannel LIKE :orderChannel AND  o.status NOT IN  (:statuses)")
         Page<Order> findByOrderChannelNotStatusComplete(@Param("orderChannel") OrderChannel orderChannel,
-                        @Param("status") Integer status, Pageable pageable);
+                        @Param("statuses") List<Integer> statuses, Pageable pageable);
 
         // List<Order> findByCustomer(Customer customer);
 
@@ -123,6 +128,6 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
         @Query("SELECT COUNT(o) > 0 FROM Order o WHERE o.voucher.voucherId = ?1")
         boolean existsByVoucherId(Integer voucherId);
 
-        @Query("SELECT o FROM Order o WHERE o.customer.customerId = :customerId AND o.status IN (9)") 
+        @Query("SELECT o FROM Order o WHERE o.customer.customerId = :customerId AND o.status IN (9)")
         Order findCurrentOrderByCustomerId(@Param("customerId") Integer customerId);
 }

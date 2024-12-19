@@ -10,13 +10,13 @@
     <body>
         <section layout:fragment="main">
             <div class="displayNotifications"></div>
-            <main id="main" class="main" style="height: 1300px">
+            <main id="main" class="main" style="height: 1100px">
                 <div class="pagetitle">
                     <h1>Bán hàng</h1>
                     <nav>
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="index.html">Trang chủ</a></li>
-                            <li class="breadcrumb-item active">Bán hàng tại quầy</li>
+                            <li class="breadcrumb-item"><a th:href="@{/admin/home}">Trang chủ</a></li>
+                            <li class="breadcrumb-item active"><a th:href="@{/admin/sell}">Bán hàng tại quầy</a></li>
                         </ol>
                     </nav>
                 </div>
@@ -516,6 +516,73 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <!-- không có địa chỉ mặc định vẫn hiện form -->
+                                                <div
+                                                    class="row"
+                                                    th:if="${#lists.isEmpty(order.customer.addresses.?[isDefault])}"
+                                                >
+                                                    <div class="col-md-6 mb-3">
+                                                        <div class="form-floating">
+                                                            <input
+                                                                type="text"
+                                                                class="form-control"
+                                                                id="floatingstreet"
+                                                                placeholder="Địa chị cụ thể"
+                                                                disabled
+                                                            />
+                                                            <label for="floatingstreet">
+                                                                <span class="text-danger">*</span>
+                                                                Địa chị cụ thể
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <div class="form-floating">
+                                                            <input
+                                                                class="form-control"
+                                                                id="floatingcity"
+                                                                placeholder="Tỉnh/thành phố"
+                                                                disabled
+                                                            />
+                                                            <label for="floatingCity">
+                                                                <span class="text-danger">*</span>
+                                                                Tỉnh/thành phố
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <div class="form-floating">
+                                                            <input
+                                                                name=""
+                                                                id="floatingdistrict"
+                                                                class="form-control"
+                                                                placeholder="Quận/huyện"
+                                                                disabled
+                                                            />
+                                                            <label for="floatingdistrict">
+                                                                <span class="text-danger">*</span>
+                                                                Quận/huyện
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <div class="form-floating">
+                                                            <input
+                                                                name=""
+                                                                id="floatingward"
+                                                                class="form-control"
+                                                                placeholder="Xã/phường/thị trấn"
+                                                                disabled
+                                                            />
+
+                                                            <label for="floatingward">
+                                                                <span class="text-danger">*</span>
+                                                                Xã/phường/thị trấn
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- không có địa chỉ mặc định -->
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <button
                                                         class="btn btn-outline-primary"
@@ -685,7 +752,7 @@
                                     <p class="text-danger fw-bold" id="TotalAmount">
                                         [[${#numbers.formatDecimal(order.totalAmount,1,'COMMA',3,'POINT') + ' VND'}]]
                                     </p>
-                                    <input type="hidden" name="" id="voucherTotalSum" th:value="${voucherTotalSum}" />
+                                    <!-- <input type="hidden" name="" id="voucherTotalSum" th:value="${voucherTotalSum}" /> -->
                                 </div>
                                 <p class="fw-bold text-center">Chọn phương thức thanh toán</p>
                                 <div class="d-flex justify-content-center">
@@ -712,7 +779,7 @@
                                     </div>
                                 </div>
                                 <div class="form-floating mt-3 mb-3">
-                                    <input id="customerGive" type="text" class="form-control" />
+                                    <input id="customerGiveAtInStore" type="text" class="form-control" />
                                     <label for="customerGive">Tiền khách đưa</label>
                                 </div>
                                 <div class="form-floating mb-3">

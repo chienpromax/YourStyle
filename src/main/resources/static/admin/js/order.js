@@ -291,9 +291,9 @@ window.addEventListener("DOMContentLoaded", () => {
         let district = row.cells[5].textContent;
         let city = row.cells[6].textContent;
         const addressIdElement = row.querySelector(".inputAddressId");
-        if (addressIdElement) {
-            addressIdSelect = addressIdElement.value;
-        }
+
+        addressIdSelect = addressIdElement ? addressIdElement.value : null;
+
         const floatingstreet = document.getElementById("floatingstreet");
         const floatingward = document.getElementById("floatingward");
         const floatingdistrict = document.getElementById("floatingdistrict");
@@ -326,13 +326,14 @@ window.addEventListener("DOMContentLoaded", () => {
     }
     window.submitAddress = function () {
         const addressData = {
-            addressId: addressIdSelect ? addressIdSelect : addressIdDefault,
+            addressId: addressIdSelect || addressIdDefault,
             customer: {
-                customerId: document.getElementById("inputCustomerId").value,
+                customerId: document.querySelector(".inputCustomerId").value,
                 fullname: document.getElementById("floatinghovaten").value.trim(),
                 phoneNumber: document.getElementById("floatingsodienthoai").value.trim(),
             },
         };
+
         Swal.fire({
             title: "Xác nhận thay đổi thông tin khách hàng?",
             text: `Thông tin khách hàng ${addressData.customer.fullname} sẽ được cập nhật`,
@@ -489,16 +490,10 @@ window.addEventListener("DOMContentLoaded", () => {
                                                             data-bs-target="#modalIdUpdateOrder"
                                                             id="selectAddress">Chọn</a>
                                 </td>
-                                 <input
-                                                        type="hidden"
-                                                        th:value="${address.addressId}"
-                                                        id="inputAddressId"
-                                                    />
-                                                    <input
-                                                        type="hidden"
-                                                        th:value="${address.customer.customerId}"
-                                                        id="inputCustomerId"
-                                                    />
+                                   <td>
+        <input type="hidden" value="${address.addressId}" class="inputAddressId" />
+        <input type="hidden" value="${address.customer.customerId}" class="inputCustomerId" />
+    </td>
                             </tr>`;
                             }
                         });

@@ -159,7 +159,7 @@
                                                                     <td>[[${productVariant.productVariantId}]]</td>
                                                                     <td scope="row" class="position-relative">
                                                                         <img
-                                                                            th:src="@{'/admin/img/'+${productVariant.product.image}}"
+                                                                            th:src="@{'/uploads/' + ${productVariant.product.image} ?: '/images/default-product.png'}"
                                                                             alt=""
                                                                             class="img-fluid rounded-circle object-cover w-100 h-100"
                                                                         />
@@ -263,7 +263,7 @@
                                                 >
                                                     <td scope="row" class="position-relative">
                                                         <img
-                                                            th:src="@{/admin/img/{imageName}(imageName=${orderDetail.productVariant.product.image})}"
+                                                            th:src="@{'/uploads/' + ${orderDetail.productVariant.product.image} ?: '/images/default-product.png'}"
                                                             alt=""
                                                             class="img-fluid rounded-circle object-cover"
                                                             style="width: 60px"
@@ -526,11 +526,11 @@
                                                             <input
                                                                 type="text"
                                                                 class="form-control"
-                                                                id="floatingstreet"
+                                                                id="floatingstreetNotDefault"
                                                                 placeholder="Địa chị cụ thể"
                                                                 disabled
                                                             />
-                                                            <label for="floatingstreet">
+                                                            <label for="floatingstreetNotDefault">
                                                                 <span class="text-danger">*</span>
                                                                 Địa chị cụ thể
                                                             </label>
@@ -540,11 +540,11 @@
                                                         <div class="form-floating">
                                                             <input
                                                                 class="form-control"
-                                                                id="floatingcity"
+                                                                id="floatingcityNotDefault"
                                                                 placeholder="Tỉnh/thành phố"
                                                                 disabled
                                                             />
-                                                            <label for="floatingCity">
+                                                            <label for="floatingcityNotDefault">
                                                                 <span class="text-danger">*</span>
                                                                 Tỉnh/thành phố
                                                             </label>
@@ -554,12 +554,12 @@
                                                         <div class="form-floating">
                                                             <input
                                                                 name=""
-                                                                id="floatingdistrict"
+                                                                id="floatingdistrictNotDefault"
                                                                 class="form-control"
                                                                 placeholder="Quận/huyện"
                                                                 disabled
                                                             />
-                                                            <label for="floatingdistrict">
+                                                            <label for="floatingdistrictNotDefault">
                                                                 <span class="text-danger">*</span>
                                                                 Quận/huyện
                                                             </label>
@@ -569,13 +569,13 @@
                                                         <div class="form-floating">
                                                             <input
                                                                 name=""
-                                                                id="floatingward"
+                                                                id="floatingwardNotDefault"
                                                                 class="form-control"
                                                                 placeholder="Xã/phường/thị trấn"
                                                                 disabled
                                                             />
 
-                                                            <label for="floatingward">
+                                                            <label for="floatingwardNotDefault">
                                                                 <span class="text-danger">*</span>
                                                                 Xã/phường/thị trấn
                                                             </label>
@@ -1329,8 +1329,14 @@
                                         Chọn
                                     </a>
                                 </td>
-                                <input type="hidden" th:value="${customer.customerId}" id="inputCustomerId" />
-                                <input type="hidden" th:value="${address.addressId}" class="inputAddressId" />
+                                <td>
+                                    <input type="hidden" value="${address.addressId}" class="inputAddressId" />
+                                    <input
+                                        type="hidden"
+                                        value="${address.customer.customerId}"
+                                        class="inputCustomerId"
+                                    />
+                                </td>
                             </tr>
                         </tbody>
                     </table>

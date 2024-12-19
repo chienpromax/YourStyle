@@ -65,7 +65,6 @@ window.addEventListener("DOMContentLoaded", function () {
         inputField.value = value;
     });
     const checkColor = document.querySelector(".colorRadio ");
-    console.log(checkColor);
 
     const customRange1 = document.getElementById("customRange1");
     const rangeValueElement = document.getElementById("rangeValue");

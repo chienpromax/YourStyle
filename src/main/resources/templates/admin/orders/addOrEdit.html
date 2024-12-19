@@ -357,13 +357,13 @@
                                                     [[${address.street + ', '+ address.ward + ', ' + address.district +
                                                     ', ' + address.city}]]
                                                 </span>
-                                                <th:block th:if="${address.isDefault}">
+                                                <!-- <th:block th:if="${address.isDefault}">
                                                     <input
                                                         type="hidden"
                                                         th:value="${address.addressId}"
                                                         class="inputAddressId"
                                                     />
-                                                </th:block>
+                                                </th:block> -->
                                             </span>
                                         </p>
                                     </div>
@@ -669,16 +669,18 @@
                                                             Chọn
                                                         </a>
                                                     </td>
-                                                    <input
-                                                        type="hidden"
-                                                        th:value="${customer.customerId}"
-                                                        id="inputCustomerId"
-                                                    />
-                                                    <input
-                                                        type="hidden"
-                                                        th:value="${address.addressId}"
-                                                        class="inputAddressId"
-                                                    />
+                                                    <td>
+                                                        <input
+                                                            type="hidden"
+                                                            th:value="${customer.customerId}"
+                                                            class="inputCustomerId"
+                                                        />
+                                                        <input
+                                                            type="hidden"
+                                                            th:value="${address.addressId}"
+                                                            class="inputAddressId"
+                                                        />
+                                                    </td>
                                                 </tr>
                                             </tbody>
                                         </table>

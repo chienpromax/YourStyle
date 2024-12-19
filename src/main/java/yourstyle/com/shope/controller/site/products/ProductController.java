@@ -86,9 +86,13 @@ public class ProductController {
         if ("best-sellers".equals(sort)) {
             // Lấy danh sách sản phẩm bán chạy nhất
             products = productService.getBestSellingProducts();
+            productPage = new PageImpl<>(products, pageable, products.size());
+
         } else if ("discount".equals(sort)) {
             // Lấy danh sách sản phẩm có giảm giá
             products = productService.getDiscountedProducts();
+            productPage = new PageImpl<>(products, pageable, products.size());
+
         } else if (categoryId != null) {
             // Lọc theo danh mục nếu categoryId không null
             productPage = productService.findByCategory_CategoryId(categoryId, pageable);

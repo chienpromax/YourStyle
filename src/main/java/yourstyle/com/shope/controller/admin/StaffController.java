@@ -80,13 +80,13 @@ public class StaffController {
                 redirectAttribute.addAttribute("messageContent", "Xóa thành công");
             } catch (Exception e) {
                 redirectAttribute.addAttribute("messageType", "error");
-                redirectAttribute.addAttribute("messageContent", "Lỗi khi xóa: " + e.getMessage());
+                redirectAttribute.addAttribute("messageContent", "Lỗi khi xóa nhân viên có rằng buộc:");
             }
         } else {
             redirectAttribute.addAttribute("messageType", "error");
             redirectAttribute.addAttribute("messageContent", "Không tìm thấy khách hàng để xóa.");
         }
-        return new ModelAndView("redirect:/admin/staffs", model);
+        return new ModelAndView("redirect:/admin/staffs");
     }
     
 

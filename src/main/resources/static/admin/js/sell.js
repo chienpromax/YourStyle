@@ -670,13 +670,32 @@ window.addEventListener("DOMContentLoaded", function () {
                         const cityInput = document.getElementById("floatingcity");
                         const districtInput = document.getElementById("floatingdistrict");
                         const wardInput = document.getElementById("floatingward");
+
+                        const floatingstreetNotDefault = document.getElementById("floatingstreetNotDefault");
+                        const floatingcityNotDefault = document.getElementById("floatingcityNotDefault");
+                        const floatingdistrictNotDefault = document.getElementById("floatingdistrictNotDefault");
+                        const floatingwardNotDefault = document.getElementById("floatingwardNotDefault");
                         fullnameLabel.textContent = fullname || "";
                         fullnameInput.value = fullname || "";
                         phoneNumberInput.value = phoneNumber || "";
-                        streetInput.value = street || "";
-                        cityInput.value = city || "";
-                        districtInput.value = district || "";
-                        wardInput.value = ward || "";
+
+                        if (streetInput && cityInput && districtInput && wardInput) {
+                            streetInput.value = street || "";
+                            cityInput.value = city || "";
+                            districtInput.value = district || "";
+                            wardInput.value = ward || "";
+                        }
+                        if (
+                            floatingstreetNotDefault &&
+                            floatingcityNotDefault &&
+                            floatingdistrictNotDefault &&
+                            floatingwardNotDefault
+                        ) {
+                            floatingstreetNotDefault.value = street || "";
+                            floatingcityNotDefault.value = city || "";
+                            floatingdistrictNotDefault.value = district || "";
+                            floatingwardNotDefault.value = ward || "";
+                        }
                         createToast(
                             "success",
                             "fa-solid fa-circle-check",

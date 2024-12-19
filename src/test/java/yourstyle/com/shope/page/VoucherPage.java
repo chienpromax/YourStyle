@@ -85,7 +85,7 @@ public class VoucherPage {
             InputValidation.clearInput(BaseSetup.driver, descriptionn, By.xpath(description));
             WebElement clickSave = WaitFor.waitElementVisible(BaseSetup.driver, By.xpath(btnSave));
             clickSave.click();
-            Thread.sleep(30000);
+            Thread.sleep(10000);
         } catch (Exception ex) {
 
         }

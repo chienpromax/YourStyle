@@ -43,9 +43,16 @@ public class AccountController {
     }
 
     @PostMapping("/register")
-    public String register(@ModelAttribute("account") Account newAccount, @RequestParam String confirmPassword, BindingResult bindingResult, Model model, HttpSession session) {
+    public String register(@ModelAttribute("account") Account newAccount, @RequestParam String confirmPassword,
+            BindingResult bindingResult, Model model, HttpSession session) {
 
         accountValidator.validate(newAccount, bindingResult);
+
+        // Kiểm tra email tồn tại
+        if (accountService.existsByEmail(newAccount.getEmail())) {
+            model.addAttribute("errorMessage", "Địa chỉ email đã được sử dụng.");
+            return "site/accounts/register";
+        }
 
         if (bindingResult.hasErrors()) {
             // In ra tất cả các lỗi
@@ -57,13 +64,13 @@ public class AccountController {
             String errorMessage = bindingResult.getAllErrors().stream()
                     .map(error -> error.getDefaultMessage()) // Lấy thông báo lỗi
                     .collect(Collectors.joining(", ")); // Nối các lỗi với dấu phẩy
-            model.addAttribute("errorMessage", errorMessage);  // Truyền thông báo lỗi vào model
+            model.addAttribute("errorMessage", errorMessage); // Truyền thông báo lỗi vào model
             return "site/accounts/register";
         }
 
         if (accountService.existsByUsername(newAccount.getUsername())) {
             model.addAttribute("errorMessage", "Tên đăng nhập đã tồn tại.");
-            return "site/accounts/register";  // Trả về trang đăng ký với lỗi tên đăng nhập
+            return "site/accounts/register"; // Trả về trang đăng ký với lỗi tên đăng nhập
         }
 
         session.setAttribute("newAccount", newAccount);
@@ -71,7 +78,7 @@ public class AccountController {
 
         accountService.sendOTP(newAccount.getEmail(), session);
         model.addAttribute("message", "Mã OTP đã được gửi đến email của bạn.");
-        return "site/accounts/verifyOTP";  // Chuyển hướng tới trang nhập OTP
+        return "site/accounts/verifyOTP"; // Chuyển hướng tới trang nhập OTP
     }
 
     @PostMapping("/verifyOTP")
@@ -92,7 +99,8 @@ public class AccountController {
                         // Lưu thông tin tài khoản vào cơ sở dữ liệu
                         accountService.register(newAccount, confirmPassword);
                         model.addAttribute("message", "Xác thực OTP thành công và tài khoản đã được tạo!");
-                        session.removeAttribute("newAccount");  // Xóa thông tin trong session sau khi đã lưu vào cơ sở dữ liệu
+                        session.removeAttribute("newAccount"); // Xóa thông tin trong session sau khi đã lưu vào cơ sở
+                                                               // dữ liệu
                         session.removeAttribute("confirmPassword");
 
                         return "redirect:/yourstyle/accounts/login";
@@ -114,7 +122,6 @@ public class AccountController {
         }
     }
 
-
     // Phương thức xử lý gửi OTP
     @PostMapping("/sendOTP")
     public String sendOTP(@RequestParam("email") String email, HttpSession session, Model model) {
@@ -127,7 +134,6 @@ public class AccountController {
             return "site/accounts/register";
         }
     }
-
 
     // Phương thức gửi lại OTP
     @PostMapping("/resendOTP")
@@ -143,8 +149,7 @@ public class AccountController {
         }
     }
 
-
-//FORGOT PASS
+    // FORGOT PASS
 
     // Hiển thị trang quên mật khẩu
     @GetMapping("/forgotpassword")
@@ -202,7 +207,7 @@ public class AccountController {
             return "site/accounts/verifyOTPForPasswordReset";
         }
     }
-    //change pass
+    // change pass
 
     // Trang nhập mật khẩu mới
     @GetMapping("/resetpassword")
@@ -217,15 +222,15 @@ public class AccountController {
         }
 
         model.addAttribute("email", email);
-        return "site/accounts/resetpassword";  // Trang nhập mật khẩu mới
+        return "site/accounts/resetpassword"; // Trang nhập mật khẩu mới
     }
 
     // Xử lý reset mật khẩu
     @PostMapping("/resetpassword")
     public String resetPassword(@RequestParam("newPassword") String newPassword,
-                                @RequestParam("confirmPassword") String confirmPassword,
-                                RedirectAttributes redirectAttributes,
-                                Model model) {
+            @RequestParam("confirmPassword") String confirmPassword,
+            RedirectAttributes redirectAttributes,
+            Model model) {
         try {
             if (!newPassword.equals(confirmPassword)) {
                 model.addAttribute("error", "Mật khẩu xác nhận không khớp.");
@@ -254,6 +259,5 @@ public class AccountController {
             return "site/accounts/resetpassword"; // Quay lại form reset mật khẩu
         }
     }
-
 
 }

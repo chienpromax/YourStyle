@@ -3,6 +3,9 @@ package yourstyle.com.shope.base;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
 import yourstyle.com.shope.untils.ReadConfig;
 
 public class BaseSetup {
@@ -13,6 +16,7 @@ public class BaseSetup {
         System.out.println("hi " + browser);
         switch (browser.toLowerCase()) {
             case "chrome":
+                WebDriverManager.chromedriver().setup();
                 driver = new ChromeDriver();
                 driver.get(ReadConfig.getProperty("url"));
                 driver.manage().window().maximize();
@@ -20,6 +24,11 @@ public class BaseSetup {
             case "edge":
                 driver = new EdgeDriver();
                 driver.get(ReadConfig.getProperty("url"));
+                driver.manage().window().maximize();
+                break;
+                 case "firefox":
+                WebDriverManager.firefoxdriver().setup(); // Tự động quản lý FirefoxDriver
+                driver = new FirefoxDriver();
                 driver.manage().window().maximize();
                 break;
             default:

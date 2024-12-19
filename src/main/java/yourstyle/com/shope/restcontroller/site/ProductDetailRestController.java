@@ -142,9 +142,9 @@ public class ProductDetailRestController {
         Review review = reviewService.findById(reviewId);
         if (review != null) {
             reviewImageService.deleteByReviewId(reviewId);
-            reviewService.deleteById(reviewId);
+            reviewService.deleteById(reviewId); 
             return ResponseEntity.ok().build();
-        }
+        }   
         return ResponseEntity.notFound().build();
     }
 }

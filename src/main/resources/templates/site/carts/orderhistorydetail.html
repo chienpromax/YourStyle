@@ -104,7 +104,7 @@
                         </p>
                     </div>
                     <div class="text-end col-md-6 bg-light">
-                        <p>Áp dụng:
+                        <p>Áp dụng mã:
                             <span
                                 th:text="${order.voucher != null ? order.voucher.voucherName : 'Không có voucher'}"></span>
                         </p>
@@ -129,8 +129,6 @@
                             <p>Giá: <span
                                     th:text="${#numbers.formatDecimal(detail.price, 1, 'COMMA', 3, 'POINT') + ' Đ'}"></span>
                             </p>
-                            <a th:href="@{yourstyle/product/detail/{id}(id=${detail.productVariant.product.productId})}"
-                                class="btn">Mua Lại</a>
                         </div>
                     </div>
 
